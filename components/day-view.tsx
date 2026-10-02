@@ -2,11 +2,13 @@
 
 import Link from 'next/link'
 import { useReps } from '@/components/reps-provider'
-import { DAY_BY_DATE } from '@/data/curriculum'
+import ProgressRing from '@/components/progress-ring'
+import { kindOf, compositionText } from '@/components/rep-kind'
+import { IconArrowRight, IconCheck, IconLock } from '@/components/icons'
+import { DAY_BY_DATE, DAYS } from '@/data/curriculum'
 import { PROBLEM_BY_ID } from '@/data/problems'
 import { MOCKS } from '@/data/mocks'
 import { formatMinutes, longDate } from '@/lib/dates'
-import { REP_TYPE_LABEL } from '@/lib/labels'
 import { attemptedSet, dayStats, exerciseUnlocked, nextExercise, passedSet, sectionUnlocked } from '@/lib/progress'
 
 export default function DayView({ date }: { date: string }) {
@@ -14,8 +16,8 @@ export default function DayView({ date }: { date: string }) {
   const day = DAY_BY_DATE[date]
   if (!day) {
     return (
-      <main className="mx-auto w-full max-w-[880px] px-5 py-16">
-        <p className="text-muted">No reps planned for {date}.</p>
+      <main className="flex-1 bg-canvas">
+        <div className="mx-auto w-full max-w-[880px] px-5 py-16 text-muted">No reps planned for {date}.</div>
       </main>
     )
   }
@@ -23,114 +25,149 @@ export default function DayView({ date }: { date: string }) {
   const passed = passedSet(attempts)
   const tried = attemptedSet(attempts)
   const next = nextExercise(day, attempts)
-  let n = 0
+  const dayNumber = DAYS.findIndex((d) => d.date === day.date) + 1
+  const currentSection = day.sections.findIndex((s) => s.exercises.some((e) => !passed.has(e.id)))
+  const offsets = day.sections.map((_, i) => day.sections.slice(0, i).reduce((c, x) => c + x.exercises.length, 0))
 
   return (
-    <main className="mx-auto w-full max-w-[880px] px-5 pb-28 pt-10">
-      <p className="text-[13px] text-muted">
-        {longDate(day.date)}
-        {day.date === today ? ' · Today' : ''}
-      </p>
-      <h1 className="mt-1 text-[32px] font-semibold tracking-tight">{day.date === '2026-10-11' ? 'Interview Reps' : 'Today’s Reps'}</h1>
-      <p className="mt-1 text-[15px] text-ink-2">{day.title}</p>
-      <p className="mt-2 max-w-[680px] text-[14px] text-muted">{day.focus}</p>
-
-      <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3">
-        {next ? (
-          <Link href={`/rep/${next.id}`} className="btn btn-primary btn-lg">
-            {stats.completed ? 'Continue' : 'Start'} →
-          </Link>
-        ) : (
-          <Link href={`/day/${day.date}/summary`} className="btn btn-primary btn-lg">
-            Review the day
-          </Link>
-        )}
-        <div className="flex min-w-[220px] flex-1 flex-col gap-1.5">
-          <div className="flex justify-between text-[12.5px] text-muted">
-            <span>
-              {stats.completed} of {stats.total} reps · {stats.percent}%
-            </span>
-            <span>{formatMinutes(stats.minutesRemaining)} left</span>
-          </div>
-          <div className="bar" aria-hidden="true">
-            <span style={{ width: `${stats.percent}%` }} />
-          </div>
-        </div>
-        {stats.completed > 0 && (
-          <Link href={`/day/${day.date}/summary`} className="text-[13px] text-muted hover:text-ink">
-            Day summary
-          </Link>
-        )}
-      </div>
-
-      {day.capstones.length > 0 && (
-        <p className="mt-6 text-[13px] text-muted">
-          Capstones:{' '}
-          {day.capstones.map((c, i) => (
-            <span key={c}>
-              {i > 0 && ' · '}
-              <span className="text-ink-2">{PROBLEM_BY_ID[c]?.title}</span>
-            </span>
-          ))}
+    <main className="flex-1 bg-canvas">
+      <div className="mx-auto w-full max-w-[920px] px-5 pb-28 pt-10 sm:px-8">
+        <p className="text-[13px] text-muted">
+          {longDate(day.date)} · Day {dayNumber} of {DAYS.length}
+          {day.date === today ? ' · Today' : ''}
         </p>
-      )}
-      {day.mocks && day.mocks.length > 0 && (
-        <p className="mt-2 text-[13px] text-muted">
-          Includes {day.mocks.length} mock interviews ·{' '}
-          <Link href="/interview" className="text-ink underline decoration-line-strong underline-offset-2">
-            Interview Reps
-          </Link>{' '}
-          ({MOCKS.map((m) => m.minutes).join(' + ')} min)
-        </p>
-      )}
+        <h1 className="display mt-1.5">{day.date === '2026-10-11' ? 'Interview Reps' : day.short}</h1>
+        <p className="mt-1.5 text-[15.5px] text-ink-2">{day.title}</p>
+        <p className="mt-2 max-w-[680px] text-[14px] leading-relaxed text-muted">{day.focus}</p>
 
-      <ol className="mt-10 flex flex-col gap-10">
-        {day.sections.map((s, si) => {
-          const unlocked = sectionUnlocked(day, si, attempts)
-          const done = s.exercises.filter((e) => passed.has(e.id)).length
-          return (
-            <li key={s.id} aria-labelledby={`sec-${s.id}`}>
-              <div className="flex items-baseline justify-between gap-4 border-b border-line pb-2">
-                <h2 id={`sec-${s.id}`} className="text-[16px] font-semibold tracking-tight">
-                  {s.title}
-                  {!unlocked && <span className="ml-2 text-[12px] font-normal text-faint">Locked · finish more of the previous block</span>}
-                </h2>
-                <span className="text-[12px] tabular-nums text-muted">
-                  {done}/{s.exercises.length}
-                </span>
-              </div>
-              <p className="mt-2 text-[13.5px] text-muted">{s.summary}</p>
-              <ol className="mt-3 flex flex-col">
-                {s.exercises.map((e) => {
-                  n++
-                  const isDone = passed.has(e.id)
-                  const isTried = tried.has(e.id) && !isDone
-                  const open = exerciseUnlocked(day, e.id, attempts)
-                  const isNext = next?.id === e.id
-                  return (
-                    <li key={e.id}>
-                      <Link
-                        href={`/rep/${e.id}`}
-                        className={`grid grid-cols-[36px_18px_1fr_auto] items-center gap-3 rounded-md px-2 py-1.5 text-[14px] hover:bg-surface ${isNext ? 'bg-surface-2' : ''} ${!open && !isDone ? 'text-muted' : ''}`}
-                        aria-label={`Rep ${n}: ${e.title}. ${isDone ? 'Complete.' : isTried ? 'Attempted, not passed.' : open ? '' : 'Locked, open anyway.'}`}
-                      >
-                        <span className="text-right text-[11.5px] tabular-nums text-faint">{n}</span>
-                        <span aria-hidden="true" className={isDone ? 'text-pass' : isTried ? 'text-warn' : 'text-faint'}>
-                          {isDone ? '✓' : isTried ? '◐' : open ? '○' : '·'}
-                        </span>
-                        <span className="truncate">{e.title}</span>
-                        <span className="text-[11.5px] text-faint">
-                          {e.repType === 'foundation' ? '' : REP_TYPE_LABEL[e.repType]} {e.minutes >= 5 ? `· ${Math.round(e.minutes)} min` : ''}
-                        </span>
+        <section className="panel mt-7 flex flex-col gap-5 p-6 sm:flex-row sm:items-center">
+          <ProgressRing value={stats.percent} size={64} stroke={5}>
+            <span className="num text-[15px] font-semibold">{stats.percent}%</span>
+          </ProgressRing>
+          <div className="min-w-0 flex-1">
+            <p className="num text-[15px] font-semibold">
+              {stats.completed} of {stats.total} reps
+            </p>
+            <p className="mt-0.5 text-[13.5px] text-muted">
+              {formatMinutes(stats.minutesRemaining)} left · {compositionText(day.sections.flatMap((s) => s.exercises))}
+            </p>
+            {(day.capstones.length > 0 || (day.mocks?.length ?? 0) > 0) && (
+              <p className="mt-1.5 text-[13px] text-muted">
+                {day.capstones.length > 0 && <>Capstones: {day.capstones.map((c) => PROBLEM_BY_ID[c]?.title).join(' · ')}</>}
+                {day.mocks && day.mocks.length > 0 && (
+                  <>
+                    {day.capstones.length > 0 ? ' · ' : ''}
+                    {day.mocks.length} mock interviews in{' '}
+                    <Link href="/interview" className="text-ink underline decoration-line-strong underline-offset-4">
+                      Interview Reps
+                    </Link>{' '}
+                    ({MOCKS.map((m) => m.minutes).join(' + ')} min)
+                  </>
+                )}
+              </p>
+            )}
+          </div>
+          <div className="flex shrink-0 items-center gap-2">
+            {stats.completed > 0 && (
+              <Link href={`/day/${day.date}/summary`} className="btn btn-ghost">
+                Day summary
+              </Link>
+            )}
+            {next ? (
+              <Link href={`/rep/${next.id}`} className="btn btn-primary btn-lg">
+                {stats.completed ? 'Continue' : 'Start'} <IconArrowRight size={15} />
+              </Link>
+            ) : (
+              <Link href={`/day/${day.date}/summary`} className="btn btn-primary btn-lg">
+                Review the day <IconArrowRight size={15} />
+              </Link>
+            )}
+          </div>
+        </section>
+
+        <ol className="mt-8 flex flex-col gap-4">
+          {day.sections.map((s, si) => {
+            const unlocked = sectionUnlocked(day, si, attempts)
+            const done = s.exercises.filter((e) => passed.has(e.id)).length
+            const complete = done === s.exercises.length && s.exercises.length > 0
+            const isCurrent = si === currentSection
+            const minutes = s.exercises.reduce((m, e) => m + e.minutes, 0)
+            const sectionNext = s.exercises.find((e) => !passed.has(e.id))
+            const startN = offsets[si]
+            return (
+              <li key={s.id} aria-labelledby={`sec-${s.id}`} className={`${isCurrent ? 'panel' : 'card'} overflow-hidden ${!isCurrent && !complete ? 'opacity-[0.92]' : ''}`}>
+                <div className="flex flex-wrap items-start gap-4 px-5 py-4 sm:px-6">
+                  <span
+                    aria-hidden="true"
+                    className={`mt-0.5 grid size-7 shrink-0 place-items-center rounded-full ${
+                      complete ? 'bg-pass text-white' : isCurrent ? 'bg-ink text-white' : 'bg-surface-2 text-faint'
+                    }`}
+                  >
+                    {complete ? <IconCheck size={14} strokeWidth={2.2} /> : !unlocked ? <IconLock size={13} /> : <span className="num text-[12px] font-semibold">{si + 1}</span>}
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1">
+                      <h2 id={`sec-${s.id}`} className="h2">
+                        {s.title}
+                      </h2>
+                      {complete && <span className="text-[12px] font-medium text-pass">Done</span>}
+                      {isCurrent && <span className="text-[12px] font-medium text-accent">In progress</span>}
+                      {!unlocked && !complete && <span className="text-[12px] text-faint">Up next · open any rep anyway</span>}
+                    </div>
+                    <p className="mt-1 text-[13.5px] leading-relaxed text-muted">{s.summary}</p>
+                    <p className="mt-1.5 text-[12.5px] text-faint">
+                      {s.exercises.length} reps · {formatMinutes(minutes)} · {compositionText(s.exercises)}
+                    </p>
+                  </div>
+                  <div className="flex shrink-0 items-center gap-3">
+                    <span className="num text-[12.5px] text-muted">
+                      {done}/{s.exercises.length}
+                    </span>
+                    {isCurrent && sectionNext && (
+                      <Link href={`/rep/${sectionNext.id}`} className="btn btn-sm">
+                        Next rep <IconArrowRight size={13} />
                       </Link>
-                    </li>
-                  )
-                })}
-              </ol>
-            </li>
-          )
-        })}
-      </ol>
+                    )}
+                  </div>
+                </div>
+                {(isCurrent || !complete) && (
+                  <ol className="px-2 pb-2 sm:px-3">
+                    {s.exercises.map((e, i) => {
+                      const num = startN + i + 1
+                      const isDone = passed.has(e.id)
+                      const isTried = tried.has(e.id) && !isDone
+                      const open = exerciseUnlocked(day, e.id, attempts)
+                      const isNext = next?.id === e.id
+                      const k = kindOf(e)
+                      return (
+                        <li key={e.id}>
+                          <Link
+                            href={`/rep/${e.id}`}
+                            className={`group grid grid-cols-[30px_22px_1fr_auto] items-center gap-3 rounded-lg px-3 py-2 text-[14px] transition-colors hover:bg-surface ${isNext ? 'bg-accent-soft/60 hover:bg-accent-soft' : ''} ${
+                              !open && !isDone ? 'text-muted' : ''
+                            }`}
+                            aria-label={`Rep ${num}: ${e.title}, ${k.short}. ${isDone ? 'Complete.' : isTried ? 'Attempted, not passed.' : isNext ? 'Next up.' : ''}`}
+                          >
+                            <span className="num text-right text-[11.5px] text-faint">{num}</span>
+                            <span aria-hidden="true" className={`grid size-[22px] place-items-center rounded-md ${isDone ? 'bg-pass-soft text-pass' : isTried ? 'bg-warn-soft text-warn' : 'bg-surface-2 text-muted'}`}>
+                              {isDone ? <IconCheck size={12} strokeWidth={2.2} /> : <k.Icon size={12} />}
+                            </span>
+                            <span className={`truncate ${isNext ? 'font-medium text-ink' : ''}`}>{e.title}</span>
+                            <span className="flex items-center gap-2 text-[11.5px] text-faint">
+                              <span className={k.bucket === 'debug' ? 'font-medium text-warn' : k.bucket === 'capstone' ? 'font-medium text-ink' : ''}>{k.short}</span>
+                              <span className="num w-10 text-right">{Math.round(e.minutes)} min</span>
+                            </span>
+                          </Link>
+                        </li>
+                      )
+                    })}
+                  </ol>
+                )}
+              </li>
+            )
+          })}
+        </ol>
+      </div>
     </main>
   )
 }

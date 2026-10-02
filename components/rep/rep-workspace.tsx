@@ -14,7 +14,9 @@ import { PROBLEM_BY_ID } from '@/data/problems'
 import { skillName } from '@/data/skills'
 import { firstDifference, hasBlanks, outputMatches } from '@/lib/answers'
 import { localDate, shortDate } from '@/lib/dates'
-import { REP_TYPE_LABEL, KIND_VERB } from '@/lib/labels'
+import { KIND_VERB } from '@/lib/labels'
+import { kindOf } from '@/components/rep-kind'
+import { IconArrowRight, IconBug, IconBulb, IconClock, IconDots, IconExternal, IconFile, IconPlay, IconRotate, IconSpark, IconX } from '@/components/icons'
 import { followingExercise, missingPrerequisites, retrievalTypeFor } from '@/lib/progress'
 import { getRunner, type RunResult } from '@/lib/python/runner'
 import { buildRepairSet, createSession, findExercise, getSession, newId } from '@/lib/sessions'
@@ -31,13 +33,24 @@ import {
 import { MISTAKE_LABEL, type Diagnosis } from '@/lib/coach/schemas'
 import type { Attempt, Exercise, Mode } from '@/lib/types'
 
+const SPLIT_DEFAULT = 38
+const SPLIT_MIN = 26
+const SPLIT_MAX = 56
+
 const CodeEditor = dynamic(() => import('@/components/code-editor'), {
   ssr: false,
-  loading: () => <div className="h-full min-h-[220px] animate-pulse bg-surface" />,
+  loading: () => (
+    <div className="flex h-full min-h-[220px] flex-col gap-2.5 p-5" aria-hidden="true">
+      <div className="skeleton h-3.5 w-48" />
+      <div className="skeleton h-3.5 w-32" />
+      <div className="skeleton h-3.5 w-40" />
+    </div>
+  ),
 })
 
 function defaultMode(e: Exercise): Mode {
   if (e.repType === 'interview') return 'interview'
+  if (e.style === 'debug') return 'practice'
   if (['recognize', 'trace', 'complete', 'recall', 'microbuild'].includes(e.stage)) return 'learn'
   return 'practice'
 }
@@ -134,6 +147,58 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
   const [aiFeedback, setAiFeedback] = useState<string | null>(null)
   const [moreOpen, setMoreOpen] = useState(false)
 
+  const [focusToken, setFocusToken] = useState(0)
+  const [modeHint, setModeHint] = useState(false)
+  const [debugFailing, setDebugFailing] = useState<number | null>(null)
+
+  // Draggable split between instructions and workspace, remembered per browser.
+  const splitHost = useRef<HTMLDivElement>(null)
+  const [split, setSplit] = useState(SPLIT_DEFAULT)
+  const [dragging, setDragging] = useState(false)
+  useEffect(() => {
+    try {
+      const v = Number(window.localStorage.getItem('reps-split'))
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time restore of a stored preference
+      if (v >= SPLIT_MIN && v <= SPLIT_MAX) setSplit(v)
+    } catch {
+      /* storage blocked */
+    }
+  }, [])
+  const setSplitPersist = (v: number) => {
+    const c = Math.min(SPLIT_MAX, Math.max(SPLIT_MIN, v))
+    setSplit(c)
+    try {
+      window.localStorage.setItem('reps-split', String(Math.round(c)))
+    } catch {
+      /* storage blocked */
+    }
+  }
+  const startDrag = (e: React.PointerEvent) => {
+    const host = splitHost.current
+    if (!host) return
+    e.preventDefault()
+    setDragging(true)
+    const rect = host.getBoundingClientRect()
+    const move = (ev: PointerEvent) => setSplitPersist(((ev.clientX - rect.left) / rect.width) * 100)
+    const up = () => {
+      setDragging(false)
+      window.removeEventListener('pointermove', move)
+      window.removeEventListener('pointerup', up)
+    }
+    window.addEventListener('pointermove', move)
+    window.addEventListener('pointerup', up)
+  }
+
+  const changeMode = (m: Mode) => {
+    setMode(m)
+    setModeHint(true)
+  }
+  useEffect(() => {
+    if (!modeHint) return
+    const t = window.setTimeout(() => setModeHint(false), 2400)
+    return () => window.clearTimeout(t)
+  }, [modeHint, mode])
+
   const [pyStatus, setPyStatus] = useState(() => getRunner().status)
   useEffect(() => getRunner().onStatus(setPyStatus), [])
 
@@ -164,6 +229,18 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
   useEffect(() => {
     if (ex.kind === 'code' || ex.kind === 'reorder') void getRunner().ensure().catch(() => undefined)
   }, [ex.kind])
+
+  // Debug Reps: once Python is ready, show how many tests the broken code fails.
+  useEffect(() => {
+    if (ex.style !== 'debug' || pyStatus !== 'ready' || debugFailing !== null) return
+    let live = true
+    void getRunner()
+      .run(blankStarter(ex), (ex.tests ?? []).filter((t) => !t.hidden))
+      .then((r) => live && setDebugFailing(r.tests.filter((t) => !t.passed).length || (r.error ? 1 : 0)))
+    return () => {
+      live = false
+    }
+  }, [ex, pyStatus, debugFailing])
 
   // Drafts: saved locally after a pause in typing, synced later in the background.
   useEffect(() => {
@@ -528,349 +605,502 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
   const locked = passed
   const mm = String(Math.floor(elapsed / 60)).padStart(2, '0')
   const ss = String(elapsed % 60).padStart(2, '0')
-  const showHintsAllowed = mode !== 'interview'
-  const hasFeedback =
-    passed || phase === 'failed' || Boolean(coachError || coachBusy || aiFeedback || result || showComplexity)
-  const crumb = session ? session.title : day ? `${shortDate(day.date)} · ${section?.title ?? ''}` : 'Rep'
-  const counter = session ? `${session.exerciseIds.indexOf(ex.id) + 1} of ${session.exerciseIds.length}` : position >= 0 ? `Rep ${position + 1} of ${dayList.length}` : ex.generated ? 'Generated rep' : ''
+  const interview = mode === 'interview'
+  const isDebug = ex.style === 'debug'
+  const kind = kindOf(ex)
+  const crumbDay = day ? shortDate(day.date) : null
+  const crumbTitle = session ? session.title : (section?.title ?? (ex.generated ? 'Generated rep' : 'Rep'))
+  const total = session ? session.exerciseIds.length : dayList.length
+  const index = session ? session.exerciseIds.indexOf(ex.id) + 1 : position + 1
+  const progressPct = total > 0 && index > 0 ? (index / total) * 100 : 0
+  const runnable = ex.kind === 'code' || ex.kind === 'reorder'
+  const testsPassed = result?.tests.filter((t) => t.passed).length ?? 0
+  const testsTotal = result?.tests.length ?? 0
+  const hasFeedback = Boolean(coachError || (coachBusy && ['same', 'harder', 'easier'].includes(coachBusy)) || aiFeedback || result || showComplexity || (phase === 'failed' && !runnable))
+  const evidence = ex.skills.map(skillName)
+  const runLabel = isDebug ? 'Run tests' : 'Run'
+  const submitLabel = isDebug ? 'Submit fix' : 'Submit'
 
   return (
-    <main className="grid flex-1 grid-cols-1 lg:h-[calc(100vh-48px)] lg:grid-cols-[minmax(360px,0.85fr)_1.15fr]">
-      {/* Prompt */}
-      <section aria-labelledby="rep-title" className="flex flex-col gap-5 overflow-y-auto border-line px-6 py-6 lg:border-r lg:px-8">
-        <div className="flex items-center gap-2 text-[12px] text-muted">
-          <Link href={session ? '/' : day ? `/day/${day.date}` : '/'} className="hover:text-ink">
-            {crumb}
-          </Link>
-          {counter && (
+    <main className="flex flex-1 flex-col bg-canvas lg:h-[calc(100vh-56px)] lg:overflow-hidden">
+      {/* Rep bar: where am I, how far, which mode */}
+      <div className="relative flex h-12 shrink-0 items-center gap-4 bg-bg px-4 sm:px-6" style={{ boxShadow: '0 1px 0 var(--hairline)' }}>
+        <nav aria-label="Breadcrumb" className="flex min-w-0 items-center gap-1.5 text-[13px]">
+          {crumbDay && !session && (
             <>
-              <span aria-hidden="true">·</span>
-              <span className="tabular-nums">{counter}</span>
+              <Link href={`/day/${day!.date}`} className="shrink-0 text-muted hover:text-ink">
+                {crumbDay}
+              </Link>
+              <span aria-hidden="true" className="text-faint">
+                /
+              </span>
             </>
           )}
-        </div>
-
-        <div>
-          <p className="label mb-1.5">
-            {runItBack ? 'Run it back' : REP_TYPE_LABEL[ex.repType]}
-            {retrievalType === 'cold' && !runItBack && ex.repType !== 'cold' ? ' · Cold' : ''}
-          </p>
-          <h1 id="rep-title" className="text-[22px] font-semibold tracking-tight">
-            {ex.title}
-          </h1>
-          <ul className="mt-2.5 flex flex-wrap gap-1.5" aria-label="Target skills">
-            {ex.skills.map((s) => (
-              <li key={s}>
-                <Link href={`/skills/${s}`} className="rounded-full border border-line px-2 py-0.5 text-[11.5px] text-muted hover:border-line-strong hover:text-ink">
-                  {skillName(s)}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {missing.length > 0 && !passed && (
-          <p className="rounded-md bg-warn-soft px-3 py-2 text-[13px] text-warn">
-            Not yet practiced: {missing.map(skillName).join(', ')}. You can try anyway, or do those reps first.
-          </p>
-        )}
-
-        <Markdown text={ex.prompt} />
-        {ex.code && ex.kind !== 'code' && <CodeView code={ex.code} />}
-
-        {ex.examples && ex.examples.length > 0 && (
-          <div className="flex flex-col gap-2">
-            {ex.examples.map((x, i) => (
-              <div key={i} className="rounded-md border border-line bg-surface px-3 py-2 text-[13px]">
-                <p className="mono text-ink-2">
-                  <span className="text-faint">in </span>
-                  {x.input}
-                </p>
-                <p className="mono text-ink-2">
-                  <span className="text-faint">out </span>
-                  {x.output}
-                </p>
-                {x.note && <p className="mt-1 text-muted">{x.note}</p>}
-              </div>
-            ))}
+          <span className="truncate font-medium text-ink">{crumbTitle}</span>
+        </nav>
+        {total > 0 && index > 0 && (
+          <div className="hidden items-center gap-2.5 sm:flex">
+            <span className="num text-[12.5px] text-muted">
+              {index} / {total}
+            </span>
+            <span className="bar bar-thin w-28" aria-hidden="true">
+              <span style={{ width: `${progressPct}%` }} />
+            </span>
           </div>
         )}
-
-        {problem && (
-          <p className="text-[13px] text-muted">
-            Capstone for{' '}
-            <a href={problem.leetcode} target="_blank" rel="noreferrer" className="text-ink underline decoration-line-strong underline-offset-2 hover:decoration-ink">
-              LeetCode {problem.number}: {problem.title} ↗
-            </a>
-          </p>
-        )}
-
-        {ex.note && (mode === 'learn' || showNote) && (
-          <div className="rounded-md border-l-2 border-accent bg-accent-soft/60 px-3.5 py-2.5">
-            <p className="label mb-1 !text-accent">Reminder</p>
-            <Markdown text={ex.note} className="!text-[13.5px]" />
-          </div>
-        )}
-        {ex.note && mode !== 'learn' && !showNote && (
-          <button type="button" className="self-start text-[12px] text-muted underline decoration-line-strong underline-offset-2 hover:text-ink" onClick={() => setShowNote(true)}>
-            Show concept reminder
-          </button>
-        )}
-
-        {allHints.length > 0 && (
-          <div className="flex flex-col gap-2" aria-live="polite">
-            {allHints.map((h, i) => (
-              <div key={i} className="rounded-md border border-line px-3.5 py-2.5">
-                <p className="label mb-1">Hint {i + 1}</p>
-                <Markdown text={h} className="!text-[13.5px]" />
-              </div>
-            ))}
-          </div>
-        )}
-
-        {diagnosis && (
-          <div className="rounded-md border border-line px-3.5 py-3" aria-live="polite">
-            <p className="label mb-1">Mistake · {MISTAKE_LABEL[diagnosis.category]}</p>
-            <p className="text-[14px] text-ink-2">{diagnosis.diagnosis}</p>
-            {diagnosis.missingPrerequisite && <p className="mt-1.5 text-[13px] text-muted">Likely missing: {skillName(diagnosis.missingPrerequisite)}</p>}
-            <div className="mt-2.5 flex flex-wrap gap-2">
-              {diagnosis.nextAction === 'retry' ? (
-                <span className="text-[13px] text-muted">Recommended: fix it and resubmit.</span>
-              ) : (
-                <button type="button" className="btn" onClick={startRepair}>
-                  {diagnosis.nextAction === 'syntax-reps' ? 'Repair Reps (syntax)' : diagnosis.nextAction === 'pattern-reps' ? 'Repair Reps (pattern)' : 'Edge-case reps'}
-                </button>
-              )}
-            </div>
-          </div>
-        )}
-
-        {followUps && (
-          <div className="rounded-md border border-line px-3.5 py-3">
-            <p className="label mb-1.5">Interview follow-up</p>
-            <ol className="list-decimal pl-5 text-[14px] text-ink-2">
-              {followUps.map((q, i) => (
-                <li key={i} className="mb-1">
-                  {q}
-                </li>
-              ))}
-            </ol>
-          </div>
-        )}
-
-        {(passed || solutionShown) && ex.explanation && !runItBack && (
-          <div className="rounded-md border border-line bg-surface px-3.5 py-3">
-            <p className="label mb-1">Why it works</p>
-            <Markdown text={ex.explanation} className="!text-[13.5px]" />
-            {ex.complexity && (
-              <p className="mono mt-2 text-[12.5px] text-muted">
-                time {ex.complexity.time} · space {ex.complexity.space}
-              </p>
-            )}
-          </div>
-        )}
-
-        {solutionShown && ex.solution && !passed && (
-          <div>
-            <p className="label mb-1">Solution</p>
-            <CodeView code={ex.solution} />
-            <p className="mt-2 text-[12.5px] text-muted">Read it, close it, then write it yourself. This rep now earns reduced credit.</p>
-          </div>
-        )}
-        {solutionShown && ex.kind === 'output' && !passed && (
-          <div>
-            <p className="label mb-1">Output</p>
-            <pre className="code-view">{ex.expectedOutput}</pre>
-          </div>
-        )}
-        {solutionShown && ex.kind === 'choice' && !passed && ex.options && ex.answer !== undefined && (
-          <p className="text-[13.5px]">
-            Answer: <span className="font-medium">{ex.options[ex.answer]}</span>
-          </p>
-        )}
-      </section>
-
-      {/* Answer */}
-      <section aria-label="Answer" className="flex min-h-0 flex-col bg-bg">
-        <div className="flex h-11 shrink-0 items-center gap-3 border-b border-line px-4">
-          <span className="text-[13px] font-medium">{KIND_VERB[ex.kind]}</span>
-          {mode === 'interview' && (
-            <span className="mono text-[12px] tabular-nums text-muted" aria-label={`Elapsed ${mm} minutes ${ss} seconds`}>
+        <div className="ml-auto flex items-center gap-3">
+          {interview && (
+            <span className="mono num inline-flex items-center gap-1.5 rounded-md bg-surface-2 px-2 py-1 text-[14px] font-medium text-ink" aria-label={`Elapsed ${mm} minutes ${ss} seconds`}>
+              <IconClock size={14} className="text-muted" />
               {mm}:{ss}
             </span>
           )}
-          {prior.length > 0 && !passed && <span className="text-[12px] text-faint">Done {prior.length}× before</span>}
-          {(ex.kind === 'code' || ex.kind === 'reorder') && (pyStatus === 'loading' || pyStatus === 'error') && (
-            <span className="text-[12px] text-faint" role="status">
-              {pyStatus === 'loading' ? 'Loading Python…' : 'Python unavailable, retrying on next run'}
-            </span>
-          )}
-          <div role="radiogroup" aria-label="Mode" className="ml-auto flex rounded-md border border-line p-0.5">
-            {(['learn', 'practice', 'interview'] as Mode[]).map((m) => (
-              <button
-                key={m}
-                type="button"
-                role="radio"
-                aria-checked={mode === m}
-                onClick={() => setMode(m)}
-                className={`rounded px-2 py-0.5 text-[12px] capitalize ${mode === m ? 'bg-ink text-white' : 'text-muted hover:text-ink'}`}
-              >
-                {m}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className={`min-h-0 flex-1 ${isCode ? '' : 'overflow-y-auto px-5 py-5'}`}>
-          {ex.kind === 'code' && (
-            <CodeEditor
-              value={code}
-              onChange={setCode}
-              onRun={onRun}
-              onSubmit={onSubmit}
-              assist={mode !== 'interview'}
-              readOnly={locked}
-              autoFocus
-              placeholder={runItBack ? 'From memory…' : 'Write your solution…'}
-            />
-          )}
-          {ex.kind === 'choice' && <ChoiceInput options={ex.options ?? []} value={choice} onChange={setChoice} locked={locked} correct={passed ? ex.answer : undefined} />}
-          {ex.kind === 'output' && <OutputInput value={outputText} onChange={setOutputText} locked={locked} onSubmit={onSubmit} />}
-          {ex.kind === 'reorder' && <ReorderInput lines={ex.lines ?? []} order={order} onChange={setOrder} locked={locked} />}
-          {ex.kind === 'explain' && (
-            <ExplainInput
-              value={explainText}
-              onChange={setExplainText}
-              rubric={ex.rubric ?? []}
-              checked={rubricChecked}
-              onCheck={(i, v) => setRubricChecked((r) => r.map((x, j) => (j === i ? v : x)))}
-              locked={locked}
-              aiMet={aiMet}
-            />
-          )}
-        </div>
-
-        {/* Feedback */}
-        <p className="sr-only" role="status" aria-live="polite">
-          {announce}
-        </p>
-        <div className={`max-h-[42vh] shrink-0 overflow-y-auto border-t border-line px-4 py-3 ${hasFeedback ? '' : 'hidden'}`}>
-          {coachError && <p className="mb-2 text-[13px] text-warn">{coachError}</p>}
-          {coachBusy && ['same', 'harder', 'easier'].includes(coachBusy) && <p className="mb-2 text-[13px] text-muted">Getting another rep and checking it runs…</p>}
-          {passed && (
-            <div className="mb-3 flex flex-wrap items-center gap-x-4 gap-y-2">
-              <p className="text-[14px] font-medium text-pass">✓ Rep complete{runItBack ? ' · reconstructed' : ''}</p>
-              {assisted && !runItBack && <p className="text-[13px] text-muted">You used help. Close the explanation and run it back from memory.</p>}
-              <div className="ml-auto flex items-center gap-1 text-[12px] text-muted" role="group" aria-label="How confident do you feel?">
-                <span className="mr-1">Confidence</span>
-                {[1, 2, 3, 4, 5].map((n) => (
-                  <button key={n} type="button" onClick={() => rate(n)} aria-pressed={confidence === n} className={`size-6 rounded border text-[11px] ${confidence === n ? 'border-ink bg-ink text-white' : 'border-line hover:border-line-strong'}`}>
-                    {n}
-                  </button>
-                ))}
-              </div>
+          <div className="relative">
+            <div role="radiogroup" aria-label="Mode" className="seg">
+              {(['learn', 'practice', 'interview'] as Mode[]).map((m) => (
+                <button key={m} type="button" role="radio" aria-checked={mode === m} onClick={() => changeMode(m)} className="capitalize">
+                  {m}
+                </button>
+              ))}
             </div>
-          )}
-          {phase === 'failed' && ex.kind === 'choice' && <p className="text-[13.5px] text-fail">✗ Not quite. Try again.</p>}
-          {phase === 'failed' && ex.kind === 'output' && <p className="text-[13.5px] text-fail">✗ {outputFeedback ?? 'Not quite.'}</p>}
-          {phase === 'failed' && ex.kind === 'explain' && <p className="text-[13.5px] text-fail">✗ {announce}</p>}
-          {passed && ex.kind === 'output' && <pre className="code-view !py-2">{ex.expectedOutput}</pre>}
-          {aiFeedback && <p className="mt-2 text-[13.5px] text-ink-2">{aiFeedback}</p>}
-          {result && (isCode || ex.kind === 'reorder') && <TestResults result={result} mode={mode} submitted={submittedResult} />}
-          {showComplexity && ex.complexity && (
-            <div className="mt-3 flex flex-col gap-2">
-              <label className="text-[13px] text-muted" htmlFor="cx">
-                Your complexity, before you look
-              </label>
-              <input id="cx" className="input mono !text-[13px]" value={complexityGuess} onChange={(e) => setComplexityGuess(e.target.value)} placeholder="time O(?) · space O(?)" />
-              {complexityGuess.trim().length > 3 && (
-                <p className="mono text-[12.5px] text-muted">
-                  Reference: time {ex.complexity.time} · space {ex.complexity.space}
-                </p>
-              )}
-            </div>
-          )}
-        </div>
-        {/* Actions */}
-        {/* Right padding leaves Winston's spot at the end of the bar clear. */}
-        <div className="flex shrink-0 flex-wrap items-center gap-2 border-t border-line py-2.5 pl-4 pr-24">
-          {!passed ? (
-            <>
-              {ex.kind === 'code' && (
-                <button type="button" className="btn" onClick={onRun} disabled={phase === 'running'}>
-                  Run <span className="kbd">⌘↵</span>
-                </button>
-              )}
-              <button type="button" className="btn btn-primary" onClick={onSubmit} disabled={phase === 'running'} data-testid="submit">
-                {phase === 'running' ? 'Running…' : 'Submit'} <span className="kbd !border-white/30 !bg-transparent !text-white/70">{ex.kind === 'code' ? '⇧⌘↵' : '⌘↵'}</span>
-              </button>
-              {showHintsAllowed && (
-                <button type="button" className="btn btn-ghost" onClick={nextHint} disabled={coachBusy !== null}>
-                  {coachBusy === 'hint' ? 'Thinking…' : hintsShown < hints.length ? `Hint${hints.length ? ` ${hintsShown + 1}/${hints.length}` : ''}` : 'Hint'}
-                </button>
-              )}
-              {phase === 'failed' && (
-                <button type="button" className="btn btn-ghost" onClick={explainMistake} disabled={coachBusy !== null}>
-                  {coachBusy === 'diagnose' ? 'Diagnosing…' : 'Explain mistake'}
-                </button>
-              )}
-              {ex.kind === 'explain' && explainText.trim().length > 40 && (
-                <button type="button" className="btn btn-ghost" onClick={checkExplanation} disabled={coachBusy !== null}>
-                  {coachBusy === 'verify' ? 'Checking…' : 'Check explanation'}
-                </button>
-              )}
-            </>
-          ) : (
-            <>
-              <Link href={nextHref} className="btn btn-primary" data-testid="next-rep" autoFocus>
-                {nextHref.endsWith('/summary') ? 'Finish the day' : session && session.exerciseIds.indexOf(ex.id) === session.exerciseIds.length - 1 && session.returnTo ? 'Retry capstone' : 'Next rep'} →
-              </Link>
-              <button type="button" className="btn" onClick={() => another('same')} disabled={coachBusy !== null}>
-                {coachBusy === 'same' ? 'Finding…' : 'Another rep'}
-              </button>
-              <button type="button" className={`btn ${assisted ? 'btn-primary !bg-accent !border-accent' : ''}`} onClick={doRunItBack}>
-                Run it back
-              </button>
-            </>
-          )}
-
-          <div className="relative ml-auto">
-            <button type="button" className="btn btn-ghost" aria-haspopup="menu" aria-expanded={moreOpen} onClick={() => setMoreOpen((v) => !v)}>
-              More
-            </button>
-            {moreOpen && (
-              <div role="menu" className="absolute bottom-full right-0 z-20 mb-1 flex w-56 flex-col rounded-lg border border-line bg-bg p-1 shadow-[0_8px_30px_rgba(0,0,0,0.08)]" onKeyDown={(e) => e.key === 'Escape' && setMoreOpen(false)}>
-                <MenuItem onClick={() => another('easier')} disabled={coachBusy !== null}>
-                  Easier rep
-                </MenuItem>
-                <MenuItem onClick={() => another('harder')} disabled={coachBusy !== null}>
-                  Harder rep
-                </MenuItem>
-                {!passed && <MenuItem onClick={() => another('same')} disabled={coachBusy !== null}>Another rep</MenuItem>}
-                {mode === 'interview' && !passed && <MenuItem onClick={() => { setMoreOpen(false); void nextHint() }}>Hint</MenuItem>}
-                <MenuItem onClick={startRepair}>Repair Reps</MenuItem>
-                {(ex.repType === 'capstone' || ex.repType === 'pattern' || ex.repType === 'interview') && isCode && (
-                  <MenuItem onClick={followUp} disabled={coachBusy !== null}>
-                    Interview follow-up
-                  </MenuItem>
-                )}
-                {ex.complexity && <MenuItem onClick={() => { setShowComplexity(true); setMoreOpen(false) }}>Complexity</MenuItem>}
-                {isCode && !passed && <MenuItem onClick={() => { setCode(blankStarter(ex)); setMoreOpen(false) }}>Reset code</MenuItem>}
-                {!passed && !solutionShown && <MenuItem onClick={viewSolution}>Show solution</MenuItem>}
-                <MenuItem onClick={() => { setMoreOpen(false); router.push(nextHref) }}>Skip for now</MenuItem>
-              </div>
+            {modeHint && (
+              <p role="status" className="fade-in absolute right-0 top-full z-20 mt-2 whitespace-nowrap rounded-lg bg-ink px-2.5 py-1.5 text-[12px] text-white shadow-lg">
+                {MODE_HINT[mode]}
+              </p>
             )}
           </div>
         </div>
+      </div>
 
-      </section>
+      <div ref={splitHost} className="flex min-h-0 flex-1 flex-col lg:flex-row">
+        {/* Instructions */}
+        <section
+          aria-labelledby="rep-title"
+          className="flex min-w-0 shrink-0 flex-col overflow-y-auto bg-bg lg:basis-[var(--split)]"
+          style={{ '--split': `${split}%` } as React.CSSProperties}
+        >
+          <div className="flex flex-col gap-6 px-6 py-7 lg:px-8">
+            <div className="flex flex-col gap-3">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className={kind.badgeClass}>
+                  <kind.Icon size={13} />
+                  {runItBack ? 'Run it back' : kind.badge}
+                </span>
+                {retrievalType === 'cold' && !runItBack && kind.badge !== 'Cold Rep' && <span className="badge badge-cold">Cold</span>}
+                {!interview && <span className="text-[12px] text-faint">~{Math.round(ex.minutes)} min</span>}
+                {prior.length > 0 && !passed && <span className="text-[12px] text-faint">· done {prior.length}× before</span>}
+              </div>
+              <h1 id="rep-title" className="h1">
+                {ex.title}
+              </h1>
+            </div>
+
+            {missing.length > 0 && !passed && !interview && (
+              <p className="rounded-lg bg-warn-soft px-3.5 py-2.5 text-[13px] leading-relaxed text-warn">
+                Not practiced yet: {missing.slice(0, 5).map(skillName).join(', ')}
+                {missing.length > 5 ? ` +${missing.length - 5}` : ''}. Try it anyway, or do those reps first.
+              </p>
+            )}
+
+            <Markdown text={ex.prompt} />
+            {ex.code && ex.kind !== 'code' && <CodeView code={ex.code} />}
+
+            {ex.examples && ex.examples.length > 0 && (
+              <div className="flex flex-col gap-2">
+                <p className="label">Examples</p>
+                <div className="well divide-y divide-line overflow-hidden">
+                  {ex.examples.map((x, i) => (
+                    <div key={i} className="grid grid-cols-[34px_1fr] gap-x-3 gap-y-1 px-4 py-3 text-[13px]">
+                      <span className="mono text-faint">in</span>
+                      <span className="mono break-all text-ink-2">{x.input}</span>
+                      <span className="mono text-faint">out</span>
+                      <span className="mono break-all font-medium text-ink">{x.output}</span>
+                      {x.note && <span className="col-start-2 text-[12.5px] text-muted">{x.note}</span>}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {ex.note && !interview && (mode === 'learn' || showNote) && (
+              <div className="rise-in rounded-xl bg-accent-soft/70 px-4 py-3">
+                <p className="label mb-1 !text-accent">Reminder</p>
+                <Markdown text={ex.note} className="!text-[13.5px]" />
+              </div>
+            )}
+            {ex.note && mode === 'practice' && !showNote && (
+              <button type="button" className="self-start text-[12.5px] text-muted underline decoration-line-strong underline-offset-4 hover:text-ink" onClick={() => setShowNote(true)}>
+                Show concept reminder
+              </button>
+            )}
+
+            {allHints.length > 0 && (
+              <section aria-label="Hints" aria-live="polite" className="flex flex-col gap-2">
+                {allHints.map((h, i) => (
+                  <div key={i} className="rise-in rounded-xl px-4 py-3" style={{ background: 'var(--surface)', boxShadow: 'inset 0 0 0 1px var(--line)' }}>
+                    <p className="mb-1 flex items-center gap-1.5 text-[12px] font-medium text-muted">
+                      <IconBulb size={13} /> Hint {i + 1}
+                      {i >= hints.length && <span className="text-faint">· tailored</span>}
+                    </p>
+                    <Markdown text={h} className="!text-[14px]" />
+                  </div>
+                ))}
+                {!passed && (
+                  <button type="button" className="btn btn-ghost btn-sm self-start" onClick={nextHint} disabled={coachBusy !== null}>
+                    {coachBusy === 'hint' ? 'Thinking…' : hintsShown < hints.length ? 'Next hint' : 'Ask for a tailored hint'}
+                  </button>
+                )}
+              </section>
+            )}
+
+            {diagnosis && (
+              <section className="rise-in rounded-xl px-4 py-3.5" style={{ boxShadow: '0 0 0 1px var(--hairline), var(--shadow-sm)' }} aria-live="polite">
+                <p className="label mb-1.5">Mistake · {MISTAKE_LABEL[diagnosis.category]}</p>
+                <p className="text-[14px] leading-relaxed text-ink-2">{diagnosis.diagnosis}</p>
+                {diagnosis.missingPrerequisite && <p className="mt-1.5 text-[13px] text-muted">Likely missing: {skillName(diagnosis.missingPrerequisite)}</p>}
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {diagnosis.nextAction === 'retry' ? (
+                    <button type="button" className="btn btn-sm" onClick={() => setFocusToken((n) => n + 1)}>
+                      Back to code
+                    </button>
+                  ) : (
+                    <button type="button" className="btn btn-sm" onClick={startRepair}>
+                      {diagnosis.nextAction === 'syntax-reps' ? 'Repair Reps · syntax' : diagnosis.nextAction === 'pattern-reps' ? 'Repair Reps · pattern' : 'Edge-case reps'}
+                    </button>
+                  )}
+                </div>
+              </section>
+            )}
+
+            {followUps && (
+              <section className="rise-in rounded-xl bg-surface px-4 py-3.5">
+                <p className="label mb-2">Interview follow-up</p>
+                <ol className="list-decimal pl-5 text-[14px] leading-relaxed text-ink-2">
+                  {followUps.map((q, i) => (
+                    <li key={i} className="mb-1">
+                      {q}
+                    </li>
+                  ))}
+                </ol>
+              </section>
+            )}
+
+            {(passed || solutionShown) && ex.explanation && !runItBack && (
+              <section className="rise-in rounded-xl bg-surface px-4 py-3.5">
+                <p className="label mb-1.5">Why it works</p>
+                <Markdown text={ex.explanation} className="!text-[14px]" />
+                {ex.complexity && (
+                  <p className="mono mt-2.5 text-[12.5px] text-muted">
+                    time {ex.complexity.time} · space {ex.complexity.space}
+                  </p>
+                )}
+              </section>
+            )}
+
+            {solutionShown && !passed && (
+              <section className="rise-in flex flex-col gap-2">
+                <p className="label">Solution</p>
+                {ex.solution && ex.kind !== 'choice' && ex.kind !== 'output' && <CodeView code={ex.solution} />}
+                {ex.kind === 'output' && <pre className="code-view">{ex.expectedOutput}</pre>}
+                {ex.kind === 'choice' && ex.options && ex.answer !== undefined && <p className="text-[14px] font-medium">{ex.options[ex.answer]}</p>}
+                <p className="text-[12.5px] text-muted">Read it, close it, then write it yourself. This rep now earns reduced credit.</p>
+              </section>
+            )}
+
+            {!interview && (
+              <footer className="mt-auto flex flex-col gap-3 pt-2">
+                <div className="flex flex-wrap items-center gap-1.5" aria-label="Skills this rep trains">
+                  <span className="mr-1 text-[12px] text-faint">Trains</span>
+                  {ex.skills.map((s) => (
+                    <Link key={s} href={`/skills/${s}`} className="chip">
+                      {skillName(s)}
+                    </Link>
+                  ))}
+                </div>
+                {problem && (
+                  <a href={problem.leetcode} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 self-start text-[13px] text-muted hover:text-ink">
+                    LeetCode {problem.number}: {problem.title} <IconExternal size={13} />
+                  </a>
+                )}
+              </footer>
+            )}
+          </div>
+        </section>
+
+        <div
+          role="separator"
+          aria-orientation="vertical"
+          aria-label="Resize instructions and editor"
+          aria-valuenow={Math.round(split)}
+          aria-valuemin={SPLIT_MIN}
+          aria-valuemax={SPLIT_MAX}
+          tabIndex={0}
+          className="splitter hidden shrink-0 lg:block"
+          data-active={dragging}
+          onPointerDown={startDrag}
+          onKeyDown={(e) => {
+            if (e.key === 'ArrowLeft') setSplitPersist(split - 2)
+            if (e.key === 'ArrowRight') setSplitPersist(split + 2)
+          }}
+        />
+
+        {/* Workspace */}
+        <section aria-label="Workspace" className="flex min-h-[520px] min-w-0 flex-1 flex-col p-3 lg:min-h-0 lg:p-4">
+          <div className="panel flex min-h-0 flex-1 flex-col overflow-hidden">
+            {/* Editor chrome */}
+            <div className="flex h-11 shrink-0 items-center gap-3 px-4" style={{ boxShadow: '0 1px 0 var(--line)' }}>
+              {ex.kind === 'code' ? (
+                <>
+                  <span className="flex items-center gap-1.5 text-[13px] font-medium text-ink">
+                    <IconFile size={14} className="text-muted" /> main.py
+                  </span>
+                  <span className="text-[12px] text-faint">Python</span>
+                </>
+              ) : (
+                <span className="text-[13px] font-medium text-ink">{KIND_VERB[ex.kind]}</span>
+              )}
+              {runnable && <PyStatusDot status={phase === 'running' ? 'running' : pyStatus} />}
+              <div className="ml-auto flex items-center gap-2">
+                {isDebug && debugFailing !== null && !passed && !result && (
+                  <span className="badge badge-debug normal-case tracking-normal">
+                    <IconBug size={12} /> {debugFailing} test{debugFailing === 1 ? '' : 's'} failing
+                  </span>
+                )}
+                {ex.kind === 'code' && !passed && (
+                  <button type="button" className="icon-btn" onClick={() => setCode(blankStarter(ex))} aria-label="Reset code" title="Reset code">
+                    <IconRotate size={14} />
+                  </button>
+                )}
+              </div>
+            </div>
+
+            <div className={`min-h-0 flex-1 ${ex.kind === 'code' ? 'bg-editor' : 'overflow-y-auto px-5 py-5 sm:px-6'}`}>
+              {ex.kind === 'code' && (
+                <CodeEditor
+                  value={code}
+                  onChange={setCode}
+                  onRun={onRun}
+                  onSubmit={onSubmit}
+                  assist={!interview}
+                  readOnly={locked}
+                  autoFocus
+                  focusToken={focusToken}
+                  placeholder={runItBack ? 'From memory…' : 'Write your solution…'}
+                />
+              )}
+              {ex.kind === 'choice' && <ChoiceInput options={ex.options ?? []} value={choice} onChange={setChoice} locked={locked} correct={passed ? ex.answer : undefined} />}
+              {ex.kind === 'output' && <OutputInput value={outputText} onChange={setOutputText} locked={locked} onSubmit={onSubmit} />}
+              {ex.kind === 'reorder' && <ReorderInput lines={ex.lines ?? []} order={order} onChange={setOrder} locked={locked} />}
+              {ex.kind === 'explain' && (
+                <ExplainInput
+                  value={explainText}
+                  onChange={setExplainText}
+                  rubric={ex.rubric ?? []}
+                  checked={rubricChecked}
+                  onCheck={(i, v) => setRubricChecked((r) => r.map((x, j) => (j === i ? v : x)))}
+                  locked={locked}
+                  aiMet={aiMet}
+                />
+              )}
+            </div>
+
+            {/* Results */}
+            <p className="sr-only" role="status" aria-live="polite">
+              {announce}
+            </p>
+            {hasFeedback && (
+              <div className="fade-in max-h-[44%] shrink-0 overflow-y-auto bg-bg px-4 py-3" style={{ boxShadow: '0 -1px 0 var(--line)' }}>
+                {coachError && <p className="mb-2 text-[13px] text-warn">{coachError}</p>}
+                {coachBusy && ['same', 'harder', 'easier'].includes(coachBusy) && <p className="mb-2 text-[13px] text-muted">Getting another rep and checking it runs…</p>}
+                {phase === 'failed' && ex.kind === 'choice' && <FailLine>Not quite. Try another option.</FailLine>}
+                {phase === 'failed' && ex.kind === 'output' && <FailLine>{outputFeedback ?? 'Not quite. Trace it again.'}</FailLine>}
+                {phase === 'failed' && ex.kind === 'explain' && <FailLine>{announce}</FailLine>}
+                {passed && ex.kind === 'output' && <pre className="code-view !py-2">{ex.expectedOutput}</pre>}
+                {aiFeedback && <p className="mt-2 text-[13.5px] text-ink-2">{aiFeedback}</p>}
+                {result && runnable && (
+                  <TestResults
+                    result={result}
+                    mode={mode}
+                    submitted={submittedResult}
+                    onBackToCode={phase === 'failed' && ex.kind === 'code' ? () => setFocusToken((n) => n + 1) : undefined}
+                  />
+                )}
+                {showComplexity && ex.complexity && (
+                  <div className="mt-3 flex flex-col gap-2">
+                    <label className="text-[13px] text-muted" htmlFor="cx">
+                      Your complexity, before you look
+                    </label>
+                    <input id="cx" className="input mono !text-[13px]" value={complexityGuess} onChange={(e) => setComplexityGuess(e.target.value)} placeholder="time O(?) · space O(?)" />
+                    {complexityGuess.trim().length > 3 && (
+                      <p className="mono text-[12.5px] text-muted">
+                        Reference: time {ex.complexity.time} · space {ex.complexity.space}
+                      </p>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Actions */}
+            {passed ? (
+              <div className="rise-in flex shrink-0 flex-wrap items-center gap-x-4 gap-y-3 bg-pass-soft/70 py-3 pl-4 pr-24" style={{ boxShadow: '0 -1px 0 rgba(21,128,61,0.15)' }} data-testid="rep-complete">
+                <div className="flex min-w-0 items-center gap-3">
+                  <span className="pop-in grid size-8 shrink-0 place-items-center rounded-full bg-pass text-white shadow-sm">
+                    <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+                      <path d="m3.5 8.5 3 3 6-7" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="draw" style={{ '--len': 16 } as React.CSSProperties} />
+                    </svg>
+                  </span>
+                  <div className="min-w-0">
+                    <p className="text-[14px] font-semibold text-ink">
+                      Rep complete{runItBack ? ' · reconstructed' : ''}
+                    </p>
+                    <p className="truncate text-[12.5px] text-muted">
+                      {runnable && testsTotal ? `All ${testsTotal} tests passed · ` : ''}+ evidence for {evidence.slice(0, 3).join(', ')}
+                      {evidence.length > 3 ? ` +${evidence.length - 3}` : ''}
+                    </p>
+                  </div>
+                </div>
+                <div className="ml-auto flex flex-wrap items-center gap-2">
+                  <div className="mr-1 hidden items-center gap-0.5 xl:flex" role="group" aria-label="How solid did that feel?">
+                    <span className="mr-1.5 text-[12px] text-muted">How solid?</span>
+                    {[1, 2, 3, 4, 5].map((n) => (
+                      <button
+                        key={n}
+                        type="button"
+                        onClick={() => rate(n)}
+                        aria-pressed={confidence === n}
+                        title={n === 1 ? 'Shaky' : n === 5 ? 'Automatic' : undefined}
+                        className={`num size-7 rounded-md text-[12px] transition-colors ${confidence === n ? 'bg-ink text-white' : 'text-muted hover:bg-bg hover:text-ink'}`}
+                      >
+                        {n}
+                      </button>
+                    ))}
+                  </div>
+                  <button type="button" className={`btn ${assisted && !runItBack ? 'btn-accent' : ''}`} onClick={doRunItBack}>
+                    <IconRotate size={14} /> Run it back
+                  </button>
+                  <button type="button" className="btn" onClick={() => another('same')} disabled={coachBusy !== null}>
+                    {coachBusy === 'same' ? 'Finding…' : 'Another rep'}
+                  </button>
+                  <Link href={nextHref} className="btn btn-primary btn-lg" data-testid="next-rep" autoFocus>
+                    {nextHref.endsWith('/summary') ? 'Finish the day' : session && session.exerciseIds.indexOf(ex.id) === session.exerciseIds.length - 1 && session.returnTo ? 'Retry capstone' : 'Next rep'}
+                    <IconArrowRight size={15} />
+                  </Link>
+                </div>
+                {assisted && !runItBack && <p className="w-full text-[12.5px] text-accent-ink">You used help. Close the explanation and run it back from memory.</p>}
+              </div>
+            ) : (
+              <div className="flex shrink-0 flex-wrap items-center gap-2 bg-bg py-3 pl-3 pr-24" style={{ boxShadow: '0 -1px 0 var(--line)' }}>
+                {!interview && (
+                  <button type="button" className="btn btn-ghost" onClick={nextHint} disabled={coachBusy !== null}>
+                    <IconBulb size={14} />
+                    {coachBusy === 'hint' ? 'Thinking…' : hints.length && hintsShown < hints.length ? `Hint ${hintsShown + 1}/${hints.length}` : 'Hint'}
+                  </button>
+                )}
+                {phase === 'failed' && (
+                  <button type="button" className="btn btn-ghost" onClick={explainMistake} disabled={coachBusy !== null}>
+                    <IconSpark size={14} />
+                    {coachBusy === 'diagnose' ? 'Diagnosing…' : 'Explain mistake'}
+                  </button>
+                )}
+                {ex.kind === 'explain' && explainText.trim().length > 40 && (
+                  <button type="button" className="btn btn-ghost" onClick={checkExplanation} disabled={coachBusy !== null}>
+                    {coachBusy === 'verify' ? 'Checking…' : 'Check explanation'}
+                  </button>
+                )}
+                <div className="relative">
+                  <button type="button" className="btn btn-ghost !px-2.5" aria-haspopup="menu" aria-expanded={moreOpen} aria-label="More actions" onClick={() => setMoreOpen((v) => !v)}>
+                    <IconDots size={16} />
+                  </button>
+                  {moreOpen && (
+                    <div
+                      role="menu"
+                      className="fade-in absolute bottom-full left-0 z-20 mb-2 flex w-56 flex-col rounded-xl bg-bg p-1.5 shadow-lg"
+                      style={{ boxShadow: '0 0 0 1px var(--hairline), var(--shadow-lg)' }}
+                      onKeyDown={(e) => e.key === 'Escape' && setMoreOpen(false)}
+                    >
+                      <MenuItem onClick={() => another('same')} disabled={coachBusy !== null}>
+                        Another rep
+                      </MenuItem>
+                      <MenuItem onClick={() => another('easier')} disabled={coachBusy !== null}>
+                        Easier rep
+                      </MenuItem>
+                      <MenuItem onClick={() => another('harder')} disabled={coachBusy !== null}>
+                        Harder rep
+                      </MenuItem>
+                      {interview && <MenuItem onClick={() => (setMoreOpen(false), void nextHint())}>Hint</MenuItem>}
+                      <MenuItem onClick={startRepair}>Repair Reps</MenuItem>
+                      {(ex.repType === 'capstone' || ex.repType === 'pattern' || ex.repType === 'interview') && ex.kind === 'code' && (
+                        <MenuItem onClick={followUp} disabled={coachBusy !== null}>
+                          Interview follow-up
+                        </MenuItem>
+                      )}
+                      {ex.complexity && <MenuItem onClick={() => (setShowComplexity(true), setMoreOpen(false))}>Complexity</MenuItem>}
+                      <div className="my-1 h-px bg-line" />
+                      {!solutionShown && <MenuItem onClick={viewSolution}>Show solution</MenuItem>}
+                      <MenuItem onClick={() => (setMoreOpen(false), router.push(nextHref))}>Skip for now</MenuItem>
+                    </div>
+                  )}
+                </div>
+                <div className="ml-auto flex items-center gap-2">
+                  {phase === 'failed' && runnable && testsTotal > 0 && (
+                    <span className="num mr-1 hidden text-[12.5px] text-muted md:inline">
+                      {testsPassed}/{testsTotal} passed
+                    </span>
+                  )}
+                  {ex.kind === 'code' && (
+                    <button type="button" className="btn" onClick={onRun} disabled={phase === 'running'}>
+                      <IconPlay size={12} /> {runLabel} <span className="kbd">⌘↵</span>
+                    </button>
+                  )}
+                  <button type="button" className="btn btn-primary" onClick={onSubmit} disabled={phase === 'running'} data-testid="submit">
+                    {phase === 'running' ? 'Running…' : phase === 'failed' && !runnable ? 'Try again' : submitLabel}
+                    <span className="kbd">{ex.kind === 'code' ? '⇧⌘↵' : '⌘↵'}</span>
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </section>
+      </div>
     </main>
+  )
+}
+
+const MODE_HINT: Record<Mode, string> = {
+  learn: 'Reminders, hints and detailed test feedback',
+  practice: 'Tests available · hints on request',
+  interview: 'Timer · plain editor · no hints unless you ask',
+}
+
+function FailLine({ children }: { children: React.ReactNode }) {
+  return (
+    <p className="flex items-center gap-2 text-[13.5px] text-fail">
+      <IconX size={14} /> {children}
+    </p>
+  )
+}
+
+function PyStatusDot({ status }: { status: string }) {
+  const map: Record<string, [string, string]> = {
+    idle: ['text-faint', 'Python'],
+    loading: ['text-accent pulse', 'Loading Python…'],
+    ready: ['text-pass', 'Ready'],
+    running: ['text-accent pulse', 'Running…'],
+    error: ['text-warn', 'Python unavailable · retries on run'],
+  }
+  const [cls, label] = map[status] ?? map.idle
+  return (
+    <span className="inline-flex items-center gap-1.5 text-[12px] text-muted" role="status">
+      <span className={`dot !size-1.5 ${cls}`} aria-hidden="true" />
+      {label}
+    </span>
   )
 }
 
 function MenuItem({ children, onClick, disabled }: { children: React.ReactNode; onClick: () => void; disabled?: boolean }) {
   return (
-    <button type="button" role="menuitem" onClick={onClick} disabled={disabled} className="rounded-md px-2.5 py-1.5 text-left text-[13px] text-ink-2 hover:bg-surface-2 disabled:opacity-40">
+    <button type="button" role="menuitem" onClick={onClick} disabled={disabled} className="rounded-lg px-2.5 py-2 text-left text-[13px] text-ink-2 transition-colors hover:bg-surface-2 disabled:opacity-40">
       {children}
     </button>
   )

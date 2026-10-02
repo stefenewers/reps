@@ -1,5 +1,5 @@
 import type { DayModule } from '@/lib/types'
-import { choice, output, fill, code, reorder, capstone, explain, t } from '@/data/exercises/build'
+import { output, code, write, debug, capstone, explain, t } from '@/data/exercises/build'
 
 const cold = { stage: 'retrieval' as const, repType: 'cold' as const }
 
@@ -13,24 +13,9 @@ export const day: DayModule = {
     {
       id: 'd3-warmup',
       title: 'Warm-up',
-      summary: 'Cold recall of yesterday: frequency maps, sets, index maps, Two Sum.',
+      summary: 'Yesterday from a bare signature: frequency maps, sets, index maps, Two Sum.',
       exercises: [
-        output({
-          id: 'd3-warm-trace-get',
-          title: 'Trace a .get() count',
-          skills: ['frequency_map', 'dict_get', 'len'],
-          ...cold,
-          prompt: 'What does this print?',
-          code: `counts = {}
-for w in ["a", "b", "a", "c", "a"]:
-    counts[w] = counts.get(w, 0) + 1
-print(counts["a"], counts.get("z", 0), len(counts))`,
-          expectedOutput: '3 0 3',
-          explanation: "`.get(w, 0)` returns 0 for a new key, so each word starts at 1. `.get('z', 0)` never raises and does not insert 'z'.",
-          signature: 'trace:freq-map-get',
-          minutes: 2,
-        }),
-        code({
+        write({
           id: 'd3-warm-char-counts',
           title: 'Count characters',
           skills: ['frequency_map', 'dict_get', 'string_iterate'],
@@ -48,7 +33,36 @@ print(counts["a"], counts.get("z", 0), len(counts))`,
           signature: 'freq-map:count-chars',
           minutes: 4,
         }),
-        code({
+        write({
+          id: 'd3-warm-most-common',
+          title: 'Most common item',
+          skills: ['frequency_map', 'dict_items', 'state_tracking'],
+          ...cold,
+          difficulty: 3,
+          prompt: 'Write `most_common(items)` returning the item that appears most often. On a tie, return the one that appeared first in `items`. Empty list → `None`.',
+          starterCode: `def most_common(items):
+    pass`,
+          solution: `def most_common(items):
+    counts = {}
+    for x in items:
+        counts[x] = counts.get(x, 0) + 1
+    best = None
+    for x, c in counts.items():
+        if best is None or c > counts[best]:
+            best = x
+    return best`,
+          tests: [
+            t.eq('most_common(["a", "b", "a"])', '"a"'),
+            t.eq('most_common([3, 1, 3, 1, 2])', '3'),
+            t.hidden('most_common([])', 'None'),
+            t.hidden('most_common([7])', '7'),
+            t.hidden('most_common(["x", "y", "y"])', '"y"'),
+          ],
+          hints: ['Count first, then scan the counts.', 'Dicts keep insertion order, so the first item seen comes first in `.items()`.', 'Use a strict `>` so an equal count does not replace the earlier winner.'],
+          signature: 'freq-map:argmax',
+          minutes: 7,
+        }),
+        write({
           id: 'd3-warm-has-dup',
           title: 'Any duplicate?',
           skills: ['set_add', 'set_membership', 'early_return'],
@@ -68,7 +82,7 @@ print(counts["a"], counts.get("z", 0), len(counts))`,
           signature: 'set:seen-early-return',
           minutes: 4,
         }),
-        code({
+        write({
           id: 'd3-warm-first-index',
           title: 'First index of each value',
           skills: ['index_map', 'enumerate', 'dict_membership'],
@@ -87,7 +101,7 @@ print(counts["a"], counts.get("z", 0), len(counts))`,
           signature: 'index-map:first-seen',
           minutes: 4,
         }),
-        code({
+        write({
           id: 'd3-warm-two-sum',
           title: 'Two Sum from memory',
           skills: ['index_map', 'complement', 'enumerate', 'dict_membership', 'hash_reasoning'],
@@ -107,7 +121,7 @@ print(counts["a"], counts.get("z", 0), len(counts))`,
           tests: [t.eq('two_sum([2, 7, 11, 15], 9)', '[0, 1]'), t.eq('two_sum([3, 2, 4], 6)', '[1, 2]'), t.hidden('two_sum([3, 3], 6)', '[0, 1]'), t.hidden('two_sum([-4, 1, 9, 4], 0)', '[0, 3]')],
           hints: ['For each number, what other number do you need?', 'Map value → index for everything seen so far.', 'Check the complement before storing the current number.'],
           signature: 'two-sum:one-pass',
-          minutes: 7,
+          minutes: 6,
         }),
       ],
     },
@@ -118,19 +132,6 @@ print(counts["a"], counts.get("z", 0), len(counts))`,
       title: 'Strings',
       summary: 'Index into strings (including negative indexes) and loop over characters.',
       exercises: [
-        choice({
-          id: 'd3-str-negative-index',
-          title: 'Negative index',
-          skills: ['string_index'],
-          prompt: 'What is `word[-2]`?',
-          code: `word = "python"`,
-          options: ['o', 'n', 'h', 'IndexError'],
-          answer: 0,
-          note: '`s[-1]` is the last character, `s[-2]` the one before it. `s[-k]` is `s[len(s) - k]`.',
-          explanation: 'Negative indexes count from the end: -1 is "n", -2 is "o".',
-          signature: 'recognize:string-negative-index',
-          minutes: 1,
-        }),
         output({
           id: 'd3-str-trace-index',
           title: 'Trace string indexes',
@@ -140,40 +141,12 @@ print(counts["a"], counts.get("z", 0), len(counts))`,
 print(s[0], s[3], s[-1])
 print(len(s), s[len(s) - 1])`,
           expectedOutput: 'i e w\n9 w',
+          note: '`s[-1]` is the last character, `s[-k]` is `s[len(s) - k]`. Strings are immutable: `s[0] = "x"` raises TypeError.',
           explanation: 'Indexes start at 0, so `s[3]` is the fourth character. The last valid index is `len(s) - 1`, the same character as `s[-1]`.',
           signature: 'trace:string-index',
           minutes: 2,
         }),
-        choice({
-          id: 'd3-str-immutable',
-          title: 'Strings cannot change',
-          skills: ['string_index'],
-          prompt: 'What happens when this runs?',
-          code: `s = "cat"
-s[0] = "b"`,
-          options: ['s becomes "bat"', 'TypeError: strings do not support item assignment', 'IndexError', 'Nothing happens'],
-          answer: 1,
-          note: 'Strings are immutable. Build a new string (slicing, `+`, `"".join(list)`) or work on a list of characters.',
-          explanation: 'You cannot assign into a string. To "edit" one, build a new string such as `"b" + s[1:]`.',
-          signature: 'recognize:string-immutable',
-          minutes: 1,
-        }),
-        output({
-          id: 'd3-str-trace-loop',
-          title: 'Trace a character loop',
-          skills: ['string_iterate', 'conditionals', 'accumulator'],
-          prompt: 'What does this print?',
-          code: `count = 0
-for ch in "Mississippi":
-    if ch == "s":
-        count += 1
-print(count)`,
-          expectedOutput: '4',
-          explanation: '`for ch in s` yields one character at a time. The capital "M" is not "s", and there are four lowercase "s".',
-          signature: 'trace:string-loop-count',
-          minutes: 2,
-        }),
-        code({
+        write({
           id: 'd3-str-count-vowels',
           title: 'Count vowels',
           skills: ['string_iterate', 'conditionals', 'accumulator'],
@@ -192,7 +165,7 @@ print(count)`,
           signature: 'string:count-matching',
           minutes: 4,
         }),
-        code({
+        write({
           id: 'd3-str-same-ends',
           title: 'Same first and last',
           skills: ['string_index', 'conditionals', 'edge_cases'],
@@ -203,38 +176,33 @@ print(count)`,
     if not s:
         return False
     return s[0] == s[-1]`,
-          tests: [t.eq('same_ends("level")', 'True'), t.eq('same_ends("ab")', 'False'), t.hidden('same_ends("a")', 'True'), t.hidden('same_ends("")', 'False')],
+          tests: [t.eq('same_ends("level")', 'True'), t.eq('same_ends("ab")', 'False'), t.hidden('same_ends("a")', 'True'), t.eq('same_ends("")', 'False')],
           hints: ['What does `s[0]` do on an empty string?', 'Guard with `if not s: return False` first.'],
           explanation: 'Guarding the empty string first avoids an IndexError. A single character is both first and last, so it matches itself.',
           signature: 'string:ends-compare',
+          minutes: 3,
+        }),
+        debug({
+          id: 'd3-str-debug-immutable',
+          title: 'Capitalize the first letter',
+          skills: ['string_index', 'slicing'],
+          prompt: '`capitalize_first(s)` should return `s` with its first character upper-cased and everything else unchanged. An empty string comes back as `""`. Make the tests pass.',
+          brokenCode: `def capitalize_first(s):
+    if not s:
+        return s
+    s[0] = s[0].upper()
+    return s`,
+          solution: `def capitalize_first(s):
+    if not s:
+        return s
+    return s[0].upper() + s[1:]`,
+          tests: [t.eq('capitalize_first("hello")', '"Hello"'), t.eq('capitalize_first("")', '""'), t.hidden('capitalize_first("a")', '"A"'), t.hidden('capitalize_first("Up")', '"Up"')],
+          hints: ['Read the error message: what kind of object refuses item assignment?', 'Build a new string from the new first character plus the rest: `s[1:]`.'],
+          explanation: 'Strings are immutable, so "editing" one means building a new string. `s[0].upper() + s[1:]` is the usual shape.',
+          signature: 'debug:string-immutable',
           minutes: 4,
         }),
-        code({
-          id: 'd3-str-mirror-pairs',
-          title: 'Mirror index pairs',
-          skills: ['string_index', 'range', 'len', 'list_append'],
-          difficulty: 3,
-          prompt: "Write `mirror_pairs(s)` returning a list of tuples `(s[i], s[mirror])` for each position `i` in the first half of `s`, where `mirror` is the matching position counted from the end. The middle character of an odd-length string is not paired.\n\n`mirror_pairs('abcd')` → `[('a', 'd'), ('b', 'c')]`",
-          starterCode: `def mirror_pairs(s):
-    pairs = []
-    for i in range(len(s) // 2):
-        # the index that mirrors i
-        pass
-    return pairs`,
-          solution: `def mirror_pairs(s):
-    pairs = []
-    for i in range(len(s) // 2):
-        j = len(s) - 1 - i
-        pairs.append((s[i], s[j]))
-    return pairs`,
-          tests: [t.eq('mirror_pairs("abcd")', '[("a", "d"), ("b", "c")]'), t.eq('mirror_pairs("abc")', '[("a", "c")]'), t.hidden('mirror_pairs("")', '[]'), t.hidden('mirror_pairs("x")', '[]')],
-          hints: ['Index 0 mirrors the last index, index 1 the one before it.', 'The mirror of i is `len(s) - 1 - i` (or `-1 - i`).'],
-          explanation: 'Every palindrome check is really this: compare position i with position `len(s) - 1 - i`. Two pointers just keep both indexes in variables.',
-          signature: 'string:mirror-index',
-          minutes: 7,
-          important: true,
-        }),
-        code({
+        write({
           id: 'd3-str-first-digit',
           title: 'Index of the first digit',
           skills: ['string_iterate', 'enumerate', 'string_methods', 'early_return'],
@@ -251,6 +219,27 @@ print(count)`,
           signature: 'string:enumerate-find',
           minutes: 4,
         }),
+        write({
+          id: 'd3-str-mirror-pairs',
+          title: 'Mirror index pairs',
+          skills: ['string_index', 'range', 'len', 'list_append', 'list_create'],
+          difficulty: 3,
+          prompt: "Write `mirror_pairs(s)` returning a list of tuples `(s[i], s[mirror])` for each position `i` in the first half of `s`, where `mirror` is the matching position counted from the end. The middle character of an odd-length string is not paired.\n\n`mirror_pairs('abcd')` → `[('a', 'd'), ('b', 'c')]`",
+          starterCode: `def mirror_pairs(s):
+    pass`,
+          solution: `def mirror_pairs(s):
+    pairs = []
+    for i in range(len(s) // 2):
+        j = len(s) - 1 - i
+        pairs.append((s[i], s[j]))
+    return pairs`,
+          tests: [t.eq('mirror_pairs("abcd")', '[("a", "d"), ("b", "c")]'), t.eq('mirror_pairs("abc")', '[("a", "c")]'), t.hidden('mirror_pairs("")', '[]'), t.hidden('mirror_pairs("x")', '[]')],
+          hints: ['Index 0 mirrors the last index, index 1 the one before it.', 'Loop `i` over `range(len(s) // 2)`.', 'The mirror of i is `len(s) - 1 - i` (or `-1 - i`).'],
+          explanation: 'Every palindrome check is really this: compare position i with position `len(s) - 1 - i`. Two pointers just keep both indexes in variables.',
+          signature: 'string:mirror-index',
+          minutes: 6,
+          important: true,
+        }),
       ],
     },
 
@@ -260,19 +249,6 @@ print(count)`,
       title: 'Slicing',
       summary: 's[a:b] excludes b; [::-1] reverses; slices never raise.',
       exercises: [
-        choice({
-          id: 'd3-slice-end-exclusive',
-          title: 'The end is excluded',
-          skills: ['slicing'],
-          prompt: 'What is `s[1:4]`?',
-          code: `s = "abcdef"`,
-          options: ['bcd', 'bcde', 'abcd', 'abc'],
-          answer: 0,
-          note: '`s[a:b]` takes indexes a, a+1, …, b-1. Its length is `b - a`.',
-          explanation: 'Indexes 1, 2 and 3: "bcd". Index 4 is excluded, so the slice has 4 - 1 = 3 characters.',
-          signature: 'recognize:slice-end-exclusive',
-          minutes: 1,
-        }),
         output({
           id: 'd3-slice-trace',
           title: 'Trace four slices',
@@ -284,41 +260,12 @@ print(s[3:])
 print(s[-3:])
 print(s[::-1])`,
           expectedOutput: 'alg\norithm\nthm\nmhtirogla',
+          note: '`s[a:b]` takes indexes a … b-1 (length `b - a`). Out-of-range ends are clamped, never an error. `[::-1]` walks backwards.',
           explanation: '`s[:3]` and `s[3:]` split the string at index 3 with no overlap. `s[-3:]` is the last three characters. `[::-1]` walks backwards with step -1.',
           signature: 'trace:slice-basic',
           minutes: 2,
         }),
-        output({
-          id: 'd3-slice-trace-edges',
-          title: 'Slice edge cases',
-          skills: ['slicing', 'len'],
-          difficulty: 2,
-          prompt: 'What does this print?',
-          code: `s = "code"
-print(s[1:1] == "")
-print(s[2:100])
-print(s[::2])
-print(len(s[0:len(s)]))`,
-          expectedOutput: 'True\nde\ncd\n4',
-          explanation: 'An empty range gives "". Slices clamp out-of-range ends instead of raising. A step of 2 takes every other character.',
-          signature: 'trace:slice-edges',
-          minutes: 2.5,
-        }),
-        fill({
-          id: 'd3-slice-fill-reverse',
-          title: 'Reverse by slicing',
-          skills: ['slicing'],
-          prompt: 'Fill the blank so `reverse(s)` returns `s` backwards.',
-          starterCode: `def reverse(s):
-    return s[____]`,
-          solution: `def reverse(s):
-    return s[::-1]`,
-          tests: [t.eq('reverse("abc")', '"cba"'), t.eq('reverse("")', '""')],
-          hints: ['Start and stop left empty, step of -1.'],
-          signature: 'fill:slice-reverse',
-          minutes: 2,
-        }),
-        code({
+        write({
           id: 'd3-slice-is-mirror',
           title: 'Palindrome in one line',
           skills: ['slicing', 'functions'],
@@ -330,25 +277,51 @@ print(len(s[0:len(s)]))`,
           tests: [t.eq('is_mirror("racecar")', 'True'), t.eq('is_mirror("ab")', 'False'), t.hidden('is_mirror("")', 'True'), t.hidden('is_mirror("Aa")', 'False')],
           explanation: 'Simple and correct, but it builds a reversed copy: O(n) extra space. The two-pointer version later today uses O(1).',
           signature: 'slice:reverse-compare',
-          minutes: 4,
+          minutes: 3,
           important: true,
         }),
-        code({
-          id: 'd3-slice-inner',
-          title: 'Drop the ends',
-          skills: ['slicing'],
-          prompt: 'Write `inner(s)` returning `s` without its first and last characters. Strings of length 0–2 give `""`.',
-          starterCode: `def inner(s):
+        write({
+          id: 'd3-slice-split-halves',
+          title: 'Split into halves',
+          skills: ['slicing', 'len', 'tuples'],
+          prompt: 'Write `split_halves(s)` returning a tuple `(front, back)`: the first half and the last half of `s`, each `len(s) // 2` long. For odd lengths the middle character belongs to neither.\n\n`split_halves("abcde")` → `("ab", "de")`',
+          starterCode: `def split_halves(s):
     pass`,
-          solution: `def inner(s):
-    return s[1:-1]`,
-          tests: [t.eq('inner("[abc]")', '"abc"'), t.eq('inner("ab")', '""'), t.hidden('inner("a")', '""'), t.hidden('inner("")', '""')],
-          hints: ['Start at 1, stop one before the end.', 'A negative stop index works in slices too.'],
-          explanation: '`s[1:-1]` never raises: when the start is past the stop, the slice is just empty.',
-          signature: 'slice:drop-ends',
+          solution: `def split_halves(s):
+    half = len(s) // 2
+    front = s[:half]
+    back = s[len(s) - half:]
+    return (front, back)`,
+          tests: [t.eq('split_halves("abcd")', '("ab", "cd")'), t.eq('split_halves("abcde")', '("ab", "de")'), t.hidden('split_halves("x")', '("", "")'), t.hidden('split_halves("")', '("", "")')],
+          hints: ['Both halves have length `len(s) // 2`.', 'The back half starts at `len(s) - half`.', 'Careful: `s[-half:]` is the whole string when `half` is 0.'],
+          explanation: '`s[-0:]` is `s[0:]`, the whole string, so a negative start breaks for tiny inputs. Computing the start as `len(s) - half` is always right.',
+          signature: 'slice:halves',
+          minutes: 5,
+        }),
+        debug({
+          id: 'd3-slice-debug-reverse',
+          title: 'Find the palindrome words',
+          skills: ['slicing', 'list_append'],
+          prompt: '`palindrome_words(words)` should return, in order, the words that read the same backwards. Make the tests pass.',
+          brokenCode: `def palindrome_words(words):
+    out = []
+    for w in words:
+        if w == w[-1:]:
+            out.append(w)
+    return out`,
+          solution: `def palindrome_words(words):
+    out = []
+    for w in words:
+        if w == w[::-1]:
+            out.append(w)
+    return out`,
+          tests: [t.eq('palindrome_words(["level", "abc", "noon", "a"])', '["level", "noon", "a"]'), t.eq('palindrome_words([])', '[]'), t.hidden('palindrome_words(["ab", "aa"])', '["aa"]')],
+          hints: ['Print `"level"[-1:]`. Is that the reversed word?', 'Reversing needs a step of -1.'],
+          explanation: '`w[-1:]` is just the last character; `w[::-1]` is the whole word backwards. Single-letter words hide the bug because both are equal.',
+          signature: 'debug:slice-reverse',
           minutes: 4,
         }),
-        code({
+        write({
           id: 'd3-slice-rotate',
           title: 'Rotate left',
           skills: ['slicing', 'len', 'edge_cases'],
@@ -364,7 +337,45 @@ print(len(s[0:len(s)]))`,
           tests: [t.eq('rotate_left("abcde", 2)', '"cdeab"'), t.eq('rotate_left("abcde", 0)', '"abcde"'), t.hidden('rotate_left("abcde", 7)', '"cdeab"'), t.hidden('rotate_left("", 3)', '""'), t.hidden('rotate_left("ab", 2)', '"ab"')],
           hints: ['The result is two slices glued together.', '`s[k:] + s[:k]`', 'Wrap k with `k % len(s)`, but guard the empty string first (modulo by zero).'],
           signature: 'slice:rotate',
-          minutes: 7,
+          minutes: 6,
+        }),
+        debug({
+          id: 'd3-slice-debug-middle',
+          title: 'Middle three characters',
+          skills: ['slicing', 'len'],
+          prompt: '`middle_three(s)` should return the three characters in the middle of `s`. `s` always has an odd length of at least 3. Make the tests pass.',
+          brokenCode: `def middle_three(s):
+    mid = len(s) // 2
+    return s[mid - 1:mid + 1]`,
+          solution: `def middle_three(s):
+    mid = len(s) // 2
+    return s[mid - 1:mid + 2]`,
+          tests: [t.eq('middle_three("abcde")', '"bcd"'), t.eq('middle_three("xyz")', '"xyz"'), t.hidden('middle_three("1234567")', '"345"')],
+          hints: ['How many characters does `s[a:b]` hold?', 'The stop index is excluded.'],
+          explanation: '`s[a:b]` has `b - a` characters. Three characters starting at `mid - 1` need a stop of `mid + 2`.',
+          signature: 'debug:slice-end-exclusive',
+          minutes: 3,
+        }),
+        code({
+          id: 'd3-slice-break-last-k',
+          title: 'Break last_k',
+          skills: ['slicing', 'edge_cases'],
+          style: 'write-test',
+          prompt: 'A teammate wrote:\n\n```python\ndef last_k(s, k):\n    return s[-k:]\n```\n\nIt is right for most inputs. Write `breaking_input()` returning a pair `(s, k)` with `k >= 0` for which `last_k(s, k)` is **not** the last `k` characters of `s`.',
+          starterCode: `def breaking_input():
+    pass`,
+          solution: `def breaking_input():
+    return ("abc", 0)`,
+          tests: [
+            t.check(
+              'your input breaks last_k',
+              'def _last_k(s, k):\n    return s[-k:]\ns, k = breaking_input()\nassert k >= 0, "k must be 0 or more"\nwant = s[len(s) - k:] if k <= len(s) else s\nassert _last_k(s, k) != want, "last_k is correct on this input"',
+            ),
+          ],
+          hints: ['Try the smallest possible k.', 'What is `-0`?'],
+          explanation: '`-0` is `0`, so `s[-0:]` is the whole string instead of `""`. Edge cases at 0 are worth a test every time you slice with a negative index.',
+          signature: 'write-test:slice-negative-zero',
+          minutes: 3,
         }),
       ],
     },
@@ -375,18 +386,6 @@ print(len(s[0:len(s)]))`,
       title: 'String methods',
       summary: '.lower(), .isalnum(), .split() and .join() to clean and rebuild text.',
       exercises: [
-        choice({
-          id: 'd3-meth-isalnum',
-          title: 'What is alphanumeric?',
-          skills: ['string_methods'],
-          prompt: 'For which character does `ch.isalnum()` return `False`?',
-          options: ['"7"', '"Q"', '"z"', '","'],
-          answer: 3,
-          note: '`.isalnum()` is True for letters and digits. `.isalpha()` letters only, `.isdigit()` digits only. Spaces and punctuation are False.',
-          explanation: 'Letters (any case) and digits are alphanumeric; punctuation and spaces are not.',
-          signature: 'recognize:isalnum',
-          minutes: 1,
-        }),
         output({
           id: 'd3-meth-trace',
           title: 'Trace lower, split, join',
@@ -398,48 +397,31 @@ print(s.split())
 print("-".join(["a", "b", "c"]))
 print(s)`,
           expectedOutput: "hello, world\n['Hello,', 'World']\na-b-c\nHello, World",
+          note: '`.isalnum()` is True for letters and digits, `.isalpha()` letters only, `.isdigit()` digits only. Methods return new strings; `s` itself never changes.',
           explanation: 'String methods return new strings; `s` itself is unchanged. `.split()` splits on whitespace and keeps punctuation attached. `sep.join(list)` puts sep between items.',
           signature: 'trace:string-methods',
           minutes: 2,
         }),
-        output({
-          id: 'd3-meth-trace-split',
-          title: 'Split collapses spaces',
-          skills: ['string_methods', 'list_index'],
-          prompt: 'What does this print?',
-          code: `words = "  the   quick fox ".split()
-print(len(words))
-print(" ".join(words))
-print(words[-1].upper())`,
-          expectedOutput: '3\nthe quick fox\nFOX',
-          explanation: 'With no argument, `.split()` drops leading/trailing whitespace and treats runs of spaces as one separator.',
-          signature: 'trace:split-join',
-          minutes: 2,
-        }),
-        fill({
-          id: 'd3-meth-fill-join',
-          title: 'Join the kept letters',
-          skills: ['string_methods', 'list_append'],
-          prompt: 'Fill the blank so `keep_letters` returns only the letters of `s`, in order, as a string.',
+        write({
+          id: 'd3-meth-keep-letters',
+          title: 'Keep only letters',
+          skills: ['string_methods', 'list_append', 'list_create'],
+          prompt: 'Write `keep_letters(s)` that returns only the letters of `s`, in order, as a string. Build a list and join it at the end.\n\n`keep_letters("a1b2c3")` → `"abc"`',
           starterCode: `def keep_letters(s):
-    letters = []
-    for ch in s:
-        if ch.isalpha():
-            letters.append(ch)
-    return ____`,
+    pass`,
           solution: `def keep_letters(s):
     letters = []
     for ch in s:
         if ch.isalpha():
             letters.append(ch)
     return "".join(letters)`,
-          tests: [t.eq('keep_letters("a1b2c3")', '"abc"'), t.eq('keep_letters("123")', '""')],
-          hints: ['Join with an empty separator.'],
+          tests: [t.eq('keep_letters("a1b2c3")', '"abc"'), t.eq('keep_letters("123")', '""'), t.hidden('keep_letters("")', '""'), t.hidden('keep_letters("Hi, you!")', '"Hiyou"')],
+          hints: ['`.isalpha()` tests for a letter.', 'Append kept characters, then `"".join(letters)`.'],
           note: 'Building a list then `"".join(parts)` is the idiomatic way to build a string piece by piece.',
-          signature: 'fill:join-list',
-          minutes: 2,
+          signature: 'string:filter-join',
+          minutes: 4,
         }),
-        code({
+        write({
           id: 'd3-meth-clean',
           title: 'Clean a phrase',
           skills: ['string_methods', 'string_iterate', 'list_append'],
@@ -455,10 +437,33 @@ print(words[-1].upper())`,
           tests: [t.eq('clean("A man, a plan")', '"amanaplan"'), t.eq('clean("Hi 5!")', '"hi5"'), t.hidden('clean("")', '""'), t.hidden('clean("?! ,")', '""')],
           hints: ['Keep some characters, drop others, then build a string.', '`.isalnum()` decides, `.lower()` normalizes.', 'Append kept characters to a list, `"".join` at the end.'],
           signature: 'string:clean-alnum',
-          minutes: 4,
+          minutes: 5,
           important: true,
         }),
-        code({
+        debug({
+          id: 'd3-meth-debug-isalnum',
+          title: 'Count letters and digits',
+          skills: ['string_methods', 'accumulator'],
+          prompt: '`count_alnum(s)` should return how many characters of `s` are letters or digits. Make the tests pass.',
+          brokenCode: `def count_alnum(s):
+    count = 0
+    for ch in s:
+        if ch.isalnum:
+            count += 1
+    return count`,
+          solution: `def count_alnum(s):
+    count = 0
+    for ch in s:
+        if ch.isalnum():
+            count += 1
+    return count`,
+          tests: [t.eq('count_alnum("a1, b2!")', '4'), t.eq('count_alnum("")', '0'), t.hidden('count_alnum("...")', '0')],
+          hints: ['Print `"!".isalnum` in the console. What is it?', 'A method has to be called to run.'],
+          explanation: '`ch.isalnum` without parentheses is the method object itself, which is always truthy, so every character counted.',
+          signature: 'debug:method-not-called',
+          minutes: 3,
+        }),
+        write({
           id: 'd3-meth-reverse-words',
           title: 'Reverse word order',
           skills: ['string_methods', 'slicing'],
@@ -466,13 +471,14 @@ print(words[-1].upper())`,
           starterCode: `def reverse_words(s):
     pass`,
           solution: `def reverse_words(s):
-    return " ".join(s.split()[::-1])`,
+    words = s.split()
+    return " ".join(words[::-1])`,
           tests: [t.eq('reverse_words("the sky is blue")', '"blue is sky the"'), t.eq('reverse_words("  the sky  is blue ")', '"blue is sky the"'), t.hidden('reverse_words("")', '""'), t.hidden('reverse_words("one")', '"one"')],
           hints: ['Split into a list of words first.', 'Reverse the list with a slice, then join with a space.'],
           signature: 'string:split-reverse-join',
-          minutes: 4,
+          minutes: 3,
         }),
-        code({
+        write({
           id: 'd3-meth-word-counts',
           title: 'Word frequency',
           skills: ['string_methods', 'frequency_map', 'dict_get'],
@@ -491,7 +497,7 @@ print(words[-1].upper())`,
           signature: 'freq-map:count-words',
           minutes: 4,
         }),
-        code({
+        write({
           id: 'd3-meth-clean-mirror',
           title: 'Clean, then compare',
           skills: ['string_methods', 'slicing'],
@@ -518,18 +524,6 @@ print(words[-1].upper())`,
       title: 'Two pointers',
       summary: 'left and right indexes walking toward each other in a while loop.',
       exercises: [
-        choice({
-          id: 'd3-tp-loop-condition',
-          title: 'When do the pointers stop?',
-          skills: ['two_pointer', 'while_loop'],
-          prompt: 'You compare `s[left]` with `s[right]`, starting at both ends. Which loop header is right?',
-          options: ['while left < right:', 'while left <= len(s):', 'while right > 0:', 'for left in range(right):'],
-          answer: 0,
-          note: 'Opposite-end pointers: `left, right = 0, len(s) - 1` then `while left < right:`. When they meet, the middle character has nothing to compare with.',
-          explanation: 'Once left reaches right, every pair has been compared. `left <= right` also works but compares the middle character with itself.',
-          signature: 'recognize:two-pointer-condition',
-          minutes: 1,
-        }),
         output({
           id: 'd3-tp-trace-pairs',
           title: 'Trace pointers on "racecar"',
@@ -543,41 +537,17 @@ while left < right:
     right -= 1
 print("met at", left)`,
           expectedOutput: '0 6 r r\n1 5 a a\n2 4 c c\nmet at 3',
+          note: 'Opposite-end pointers: `left, right = 0, len(s) - 1` then `while left < right:`. Every iteration must move at least one pointer.',
           explanation: 'Each step moves both pointers one place inward. With 7 characters they meet at the middle index 3, which is never compared.',
           signature: 'trace:two-pointer-inward',
           minutes: 2,
         }),
-        fill({
-          id: 'd3-tp-fill-move',
-          title: 'Move both pointers',
-          skills: ['two_pointer', 'while_loop'],
-          prompt: 'Fill the two blanks so the loop makes progress.',
-          starterCode: `def ends_match(s):
-    left, right = 0, len(s) - 1
-    while left < right:
-        if s[left] != s[right]:
-            return False
-        ____
-        ____
-    return True`,
-          solution: `def ends_match(s):
-    left, right = 0, len(s) - 1
-    while left < right:
-        if s[left] != s[right]:
-            return False
-        left += 1
-        right -= 1
-    return True`,
-          tests: [t.eq('ends_match("abba")', 'True'), t.eq('ends_match("abca")', 'False'), t.hidden('ends_match("")', 'True')],
-          hints: ['Without these lines the loop never ends.', 'left moves right, right moves left.'],
-          signature: 'fill:two-pointer-step',
-          minutes: 2,
-        }),
-        code({
+        write({
           id: 'd3-tp-palindrome-plain',
           title: 'Palindrome with pointers',
           skills: ['two_pointer', 'while_loop', 'string_index', 'early_return'],
-          prompt: 'Write `is_pal(s)` with two pointers (no slicing, no reversed copy). Compare characters exactly as they are.',
+          style: 'translate',
+          prompt: 'This palindrome check uses a `for` loop and a computed mirror index:\n\n```python\ndef is_pal(s):\n    for i in range(len(s) // 2):\n        if s[i] != s[len(s) - 1 - i]:\n            return False\n    return True\n```\n\nRewrite `is_pal(s)` with two named pointers, `left` and `right`, and a `while` loop. No slicing, no reversed copy.',
           starterCode: `def is_pal(s):
     pass`,
           solution: `def is_pal(s):
@@ -589,12 +559,39 @@ print("met at", left)`,
         right -= 1
     return True`,
           tests: [t.eq('is_pal("level")', 'True'), t.eq('is_pal("levels")', 'False'), t.hidden('is_pal("")', 'True'), t.hidden('is_pal("z")', 'True'), t.hidden('is_pal("abBA")', 'False')],
-          hints: ['Start at both ends.', '`while left < right:` compare, return False on mismatch.', 'Move both pointers inward after a match.'],
+          hints: ['`i` becomes `left`; `len(s) - 1 - i` becomes `right`.', '`while left < right:` compare, return False on mismatch.', 'Move both pointers inward after a match.'],
           signature: 'two-pointer:palindrome',
-          minutes: 4,
+          minutes: 5,
           important: true,
         }),
-        code({
+        debug({
+          id: 'd3-tp-debug-step',
+          title: 'Fix the pointer walk',
+          skills: ['two_pointer', 'while_loop'],
+          prompt: '`is_pal(s)` should return `True` when `s` reads the same in both directions, comparing characters exactly, using two pointers. Make the tests pass.',
+          brokenCode: `def is_pal(s):
+    left, right = 0, len(s) - 1
+    while left < right:
+        if s[left] != s[right]:
+            return False
+        left += 1
+    right -= 1
+    return True`,
+          solution: `def is_pal(s):
+    left, right = 0, len(s) - 1
+    while left < right:
+        if s[left] != s[right]:
+            return False
+        left += 1
+        right -= 1
+    return True`,
+          tests: [t.eq('is_pal("abba")', 'True'), t.eq('is_pal("abca")', 'False'), t.hidden('is_pal("racecar")', 'True'), t.hidden('is_pal("")', 'True')],
+          hints: ['Trace "abba" by hand: which characters get compared on the second pass?', 'Indentation decides what is inside the loop.'],
+          explanation: 'Dedented one level, `right -= 1` runs once after the loop instead of every iteration, so `left` walks toward a fixed `right`.',
+          signature: 'debug:pointer-step-placement',
+          minutes: 4,
+        }),
+        write({
           id: 'd3-tp-swap-reverse',
           title: 'Reverse a list in place',
           skills: ['two_pointer', 'list_index', 'tuples'],
@@ -616,15 +613,22 @@ print("met at", left)`,
           ],
           hints: ['Swap the two ends, then move inward.', 'Python swaps in one line: `a[i], a[j] = a[j], a[i]`.'],
           signature: 'two-pointer:swap-reverse',
-          minutes: 4,
+          minutes: 5,
         }),
         code({
           id: 'd3-tp-mismatches',
           title: 'Changes to make a palindrome',
           skills: ['two_pointer', 'while_loop', 'accumulator'],
-          prompt: 'Write `changes_needed(s)`: the number of character changes needed to make `s` a palindrome. Each mirror pair that differs needs exactly one change.',
+          style: 'modify',
+          prompt: 'This is the palindrome check under a new name. Change it so `changes_needed(s)` returns the **number** of character changes needed to make `s` a palindrome. Each mirror pair that differs needs exactly one change.',
           starterCode: `def changes_needed(s):
-    pass`,
+    left, right = 0, len(s) - 1
+    while left < right:
+        if s[left] != s[right]:
+            return False
+        left += 1
+        right -= 1
+    return True`,
           solution: `def changes_needed(s):
     left, right = 0, len(s) - 1
     changes = 0
@@ -635,47 +639,33 @@ print("met at", left)`,
         right -= 1
     return changes`,
           tests: [t.eq('changes_needed("abcd")', '2'), t.eq('changes_needed("abca")', '1'), t.hidden('changes_needed("")', '0'), t.hidden('changes_needed("racecar")', '0'), t.hidden('changes_needed("ab")', '1')],
-          hints: ['Same pointer walk as a palindrome check.', 'Instead of returning on a mismatch, count it.'],
+          hints: ['Same pointer walk; a mismatch no longer ends the loop.', 'Add a counter, bump it on a mismatch, return it at the end.'],
           signature: 'two-pointer:count-mismatch',
           minutes: 4,
         }),
-        code({
-          id: 'd3-tp-first-mismatch',
-          title: 'First mismatching pair',
-          skills: ['two_pointer', 'while_loop', 'tuples', 'early_return'],
-          prompt: 'Write `first_mismatch(s)`: walking inward from both ends, return the pair of indexes `(left, right)` of the first characters that differ, or `None` if `s` is a palindrome.',
-          starterCode: `def first_mismatch(s):
+        write({
+          id: 'd3-tp-reverse-of',
+          title: 'Is one the reverse of the other?',
+          skills: ['two_pointer', 'while_loop', 'len', 'early_return'],
+          difficulty: 3,
+          prompt: 'Write `is_reverse_of(a, b)`: `True` if `a` is exactly `b` backwards. Walk one index forward through `a` and another backward through `b`. No slicing.\n\n`is_reverse_of("abc", "cba")` → `True`',
+          starterCode: `def is_reverse_of(a, b):
     pass`,
-          solution: `def first_mismatch(s):
-    left, right = 0, len(s) - 1
-    while left < right:
-        if s[left] != s[right]:
-            return (left, right)
-        left += 1
-        right -= 1
-    return None`,
-          tests: [t.eq('first_mismatch("abcxba")', '(2, 3)'), t.eq('first_mismatch("abca")', '(1, 2)'), t.hidden('first_mismatch("aa")', 'None'), t.hidden('first_mismatch("")', 'None'), t.hidden('first_mismatch("xy")', '(0, 1)')],
-          signature: 'two-pointer:first-mismatch',
-          minutes: 4,
-        }),
-        reorder({
-          id: 'd3-tp-reorder-palindrome',
-          title: 'Rebuild the pointer check',
-          skills: ['two_pointer', 'while_loop'],
-          prompt: 'Put the lines in order to build a two-pointer palindrome check.',
-          lines: [
-            'def is_pal(s):',
-            '    left, right = 0, len(s) - 1',
-            '    while left < right:',
-            '        if s[left] != s[right]:',
-            '            return False',
-            '        left += 1',
-            '        right -= 1',
-            '    return True',
-          ],
-          tests: [t.eq('is_pal("noon")', 'True'), t.eq('is_pal("moon")', 'False'), t.hidden('is_pal("")', 'True')],
-          signature: 'reorder:two-pointer-palindrome',
-          minutes: 3,
+          solution: `def is_reverse_of(a, b):
+    if len(a) != len(b):
+        return False
+    i, j = 0, len(b) - 1
+    while i < len(a):
+        if a[i] != b[j]:
+            return False
+        i += 1
+        j -= 1
+    return True`,
+          tests: [t.eq('is_reverse_of("abc", "cba")', 'True'), t.eq('is_reverse_of("abc", "abc")', 'False'), t.hidden('is_reverse_of("", "")', 'True'), t.hidden('is_reverse_of("ab", "a")', 'False'), t.hidden('is_reverse_of("aa", "aa")', 'True')],
+          hints: ['Different lengths can never match: check that first.', '`i` starts at 0 in `a`, `j` starts at the last index of `b`.', 'Compare, then `i += 1` and `j -= 1`.'],
+          explanation: 'The two pointers live in different strings but move in lockstep, one forward and one backward.',
+          signature: 'two-pointer:cross-reverse',
+          minutes: 6,
         }),
       ],
     },
@@ -686,18 +676,6 @@ print("met at", left)`,
       title: 'Move one pointer',
       summary: 'On a sorted array, a comparison decides which single pointer moves.',
       exercises: [
-        choice({
-          id: 'd3-pu-which-pointer',
-          title: 'Which pointer moves?',
-          skills: ['pointer_update'],
-          prompt: 'The list is sorted ascending. `nums[left] + nums[right]` is **smaller** than the target. What do you do?',
-          options: ['left += 1 (try a bigger small number)', 'right -= 1 (try a smaller big number)', 'Move both pointers', 'Start over from the ends'],
-          answer: 0,
-          note: 'Sorted input: sum too small → `left += 1`; too big → `right -= 1`; equal → found. Exactly one pointer moves per step.',
-          explanation: 'Moving right inward could only make the sum smaller. The only way to grow it is to advance left.',
-          signature: 'recognize:pointer-update-direction',
-          minutes: 1,
-        }),
         output({
           id: 'd3-pu-trace-sorted-sum',
           title: 'Trace a sorted pair search',
@@ -717,52 +695,18 @@ while left < right:
     else:
         right -= 1`,
           expectedOutput: '0 4 10\n1 4 12\n2 4 13',
+          note: 'Sorted input: sum too small → `left += 1`; too big → `right -= 1`; equal → found. Exactly one pointer moves per step, so it is O(n).',
           explanation: 'Each sum is too small, so only left moves until 4 + 9 hits 13.',
           signature: 'trace:sorted-pair-sum',
           minutes: 2.5,
         }),
-        output({
-          id: 'd3-pu-trace-right-moves',
-          title: 'Trace when the sum is too big',
-          skills: ['pointer_update', 'two_pointer'],
-          difficulty: 2,
-          prompt: 'What does this print?',
-          code: `nums = [2, 5, 8, 12]
-target = 7
-left, right = 0, len(nums) - 1
-moves = []
-while left < right:
-    total = nums[left] + nums[right]
-    if total == target:
-        break
-    if total > target:
-        right -= 1
-        moves.append("R")
-    else:
-        left += 1
-        moves.append("L")
-print(moves, left, right)`,
-          expectedOutput: "['R', 'R'] 0 1",
-          explanation: '2 + 12 = 14 and 2 + 8 = 10 are too big, so right moves twice; 2 + 5 = 7 matches and the loop breaks with left still at 0.',
-          signature: 'trace:sorted-pair-shrink',
-          minutes: 2.5,
-        }),
-        fill({
-          id: 'd3-pu-fill-branches',
-          title: 'Fill the pointer moves',
+        write({
+          id: 'd3-pu-has-pair',
+          title: 'Sorted pair search',
           skills: ['pointer_update', 'two_pointer', 'conditionals'],
-          prompt: 'The list is sorted. Fill the blanks so exactly one pointer moves each step.',
+          prompt: 'Write `has_pair(nums, target)`. `nums` is sorted. Return `True` if two different positions add up to `target`. Use two pointers, not a set.',
           starterCode: `def has_pair(nums, target):
-    left, right = 0, len(nums) - 1
-    while left < right:
-        total = nums[left] + nums[right]
-        if total == target:
-            return True
-        elif total < target:
-            ____
-        else:
-            ____
-    return False`,
+    pass`,
           solution: `def has_pair(nums, target):
     left, right = 0, len(nums) - 1
     while left < right:
@@ -774,12 +718,46 @@ print(moves, left, right)`,
         else:
             right -= 1
     return False`,
-          tests: [t.eq('has_pair([1, 2, 4, 7], 9)', 'True'), t.eq('has_pair([1, 2, 4, 7], 10)', 'False'), t.hidden('has_pair([], 0)', 'False'), t.hidden('has_pair([-3, 0, 3], 0)', 'True')],
-          hints: ['Too small: which pointer makes the sum larger?'],
-          signature: 'fill:sorted-pair-branches',
-          minutes: 2,
+          tests: [t.eq('has_pair([1, 2, 4, 7], 9)', 'True'), t.eq('has_pair([1, 2, 4, 7], 10)', 'False'), t.hidden('has_pair([], 0)', 'False'), t.hidden('has_pair([-3, 0, 3], 0)', 'True'), t.hidden('has_pair([5], 10)', 'False')],
+          hints: ['Start at the smallest and the largest.', 'Too small: which pointer makes the sum larger?', 'Equal → True; smaller → `left += 1`; bigger → `right -= 1`.'],
+          signature: 'sorted-pair:exists',
+          minutes: 6,
+          important: true,
         }),
-        code({
+        debug({
+          id: 'd3-pu-debug-swapped',
+          title: 'Fix the pair finder',
+          skills: ['pointer_update', 'two_pointer'],
+          prompt: '`pair_values(nums, target)` takes a sorted list and should return the two values `(small, big)` at different positions that add to `target`, or `None` if no pair does. Make the tests pass.',
+          brokenCode: `def pair_values(nums, target):
+    left, right = 0, len(nums) - 1
+    while left < right:
+        total = nums[left] + nums[right]
+        if total == target:
+            return (nums[left], nums[right])
+        if total < target:
+            right -= 1
+        else:
+            left += 1
+    return None`,
+          solution: `def pair_values(nums, target):
+    left, right = 0, len(nums) - 1
+    while left < right:
+        total = nums[left] + nums[right]
+        if total == target:
+            return (nums[left], nums[right])
+        if total < target:
+            left += 1
+        else:
+            right -= 1
+    return None`,
+          tests: [t.eq('pair_values([1, 2, 4, 7], 9)', '(2, 7)'), t.eq('pair_values([1, 3, 5], 100)', 'None'), t.hidden('pair_values([-3, 0, 3, 4], 4)', '(0, 4)')],
+          hints: ['Trace the first test: 1 + 7 is too small. What should grow?', 'Moving `right` inward can only shrink the sum.'],
+          explanation: 'When the sum is too small, only advancing `left` can increase it. The swapped moves walk away from the answer.',
+          signature: 'debug:pointer-direction',
+          minutes: 4,
+        }),
+        write({
           id: 'd3-pu-count-pairs',
           title: 'Count pairs with a sum',
           skills: ['pointer_update', 'two_pointer', 'accumulator'],
@@ -814,7 +792,8 @@ print(moves, left, right)`,
           difficulty: 3,
           stage: 'combine',
           repType: 'combine',
-          prompt: 'Write `is_pal_ignoring_spaces(s)` with two pointers: spaces are skipped, every other character must match exactly. Do not build a new string.\n\n`"taco cat"` → `True`',
+          style: 'finish',
+          prompt: 'Finish `is_pal_ignoring_spaces(s)` with two pointers: spaces are skipped, every other character must match exactly. Do not build a new string.\n\n`"taco cat"` → `True`',
           starterCode: `def is_pal_ignoring_spaces(s):
     left, right = 0, len(s) - 1
     # while left < right:
@@ -845,7 +824,7 @@ print(moves, left, right)`,
           minutes: 7,
           important: true,
         }),
-        code({
+        write({
           id: 'd3-pu-count-below',
           title: 'Count pairs below a target',
           skills: ['pointer_update', 'two_pointer', 'accumulator'],
@@ -872,54 +851,7 @@ print(moves, left, right)`,
           ],
           explanation: 'One comparison settles `right - left` pairs at once, which is why the scan is linear instead of quadratic.',
           signature: 'sorted-pair:count-below',
-          minutes: 11,
-        }),
-        code({
-          id: 'd3-pu-closest-sum',
-          title: 'Closest pair sum',
-          skills: ['pointer_update', 'two_pointer', 'state_tracking'],
-          difficulty: 4,
-          prompt: 'Write `closest_sum(nums, target)`. `nums` is sorted with at least two items. Return the pair sum closest to `target` (tests have no ties).',
-          starterCode: `def closest_sum(nums, target):
-    pass`,
-          solution: `def closest_sum(nums, target):
-    left, right = 0, len(nums) - 1
-    best = nums[left] + nums[right]
-    while left < right:
-        total = nums[left] + nums[right]
-        if abs(total - target) < abs(best - target):
-            best = total
-        if total < target:
-            left += 1
-        elif total > target:
-            right -= 1
-        else:
-            return total
-    return best`,
-          tests: [t.eq('closest_sum([1, 4, 6, 9], 12)', '13'), t.eq('closest_sum([2, 3], 100)', '5'), t.hidden('closest_sum([-4, -1, 2, 5], 0)', '1'), t.hidden('closest_sum([1, 2, 3, 4], 7)', '7'), t.hidden('closest_sum([-10, -5, 0], -14)', '-15')],
-          hints: [
-            'Same pointer moves as the exact search; you just remember the best so far.',
-            'Track `best` and update it when `abs(total - target)` improves.',
-            'An exact hit is the best possible; return it immediately.',
-          ],
-          signature: 'sorted-pair:closest',
-          minutes: 11,
-        }),
-        choice({
-          id: 'd3-pu-why-linear',
-          title: 'Why O(n)?',
-          skills: ['two_pointer', 'complexity'],
-          prompt: 'Why does the sorted two-pointer pair search run in O(n) time?',
-          options: [
-            'Each step moves one pointer inward, so there are at most n - 1 steps',
-            'It uses a hash map for O(1) lookups',
-            'It halves the search space each step',
-            'Sorting makes every comparison free',
-          ],
-          answer: 0,
-          explanation: 'The gap `right - left` shrinks by one each iteration and starts at n - 1. Space is O(1): two integers.',
-          signature: 'recognize:two-pointer-complexity',
-          minutes: 1,
+          minutes: 9,
         }),
       ],
     },
@@ -930,7 +862,7 @@ print(moves, left, right)`,
       title: 'Pointer patterns',
       summary: 'Pointers in the same direction and across two sequences.',
       exercises: [
-        code({
+        write({
           id: 'd3-pp-subsequence',
           title: 'Is it a subsequence?',
           skills: ['two_pointer', 'pointer_update', 'while_loop'],
@@ -949,12 +881,12 @@ print(moves, left, right)`,
           tests: [t.eq('is_subsequence("ace", "abcde")', 'True'), t.eq('is_subsequence("aec", "abcde")', 'False'), t.hidden('is_subsequence("", "abc")', 'True'), t.hidden('is_subsequence("a", "")', 'False'), t.hidden('is_subsequence("aa", "a")', 'False')],
           hints: ['One pointer walks `big` every step; the other walks `small` only on a match.', 'Guard `i < len(small)` before reading `small[i]`.', 'At the end, did `i` reach `len(small)`?'],
           signature: 'two-pointer:subsequence',
-          minutes: 7,
+          minutes: 6,
         }),
-        code({
+        write({
           id: 'd3-pp-merge',
           title: 'Merge two sorted lists',
-          skills: ['two_pointer', 'pointer_update', 'list_append', 'while_loop'],
+          skills: ['two_pointer', 'pointer_update', 'list_append', 'while_loop', 'list_create'],
           difficulty: 3,
           stage: 'pattern',
           repType: 'pattern',
@@ -977,9 +909,45 @@ print(moves, left, right)`,
           tests: [t.eq('merge_sorted([1, 4, 7], [2, 3, 9])', '[1, 2, 3, 4, 7, 9]'), t.eq('merge_sorted([], [1, 2])', '[1, 2]'), t.hidden('merge_sorted([1, 1], [1])', '[1, 1, 1]'), t.hidden('merge_sorted([], [])', '[]'), t.hidden('merge_sorted([5, 6], [1, 2])', '[1, 2, 5, 6]')],
           hints: ['One pointer per list.', 'Take the smaller front item and advance only that pointer.', 'Loop while both have items, then add whatever is left with slices.'],
           signature: 'two-pointer:merge-two',
-          minutes: 7,
+          minutes: 8,
         }),
-        code({
+        debug({
+          id: 'd3-pp-debug-common',
+          title: 'Fix the common values',
+          skills: ['two_pointer', 'pointer_update'],
+          prompt: '`common(a, b)` takes two sorted lists and should return the values found in both, in order. Each match uses up one item from each list, so `common([2, 2], [2])` is `[2]`. Make the tests pass.',
+          brokenCode: `def common(a, b):
+    i, j = 0, 0
+    out = []
+    while i < len(a) and j < len(b):
+        if a[i] == b[j]:
+            out.append(a[i])
+            i += 1
+        elif a[i] < b[j]:
+            i += 1
+        else:
+            j += 1
+    return out`,
+          solution: `def common(a, b):
+    i, j = 0, 0
+    out = []
+    while i < len(a) and j < len(b):
+        if a[i] == b[j]:
+            out.append(a[i])
+            i += 1
+            j += 1
+        elif a[i] < b[j]:
+            i += 1
+        else:
+            j += 1
+    return out`,
+          tests: [t.eq('common([1, 2, 2, 3], [2, 3])', '[2, 3]'), t.eq('common([1, 5], [2, 6])', '[]'), t.hidden('common([2, 2], [2, 2])', '[2, 2]'), t.hidden('common([], [1])', '[]')],
+          hints: ['Trace the first test: how many times is `b[0]` matched?', 'A match consumes an item from each list.'],
+          explanation: 'After a match both items are used, so both pointers must advance. Moving only `i` lets `b[j]` match again.',
+          signature: 'debug:pointer-both-advance',
+          minutes: 4,
+        }),
+        write({
           id: 'd3-pp-dedupe',
           title: 'Dedupe a sorted list in place',
           skills: ['two_pointer', 'pointer_update', 'list_index'],
@@ -1014,40 +982,6 @@ print(moves, left, right)`,
           signature: 'two-pointer:read-write',
           minutes: 7,
         }),
-        code({
-          id: 'd3-pp-squares',
-          title: 'Sorted squares',
-          skills: ['two_pointer', 'pointer_update', 'list_index'],
-          difficulty: 4,
-          stage: 'pattern',
-          repType: 'pattern',
-          prompt: 'Write `sorted_squares(nums)`. `nums` is sorted and may contain negatives. Return the squares in sorted order in O(n), without calling `sorted`.\n\n`[-4, -1, 0, 3]` → `[0, 1, 9, 16]`',
-          starterCode: `def sorted_squares(nums):
-    pass`,
-          solution: `def sorted_squares(nums):
-    out = [0] * len(nums)
-    left, right = 0, len(nums) - 1
-    pos = len(nums) - 1
-    while left <= right:
-        if abs(nums[left]) > abs(nums[right]):
-            out[pos] = nums[left] * nums[left]
-            left += 1
-        else:
-            out[pos] = nums[right] * nums[right]
-            right -= 1
-        pos -= 1
-    return out`,
-          tests: [t.eq('sorted_squares([-4, -1, 0, 3])', '[0, 1, 9, 16]'), t.eq('sorted_squares([1, 2])', '[1, 4]'), t.hidden('sorted_squares([])', '[]'), t.hidden('sorted_squares([-3, -2])', '[4, 9]'), t.hidden('sorted_squares([-2, 2])', '[4, 4]')],
-          hints: [
-            'Where is the largest square: in the middle or at one of the ends?',
-            'The biggest absolute value is always at left or right.',
-            'Fill the result from the back: compare `abs(nums[left])` and `abs(nums[right])`.',
-            'Use `while left <= right` so the last element is placed too.',
-          ],
-          explanation: 'The largest square always sits at an end, so filling from the back with two pointers avoids an O(n log n) sort.',
-          signature: 'two-pointer:fill-from-back',
-          minutes: 11,
-        }),
       ],
     },
 
@@ -1057,18 +991,6 @@ print(moves, left, right)`,
       title: 'Running min/max',
       summary: 'Carry the best-so-far or min-so-far through one scan.',
       exercises: [
-        choice({
-          id: 'd3-rs-init',
-          title: 'Start the minimum',
-          skills: ['state_tracking'],
-          prompt: 'You track the smallest value so far in a non-empty list of prices. Which start is safe for any input?',
-          options: ['lowest = prices[0]', 'lowest = 0', 'lowest = -1', 'lowest = len(prices)'],
-          answer: 0,
-          note: "Start a running min/max from the first item (or `float('inf')` / `float('-inf')`), never from a made-up number like 0.",
-          explanation: 'If every price is above 0, starting at 0 makes the minimum wrong forever. The first item is always a real candidate.',
-          signature: 'recognize:running-min-init',
-          minutes: 1,
-        }),
         output({
           id: 'd3-rs-trace-min',
           title: 'Trace min so far',
@@ -1082,52 +1004,62 @@ for p in prices:
     mins.append(lowest)
 print(mins)`,
           expectedOutput: '[8, 5, 5, 3, 3]',
+          note: "Start a running min/max from the first item (or `float('inf')` / `float('-inf')`), never from a made-up number like 0.",
           explanation: 'The running minimum only ever goes down. Each entry is the smallest price seen up to and including that day.',
           signature: 'trace:running-min',
           minutes: 2,
         }),
-        output({
-          id: 'd3-rs-trace-best',
-          title: 'Trace best and where',
-          skills: ['state_tracking', 'enumerate', 'conditionals'],
-          prompt: 'What does this print?',
-          code: `nums = [3, -1, 4, -1, 5, 5]
-best = nums[0]
-best_at = 0
-for i, x in enumerate(nums):
-    if x > best:
-        best = x
-        best_at = i
-print(best, best_at)`,
-          expectedOutput: '5 4',
-          explanation: 'The strict `>` keeps the first index of the maximum: the second 5 is not greater than 5.',
-          signature: 'trace:running-max-index',
-          minutes: 2,
-        }),
-        fill({
-          id: 'd3-rs-fill-max',
-          title: 'Best so far',
-          skills: ['state_tracking', 'accumulator'],
-          prompt: 'Fill the blank so `largest` returns the biggest value. It must work for all-negative lists.',
+        write({
+          id: 'd3-rs-largest',
+          title: 'Largest by hand',
+          skills: ['state_tracking', 'accumulator', 'conditionals'],
+          prompt: 'Write `largest(nums)` for a non-empty list without calling `max()`. It must work when every value is negative.',
           starterCode: `def largest(nums):
-    best = nums[0]
-    for x in nums:
-        best = ____
-    return best`,
+    pass`,
           solution: `def largest(nums):
     best = nums[0]
     for x in nums:
-        best = max(best, x)
+        if x > best:
+            best = x
     return best`,
-          tests: [t.eq('largest([3, 9, 2])', '9'), t.eq('largest([-5, -2, -9])', '-2')],
-          hints: ['`max(a, b)` returns the larger of two values.'],
-          signature: 'fill:running-max',
-          minutes: 2,
+          tests: [t.eq('largest([3, 9, 2])', '9'), t.eq('largest([-5, -2, -9])', '-2'), t.hidden('largest([4])', '4')],
+          hints: ['Start `best` at a real value from the list.', 'Replace it whenever you see something bigger.'],
+          signature: 'running:max',
+          minutes: 4,
         }),
-        code({
+        debug({
+          id: 'd3-rs-debug-init',
+          title: 'Fix min and max',
+          skills: ['state_tracking', 'tuples'],
+          prompt: '`min_and_max(nums)` takes a non-empty list and should return `(smallest, largest)` in one pass. Make the tests pass.',
+          brokenCode: `def min_and_max(nums):
+    lo = 0
+    hi = 0
+    for x in nums:
+        if x < lo:
+            lo = x
+        if x > hi:
+            hi = x
+    return (lo, hi)`,
+          solution: `def min_and_max(nums):
+    lo = nums[0]
+    hi = nums[0]
+    for x in nums:
+        if x < lo:
+            lo = x
+        if x > hi:
+            hi = x
+    return (lo, hi)`,
+          tests: [t.eq('min_and_max([3, 9, 2])', '(2, 9)'), t.eq('min_and_max([-5, -2])', '(-5, -2)'), t.hidden('min_and_max([0])', '(0, 0)'), t.hidden('min_and_max([7, 7])', '(7, 7)')],
+          hints: ['Is 0 ever actually in the first test’s list?', 'Start from a value that is really in the list.'],
+          explanation: 'A made-up start like 0 wins whenever every real value is on one side of it. Starting from `nums[0]` is always a real candidate.',
+          signature: 'debug:running-init',
+          minutes: 4,
+        }),
+        write({
           id: 'd3-rs-prefix-mins',
           title: 'Prefix minimums',
-          skills: ['state_tracking', 'list_append'],
+          skills: ['state_tracking', 'list_append', 'list_create'],
           prompt: 'Write `prefix_mins(nums)` returning a list where entry `i` is the smallest of `nums[0..i]`.',
           starterCode: `def prefix_mins(nums):
     pass`,
@@ -1143,7 +1075,7 @@ print(best, best_at)`,
           signature: 'running:prefix-min',
           minutes: 4,
         }),
-        code({
+        write({
           id: 'd3-rs-records',
           title: 'Count new records',
           skills: ['state_tracking', 'conditionals', 'accumulator'],
@@ -1161,26 +1093,9 @@ print(best, best_at)`,
           tests: [t.eq('count_records([3, 1, 4, 1, 5, 9, 2, 6])', '4'), t.eq('count_records([])', '0'), t.hidden('count_records([2, 2, 2])', '1'), t.hidden('count_records([-5, -4, -6])', '2')],
           hints: ['Keep the best seen so far.', 'A record is a score greater than the best; it also becomes the new best.'],
           signature: 'running:count-records',
-          minutes: 4,
+          minutes: 5,
         }),
-        code({
-          id: 'd3-rs-biggest-jump',
-          title: 'Biggest day-over-day rise',
-          skills: ['state_tracking', 'range', 'list_index'],
-          prompt: 'Write `biggest_jump(nums)`: the largest `nums[i] - nums[i - 1]` over neighbouring items, or `0` if nothing ever rises (including lists shorter than 2).',
-          starterCode: `def biggest_jump(nums):
-    pass`,
-          solution: `def biggest_jump(nums):
-    best = 0
-    for i in range(1, len(nums)):
-        best = max(best, nums[i] - nums[i - 1])
-    return best`,
-          tests: [t.eq('biggest_jump([1, 5, 2, 9])', '7'), t.eq('biggest_jump([9, 4, 1])', '0'), t.hidden('biggest_jump([])', '0'), t.hidden('biggest_jump([3])', '0')],
-          hints: ['Start at index 1 so `i - 1` exists.', 'Starting `best` at 0 handles "never rises".'],
-          signature: 'running:adjacent-diff',
-          minutes: 4,
-        }),
-        code({
+        write({
           id: 'd3-rs-biggest-drop',
           title: 'Biggest fall from a peak',
           skills: ['state_tracking', 'list_iterate'],
@@ -1203,9 +1118,9 @@ print(best, best_at)`,
             'Only the highest value so far matters.',
             'Track `peak` (max so far) and `best` (largest peak - v).',
           ],
-          explanation: 'Two pieces of running state: the best peak seen so far, and the best answer so far. Tomorrow’s capstone mirrors this with a minimum.',
+          explanation: 'Two pieces of running state: the best peak seen so far, and the best answer so far. The stock capstone mirrors this with a minimum.',
           signature: 'running:max-so-far-gap',
-          minutes: 7,
+          minutes: 6,
           important: true,
         }),
       ],
@@ -1281,7 +1196,77 @@ print(best, best_at)`,
           signature: 'explain:valid-palindrome',
           minutes: 5,
         }),
-        code({
+        debug({
+          id: 'd3-vp-debug-case',
+          title: 'Fix the mirror check: case',
+          skills: ['string_methods', 'two_pointer'],
+          prompt: '`is_palindrome(s)` should ignore case and every character that is not a letter or digit, then report whether what is left reads the same both ways. Make the tests pass.',
+          brokenCode: `def is_palindrome(s):
+    left, right = 0, len(s) - 1
+    while left < right:
+        while left < right and not s[left].isalnum():
+            left += 1
+        while left < right and not s[right].isalnum():
+            right -= 1
+        if s[left] != s[right]:
+            return False
+        left += 1
+        right -= 1
+    return True`,
+          solution: `def is_palindrome(s):
+    left, right = 0, len(s) - 1
+    while left < right:
+        while left < right and not s[left].isalnum():
+            left += 1
+        while left < right and not s[right].isalnum():
+            right -= 1
+        if s[left].lower() != s[right].lower():
+            return False
+        left += 1
+        right -= 1
+    return True`,
+          tests: [t.eq('is_palindrome("Was it a car or a cat I saw?")', 'True'), t.eq('is_palindrome("race a car")', 'False'), t.hidden('is_palindrome("Ab1bA")', 'True'), t.hidden('is_palindrome("0P")', 'False')],
+          hints: ['Which two characters are compared first in the failing test?', '"W" and "w" are different strings.'],
+          explanation: 'Comparing raw characters treats "W" and "w" as different. Lowercase both sides at the comparison.',
+          signature: 'debug:compare-before-lower',
+          minutes: 4,
+        }),
+        debug({
+          id: 'd3-vp-debug-guard',
+          title: 'Fix the mirror check: junk',
+          skills: ['two_pointer', 'pointer_update', 'while_loop'],
+          prompt: 'This `is_palindrome(s)` should ignore case and every character that is not a letter or digit. A string with nothing left to compare is a palindrome. Make the tests pass.',
+          brokenCode: `def is_palindrome(s):
+    left, right = 0, len(s) - 1
+    while left < right:
+        while not s[left].isalnum():
+            left += 1
+        while not s[right].isalnum():
+            right -= 1
+        if s[left].lower() != s[right].lower():
+            return False
+        left += 1
+        right -= 1
+    return True`,
+          solution: `def is_palindrome(s):
+    left, right = 0, len(s) - 1
+    while left < right:
+        while left < right and not s[left].isalnum():
+            left += 1
+        while left < right and not s[right].isalnum():
+            right -= 1
+        if s[left].lower() != s[right].lower():
+            return False
+        left += 1
+        right -= 1
+    return True`,
+          tests: [t.eq('is_palindrome(".,")', 'True'), t.eq('is_palindrome("No lemon, no melon")', 'True'), t.hidden('is_palindrome("!a!")', 'True'), t.hidden('is_palindrome("ab")', 'False')],
+          hints: ['What index does `left` reach on ".,"?', 'The inner loops need the same boundary as the outer loop.'],
+          explanation: 'On a string of junk the inner loop walks `left` off the end and raises IndexError. Adding `left < right` to the inner conditions stops it at the boundary.',
+          signature: 'debug:inner-loop-guard',
+          minutes: 5,
+        }),
+        write({
           id: 'd3-vp-one-deletion',
           title: 'Palindrome after one deletion',
           skills: ['two_pointer', 'pointer_update', 'functions', 'slicing'],
@@ -1398,7 +1383,32 @@ def max_profit(prices: List[int]) -> int:
           signature: 'explain:best-time-stock',
           minutes: 5,
         }),
-        code({
+        debug({
+          id: 'd3-stock-debug-order',
+          title: 'Fix the profit calculator',
+          skills: ['state_tracking'],
+          prompt: '`max_profit(prices)` should return the best profit from buying once and selling on a **later** day, or `0` if no trade makes money (including an empty list). Make the tests pass.',
+          brokenCode: `def max_profit(prices):
+    lowest = float("inf")
+    highest = 0
+    for p in prices:
+        lowest = min(lowest, p)
+        highest = max(highest, p)
+    return highest - lowest`,
+          solution: `def max_profit(prices):
+    lowest = float("inf")
+    best = 0
+    for p in prices:
+        lowest = min(lowest, p)
+        best = max(best, p - lowest)
+    return best`,
+          tests: [t.eq('max_profit([7, 1, 5, 3, 6, 4])', '5'), t.eq('max_profit([7, 6, 4, 3, 1])', '0'), t.hidden('max_profit([])', '0'), t.hidden('max_profit([2, 9, 1, 3])', '7')],
+          hints: ['In the falling list, on which days are the max and the min?', 'The sale has to come after the purchase: profit must be measured against the min **so far**.'],
+          explanation: 'The global max and min ignore order, so they can describe "sell, then buy". Keeping the min so far and the best `p - lowest` respects time.',
+          signature: 'debug:profit-order',
+          minutes: 5,
+        }),
+        write({
           id: 'd3-stock-days',
           title: 'Which days to trade?',
           skills: ['state_tracking', 'enumerate', 'tuples'],
@@ -1423,7 +1433,7 @@ def max_profit(prices: List[int]) -> int:
           hints: ['Track the index of the minimum, not just its value.', 'When the profit improves, record `(low_day, i)`.'],
           explanation: 'Tracking an index instead of a value is a common follow-up: the same running state, just remembering where it came from.',
           signature: 'running:min-index-pair',
-          minutes: 7,
+          minutes: 8,
         }),
       ],
     },
@@ -1502,7 +1512,83 @@ def two_sum_sorted(numbers: List[int], target: int) -> List[int]:
           signature: 'explain:two-sum-ii',
           minutes: 5,
         }),
-        code({
+        debug({
+          id: 'd3-tsii-debug-positions',
+          title: 'Fix the positions',
+          skills: ['two_pointer', 'pointer_update'],
+          prompt: '`two_sum_sorted(numbers, target)` should return the **1-based** positions `[a, b]` of the one pair that adds to `target` in a sorted list. Make the tests pass.',
+          brokenCode: `def two_sum_sorted(numbers, target):
+    left, right = 0, len(numbers) - 1
+    while left < right:
+        total = numbers[left] + numbers[right]
+        if total == target:
+            return [left, right]
+        if total < target:
+            left += 1
+        else:
+            right -= 1
+    return []`,
+          solution: `def two_sum_sorted(numbers, target):
+    left, right = 0, len(numbers) - 1
+    while left < right:
+        total = numbers[left] + numbers[right]
+        if total == target:
+            return [left + 1, right + 1]
+        if total < target:
+            left += 1
+        else:
+            right -= 1
+    return []`,
+          tests: [t.eq('two_sum_sorted([2, 7, 11, 15], 9)', '[1, 2]'), t.eq('two_sum_sorted([1, 3, 4, 6], 10)', '[3, 4]'), t.hidden('two_sum_sorted([-3, 0, 2], -1)', '[1, 3]')],
+          hints: ['The pointer logic is fine. Compare the returned numbers with the expected ones.'],
+          explanation: 'Python indexes are 0-based; the problem asks for positions counted from 1. Read the output format twice in an interview.',
+          signature: 'debug:one-based-output',
+          minutes: 3,
+        }),
+        write({
+          id: 'd3-tsii-optimize-diff',
+          title: 'Pair with a difference',
+          skills: ['two_pointer', 'pointer_update', 'while_loop'],
+          difficulty: 4,
+          style: 'optimize',
+          stage: 'pattern',
+          repType: 'pattern',
+          prompt: 'This works but is O(n²):\n\n```python\ndef has_diff(nums, k):\n    for i in range(len(nums)):\n        for j in range(i + 1, len(nums)):\n            if nums[j] - nums[i] == k:\n                return True\n    return False\n```\n\n`nums` is sorted and `k >= 0`. Rewrite `has_diff(nums, k)` in O(n) time and O(1) space with two pointers that both move **left to right**: `i` behind, `j` ahead.',
+          starterCode: `def has_diff(nums, k):
+    pass`,
+          solution: `def has_diff(nums, k):
+    i, j = 0, 1
+    while j < len(nums):
+        if i == j:
+            j += 1
+            continue
+        d = nums[j] - nums[i]
+        if d == k:
+            return True
+        if d < k:
+            j += 1
+        else:
+            i += 1
+    return False`,
+          tests: [
+            t.eq('has_diff([1, 3, 5, 8], 3)', 'True'),
+            t.eq('has_diff([1, 2, 3], 5)', 'False'),
+            t.hidden('has_diff([1, 1], 0)', 'True'),
+            t.hidden('has_diff([], 1)', 'False'),
+            t.hidden('has_diff([1, 5], 0)', 'False'),
+            t.hidden('has_diff([-4, -1, 2, 10], 6)', 'True'),
+          ],
+          hints: [
+            'The difference `nums[j] - nums[i]` grows when j moves right and shrinks when i moves right.',
+            'Too small → `j += 1`; too big → `i += 1`; equal → found.',
+            'The pair must use two different positions: if `i` catches up to `j`, push `j` forward.',
+            'Loop `while j < len(nums)`; every iteration moves exactly one pointer.',
+          ],
+          explanation: 'Same-direction pointers: each step moves one of them forward, so there are at most 2n steps. The sorted order tells you which pointer fixes the difference.',
+          signature: 'two-pointer:same-direction-diff',
+          minutes: 9,
+        }),
+        write({
           id: 'd3-tsii-triplet',
           title: 'Three numbers to a target',
           skills: ['two_pointer', 'pointer_update', 'sorting', 'range'],
@@ -1551,50 +1637,33 @@ def two_sum_sorted(numbers: List[int], target: int) -> List[int]:
     {
       id: 'd3-cold',
       title: 'Cold reps',
-      summary: 'Today’s primitives once more, no scaffolding.',
+      summary: 'Today’s primitives once more: a signature and nothing else.',
       exercises: [
-        output({
-          id: 'd3-cold-trace-mix',
-          title: 'Slices and pointers',
-          skills: ['slicing', 'two_pointer', 'string_methods'],
-          ...cold,
-          difficulty: 2,
-          prompt: 'What does this print?',
-          code: `s = "Level Up"
-t = s.lower().replace(" ", "")
-print(t[:5], t[-2:], t[::-1][:2])
-left, right = 0, len(t) - 1
-while left < right and t[left] == t[right]:
-    left += 1
-    right -= 1
-print(left, right)`,
-          expectedOutput: 'level up pu\n0 6',
-          explanation: 't is "levelup". Its first and last characters ("l" and "p") differ, so the loop never runs.',
-          signature: 'trace:slice-pointer-mix',
-          minutes: 2.5,
-        }),
-        code({
+        write({
           id: 'd3-cold-last-k',
           title: 'Last k characters',
           skills: ['slicing', 'edge_cases'],
           ...cold,
-          prompt: 'Write `last_k(s, k)` returning the last `k` characters of `s` (all of `s` if `k` is larger). Careful with `k = 0`.',
+          prompt: 'Write `last_k(s, k)` returning the last `k` characters of `s` (all of `s` if `k` is larger, `""` if `k` is 0).',
           starterCode: `def last_k(s, k):
     pass`,
           solution: `def last_k(s, k):
-    return s[len(s) - k:] if k > 0 else ""`,
+    if k <= 0:
+        return ""
+    return s[-k:]`,
           tests: [t.eq('last_k("hello", 2)', '"lo"'), t.eq('last_k("hi", 0)', '""'), t.hidden('last_k("hi", 5)', '"hi"'), t.hidden('last_k("", 1)', '""')],
-          hints: ['`s[-k:]` is almost right. What is `s[-0:]`?'],
           explanation: '`-0` is just `0`, so `s[-0:]` is the whole string. Handling k = 0 separately (or slicing from `len(s) - k`) fixes it.',
           signature: 'slice:last-k',
-          minutes: 4,
+          minutes: 3,
         }),
-        code({
+        write({
           id: 'd3-cold-pair-exists',
-          title: 'Sorted pair, from blank',
+          title: 'Sorted pair, from a signature',
           skills: ['two_pointer', 'pointer_update'],
           ...cold,
           prompt: 'Write `pair_exists(nums, target)` for a sorted list: `True` if two different positions sum to `target`. O(1) extra space.',
+          starterCode: `def pair_exists(nums, target):
+    pass`,
           solution: `def pair_exists(nums, target):
     left, right = 0, len(nums) - 1
     while left < right:
@@ -1608,15 +1677,17 @@ print(left, right)`,
     return False`,
           tests: [t.eq('pair_exists([1, 3, 5, 8], 11)', 'True'), t.eq('pair_exists([1, 3, 5, 8], 10)', 'False'), t.hidden('pair_exists([4], 8)', 'False'), t.hidden('pair_exists([], 0)', 'False'), t.hidden('pair_exists([-2, -1, 3], 1)', 'True')],
           signature: 'sorted-pair:exists',
-          minutes: 4,
+          minutes: 6,
           important: true,
         }),
-        code({
+        write({
           id: 'd3-cold-sell-today',
           title: 'Profit if you sell today',
           skills: ['state_tracking', 'list_append'],
           ...cold,
           prompt: 'Write `sell_today(prices)` returning a list: for each day, the profit from selling that day after buying at the lowest price up to that day.\n\n`[3, 1, 4]` → `[0, 0, 3]`',
+          starterCode: `def sell_today(prices):
+    pass`,
           solution: `def sell_today(prices):
     out = []
     lowest = float("inf")
@@ -1626,15 +1697,17 @@ print(left, right)`,
     return out`,
           tests: [t.eq('sell_today([3, 1, 4])', '[0, 0, 3]'), t.eq('sell_today([])', '[]'), t.hidden('sell_today([5, 6, 2, 9])', '[0, 1, 0, 7]')],
           signature: 'running:min-profit-list',
-          minutes: 4,
+          minutes: 5,
         }),
-        code({
+        write({
           id: 'd3-cold-letter-pal',
           title: 'Letters-only palindrome',
           skills: ['two_pointer', 'pointer_update', 'string_methods'],
           ...cold,
           difficulty: 3,
           prompt: 'Write `letters_pal(s)`: ignoring case and every character that is not a **letter** (`.isalpha()`, so digits are ignored too), is `s` a palindrome? Two pointers, no copy.',
+          starterCode: `def letters_pal(s):
+    pass`,
           solution: `def letters_pal(s):
     left, right = 0, len(s) - 1
     while left < right:
@@ -1649,7 +1722,7 @@ print(left, right)`,
     return True`,
           tests: [t.eq('letters_pal("No1 on")', 'True'), t.eq('letters_pal("ab9")', 'False'), t.hidden('letters_pal("123")', 'True'), t.hidden('letters_pal("")', 'True'), t.hidden('letters_pal("A-b-A")', 'True')],
           signature: 'two-pointer:skip-chars',
-          minutes: 7,
+          minutes: 8,
         }),
       ],
     },

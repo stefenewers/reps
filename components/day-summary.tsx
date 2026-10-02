@@ -20,22 +20,23 @@ export default function DaySummary({ date }: { date: string }) {
   const complete = st.complete
 
   return (
-    <main className="mx-auto w-full max-w-[720px] px-5 pb-28 pt-10">
+    <main className="flex-1 bg-canvas">
+      <div className="mx-auto w-full max-w-[760px] px-5 pb-28 pt-10 sm:px-8">
       <p className="text-[13px] text-muted">{longDate(date)}</p>
-      <h1 className="mt-1 text-[32px] font-semibold tracking-tight">{complete ? 'Reps complete' : 'Day so far'}</h1>
+      <h1 className="display mt-1.5">{complete ? 'Reps complete' : 'Day so far'}</h1>
       <p className="mt-1 text-[14px] text-muted">
         {s.completed} of {s.total} reps · {formatMinutes(st.timeSpentSeconds / 60)} logged
       </p>
 
-      <div className="mt-8 grid gap-8 sm:grid-cols-2">
+      <div className="mt-8 grid gap-4 sm:grid-cols-2">
         <Block title="Strong" items={s.strong.slice(0, 8).map(skillName)} empty="Nothing competent yet today." />
         <Block title="Needs more reps" items={s.needsReps.slice(0, 8).map(skillName)} empty="Nothing shaky today." />
       </div>
 
       {s.capstones.length > 0 && (
-        <section className="mt-8">
-          <h2 className="text-[15px] font-semibold tracking-tight">Capstones</h2>
-          <ul className="mt-2 divide-y divide-line border-y border-line text-[14px]">
+        <section className="card mt-4 p-5">
+          <h2 className="h2">Capstones</h2>
+          <ul className="mt-2 divide-y divide-line text-[14px]">
             {s.capstones.map((c) => (
               <li key={c.problemId} className="flex items-center justify-between py-2">
                 <Link href={`/rep/${c.exerciseId}`} className="hover:underline">
@@ -52,14 +53,14 @@ export default function DaySummary({ date }: { date: string }) {
         </section>
       )}
 
-      <section className="mt-8">
-        <h2 className="text-[15px] font-semibold tracking-tight">Tomorrow</h2>
+      <section className="card mt-4 p-5">
+        <h2 className="h2">Tomorrow</h2>
         <p className="mt-1 text-[14px] text-ink-2">
           {s.tomorrowReviews} cold rep{s.tomorrowReviews === 1 ? '' : 's'} scheduled.
         </p>
       </section>
 
-      <div className="mt-10 flex gap-2">
+      <div className="mt-8 flex gap-2">
         <Link href={`/day/${date}`} className="btn">
           Back to the day
         </Link>
@@ -67,14 +68,15 @@ export default function DaySummary({ date }: { date: string }) {
           Today
         </Link>
       </div>
+      </div>
     </main>
   )
 }
 
 function Block({ title, items, empty }: { title: string; items: string[]; empty: string }) {
   return (
-    <section>
-      <h2 className="text-[15px] font-semibold tracking-tight">{title}</h2>
+    <section className="card p-5">
+      <h2 className="h2">{title}</h2>
       {items.length ? (
         <ul className="mt-2 flex flex-col gap-1 text-[14px] text-ink-2">
           {items.map((i) => (

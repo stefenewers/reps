@@ -24,7 +24,7 @@ test('today → first rep → correct answer → mastery updates → reload → 
   await expect(page.getByRole('heading', { name: firstRep.title })).toBeVisible()
 
   await answer(page, firstRep)
-  await expect(page.getByText(/✓ Rep complete/)).toBeVisible({ timeout: 60_000 })
+  await expect(page.getByTestId('rep-complete')).toBeVisible({ timeout: 60_000 })
 
   const skill = firstRep.skills[0]
   await page.goto(`/skills/${skill}`)
@@ -55,5 +55,5 @@ test('a code rep runs real Python in the browser and an infinite loop is stopped
   await page.keyboard.press('Backspace')
   await page.keyboard.insertText('def two_sum(nums, target):\n    seen = {}\n    for i, n in enumerate(nums):\n        if target - n in seen:\n            return [seen[target - n], i]\n        seen[n] = i\n')
   await page.getByTestId('submit').click()
-  await expect(page.getByText(/✓ Rep complete/)).toBeVisible({ timeout: 90_000 })
+  await expect(page.getByTestId('rep-complete')).toBeVisible({ timeout: 90_000 })
 })

@@ -11,6 +11,7 @@ import { explainMastery } from '@/lib/mastery'
 import { relativeDue, shortDate } from '@/lib/dates'
 import { buildSkillSession, createSession } from '@/lib/sessions'
 import { MISTAKE_LABEL } from '@/lib/coach/schemas'
+import { evidenceFor, evidenceText } from '@/components/skills-view'
 
 export default function SkillDetail({ id }: { id: string }) {
   const router = useRouter()
@@ -35,30 +36,34 @@ export default function SkillDetail({ id }: { id: string }) {
   }
 
   return (
-    <main className="mx-auto w-full max-w-[760px] px-5 pb-28 pt-10">
+    <main className="flex-1 bg-canvas">
+      <div className="mx-auto w-full max-w-[820px] px-5 pb-28 pt-10 sm:px-8">
       <Link href="/skills" className="text-[13px] text-muted hover:text-ink">
         ← Skills
       </Link>
       <div className="mt-3 flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="label">{skill.group}</p>
-          <h1 className="mt-1 text-[28px] font-semibold tracking-tight">{skill.name}</h1>
+          <h1 className="display mt-1.5">{skill.name}</h1>
         </div>
-        <button type="button" className="btn btn-primary" onClick={doReps}>
+        <button type="button" className="btn btn-primary btn-lg" onClick={doReps}>
           Do reps
         </button>
       </div>
       <p className="mt-3 text-[15px] text-ink-2">{skill.definition}</p>
       {skill.prerequisites.length > 0 && <p className="mt-2 text-[13px] text-muted">Builds on: {skill.prerequisites.map(skillName).join(', ')}</p>}
 
-      <section className="mt-8 rounded-lg border border-line p-4">
-        <div className="flex items-center gap-4">
-          <span className="text-[28px] font-semibold tabular-nums">{m.status === 'unseen' ? '—' : m.score}</span>
-          <ScoreBar score={m.score} className="!w-40" />
-          <StatusLabel status={m.status} />
+      <section className="panel mt-8 p-6">
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
+          <span className="num text-[40px] font-semibold leading-none tracking-tight">{m.status === 'unseen' ? '—' : m.score}</span>
+          <div className="flex flex-col gap-2">
+            <StatusLabel status={m.status} />
+            <ScoreBar score={m.score} className="!w-48" />
+          </div>
+          <p className="ml-auto text-[13px] text-muted">{evidenceText(evidenceFor(id, attempts))}</p>
         </div>
         <p className="mt-3 text-[13.5px] text-muted">{explainMastery(m)}</p>
-        <dl className="mt-4 grid grid-cols-3 gap-y-3 text-[13px] sm:grid-cols-6">
+        <dl className="mt-5 grid grid-cols-3 gap-y-4 rounded-xl bg-surface px-4 py-3.5 text-[13px] sm:grid-cols-6">
           {[
             ['Attempts', m.attempts],
             ['Correct', m.correct],
@@ -68,8 +73,8 @@ export default function SkillDetail({ id }: { id: string }) {
             ['Hints', m.hintsUsed],
           ].map(([k, v]) => (
             <div key={k as string}>
-              <dt className="text-faint">{k}</dt>
-              <dd className="tabular-nums text-ink">{v}</dd>
+              <dt className="text-[12px] text-faint">{k}</dt>
+              <dd className="num mt-0.5 text-[15px] font-medium text-ink">{v}</dd>
             </div>
           ))}
         </dl>
@@ -81,7 +86,7 @@ export default function SkillDetail({ id }: { id: string }) {
 
       {(mistakes.size > 0 || notes.length > 0) && (
         <section className="mt-8">
-          <h2 className="text-[15px] font-semibold tracking-tight">Repeated mistakes</h2>
+          <h2 className="h2">Repeated mistakes</h2>
           <ul className="mt-2 text-[14px] text-ink-2">
             {[...mistakes].map(([k, n]) => (
               <li key={k}>
@@ -98,11 +103,11 @@ export default function SkillDetail({ id }: { id: string }) {
       )}
 
       <section className="mt-8">
-        <h2 className="text-[15px] font-semibold tracking-tight">Recent attempts</h2>
+        <h2 className="h2">Recent attempts</h2>
         {mine.length === 0 ? (
           <p className="mt-2 text-[14px] text-muted">No reps yet.</p>
         ) : (
-          <ul className="mt-2 divide-y divide-line border-y border-line text-[13.5px]">
+          <ul className="card mt-3 divide-y divide-line px-4 text-[13.5px]">
             {mine.slice(0, 12).map((a) => {
               const ex = EXERCISE_BY_ID[a.exerciseId]
               return (
@@ -111,7 +116,7 @@ export default function SkillDetail({ id }: { id: string }) {
                     {a.passed ? '✓' : '✗'}
                   </span>
                   <Link href={`/rep/${a.exerciseId}`} className="truncate hover:underline">
-                    {ex?.title ?? 'Generated rep'}
+                    {ex?.title ?? (a.exerciseId.startsWith('gen-') ? 'Generated rep' : 'Retired rep')}
                   </Link>
                   <span className="text-[12px] text-faint">
                     {a.retrievalType === 'cold' ? 'cold · ' : a.retrievalType === 'immediate-reconstruction' ? 'run back · ' : ''}
@@ -128,11 +133,11 @@ export default function SkillDetail({ id }: { id: string }) {
 
       {related.length > 0 && (
         <section className="mt-8">
-          <h2 className="text-[15px] font-semibold tracking-tight">Related problems</h2>
+          <h2 className="h2">Related problems</h2>
           <ul className="mt-2 flex flex-wrap gap-2 text-[13.5px]">
             {related.map((p) => (
               <li key={p.id}>
-                <Link href={`/rep/cap-${p.id}`} className="rounded-md border border-line px-2.5 py-1 hover:border-line-strong">
+                <Link href={`/rep/cap-${p.id}`} className="chip !h-8 !px-3">
                   {p.title}
                 </Link>
               </li>
@@ -140,6 +145,7 @@ export default function SkillDetail({ id }: { id: string }) {
           </ul>
         </section>
       )}
+      </div>
     </main>
   )
 }

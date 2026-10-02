@@ -13,7 +13,6 @@ if (process.argv.includes('--json')) {
   process.exit(0)
 }
 
-const rows = [...days, overall]
 const pad = (s: string | number, n: number) => String(s).padStart(n)
 const padR = (s: string | number, n: number) => String(s).padEnd(n)
 

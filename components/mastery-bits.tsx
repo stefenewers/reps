@@ -10,13 +10,30 @@ const MARK: Record<MasteryStatus, string> = {
   weak: '!',
 }
 
-export function StatusLabel({ status }: { status: MasteryStatus }) {
+const LABEL: Record<MasteryStatus, string> = {
+  unseen: 'Unseen',
+  introduced: 'Introduced',
+  practicing: 'Practicing',
+  competent: 'Competent',
+  fluent: 'Fluent',
+  weak: 'Needs reps',
+}
+
+export function StatusLabel({ status, compact = false }: { status: MasteryStatus; compact?: boolean }) {
+  const tone =
+    status === 'weak'
+      ? 'bg-fail-soft text-fail'
+      : status === 'fluent'
+        ? 'bg-ink text-white'
+        : status === 'competent'
+          ? 'bg-pass-soft text-pass'
+          : status === 'unseen'
+            ? 'text-faint'
+            : 'bg-surface-2 text-muted'
   return (
-    <span className={`inline-flex items-center gap-1 text-[12px] ${status === 'weak' ? 'font-medium text-fail' : status === 'fluent' ? 'text-ink' : 'text-muted'}`}>
-      <span aria-hidden="true" className="w-3 text-center">
-        {MARK[status]}
-      </span>
-      {status}
+    <span className={`inline-flex items-center gap-1 rounded-full font-medium ${compact ? 'px-1.5 text-[11px]' : 'px-2 py-0.5 text-[11.5px]'} ${tone}`}>
+      <span aria-hidden="true">{MARK[status]}</span>
+      {LABEL[status]}
     </span>
   )
 }

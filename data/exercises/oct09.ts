@@ -1,10 +1,10 @@
 import type { DayModule } from '@/lib/types'
-import { choice, output, fill, code, reorder, capstone, explain, t } from '@/data/exercises/build'
+import { output, code, write, debug, capstone, explain, t } from '@/data/exercises/build'
 
-// October 9: sorting with keys, heapq, top-k, intervals.
+// October 9: sorting with keys, heapq, top-k, intervals. Code-first: write, break, fix.
 
 const warmup = [
-  code({
+  write({
     id: 'd9-warm-word-counts',
     title: 'Warm-up: count words',
     skills: ['frequency_map', 'dict_get'],
@@ -28,7 +28,7 @@ const warmup = [
     hints: ['counts[w] = counts.get(w, 0) + 1'],
     signature: 'freq-map:count-words',
   }),
-  code({
+  write({
     id: 'd9-warm-sorted-pair',
     title: 'Warm-up: pair in a sorted list',
     skills: ['two_pointer', 'pointer_update'],
@@ -59,7 +59,7 @@ const warmup = [
     hints: ['Start one pointer at each end.', 'Too small: move left up. Too big: move right down.'],
     signature: 'two-pointer:sorted-pair',
   }),
-  code({
+  write({
     id: 'd9-warm-window-sum',
     title: 'Warm-up: best window of size k',
     skills: ['sliding_window', 'window_state'],
@@ -86,7 +86,7 @@ const warmup = [
     hints: ['Add the entering element, subtract the leaving one: nums[i] - nums[i - k].'],
     signature: 'sliding-window:fixed-max-sum',
   }),
-  code({
+  write({
     id: 'd9-warm-lower-bound',
     title: 'Warm-up: first index at least target',
     skills: ['binary_search', 'mid_calc', 'search_invariant'],
@@ -116,7 +116,7 @@ const warmup = [
     hints: ['Use hi = len(nums) so "not found" is a valid answer.', 'If nums[mid] < target the answer is right of mid; otherwise mid might be the answer, so hi = mid.'],
     signature: 'binary-search:lower-bound',
   }),
-  code({
+  write({
     id: 'd9-warm-max-depth',
     title: 'Warm-up: tree depth',
     skills: ['tree_dfs', 'recursion_base_case', 'recursion_return'],
@@ -139,7 +139,7 @@ const warmup = [
     hints: ['Base case: None has depth 0.'],
     signature: 'tree-dfs:max-depth',
   }),
-  code({
+  write({
     id: 'd9-warm-components',
     title: 'Warm-up: count components',
     skills: ['graph_adjacency', 'graph_dfs', 'connected_components', 'visited_set'],
@@ -182,17 +182,6 @@ const warmup = [
 ]
 
 const sorting = [
-  choice({
-    id: 'd9-sort-new-vs-inplace',
-    title: 'sorted() or .sort()?',
-    skills: ['sorting'],
-    prompt: "You need a sorted version of `nums` but must leave `nums` itself unchanged. Which line?",
-    options: ['nums.sort()', 'result = sorted(nums)', 'result = nums.sort()', 'sort(nums)'],
-    answer: 1,
-    note: "`sorted(seq)` returns a new list. `lst.sort()` sorts in place and returns `None`.",
-    explanation: '`sorted` copies and leaves the original alone. `.sort()` mutates and returns None, so `result = nums.sort()` stores None.',
-    signature: 'sorting:recognize-new-vs-inplace',
-  }),
   output({
     id: 'd9-sort-returns-none',
     title: 'What does .sort() return?',
@@ -201,44 +190,15 @@ const sorting = [
     code: `nums = [3, 1, 2]
 result = nums.sort()
 print(result)
-print(nums)`,
+print(nums)
+print(sorted([9, 7, 8]))`,
     expectedOutput: `None
-[1, 2, 3]`,
+[1, 2, 3]
+[7, 8, 9]`,
+    note: '`sorted(seq)` returns a new list and leaves `seq` alone. `lst.sort()` sorts in place and returns `None`. Both take `reverse=True`.',
     explanation: '`.sort()` works in place and returns None. This is the most common sorting bug in interviews.',
     important: true,
     signature: 'trace:sort-returns-none',
-  }),
-  output({
-    id: 'd9-sort-strings-reverse',
-    title: 'sorted on strings and reverse=True',
-    skills: ['sorting', 'string_methods'],
-    prompt: 'Predict the output.',
-    code: `word = 'dcab'
-print(sorted(word))
-print(''.join(sorted(word)))
-nums = [5, 2, 9]
-print(sorted(nums, reverse=True))
-print(nums)`,
-    expectedOutput: `['a', 'b', 'c', 'd']
-abcd
-[9, 5, 2]
-[5, 2, 9]`,
-    explanation: '`sorted` on a string returns a list of characters; join it back to get a string. `reverse=True` sorts descending, and `nums` is untouched.',
-    minutes: 2,
-    signature: 'trace:sorted-string-reverse',
-  }),
-  fill({
-    id: 'd9-sort-fill-reverse',
-    title: 'Sort descending into a new list',
-    skills: ['sorting'],
-    prompt: 'Fill the blank so `desc` holds the scores from highest to lowest and `scores` is unchanged.',
-    starterCode: `scores = [70, 95, 82, 61]
-desc = sorted(scores, ____)`,
-    solution: `scores = [70, 95, 82, 61]
-desc = sorted(scores, reverse=True)`,
-    tests: [t.check('desc is descending', 'assert desc == [95, 82, 70, 61]'), t.check('scores unchanged', 'assert scores == [70, 95, 82, 61]')],
-    hints: ['A keyword argument flips the order.'],
-    signature: 'sorting:fill-reverse',
   }),
   code({
     id: 'd9-sort-inplace-desc',
@@ -257,26 +217,183 @@ nums.sort(reverse=True)`,
     hints: ['`.sort()` takes the same `reverse=` keyword as `sorted`.'],
     signature: 'sorting:one-line-inplace-desc',
   }),
-  code({
-    id: 'd9-sort-top-three',
-    title: 'Three best scores',
-    skills: ['sorting', 'slicing'],
-    difficulty: 1,
+  write({
+    id: 'd9-sort-second-largest',
+    title: 'Second largest distinct value',
+    skills: ['sorting', 'set_create'],
+    difficulty: 2,
     minutes: 4,
-    prompt: 'Write `top_three(scores)` that returns the three largest scores, highest first. If there are fewer than three, return all of them, highest first. Do not modify the input.',
-    starterCode: `def top_three(scores):
+    prompt: 'Write `second_largest(nums)` that returns the second largest **distinct** value, or `None` if there are fewer than two distinct values. Use sorting.',
+    starterCode: `def second_largest(nums):
     pass`,
-    solution: `def top_three(scores):
-    return sorted(scores, reverse=True)[:3]`,
+    solution: `def second_largest(nums):
+    distinct = sorted(set(nums), reverse=True)
+    if len(distinct) < 2:
+        return None
+    return distinct[1]`,
     tests: [
-      t.eq('top_three([50, 90, 70, 80])', '[90, 80, 70]'),
-      t.eq('top_three([5])', '[5]'),
-      t.hidden('top_three([])', '[]'),
-      t.hidden('top_three([3, 3, 3, 3])', '[3, 3, 3]'),
-      t.check('input unchanged', 's = [1, 2, 3, 4]\ntop_three(s)\nassert s == [1, 2, 3, 4]', true),
+      t.eq('second_largest([4, 1, 4, 3])', '3'),
+      t.eq('second_largest([7, 7])', 'None'),
+      t.hidden('second_largest([])', 'None'),
+      t.hidden('second_largest([-1, -5])', '-5'),
     ],
-    hints: ['Sort descending, then slice.', 'Slicing past the end is safe: [1][:3] is [1].'],
-    signature: 'sorting:slice-top',
+    hints: ['Remove duplicates with set() first.', 'sorted() accepts any iterable, including a set, and returns a list.'],
+    signature: 'sorting:second-largest-distinct',
+  }),
+  write({
+    id: 'd9-sort-median',
+    title: 'Median without touching the input',
+    skills: ['sorting', 'list_index'],
+    difficulty: 2,
+    minutes: 5,
+    prompt: 'Write `median(nums)` for a non-empty list: the middle value of the sorted numbers, or the average of the two middle values when the length is even. Do not reorder the caller\'s list.',
+    starterCode: `def median(nums):
+    pass`,
+    solution: `def median(nums):
+    ordered = sorted(nums)
+    n = len(ordered)
+    mid = n // 2
+    if n % 2 == 1:
+        return ordered[mid]
+    return (ordered[mid - 1] + ordered[mid]) / 2`,
+    tests: [
+      t.eq('median([3, 1, 2])', '2'),
+      t.eq('median([4, 1, 3, 2])', '2.5'),
+      t.hidden('median([5])', '5'),
+      t.hidden('median([1, 1, 1, 9])', '1.0'),
+      t.check('input unchanged', 's = [3, 1, 2]\nmedian(s)\nassert s == [3, 1, 2]', true),
+    ],
+    hints: ['sorted() gives you a copy to index into.', 'For even n the middle pair is at n // 2 - 1 and n // 2.'],
+    signature: 'sorting:median',
+  }),
+  write({
+    id: 'd9-sort-min-gap',
+    title: 'Smallest gap between two values',
+    skills: ['sorting', 'list_index'],
+    difficulty: 2,
+    minutes: 5,
+    prompt: 'Write `min_gap(nums)` returning the smallest absolute difference between any two values (`len(nums) >= 2`). After sorting, only neighbours need comparing.',
+    starterCode: `def min_gap(nums):
+    pass`,
+    solution: `def min_gap(nums):
+    ordered = sorted(nums)
+    best = ordered[1] - ordered[0]
+    for i in range(2, len(ordered)):
+        best = min(best, ordered[i] - ordered[i - 1])
+    return best`,
+    tests: [
+      t.eq('min_gap([10, 3, 7, 1])', '2'),
+      t.eq('min_gap([5, 5])', '0'),
+      t.hidden('min_gap([-4, 9, 0, 20])', '4'),
+      t.hidden('min_gap([1, 100])', '99'),
+    ],
+    hints: ['Sort, then walk adjacent pairs i - 1, i.', 'Track the smallest difference seen.'],
+    explanation: 'Sorting turns an O(n²) all-pairs check into one O(n) pass after an O(n log n) sort.',
+    signature: 'sorting:min-adjacent-gap',
+  }),
+  debug({
+    id: 'd9-sort-dbg-assign-none',
+    title: 'Debug: consecutive run check',
+    skills: ['sorting'],
+    minutes: 3,
+    prompt: '`is_consecutive(nums)` should return `True` when the values, in some order, form a run with no gaps or repeats (like `[6, 4, 5]`). It must not reorder the caller\'s list. Run it, read the error, fix it.',
+    brokenCode: `def is_consecutive(nums):
+    ordered = nums.sort()
+    for i in range(1, len(ordered)):
+        if ordered[i] != ordered[i - 1] + 1:
+            return False
+    return True`,
+    solution: `def is_consecutive(nums):
+    ordered = sorted(nums)
+    for i in range(1, len(ordered)):
+        if ordered[i] != ordered[i - 1] + 1:
+            return False
+    return True`,
+    tests: [
+      t.eq('is_consecutive([6, 4, 5])', 'True'),
+      t.eq('is_consecutive([1, 2, 4])', 'False'),
+      t.hidden('is_consecutive([])', 'True'),
+      t.hidden('is_consecutive([2, 2, 3])', 'False'),
+      t.check('input unchanged', 's = [3, 1, 2]\nis_consecutive(s)\nassert s == [3, 1, 2]', true),
+    ],
+    hints: ['What does the right-hand side of the first line evaluate to?'],
+    explanation: '`.sort()` returns None, so `ordered` was None. `sorted(nums)` returns a new sorted list and leaves the input alone.',
+    signature: 'debug:sort-returns-none',
+  }),
+  debug({
+    id: 'd9-sort-dbg-discarded',
+    title: 'Debug: duplicate check by sorting',
+    skills: ['sorting'],
+    minutes: 3,
+    prompt: '`has_duplicate(nums)` should sort the values and then report whether any value appears twice by comparing neighbours. It gives wrong answers. Fix it.',
+    brokenCode: `def has_duplicate(nums):
+    sorted(nums)
+    for i in range(1, len(nums)):
+        if nums[i] == nums[i - 1]:
+            return True
+    return False`,
+    solution: `def has_duplicate(nums):
+    nums = sorted(nums)
+    for i in range(1, len(nums)):
+        if nums[i] == nums[i - 1]:
+            return True
+    return False`,
+    tests: [
+      t.eq('has_duplicate([3, 1, 3])', 'True'),
+      t.eq('has_duplicate([1, 2, 3])', 'False'),
+      t.hidden('has_duplicate([])', 'False'),
+      t.hidden('has_duplicate([5, 9, 2, 9, 1])', 'True'),
+    ],
+    hints: ['Where does the sorted list go?'],
+    explanation: '`sorted()` returns a new list; calling it without keeping the result does nothing. Assign it.',
+    signature: 'debug:sorted-discarded',
+  }),
+  write({
+    id: 'd9-sort-group-anagrams',
+    title: 'Group anagrams by sorted letters',
+    skills: ['sorting', 'string_methods', 'dict_assign'],
+    stage: 'combine',
+    repType: 'combine',
+    difficulty: 3,
+    minutes: 7,
+    prompt: "Write `group_anagrams(words)` returning a list of groups, where each group holds the words that are rearrangements of each other. Groups appear in the order their first word appears; words inside a group keep input order. Use `''.join(sorted(word))` as the dict key.",
+    starterCode: `def group_anagrams(words):
+    pass`,
+    solution: `def group_anagrams(words):
+    groups = {}
+    for w in words:
+        key = ''.join(sorted(w))
+        if key not in groups:
+            groups[key] = []
+        groups[key].append(w)
+    return list(groups.values())`,
+    tests: [
+      t.eq("group_anagrams(['eat', 'tea', 'tan', 'ate', 'nat', 'bat'])", "[['eat', 'tea', 'ate'], ['tan', 'nat'], ['bat']]"),
+      t.eq('group_anagrams([])', '[]'),
+      t.hidden("group_anagrams(['', 'a', ''])", "[['', ''], ['a']]"),
+      t.hidden("group_anagrams(['ab', 'ba', 'abc'])", "[['ab', 'ba'], ['abc']]"),
+    ],
+    hints: ["sorted('tea') is ['a', 'e', 't']; join it back into a string so it can be a dict key.", 'Start an empty list the first time you see a key.'],
+    explanation: 'Sorting the letters gives every anagram the same signature. Dicts keep insertion order, so groups come out in first-seen order.',
+    signature: 'sorting:group-anagrams',
+  }),
+]
+
+const keys = [
+  output({
+    id: 'd9-key-len-stable',
+    title: 'Sorting by length, with ties',
+    skills: ['sort_key'],
+    prompt: 'Predict the output. Python sorting is **stable**: items with equal keys keep their original order.',
+    code: `words = ['pear', 'fig', 'banana', 'kiwi']
+print(sorted(words, key=len))
+print(sorted(words, key=len, reverse=True))`,
+    expectedOutput: `['fig', 'pear', 'kiwi', 'banana']
+['banana', 'pear', 'kiwi', 'fig']`,
+    note: '`key` is a function applied to each item; items are ordered by its result, but the items themselves are returned. `key=lambda x: ...` for anything custom.',
+    explanation: "'pear' and 'kiwi' both have length 4, so they stay in input order, even with reverse=True.",
+    minutes: 2,
+    signature: 'trace:sort-key-len',
   }),
   output({
     id: 'd9-sort-tuples',
@@ -288,92 +405,10 @@ print(sorted(pairs))
 print(max(pairs))`,
     expectedOutput: `[(1, 'z'), (2, 'a'), (2, 'b')]
 (2, 'b')`,
-    note: 'Tuples compare element by element: first items, and only on a tie the second items.',
-    explanation: 'Tuples compare left to right. (2, "a") < (2, "b") because the first items tie and "a" < "b". This is why heaps of (priority, item) tuples work.',
+    note: 'Tuples compare element by element: first items, and only on a tie the second items. So a key can return a tuple: `key=lambda p: (primary, tiebreak)`; negate a number to make just that part descending.',
+    explanation: 'Tuples compare left to right. (2, "a") < (2, "b") because the first items tie and "a" < "b". This is why tuple keys and heaps of (priority, item) tuples work.',
     important: true,
     signature: 'trace:sort-tuples',
-  }),
-  code({
-    id: 'd9-sort-anagram',
-    title: 'Anagram check by sorting',
-    skills: ['sorting', 'string_methods'],
-    stage: 'combine',
-    repType: 'combine',
-    difficulty: 2,
-    minutes: 4,
-    prompt: 'Write `same_letters(a, b)` that returns `True` if `b` is a rearrangement of `a`. Use sorting, not a dict.',
-    starterCode: `def same_letters(a, b):
-    pass`,
-    solution: `def same_letters(a, b):
-    return sorted(a) == sorted(b)`,
-    tests: [
-      t.eq("same_letters('listen', 'silent')", 'True'),
-      t.eq("same_letters('rat', 'car')", 'False'),
-      t.hidden("same_letters('', '')", 'True'),
-      t.hidden("same_letters('aab', 'abb')", 'False'),
-      t.hidden("same_letters('ab', 'abc')", 'False'),
-    ],
-    hints: ['Two strings are rearrangements of each other exactly when their sorted characters match.'],
-    explanation: 'Sorting costs O(n log n) versus O(n) for a frequency map, but it is a one-liner and easy to explain.',
-    signature: 'sorting:anagram',
-  }),
-]
-
-const keys = [
-  choice({
-    id: 'd9-key-len',
-    title: 'What does key= do?',
-    skills: ['sort_key'],
-    prompt: 'What does `sorted(words, key=len)` sort by?',
-    options: [
-      'Alphabetical order, then length',
-      'The length of each word, shortest first',
-      'The length of each word, longest first',
-      'It returns the lengths, sorted',
-    ],
-    answer: 1,
-    note: '`key` is a function applied to each item; items are ordered by its result. The items themselves are returned, not the keys.',
-    explanation: 'key=len means "compare len(w) instead of w". The result still contains the words.',
-    signature: 'sort-key:recognize-len',
-  }),
-  output({
-    id: 'd9-key-len-stable',
-    title: 'Sorting by length, with ties',
-    skills: ['sort_key'],
-    prompt: 'Predict the output. Python sorting is **stable**: items with equal keys keep their original order.',
-    code: `words = ['pear', 'fig', 'banana', 'kiwi']
-print(sorted(words, key=len))
-print(sorted(words, key=len, reverse=True))`,
-    expectedOutput: `['fig', 'pear', 'kiwi', 'banana']
-['banana', 'pear', 'kiwi', 'fig']`,
-    explanation: "'pear' and 'kiwi' both have length 4, so they stay in input order, even with reverse=True.",
-    minutes: 2,
-    signature: 'trace:sort-key-len',
-  }),
-  output({
-    id: 'd9-key-abs',
-    title: 'Sorting by absolute value',
-    skills: ['sort_key'],
-    prompt: 'Predict the output.',
-    code: `print(sorted([-4, 1, -2, 3], key=abs))`,
-    expectedOutput: `[1, -2, 3, -4]`,
-    explanation: 'Any one-argument function works as a key, including built-ins like abs.',
-    minutes: 1,
-    signature: 'trace:sort-key-abs',
-  }),
-  fill({
-    id: 'd9-key-second',
-    title: 'Sort pairs by the second item',
-    skills: ['sort_key', 'tuples'],
-    prompt: 'Fill the blank so the pairs are ordered by their number (the second item), smallest first.',
-    starterCode: `pairs = [('a', 3), ('b', 1), ('c', 2)]
-by_second = sorted(pairs, key=____)`,
-    solution: `pairs = [('a', 3), ('b', 1), ('c', 2)]
-by_second = sorted(pairs, key=lambda p: p[1])`,
-    tests: [t.check('ordered by second item', "assert by_second == [('b', 1), ('c', 2), ('a', 3)]")],
-    hints: ['A lambda that takes one pair and returns the part to compare.', 'lambda p: p[...]'],
-    important: true,
-    signature: 'sort-key:fill-second',
   }),
   code({
     id: 'd9-key-age-desc',
@@ -389,34 +424,16 @@ by_second = sorted(pairs, key=lambda p: p[1])`,
     solution: `people = [('ana', 31), ('ben', 19), ('cy', 45)]
 people.sort(key=lambda p: p[1], reverse=True)`,
     tests: [t.check('oldest first', "assert people == [('cy', 45), ('ana', 31), ('ben', 19)]")],
-    hints: ['.sort(key=..., reverse=True)'],
+    hints: ['.sort(key=lambda p: ..., reverse=True)'],
+    important: true,
     signature: 'sort-key:one-line-inplace-second-desc',
   }),
-  output({
-    id: 'd9-key-tuple-trace',
-    title: 'Tuple keys: descending score, then name',
-    skills: ['sort_key', 'tuples'],
-    prompt: 'Predict the output. The key returns a tuple; negating the score flips that part to descending.',
-    code: `scores = [('ann', 90), ('bob', 85), ('cat', 90), ('dan', 70)]
-ranked = sorted(scores, key=lambda p: (-p[1], p[0]))
-for name, s in ranked:
-    print(name, s)`,
-    expectedOutput: `ann 90
-cat 90
-bob 85
-dan 70`,
-    note: 'key=lambda x: (primary, secondary). Negate a number to make just that part descending.',
-    explanation: 'The tuple (-90, "ann") < (-90, "cat") < (-85, "bob"): highest score first, ties alphabetical.',
-    important: true,
-    minutes: 2,
-    signature: 'trace:sort-key-tuple',
-  }),
-  code({
+  write({
     id: 'd9-key-len-then-alpha',
     title: 'Shortest words first, ties alphabetical',
     skills: ['sort_key', 'tuples'],
     difficulty: 2,
-    minutes: 4,
+    minutes: 3,
     prompt: 'Write `order_words(words)` that returns the words sorted by length (shortest first), with equal-length words in alphabetical order.',
     starterCode: `def order_words(words):
     pass`,
@@ -430,6 +447,48 @@ dan 70`,
     hints: ['Return a tuple from the key: the first thing to compare, then the tie-breaker.'],
     signature: 'sort-key:tuple-two-ascending',
   }),
+  write({
+    id: 'd9-key-records',
+    title: 'Names by age, then name',
+    skills: ['sort_key', 'dict_lookup', 'list_comprehension'],
+    difficulty: 2,
+    minutes: 3.5,
+    prompt: "`people` is a list of dicts like `{'name': 'ana', 'age': 31}`. Write `names_by_age(people)` that returns just the names, youngest first; people of the same age go alphabetically.",
+    starterCode: `def names_by_age(people):
+    pass`,
+    solution: `def names_by_age(people):
+    ordered = sorted(people, key=lambda p: (p['age'], p['name']))
+    return [p['name'] for p in ordered]`,
+    tests: [
+      t.eq("names_by_age([{'name': 'cy', 'age': 40}, {'name': 'bo', 'age': 22}, {'name': 'al', 'age': 40}])", "['bo', 'al', 'cy']"),
+      t.eq('names_by_age([])', '[]'),
+      t.hidden("names_by_age([{'name': 'z', 'age': 1}])", "['z']"),
+    ],
+    hints: ["The key can read dict fields: lambda p: (p['age'], p['name']).", 'Sort the dicts, then pull out the names with a comprehension.'],
+    signature: 'sort-key:records-then-project',
+  }),
+  write({
+    id: 'd9-key-distance',
+    title: 'Points by distance, with a named key',
+    skills: ['sort_key', 'functions'],
+    difficulty: 2,
+    minutes: 4,
+    prompt: 'Write `by_distance(points)` that returns the `[x, y]` points sorted by distance from `(0, 0)`, closest first. This time define a small helper `dist(p)` inside the function that returns `x*x + y*y`, and pass it as `key=dist` (no lambda). Equal distances keep input order.',
+    starterCode: `def by_distance(points):
+    pass`,
+    solution: `def by_distance(points):
+    def dist(p):
+        return p[0] * p[0] + p[1] * p[1]
+    return sorted(points, key=dist)`,
+    tests: [
+      t.eq('by_distance([[3, 3], [1, 0], [-2, 1]])', '[[1, 0], [-2, 1], [3, 3]]'),
+      t.eq('by_distance([])', '[]'),
+      t.hidden('by_distance([[0, 2], [2, 0], [0, 0]])', '[[0, 0], [0, 2], [2, 0]]'),
+    ],
+    hints: ['key= takes any one-argument function, not just a lambda.', 'Pass the function itself: key=dist, not key=dist(p).'],
+    explanation: 'Squared distance preserves order and avoids floats. Sorting is stable, so ties stay in input order.',
+    signature: 'sort-key:named-key-function',
+  }),
   code({
     id: 'd9-key-dict-by-value',
     title: 'Dict keys by value, highest first',
@@ -437,7 +496,7 @@ dan 70`,
     stage: 'combine',
     repType: 'combine',
     difficulty: 2,
-    minutes: 5,
+    minutes: 3.5,
     prompt: '`counts` maps names to numbers. Write `by_value_desc(counts)` that returns the **keys** ordered by their value, largest first. Break ties alphabetically by key.',
     starterCode: `def by_value_desc(counts):
     pass`,
@@ -448,59 +507,60 @@ dan 70`,
       t.eq('by_value_desc({})', '[]'),
       t.hidden("by_value_desc({'z': 2, 'y': 2, 'x': 9})", "['x', 'y', 'z']"),
     ],
-    hints: ['Iterating (or sorting) a dict gives its keys.', 'The key function can look up counts[name].', 'Use (-counts[name], name) for "value descending, then key".'],
+    hints: ['Sorting a dict gives its keys.', 'The key function can look up counts[name].', 'Use (-counts[name], name) for "value descending, then key".'],
     important: true,
     signature: 'sort-key:dict-by-value',
   }),
-  code({
-    id: 'd9-key-distance',
-    title: 'Points by distance from origin',
-    skills: ['sort_key'],
-    stage: 'combine',
-    repType: 'combine',
-    difficulty: 2,
-    minutes: 5,
-    prompt: 'Write `by_distance(points)` that returns the `[x, y]` points sorted by distance from `(0, 0)`, closest first. You do not need a square root: comparing `x*x + y*y` gives the same order. Points at equal distance keep their input order.',
-    starterCode: `def by_distance(points):
-    pass`,
-    solution: `def by_distance(points):
-    return sorted(points, key=lambda p: p[0] * p[0] + p[1] * p[1])`,
+  debug({
+    id: 'd9-key-dbg-wrong-index',
+    title: 'Debug: rank by score',
+    skills: ['sort_key', 'tuples'],
+    minutes: 3,
+    prompt: '`by_score(results)` takes `(name, score)` pairs and should return the names ordered by score, lowest first. Fix it.',
+    brokenCode: `def by_score(results):
+    ordered = sorted(results, key=lambda r: r[0])
+    return [name for name, score in ordered]`,
+    solution: `def by_score(results):
+    ordered = sorted(results, key=lambda r: r[1])
+    return [name for name, score in ordered]`,
     tests: [
-      t.eq('by_distance([[3, 3], [1, 0], [-2, 1]])', '[[1, 0], [-2, 1], [3, 3]]'),
-      t.eq('by_distance([])', '[]'),
-      t.hidden('by_distance([[0, 2], [2, 0], [0, 0]])', '[[0, 0], [0, 2], [2, 0]]'),
+      t.eq("by_score([('zed', 1), ('amy', 9), ('kim', 5)])", "['zed', 'kim', 'amy']"),
+      t.eq('by_score([])', '[]'),
+      t.hidden("by_score([('b', -2), ('a', 3)])", "['b', 'a']"),
     ],
-    hints: ['The key computes a number from each point.', 'lambda p: p[0] * p[0] + p[1] * p[1]'],
-    explanation: 'Squared distance preserves order and avoids floats. Sorting is stable, so ties stay in input order.',
-    signature: 'sort-key:computed-distance',
+    hints: ['Which part of each pair is the key comparing?'],
+    signature: 'debug:sort-key-wrong-index',
+  }),
+  debug({
+    id: 'd9-key-dbg-reverse-ties',
+    title: 'Debug: leaderboard ties',
+    skills: ['sort_key', 'tuples'],
+    minutes: 3.5,
+    prompt: '`leaderboard(scores)` takes `(name, points)` pairs and should return them highest points first; players with equal points must be listed A to Z. Fix it.',
+    brokenCode: `def leaderboard(scores):
+    return sorted(scores, key=lambda p: (p[1], p[0]), reverse=True)`,
+    solution: `def leaderboard(scores):
+    return sorted(scores, key=lambda p: (-p[1], p[0]))`,
+    tests: [
+      t.eq("leaderboard([('bo', 5), ('al', 5), ('cy', 9)])", "[('cy', 9), ('al', 5), ('bo', 5)]"),
+      t.eq('leaderboard([])', '[]'),
+      t.hidden("leaderboard([('x', 1), ('w', 1), ('v', 1)])", "[('v', 1), ('w', 1), ('x', 1)]"),
+    ],
+    hints: ['reverse=True flips every part of the tuple, including the tie-breaker.', 'Make only the points descending.'],
+    explanation: 'reverse=True reverses the whole comparison. To mix directions, negate the numeric part of the key and leave reverse off.',
+    signature: 'debug:sort-key-reverse-ties',
   }),
 ]
 
 const freqSort = [
-  output({
-    id: 'd9-freq-sort-trace',
-    title: 'Count, then sort the counts',
-    skills: ['frequency_map', 'sort_key', 'dict_items'],
-    prompt: 'Predict the output.',
-    code: `counts = {}
-for ch in 'banana':
-    counts[ch] = counts.get(ch, 0) + 1
-print(counts)
-print(sorted(counts.items(), key=lambda kv: kv[1], reverse=True))`,
-    expectedOutput: `{'b': 1, 'a': 3, 'n': 2}
-[('a', 3), ('n', 2), ('b', 1)]`,
-    explanation: 'Dicts keep insertion order. `.items()` gives (key, value) pairs, and kv[1] sorts by the count.',
-    minutes: 2,
-    signature: 'trace:freq-then-sort',
-  }),
-  code({
+  write({
     id: 'd9-freq-most-common',
     title: 'Most common character',
     skills: ['frequency_map', 'sort_key'],
     stage: 'combine',
     repType: 'combine',
     difficulty: 2,
-    minutes: 6,
+    minutes: 5,
     prompt: 'Write `most_common(s)` that returns the character that appears most often in the non-empty string `s`. If several tie, return the alphabetically smallest of them.',
     starterCode: `def most_common(s):
     pass`,
@@ -519,36 +579,65 @@ print(sorted(counts.items(), key=lambda kv: kv[1], reverse=True))`,
     explanation: 'min(..., key=...) avoids sorting the whole dict: O(n) instead of O(n log n).',
     signature: 'freq-sort:most-common',
   }),
-  reorder({
-    id: 'd9-freq-topk-reorder',
-    title: 'Rebuild: top k by sorting',
+  write({
+    id: 'd9-freq-topk-by-sort',
+    title: 'Top k by sorting the counts',
     skills: ['frequency_map', 'sort_key', 'slicing'],
-    prompt: 'Put the lines in order: `top_k_by_sort(nums, k)` returns the `k` most frequent values.',
-    lines: [
-      'def top_k_by_sort(nums, k):',
-      '    counts = {}',
-      '    for x in nums:',
-      '        counts[x] = counts.get(x, 0) + 1',
-      '    ordered = sorted(counts, key=lambda x: counts[x], reverse=True)',
-      '    return ordered[:k]',
-    ],
+    difficulty: 2,
+    minutes: 5,
+    prompt: 'Write `top_k_by_sort(nums, k)` returning the `k` most frequent values, most frequent first (counts are distinct in the tests). Count with a dict, then sort its keys by count. This is the O(n log n) baseline; the heap version comes later today.',
+    starterCode: `def top_k_by_sort(nums, k):
+    pass`,
+    solution: `def top_k_by_sort(nums, k):
+    counts = {}
+    for x in nums:
+        counts[x] = counts.get(x, 0) + 1
+    ordered = sorted(counts, key=lambda x: counts[x], reverse=True)
+    return ordered[:k]`,
     tests: [
-      t.eq('top_k_by_sort([4, 4, 4, 2, 2, 9], 2)', '[4, 2]', { compare: 'unordered' }),
+      t.eq('top_k_by_sort([4, 4, 4, 2, 2, 9], 2)', '[4, 2]'),
       t.eq('top_k_by_sort([7], 1)', '[7]'),
+      t.hidden('top_k_by_sort([1, 2, 2, 3, 3, 3], 3)', '[3, 2, 1]'),
+      t.hidden('top_k_by_sort([], 0)', '[]'),
     ],
-    explanation: 'This sort-based version is O(n log n). The heap version later today brings it to O(n log k).',
-    minutes: 4,
+    hints: ['Two phases: count, then order the distinct values.', 'sorted(counts, key=lambda x: counts[x], reverse=True)'],
     important: true,
-    signature: 'freq-sort:top-k-reorder',
+    signature: 'freq-sort:top-k-by-sort',
   }),
-  code({
+  debug({
+    id: 'd9-freq-dbg-pairs',
+    title: 'Debug: most frequent values',
+    skills: ['frequency_map', 'sort_key', 'dict_items'],
+    minutes: 3.5,
+    prompt: '`most_frequent(nums, k)` should return a list of the `k` most frequent **values**, most frequent first. Fix it.',
+    brokenCode: `def most_frequent(nums, k):
+    counts = {}
+    for x in nums:
+        counts[x] = counts.get(x, 0) + 1
+    ordered = sorted(counts.items(), key=lambda kv: kv[1], reverse=True)
+    return ordered[:k]`,
+    solution: `def most_frequent(nums, k):
+    counts = {}
+    for x in nums:
+        counts[x] = counts.get(x, 0) + 1
+    ordered = sorted(counts.items(), key=lambda kv: kv[1], reverse=True)
+    return [x for x, c in ordered[:k]]`,
+    tests: [
+      t.eq('most_frequent([4, 4, 4, 2, 2, 9], 2)', '[4, 2]'),
+      t.eq('most_frequent([8], 1)', '[8]'),
+      t.hidden('most_frequent([1, 3, 3], 1)', '[3]'),
+    ],
+    hints: ['Look at what .items() gives you, and what the caller wants back.'],
+    signature: 'debug:freq-sort-returns-pairs',
+  }),
+  write({
     id: 'd9-freq-sort-chars',
     title: 'Rebuild a string by frequency',
     skills: ['frequency_map', 'sort_key'],
     stage: 'combine',
     repType: 'combine',
     difficulty: 3,
-    minutes: 9,
+    minutes: 7,
     prompt: "Write `by_frequency(s)` that returns a string with the same characters as `s`, grouped so the most frequent character comes first. Ties go alphabetically. Example: `'tree'` gives `'eert'`.",
     starterCode: `def by_frequency(s):
     pass`,
@@ -570,18 +659,6 @@ print(sorted(counts.items(), key=lambda kv: kv[1], reverse=True))`,
 ]
 
 const heapBasics = [
-  choice({
-    id: 'd9-heap-min-root',
-    title: 'What lives at heap[0]?',
-    skills: ['heap_push_pop'],
-    prompt: 'After any sequence of `heapq.heappush` calls on a list `h`, what is always true?',
-    options: ['h is sorted ascending', 'h[0] is the smallest item', 'h[-1] is the largest item', 'h[0] is the most recently pushed item'],
-    answer: 1,
-    note: '`import heapq`. A heap is a plain list where h[0] is always the minimum. heappush and heappop are O(log n); peeking at h[0] is O(1).',
-    explanation: 'heapq maintains the min-heap property: each parent is <= its children. Only h[0] is guaranteed; the rest is partially ordered.',
-    important: true,
-    signature: 'heap:recognize-min-root',
-  }),
   output({
     id: 'd9-heap-push-trace',
     title: 'Pushing onto a heap',
@@ -592,67 +669,19 @@ h = []
 for x in [5, 2, 8, 1]:
     heapq.heappush(h, x)
 print(h[0])
-print(len(h))`,
-    expectedOutput: `1
-4`,
-    explanation: 'Peeking at h[0] does not remove it. len(h) still counts all four items.',
-    signature: 'trace:heap-push-peek',
-  }),
-  output({
-    id: 'd9-heap-heapify-pop',
-    title: 'heapify, then pop',
-    skills: ['heap_push_pop'],
-    prompt: 'Predict the output.',
-    code: `import heapq
-h = [7, 3, 9, 1, 4]
-heapq.heapify(h)
 print(heapq.heappop(h))
 print(heapq.heappop(h))
-print(h[0])
 print(len(h))`,
     expectedOutput: `1
-3
-4
-3`,
-    note: '`heapq.heapify(lst)` rearranges an existing list into a heap in place, in O(n). It returns None.',
-    explanation: 'Each heappop removes and returns the current smallest, so pops come out in ascending order.',
-    minutes: 2,
-    signature: 'trace:heapify-pop',
-  }),
-  choice({
-    id: 'd9-heap-not-sorted',
-    title: 'Is a heap sorted?',
-    skills: ['heap_push_pop'],
-    prompt: 'What can you rely on after this runs?',
-    code: `import heapq
-h = [5, 4, 3, 2, 1]
-heapq.heapify(h)`,
-    options: ['h == [1, 2, 3, 4, 5]', 'h[0] == 1, and the rest is only partly ordered', 'h[-1] == 5', 'heapify returned a new sorted list'],
-    answer: 1,
-    explanation: 'Never index a heap beyond h[0] expecting sorted order. To get items in order, pop them.',
-    signature: 'heap:recognize-partial-order',
-  }),
-  fill({
-    id: 'd9-heap-fill-push-peek',
-    title: 'Push, then peek',
-    skills: ['heap_push_pop'],
-    prompt: 'Fill both blanks: push every value onto `h`, then read the smallest without removing it.',
-    starterCode: `import heapq
-h = []
-for x in [6, 2, 9]:
-    heapq.____(h, x)
-smallest = ____`,
-    solution: `import heapq
-h = []
-for x in [6, 2, 9]:
-    heapq.heappush(h, x)
-smallest = h[0]`,
-    tests: [t.check('all pushed', 'assert sorted(h) == [2, 6, 9]'), t.check('peeked', 'assert smallest == 2 and len(h) == 3')],
-    hints: ['heappush(heap, item). Peek is plain indexing.'],
+1
+2
+2`,
+    note: '`import heapq`. A heap is a plain list where h[0] is always the minimum; the rest is only partly ordered. heappush / heappop are O(log n); h[0] peeks in O(1); heapify(lst) works in place and returns None.',
+    explanation: 'h[0] peeks without removing. Each heappop removes the current smallest, so pops come out in ascending order.',
     important: true,
-    signature: 'heap:fill-push-peek',
+    signature: 'trace:heap-push-pop',
   }),
-  code({
+  write({
     id: 'd9-heap-smallest-k',
     title: 'k smallest by popping',
     skills: ['heap_push_pop'],
@@ -679,19 +708,17 @@ def smallest_k(nums, k):
       t.hidden('smallest_k([-5, 0, -9], 3)', '[-9, -5, 0]'),
       t.check('input unchanged', 's = [3, 1, 2]\nsmallest_k(s, 1)\nassert s == [3, 1, 2]', true),
     ],
-    hints: ['nums[:] makes a copy.', 'heapify the copy, then heappop k times.'],
+    hints: ['nums[:] makes a copy.', 'heapify the copy (it returns None), then heappop k times.'],
     signature: 'heap:pop-k-smallest',
   }),
-  code({
+  write({
     id: 'd9-heap-sort',
     title: 'Heap sort with push and pop',
     skills: ['heap_push_pop'],
     difficulty: 2,
     minutes: 5,
-    prompt: 'Write `heap_sort(nums)` that returns a new ascending list by pushing every value onto an empty heap, then popping until it is empty. No `sorted` or `.sort()`.',
-    starterCode: `import heapq
-
-def heap_sort(nums):
+    prompt: 'Write `heap_sort(nums)` that returns a new ascending list by pushing every value onto an empty heap, then popping until it is empty. No `sorted` or `.sort()`. Nothing is pre-imported.',
+    starterCode: `def heap_sort(nums):
     pass`,
     solution: `import heapq
 
@@ -708,41 +735,53 @@ def heap_sort(nums):
       t.eq('heap_sort([])', '[]'),
       t.hidden('heap_sort([5, -1, 5, 0])', '[-1, 0, 5, 5]'),
     ],
-    hints: ['Two loops: one pushing, one popping while h is non-empty.'],
+    hints: ['import heapq first.', 'Two loops: one pushing, one popping while h is non-empty.'],
     explanation: 'n pushes and n pops at O(log n) each: O(n log n) total.',
     signature: 'heap:push-all-pop-all',
   }),
-  output({
-    id: 'd9-heap-tuples',
-    title: 'Heap of (priority, name) tuples',
-    skills: ['heap_push_pop', 'tuples'],
-    prompt: 'Predict the output.',
-    code: `import heapq
-tasks = []
-heapq.heappush(tasks, (2, 'email'))
-heapq.heappush(tasks, (1, 'deploy'))
-heapq.heappush(tasks, (2, 'call'))
-while tasks:
-    priority, name = heapq.heappop(tasks)
-    print(priority, name)`,
-    expectedOutput: `1 deploy
-2 call
-2 email`,
-    note: 'Push tuples to order by the first item; later items break ties.',
-    explanation: 'Tuples compare by priority first, then name, so (2, "call") pops before (2, "email").',
-    important: true,
-    minutes: 2,
-    signature: 'trace:heap-tuples',
+  write({
+    id: 'd9-heap-ropes',
+    title: 'Join ropes as cheaply as possible',
+    skills: ['heap_push_pop', 'while_loop'],
+    stage: 'combine',
+    repType: 'combine',
+    difficulty: 3,
+    minutes: 7,
+    prompt: 'Joining two ropes of lengths `a` and `b` costs `a + b` and gives one rope of length `a + b`. Write `join_cost(lengths)` returning the cheapest total cost to join all ropes into one. Always joining the two shortest ropes is optimal. One rope or none costs 0.',
+    starterCode: `def join_cost(lengths):
+    pass`,
+    solution: `import heapq
+
+def join_cost(lengths):
+    h = list(lengths)
+    heapq.heapify(h)
+    total = 0
+    while len(h) > 1:
+        a = heapq.heappop(h)
+        b = heapq.heappop(h)
+        total += a + b
+        heapq.heappush(h, a + b)
+    return total`,
+    tests: [
+      t.eq('join_cost([4, 3, 2, 6])', '29'),
+      t.eq('join_cost([5])', '0'),
+      t.hidden('join_cost([])', '0'),
+      t.hidden('join_cost([1, 1, 1, 1])', '8'),
+      t.hidden('join_cost([10, 1])', '11'),
+    ],
+    hints: ['You repeatedly need the two smallest: a min-heap.', 'Pop two, add their sum to the total, push the sum back.', 'Stop when one rope is left: while len(h) > 1.'],
+    explanation: 'Each round is O(log n) and removes one rope, so O(n log n) total.',
+    signature: 'heap:min-heap-simulation',
   }),
-  code({
+  write({
     id: 'd9-heap-run-order',
     title: 'Run tasks by priority',
     skills: ['heap_push_pop', 'tuples'],
     stage: 'combine',
     repType: 'combine',
     difficulty: 2,
-    minutes: 7,
-    prompt: '`tasks` is a list of `(priority, name)` tuples; a lower number runs first, and equal priorities run alphabetically. Write `run_order(tasks)` that returns the names in run order using a heap.',
+    minutes: 6,
+    prompt: '`tasks` is a list of `(priority, name)` tuples; a lower number runs first, and equal priorities run alphabetically. Write `run_order(tasks)` that returns the names in run order using a heap (tuples in a heap compare like tuples anywhere else).',
     starterCode: `def run_order(tasks):
     pass`,
     solution: `import heapq
@@ -763,26 +802,36 @@ def run_order(tasks):
     hints: ['Remember: nothing is pre-imported. You need import heapq.', 'Copy, heapify, pop while non-empty, keep only the name.'],
     signature: 'heap:priority-order',
   }),
+  debug({
+    id: 'd9-heap-dbg-slice',
+    title: 'Debug: three smallest',
+    skills: ['heap_push_pop'],
+    minutes: 3,
+    prompt: '`three_smallest(nums)` should return the three smallest values in ascending order (`len(nums) >= 3`) without changing `nums`. Fix it.',
+    brokenCode: `import heapq
+
+def three_smallest(nums):
+    h = nums[:]
+    heapq.heapify(h)
+    return h[:3]`,
+    solution: `import heapq
+
+def three_smallest(nums):
+    h = nums[:]
+    heapq.heapify(h)
+    return [heapq.heappop(h) for _ in range(3)]`,
+    tests: [
+      t.eq('three_smallest([1, 5, 2, 6, 7, 3, 4])', '[1, 2, 3]'),
+      t.eq('three_smallest([5, 4, 3, 2, 1])', '[1, 2, 3]'),
+      t.hidden('three_smallest([9, 9, 9])', '[9, 9, 9]'),
+    ],
+    hints: ['Which positions of a heap are guaranteed to be in order?'],
+    explanation: 'Only h[0] is guaranteed. A heap is not a sorted list; to read items in order you pop them.',
+    signature: 'debug:heap-not-sorted',
+  }),
 ]
 
 const maxHeap = [
-  choice({
-    id: 'd9-maxheap-negate',
-    title: 'Max-heap in Python',
-    skills: ['heap_push_pop'],
-    prompt: '`heapq` only gives a min-heap. How do you get the largest item out first?',
-    options: [
-      'heapq.heappush(h, x, reverse=True)',
-      'Push -x, and negate again when you pop',
-      'Use heapq.heappop(h[::-1])',
-      'Pop from the end with h.pop()',
-    ],
-    answer: 1,
-    note: 'Max-heap trick: heappush(h, -x); largest = -heappop(h).',
-    explanation: 'Negating flips the order, so the most negative value (the original largest) sits at h[0].',
-    important: true,
-    signature: 'heap:recognize-negation',
-  }),
   output({
     id: 'd9-maxheap-trace',
     title: 'Negation trace',
@@ -793,35 +842,18 @@ h = []
 for x in [3, 10, 6]:
     heapq.heappush(h, -x)
 print(h[0])
-print(-h[0])
 print(-heapq.heappop(h))
 print(-heapq.heappop(h))`,
     expectedOutput: `-10
 10
-10
 6`,
+    note: 'heapq only has a min-heap. Max-heap trick: heappush(h, -x); largest = -heappop(h).',
     explanation: 'The heap stores -10, -6, -3. h[0] is -10; negating it gives back the original maximum.',
+    important: true,
     minutes: 2,
     signature: 'trace:max-heap-negation',
   }),
-  fill({
-    id: 'd9-maxheap-fill',
-    title: 'Pop the largest',
-    skills: ['heap_push_pop'],
-    prompt: 'The heap stores negated values. Fill the blank so `largest` is the original largest number (11).',
-    starterCode: `import heapq
-h = [-x for x in [4, 11, 7]]
-heapq.heapify(h)
-largest = ____`,
-    solution: `import heapq
-h = [-x for x in [4, 11, 7]]
-heapq.heapify(h)
-largest = -heapq.heappop(h)`,
-    tests: [t.check('largest restored', 'assert largest == 11'), t.check('popped', 'assert len(h) == 2')],
-    hints: ['Pop, then undo the negation.'],
-    signature: 'heap:fill-negated-pop',
-  }),
-  code({
+  write({
     id: 'd9-maxheap-k-largest-desc',
     title: 'k largest, biggest first',
     skills: ['heap_push_pop'],
@@ -843,16 +875,54 @@ def largest_first(nums, k):
       t.hidden('largest_first([-1, -7, -3], 2)', '[-1, -3]'),
     ],
     hints: ['Build the negated list with a comprehension, then heapify.', 'Negate each popped value back.'],
+    important: true,
     signature: 'heap:negated-pop-k',
   }),
-  code({
+  debug({
+    id: 'd9-maxheap-dbg-no-negate',
+    title: 'Debug: heaviest items',
+    skills: ['heap_push_pop', 'tuples'],
+    minutes: 4,
+    prompt: '`heaviest(items, k)` takes `(weight, name)` pairs and should return the names of the `k` heaviest items, heaviest first. Fix it.',
+    brokenCode: `import heapq
+
+def heaviest(items, k):
+    h = []
+    for weight, name in items:
+        heapq.heappush(h, (weight, name))
+    out = []
+    for _ in range(k):
+        weight, name = heapq.heappop(h)
+        out.append(name)
+    return out`,
+    solution: `import heapq
+
+def heaviest(items, k):
+    h = []
+    for weight, name in items:
+        heapq.heappush(h, (-weight, name))
+    out = []
+    for _ in range(k):
+        weight, name = heapq.heappop(h)
+        out.append(name)
+    return out`,
+    tests: [
+      t.eq("heaviest([(3, 'box'), (9, 'piano'), (5, 'desk')], 2)", "['piano', 'desk']"),
+      t.eq("heaviest([(1, 'pen')], 1)", "['pen']"),
+      t.hidden("heaviest([(2, 'a'), (8, 'b'), (4, 'c'), (6, 'd')], 3)", "['b', 'd', 'c']"),
+    ],
+    hints: ['heapq always pops the smallest. What do you want popped first?'],
+    explanation: 'Negating the priority turns the min-heap into a max-heap on weight. Only the name is used afterwards, so nothing needs un-negating.',
+    signature: 'debug:max-heap-without-negation',
+  }),
+  write({
     id: 'd9-maxheap-smash',
     title: 'Smash the two heaviest',
     skills: ['heap_push_pop', 'while_loop'],
     stage: 'combine',
     repType: 'combine',
     difficulty: 3,
-    minutes: 10,
+    minutes: 9,
     prompt: 'You have rocks with positive weights. Repeatedly take the two heaviest. If they weigh the same, both vanish. Otherwise the lighter vanishes and the heavier one goes back with weight `heavier - lighter`. Write `last_rock(weights)` returning the weight of the rock left at the end, or `0` if none are left.',
     starterCode: `def last_rock(weights):
     pass`,
@@ -880,29 +950,12 @@ def last_rock(weights):
       'Pop two, negate back, push -(a - b) if they differ.',
       'Loop while len(h) > 1; return -h[0] if anything remains, else 0.',
     ],
-    explanation: 'Each round is O(log n) and removes at least one rock, so O(n log n) total.',
+    explanation: 'Same shape as joining ropes, mirrored: a max-heap via negation. Each round is O(log n) and removes at least one rock.',
     signature: 'heap:max-heap-simulation',
   }),
 ]
 
 const topK = [
-  choice({
-    id: 'd9-topk-which-heap',
-    title: 'Keeping the k largest',
-    skills: ['top_k', 'heap_push_pop'],
-    prompt: 'You scan numbers one by one and want to keep only the `k` largest seen so far, in a heap of size `k`. Which heap, and what do you pop when it grows to `k + 1`?',
-    options: [
-      'A max-heap; pop the largest',
-      'A min-heap; pop the smallest',
-      'A min-heap; pop the largest',
-      'A max-heap; pop the smallest',
-    ],
-    answer: 1,
-    note: 'Top-k largest: min-heap of size k. Push each x; if len(heap) > k: heappop. Then heap[0] is the k-th largest.',
-    explanation: 'The min-heap root is the weakest of the current top k, exactly the one to evict. Each step costs O(log k).',
-    important: true,
-    signature: 'top-k:recognize-min-heap-size-k',
-  }),
   output({
     id: 'd9-topk-trace',
     title: 'Size-k heap trace',
@@ -919,36 +972,11 @@ print(sorted(heap))
 print(heap[0])`,
     expectedOutput: `[6, 7]
 6`,
+    note: 'Top-k largest: a min-heap of size k. Push each x; if len(heap) > k: heappop. The root is the weakest of the current top k, so heap[0] is the k-th largest. O(n log k).',
     explanation: 'After each step the heap holds the 2 largest so far. heap[0] is the 2nd largest overall.',
+    important: true,
     minutes: 2,
     signature: 'trace:top-k-heap',
-  }),
-  fill({
-    id: 'd9-topk-fill-evict',
-    title: 'Evict when the heap is too big',
-    skills: ['top_k', 'heap_push_pop'],
-    prompt: 'Fill the blank so `k_largest` returns the `k` largest values, biggest first.',
-    starterCode: `import heapq
-
-def k_largest(nums, k):
-    heap = []
-    for x in nums:
-        heapq.heappush(heap, x)
-        if len(heap) > k:
-            ____
-    return sorted(heap, reverse=True)`,
-    solution: `import heapq
-
-def k_largest(nums, k):
-    heap = []
-    for x in nums:
-        heapq.heappush(heap, x)
-        if len(heap) > k:
-            heapq.heappop(heap)
-    return sorted(heap, reverse=True)`,
-    tests: [t.eq('k_largest([3, 9, 1, 8, 2], 3)', '[9, 8, 3]'), t.eq('k_largest([4], 1)', '[4]'), t.hidden('k_largest([5, 5, 1], 2)', '[5, 5]')],
-    hints: ['Remove the smallest of the k + 1.'],
-    signature: 'top-k:fill-evict',
   }),
   code({
     id: 'd9-topk-kth-by-sort',
@@ -966,35 +994,78 @@ def k_largest(nums, k):
     hints: ['Sort descending; k is 1-based, indexes are 0-based.'],
     signature: 'top-k:kth-by-sort',
   }),
-  reorder({
-    id: 'd9-topk-reorder',
-    title: 'Rebuild: k-th largest with a heap',
+  write({
+    id: 'd9-topk-optimize',
+    title: 'Optimize: sort everything → size-k heap',
     skills: ['top_k', 'heap_push_pop'],
-    prompt: 'Put the lines in order: `kth_from_top(nums, k)` keeps a size-k min-heap and returns its root.',
-    lines: [
-      'import heapq',
-      'def kth_from_top(nums, k):',
-      '    heap = []',
-      '    for x in nums:',
-      '        heapq.heappush(heap, x)',
-      '        if len(heap) > k:',
-      '            heapq.heappop(heap)',
-      '    return heap[0]',
+    style: 'optimize',
+    difficulty: 3,
+    minutes: 5,
+    prompt: 'This works but sorts all `n` values: O(n log n). Rewrite `k_largest(nums, k)` so it keeps a min-heap of at most `k` items while scanning: O(n log k). Return the `k` largest values in any order. No `sorted` allowed (a test checks).',
+    starterCode: `def k_largest(nums, k):
+    return sorted(nums, reverse=True)[:k]`,
+    solution: `import heapq
+
+def k_largest(nums, k):
+    heap = []
+    for x in nums:
+        heapq.heappush(heap, x)
+        if len(heap) > k:
+            heapq.heappop(heap)
+    return heap`,
+    tests: [
+      t.eq('k_largest([3, 9, 1, 8, 2], 3)', '[9, 8, 3]', { compare: 'unordered' }),
+      t.eq('k_largest([4], 1)', '[4]', { compare: 'unordered' }),
+      t.hidden('k_largest([5, 5, 1], 2)', '[5, 5]', { compare: 'unordered' }),
+      t.check(
+        'no full sort',
+        "def sorted(*args, **kwargs):\n    raise AssertionError('no full sort: keep a heap of size k')\ntry:\n    assert len(k_largest([5, 1, 9, 3, 7], 2)) == 2\nfinally:\n    del sorted",
+      ),
     ],
-    tests: [t.eq('kth_from_top([3, 2, 1, 5, 6, 4], 2)', '5'), t.eq('kth_from_top([7], 1)', '7')],
-    minutes: 4,
-    important: true,
-    signature: 'top-k:reorder-kth',
+    hints: ['Push every value; the moment the heap holds k + 1, pop the smallest.', 'What is left is the k largest.'],
+    explanation: 'Each push and pop works on at most k + 1 items: O(log k), n times. With k much smaller than n, that beats sorting.',
+    signature: 'top-k:optimize-sort-to-heap',
   }),
-  code({
+  debug({
+    id: 'd9-topk-dbg-no-trim',
+    title: 'Debug: sum of the k largest',
+    skills: ['top_k', 'heap_push_pop'],
+    minutes: 3.5,
+    prompt: '`top_k_sum(nums, k)` should return the sum of the `k` largest values, using a min-heap that never holds more than `k` items. Fix it.',
+    brokenCode: `import heapq
+
+def top_k_sum(nums, k):
+    heap = []
+    for x in nums:
+        heapq.heappush(heap, x)
+    return sum(heap)`,
+    solution: `import heapq
+
+def top_k_sum(nums, k):
+    heap = []
+    for x in nums:
+        heapq.heappush(heap, x)
+        if len(heap) > k:
+            heapq.heappop(heap)
+    return sum(heap)`,
+    tests: [
+      t.eq('top_k_sum([5, 1, 9, 3], 2)', '14'),
+      t.eq('top_k_sum([4], 1)', '4'),
+      t.hidden('top_k_sum([-1, -5, 0], 2)', '-1'),
+      t.hidden('top_k_sum([3, 1], 0)', '0'),
+    ],
+    hints: ['How big does the heap get?'],
+    signature: 'debug:top-k-no-trim',
+  }),
+  write({
     id: 'd9-topk-closest',
     title: 'k closest points',
     skills: ['top_k', 'heap_push_pop', 'tuples'],
     stage: 'pattern',
     repType: 'pattern',
     difficulty: 3,
-    minutes: 12,
-    prompt: 'Write `k_closest(points, k)` that returns the `k` points `[x, y]` nearest to the origin, in any order. Use a heap of size `k`. Hint: you want to evict the **farthest**, so the heap must be a max-heap on distance.',
+    minutes: 10,
+    prompt: 'Write `k_closest(points, k)` that returns the `k` points `[x, y]` nearest to the origin, in any order. Use a heap of size `k`. You want to evict the **farthest**, so the heap must be a max-heap on distance.',
     starterCode: `def k_closest(points, k):
     pass`,
     solution: `import heapq
@@ -1021,14 +1092,14 @@ def k_closest(points, k):
     explanation: 'O(n log k) time, O(k) space. Negating the distance turns the min-heap into a max-heap on distance.',
     signature: 'top-k:k-closest',
   }),
-  code({
+  write({
     id: 'd9-topk-keys-by-count',
     title: 'Top k keys from a count dict',
     skills: ['top_k', 'heap_push_pop', 'dict_items'],
     stage: 'combine',
     repType: 'combine',
     difficulty: 3,
-    minutes: 8,
+    minutes: 7,
     prompt: '`counts` maps items to how often they appear. Write `top_k_keys(counts, k)` returning the `k` keys with the highest counts, in any order, using a size-k heap of `(count, key)` tuples. The answer is unique in the tests.',
     starterCode: `def top_k_keys(counts, k):
     pass`,
@@ -1048,6 +1119,44 @@ def top_k_keys(counts, k):
     ],
     hints: ['Loop over counts.items().', 'Push (count, key) so the heap orders by count.', 'Evict when len(heap) > k; return the keys.'],
     signature: 'top-k:keys-by-count',
+  }),
+  debug({
+    id: 'd9-topk-dbg-tuple-order',
+    title: 'Debug: busiest users',
+    skills: ['top_k', 'frequency_map', 'tuples'],
+    minutes: 4,
+    prompt: '`busiest(log, k)` gets a list of usernames (one per action) and should return the `k` users with the most actions, in any order. Fix it.',
+    brokenCode: `import heapq
+
+def busiest(log, k):
+    counts = {}
+    for user in log:
+        counts[user] = counts.get(user, 0) + 1
+    heap = []
+    for user, c in counts.items():
+        heapq.heappush(heap, (user, c))
+        if len(heap) > k:
+            heapq.heappop(heap)
+    return [user for user, c in heap]`,
+    solution: `import heapq
+
+def busiest(log, k):
+    counts = {}
+    for user in log:
+        counts[user] = counts.get(user, 0) + 1
+    heap = []
+    for user, c in counts.items():
+        heapq.heappush(heap, (c, user))
+        if len(heap) > k:
+            heapq.heappop(heap)
+    return [user for c, user in heap]`,
+    tests: [
+      t.eq("busiest(['bo', 'al', 'bo', 'cy', 'bo', 'al'], 2)", "['bo', 'al']", { compare: 'unordered' }),
+      t.eq("busiest(['zz'], 1)", "['zz']", { compare: 'unordered' }),
+      t.hidden("busiest(['a', 'b', 'b', 'c', 'c', 'c'], 1)", "['c']", { compare: 'unordered' }),
+    ],
+    hints: ['A heap of tuples orders by the first element. What is first here?'],
+    signature: 'debug:top-k-tuple-order',
   }),
   capstone({
     id: 'cap-kth-largest',
@@ -1173,49 +1282,6 @@ def top_k_frequent(nums: List[int], k: int) -> List[int]:
 ]
 
 const intervals = [
-  choice({
-    id: 'd9-iv-sort-start',
-    title: 'Sorting intervals by start',
-    skills: ['sort_key', 'interval_overlap'],
-    prompt: '`intervals` is a list of `[start, end]` lists. Which line sorts it in place by start?',
-    options: [
-      'intervals.sort(key=lambda iv: iv[1])',
-      'intervals.sort(key=lambda iv: iv[0])',
-      'intervals = intervals.sort()',
-      'sorted(intervals, key=start)',
-    ],
-    answer: 1,
-    note: 'Interval problems almost always begin with intervals.sort(key=lambda iv: iv[0]).',
-    explanation: 'iv[0] is the start. Plain intervals.sort() also works here because lists compare by first element, but the explicit key states your intent.',
-    signature: 'interval:recognize-sort-start',
-  }),
-  output({
-    id: 'd9-iv-sort-trace',
-    title: 'Sorted intervals',
-    skills: ['sort_key', 'interval_overlap'],
-    prompt: 'Predict the output.',
-    code: `intervals = [[5, 7], [1, 3], [2, 4]]
-intervals.sort(key=lambda iv: iv[0])
-print(intervals)
-print(intervals[0][1])
-print(intervals[-1])`,
-    expectedOutput: `[[1, 3], [2, 4], [5, 7]]
-3
-[5, 7]`,
-    signature: 'trace:interval-sort',
-  }),
-  choice({
-    id: 'd9-iv-touching',
-    title: 'Do they overlap?',
-    skills: ['interval_overlap'],
-    prompt: 'Intervals are sorted by start. The current merged interval is `[1, 4]` and the next is `[4, 6]`. Using the rule `next_start <= cur_end`, what happens?',
-    options: ['They do not overlap; append [4, 6]', 'They overlap; the merged interval becomes [1, 6]', 'They overlap; the merged interval becomes [1, 4]', 'They overlap; the merged interval becomes [4, 6]'],
-    answer: 1,
-    note: 'Sorted by start, the next interval overlaps the current one when next_start <= cur_end. Touching endpoints count.',
-    explanation: '4 <= 4, so they merge, and the end becomes max(4, 6) = 6.',
-    important: true,
-    signature: 'interval:recognize-overlap',
-  }),
   code({
     id: 'd9-iv-overlaps-line',
     title: 'Overlap test in one line',
@@ -1234,8 +1300,33 @@ print(intervals[-1])`,
       t.hidden('overlaps([1, 10], [2, 3])', 'True'),
       t.hidden('overlaps([0, 0], [1, 1])', 'False'),
     ],
+    note: 'Sorted by start, the next interval overlaps the current one when next_start <= cur_end. Touching endpoints count.',
     hints: ['Compare the next start with the current end.'],
     signature: 'interval:overlap-line',
+  }),
+  write({
+    id: 'd9-iv-intersection',
+    title: 'Where two ranges overlap',
+    skills: ['interval_overlap'],
+    difficulty: 2,
+    minutes: 4,
+    prompt: 'Write `intersection(a, b)` for two `[start, end]` ranges in either order. Return the shared part as `[start, end]`, or `None` if they do not overlap. Touching ranges share a single point: `[3, 5]` and `[5, 8]` give `[5, 5]`.',
+    starterCode: `def intersection(a, b):
+    pass`,
+    solution: `def intersection(a, b):
+    start = max(a[0], b[0])
+    end = min(a[1], b[1])
+    if start > end:
+        return None
+    return [start, end]`,
+    tests: [
+      t.eq('intersection([1, 6], [4, 9])', '[4, 6]'),
+      t.eq('intersection([3, 5], [5, 8])', '[5, 5]'),
+      t.eq('intersection([7, 9], [1, 2])', 'None'),
+      t.hidden('intersection([1, 10], [3, 4])', '[3, 4]'),
+    ],
+    hints: ['The overlap starts at the later start and ends at the earlier end.', 'If that start is past that end, there is no overlap.'],
+    signature: 'interval:intersection',
   }),
   output({
     id: 'd9-iv-merge-trace',
@@ -1253,24 +1344,21 @@ for start, end in intervals[1:]:
     expectedOutput: `[[1, 6]]
 [[1, 6], [8, 10]]
 [[1, 6], [8, 10]]`,
+    note: 'Merge loop: sort by start; compare each interval only with merged[-1]; overlap → extend the end with max(); otherwise append.',
     explanation: '[9, 9] sits inside [8, 10]; max keeps the end at 10 instead of shrinking it to 9.',
     minutes: 3,
     important: true,
     signature: 'trace:interval-merge',
   }),
-  fill({
-    id: 'd9-iv-fill-max-end',
-    title: 'Extend with the max end',
+  write({
+    id: 'd9-iv-merge-sorted',
+    title: 'Merge, input already sorted',
     skills: ['interval_overlap', 'list_index'],
-    prompt: 'The input is sorted by start. Fill the blank that extends the last merged interval.',
+    difficulty: 2,
+    minutes: 5,
+    prompt: '`intervals` is already sorted by start. Write `merge_sorted(intervals)` returning the merged list (touching intervals merge). Start from an empty `merged` list.',
     starterCode: `def merge_sorted(intervals):
-    merged = []
-    for start, end in intervals:
-        if merged and start <= merged[-1][1]:
-            merged[-1][1] = ____
-        else:
-            merged.append([start, end])
-    return merged`,
+    pass`,
     solution: `def merge_sorted(intervals):
     merged = []
     for start, end in intervals:
@@ -1283,29 +1371,110 @@ for start, end in intervals[1:]:
       t.eq('merge_sorted([[1, 3], [2, 6], [8, 10]])', '[[1, 6], [8, 10]]'),
       t.eq('merge_sorted([[1, 10], [2, 3]])', '[[1, 10]]'),
       t.hidden('merge_sorted([])', '[]'),
+      t.hidden('merge_sorted([[1, 2], [2, 3], [5, 5]])', '[[1, 3], [5, 5]]'),
     ],
-    hints: ['A contained interval must not shrink the end.'],
+    hints: ['`if merged and ...` guards the very first interval.', 'Extend merged[-1][1] with max(); otherwise append a new [start, end].'],
     important: true,
-    signature: 'interval:fill-max-end',
+    signature: 'interval:merge-sorted',
   }),
-  choice({
-    id: 'd9-iv-why-max',
-    title: 'Why max()?',
+  debug({
+    id: 'd9-iv-dbg-overwrite-end',
+    title: 'Debug: nested ranges',
     skills: ['interval_overlap'],
-    prompt: 'Sorted input `[[1, 10], [2, 3]]`. What goes wrong if you write `merged[-1][1] = end` instead of `max(merged[-1][1], end)`?',
-    options: ['Nothing, the result is the same', 'The merged interval shrinks to [1, 3]', 'It raises an IndexError', 'It produces [[1, 10], [2, 3]]'],
-    answer: 1,
-    explanation: 'A later interval can be fully inside the current one. Its end is smaller, so you must keep the larger end.',
-    signature: 'interval:recognize-max-end',
+    minutes: 3.5,
+    prompt: '`merge_sorted(intervals)` gets ranges sorted by start and should merge every overlapping or touching group. It fails when one range sits inside another. Fix it.',
+    brokenCode: `def merge_sorted(intervals):
+    merged = []
+    for start, end in intervals:
+        if merged and start <= merged[-1][1]:
+            merged[-1][1] = end
+        else:
+            merged.append([start, end])
+    return merged`,
+    solution: `def merge_sorted(intervals):
+    merged = []
+    for start, end in intervals:
+        if merged and start <= merged[-1][1]:
+            merged[-1][1] = max(merged[-1][1], end)
+        else:
+            merged.append([start, end])
+    return merged`,
+    tests: [
+      t.eq('merge_sorted([[1, 10], [2, 3]])', '[[1, 10]]'),
+      t.eq('merge_sorted([[1, 3], [2, 6]])', '[[1, 6]]'),
+      t.hidden('merge_sorted([[0, 9], [1, 2], [3, 4], [10, 11]])', '[[0, 9], [10, 11]]'),
+    ],
+    hints: ['Can a later range end before the current block does?'],
+    signature: 'debug:interval-overwrite-end',
   }),
-  code({
+  debug({
+    id: 'd9-iv-dbg-strict',
+    title: 'Debug: back-to-back bookings',
+    skills: ['interval_overlap', 'sort_key'],
+    minutes: 3.5,
+    prompt: '`combine(bookings)` should merge `[start, end]` bookings that overlap **or touch** (a booking ending at 4 and one starting at 4 become one block), returning blocks sorted by start. Fix it.',
+    brokenCode: `def combine(bookings):
+    merged = []
+    for start, end in sorted(bookings, key=lambda b: b[0]):
+        if merged and start < merged[-1][1]:
+            merged[-1][1] = max(merged[-1][1], end)
+        else:
+            merged.append([start, end])
+    return merged`,
+    solution: `def combine(bookings):
+    merged = []
+    for start, end in sorted(bookings, key=lambda b: b[0]):
+        if merged and start <= merged[-1][1]:
+            merged[-1][1] = max(merged[-1][1], end)
+        else:
+            merged.append([start, end])
+    return merged`,
+    tests: [
+      t.eq('combine([[4, 6], [1, 4]])', '[[1, 6]]'),
+      t.eq('combine([[1, 2], [5, 7]])', '[[1, 2], [5, 7]]'),
+      t.hidden('combine([[1, 3], [3, 5], [5, 7]])', '[[1, 7]]'),
+    ],
+    hints: ['What happens when start equals the current end?'],
+    signature: 'debug:interval-strict-compare',
+  }),
+  debug({
+    id: 'd9-iv-dbg-unsorted',
+    title: 'Debug: ranges in any order',
+    skills: ['interval_overlap', 'sort_key'],
+    minutes: 3.5,
+    prompt: '`merge_ranges(ranges)` gets `[start, end]` ranges in **any order** and should return the merged ranges sorted by start. Fix it.',
+    brokenCode: `def merge_ranges(ranges):
+    merged = []
+    for start, end in ranges:
+        if merged and start <= merged[-1][1]:
+            merged[-1][1] = max(merged[-1][1], end)
+        else:
+            merged.append([start, end])
+    return merged`,
+    solution: `def merge_ranges(ranges):
+    merged = []
+    for start, end in sorted(ranges, key=lambda r: r[0]):
+        if merged and start <= merged[-1][1]:
+            merged[-1][1] = max(merged[-1][1], end)
+        else:
+            merged.append([start, end])
+    return merged`,
+    tests: [
+      t.eq('merge_ranges([[8, 10], [1, 3], [2, 6]])', '[[1, 6], [8, 10]]'),
+      t.eq('merge_ranges([[1, 2]])', '[[1, 2]]'),
+      t.hidden('merge_ranges([[5, 6], [1, 2]])', '[[1, 2], [5, 6]]'),
+    ],
+    hints: ['The loop only ever compares with merged[-1]. When is that enough?'],
+    signature: 'debug:interval-unsorted',
+  }),
+  write({
     id: 'd9-iv-can-attend',
     title: 'Can one person attend every meeting?',
     skills: ['interval_overlap', 'sort_key'],
     stage: 'combine',
     repType: 'combine',
     difficulty: 2,
-    minutes: 7,
+    minutes: 6,
     prompt: 'Meetings are `[start, end]` in any order. A meeting ending at 10 and another starting at 10 do **not** clash. Write `can_attend(meetings)` returning `True` if no two meetings clash.',
     starterCode: `def can_attend(meetings):
     pass`,
@@ -1327,14 +1496,14 @@ for start, end in intervals[1:]:
     explanation: 'After sorting, it is enough to compare each meeting with the one just before it. The strict < is the only change from the merge rule.',
     signature: 'interval:any-overlap',
   }),
-  code({
+  write({
     id: 'd9-iv-covered-length',
     title: 'Total length covered',
     skills: ['interval_overlap', 'sort_key', 'accumulator'],
     stage: 'combine',
     repType: 'combine',
     difficulty: 3,
-    minutes: 10,
+    minutes: 8,
     prompt: 'Given `[start, end]` intervals in any order, write `covered(intervals)` returning the total length of the number line they cover. Overlapping parts count once. Example: `[[1, 4], [2, 6], [8, 9]]` covers `5 + 1 = 6`.',
     starterCode: `def covered(intervals):
     pass`,
@@ -1356,25 +1525,41 @@ for start, end in intervals[1:]:
     hints: ['Merge first, then measure.', 'Sort by start, extend with max end.', 'Sum end - start over the merged list.'],
     signature: 'interval:merge-then-sum',
   }),
-  reorder({
-    id: 'd9-iv-merge-reorder',
-    title: 'Rebuild: merge intervals',
-    skills: ['interval_overlap', 'sort_key'],
-    prompt: 'Put the lines in order: `merge_all(intervals)` sorts by start and merges overlaps.',
-    lines: [
-      'def merge_all(intervals):',
-      '    intervals = sorted(intervals, key=lambda iv: iv[0])',
-      '    merged = []',
-      '    for start, end in intervals:',
-      '        if merged and start <= merged[-1][1]:',
-      '            merged[-1][1] = max(merged[-1][1], end)',
-      '        else:',
-      '            merged.append([start, end])',
-      '    return merged',
+  write({
+    id: 'd9-iv-write-test',
+    title: 'Write the tests that catch merge bugs',
+    skills: ['interval_overlap', 'edge_cases'],
+    style: 'write-test',
+    difficulty: 3,
+    minutes: 5,
+    prompt: 'Write `test_merge(merge)`: it receives some implementation of merge-intervals (unsorted input, touching ranges combine, result sorted by start) and must `assert` on its results. A correct `merge` must pass your asserts. Three buggy versions must each trip at least one assert: one uses `<` instead of `<=`, one sets the end to `end` instead of `max(...)`, and one forgets to sort.',
+    starterCode: `def test_merge(merge):
+    pass`,
+    solution: `def test_merge(merge):
+    assert merge([[1, 4], [4, 6]]) == [[1, 6]]
+    assert merge([[1, 10], [2, 3]]) == [[1, 10]]
+    assert merge([[5, 6], [1, 2]]) == [[1, 2], [5, 6]]`,
+    tests: [
+      t.check(
+        'a correct merge passes',
+        "def _good(ivs):\n    out = []\n    for s, e in sorted(ivs):\n        if out and s <= out[-1][1]:\n            out[-1][1] = max(out[-1][1], e)\n        else:\n            out.append([s, e])\n    return out\ntest_merge(_good)",
+      ),
+      t.check(
+        'catches < instead of <=',
+        "def _strict(ivs):\n    out = []\n    for s, e in sorted(ivs):\n        if out and s < out[-1][1]:\n            out[-1][1] = max(out[-1][1], e)\n        else:\n            out.append([s, e])\n    return out\ntry:\n    test_merge(_strict)\nexcept AssertionError:\n    pass\nelse:\n    raise AssertionError('the strict < version passed your tests: add touching ranges')",
+      ),
+      t.check(
+        'catches end overwritten',
+        "def _overwrite(ivs):\n    out = []\n    for s, e in sorted(ivs):\n        if out and s <= out[-1][1]:\n            out[-1][1] = e\n        else:\n            out.append([s, e])\n    return out\ntry:\n    test_merge(_overwrite)\nexcept AssertionError:\n    pass\nelse:\n    raise AssertionError('the version without max() passed your tests: add a range nested inside another')",
+      ),
+      t.check(
+        'catches missing sort',
+        "def _unsorted(ivs):\n    out = []\n    for s, e in ivs:\n        if out and s <= out[-1][1]:\n            out[-1][1] = max(out[-1][1], e)\n        else:\n            out.append([s, e])\n    return out\ntry:\n    test_merge(_unsorted)\nexcept AssertionError:\n    pass\nelse:\n    raise AssertionError('the version that never sorts passed your tests: add unsorted input')",
+      ),
     ],
-    tests: [t.eq('merge_all([[8, 10], [1, 3], [2, 6]])', '[[1, 6], [8, 10]]'), t.eq('merge_all([[1, 4], [4, 5]])', '[[1, 5]]')],
-    minutes: 4,
-    signature: 'interval:reorder-merge',
+    hints: ['One assert per bug: what input exposes each one?', 'Touching: [[1, 4], [4, 6]]. Nested: [[1, 10], [2, 3]]. Unsorted: put a later range first.'],
+    explanation: 'Interviewers love asking "how would you test this?". Each edge case maps to one classic bug.',
+    signature: 'interval:write-tests',
   }),
   capstone({
     id: 'cap-merge-intervals',
@@ -1438,46 +1623,35 @@ for start, end in intervals[1:]:
 ]
 
 const cold = [
-  choice({
-    id: 'd9-cold-topk-complexity',
-    title: 'Cold: cost of a size-k heap',
-    skills: ['top_k', 'complexity'],
-    stage: 'retrieval',
-    repType: 'cold',
-    prompt: 'You push all `n` values through a min-heap that you trim back to size `k` each step. What is the time complexity?',
-    options: ['O(n)', 'O(n log n)', 'O(n log k)', 'O(k log n)'],
-    answer: 2,
-    explanation: 'Each push and pop works on a heap of at most k + 1 items: O(log k), done n times.',
-    signature: 'cold:top-k-complexity',
-  }),
-  code({
+  write({
     id: 'd9-cold-sort-second-desc',
-    title: 'Cold: sort by second, descending',
+    title: 'Cold: rank names by points',
     skills: ['sort_key', 'tuples'],
     stage: 'retrieval',
     repType: 'cold',
     difficulty: 2,
     minutes: 4,
-    prompt: 'Write `rank_pairs(pairs)` that returns `(name, points)` pairs sorted by points, highest first; equal points ordered by name A to Z.',
-    starterCode: `def rank_pairs(pairs):
+    prompt: 'Write `rank_names(pairs)` that takes `(name, points)` pairs and returns just the names, highest points first; equal points ordered by name A to Z.',
+    starterCode: `def rank_names(pairs):
     pass`,
-    solution: `def rank_pairs(pairs):
-    return sorted(pairs, key=lambda p: (-p[1], p[0]))`,
+    solution: `def rank_names(pairs):
+    ordered = sorted(pairs, key=lambda p: (-p[1], p[0]))
+    return [name for name, _ in ordered]`,
     tests: [
-      t.eq("rank_pairs([('b', 2), ('a', 2), ('c', 5)])", "[('c', 5), ('a', 2), ('b', 2)]"),
-      t.hidden('rank_pairs([])', '[]'),
-      t.hidden("rank_pairs([('x', -1), ('y', 0)])", "[('y', 0), ('x', -1)]"),
+      t.eq("rank_names([('b', 2), ('a', 2), ('c', 5)])", "['c', 'a', 'b']"),
+      t.hidden('rank_names([])', '[]'),
+      t.hidden("rank_names([('x', -1), ('y', 0)])", "['y', 'x']"),
     ],
     signature: 'cold:sort-key-tuple',
   }),
-  code({
+  write({
     id: 'd9-cold-kth-smallest',
     title: 'Cold: k-th smallest with a heap',
     skills: ['top_k', 'heap_push_pop'],
     stage: 'retrieval',
     repType: 'cold',
     difficulty: 3,
-    minutes: 7,
+    minutes: 6,
     prompt: 'Write `kth_smallest(nums, k)` using a heap of size `k` (the mirror of k-th largest). Assume `1 <= k <= len(nums)`.',
     starterCode: `def kth_smallest(nums, k):
     pass`,
@@ -1499,14 +1673,14 @@ def kth_smallest(nums, k):
     hints: ['To keep the k smallest you must evict the largest: a max-heap via negation.'],
     signature: 'cold:kth-smallest-heap',
   }),
-  code({
+  write({
     id: 'd9-cold-any-overlap',
     title: 'Cold: any overlap?',
     skills: ['interval_overlap', 'sort_key'],
     stage: 'retrieval',
     repType: 'cold',
     difficulty: 2,
-    minutes: 6,
+    minutes: 5,
     prompt: 'Write `has_overlap(intervals)` returning `True` if any two `[start, end]` ranges overlap. Here touching endpoints **do** count as overlap. Input is unsorted.',
     starterCode: `def has_overlap(intervals):
     pass`,
@@ -1524,14 +1698,14 @@ def kth_smallest(nums, k):
     ],
     signature: 'cold:interval-any-overlap',
   }),
-  code({
+  write({
     id: 'd9-cold-top-words',
     title: 'Cold: top k words, ordered',
     skills: ['frequency_map', 'sort_key'],
     stage: 'retrieval',
     repType: 'cold',
     difficulty: 3,
-    minutes: 7,
+    minutes: 6,
     prompt: 'Write `top_words(words, k)` returning the `k` most frequent words, most frequent first; words with equal counts go alphabetically. Order matters here.',
     starterCode: `def top_words(words, k):
     pass`,
@@ -1548,23 +1722,52 @@ def kth_smallest(nums, k):
     ],
     signature: 'cold:top-k-words-sorted',
   }),
+  write({
+    id: 'd9-cold-last-rock',
+    title: 'Cold: smash the two heaviest',
+    skills: ['heap_push_pop', 'while_loop'],
+    stage: 'retrieval',
+    repType: 'cold',
+    difficulty: 3,
+    minutes: 6,
+    prompt: 'From memory: `last_rock(weights)`. Repeatedly smash the two heaviest rocks; equal weights both vanish, otherwise the difference goes back. Return the last weight, or `0`.',
+    starterCode: `def last_rock(weights):
+    pass`,
+    solution: `import heapq
+
+def last_rock(weights):
+    h = [-w for w in weights]
+    heapq.heapify(h)
+    while len(h) > 1:
+        a = -heapq.heappop(h)
+        b = -heapq.heappop(h)
+        if a != b:
+            heapq.heappush(h, -(a - b))
+    return -h[0] if h else 0`,
+    tests: [
+      t.eq('last_rock([2, 7, 4, 1, 8, 1])', '1'),
+      t.hidden('last_rock([])', '0'),
+      t.hidden('last_rock([4, 4, 9])', '1'),
+    ],
+    signature: 'cold:max-heap-simulation',
+  }),
 ]
 
 export const day: DayModule = {
   date: '2026-10-09',
   short: 'Heaps',
   title: 'Heaps, sorting + intervals',
-  focus: 'Make sorted/key=lambda, heapq push/pop/negation, size-k heaps and the interval merge loop automatic.',
+  focus: 'Write, break and fix sorted/key=lambda, heapq push/pop/negation, size-k heaps and the interval merge loop until they are automatic.',
   sections: [
     { id: 'd9-warmup', title: 'Warm-up', summary: 'Cold reps on dicts, pointers, windows, binary search, trees and graphs.', exercises: warmup },
-    { id: 'd9-sorting', title: 'Sorting', summary: 'sorted() vs .sort(), reverse=True, how tuples compare.', exercises: sorting },
-    { id: 'd9-keys', title: 'Sort keys', summary: 'key=lambda by length, by second item, by tuple.', exercises: keys },
+    { id: 'd9-sorting', title: 'Sorting', summary: 'sorted() vs .sort(), reverse=True, and the bugs they cause.', exercises: sorting },
+    { id: 'd9-keys', title: 'Sort keys', summary: 'key=lambda by field, by tuple, named key functions.', exercises: keys },
     { id: 'd9-freq-sort', title: 'Frequency + sort', summary: 'Count with a dict, then order the counts.', exercises: freqSort },
     { id: 'd9-heapq', title: 'heapq', summary: 'heappush, heappop, heapify, heap[0], tuples in heaps.', exercises: heapBasics },
     { id: 'd9-max-heap', title: 'Max-heap', summary: 'Negate on the way in and out.', exercises: maxHeap },
     { id: 'd9-top-k', title: 'Top-k', summary: 'Size-k heaps, then the k-th largest and top-k frequent capstones.', exercises: topK },
-    { id: 'd9-intervals', title: 'Intervals', summary: 'Sort by start, overlap test, extend with max end, then merge intervals.', exercises: intervals },
-    { id: 'd9-cold', title: 'Cold reps', summary: 'From memory, no scaffolding.', exercises: cold },
+    { id: 'd9-intervals', title: 'Intervals', summary: 'Overlap test, the merge loop, its three classic bugs, then merge intervals.', exercises: intervals },
+    { id: 'd9-cold', title: 'Cold reps', summary: 'From a signature, no scaffolding.', exercises: cold },
   ],
   capstones: ['top-k-frequent', 'kth-largest', 'merge-intervals'],
 }

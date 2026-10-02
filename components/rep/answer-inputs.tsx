@@ -29,15 +29,21 @@ export function ChoiceInput({
         return (
           <label
             key={i}
-            className={`group flex cursor-pointer items-start gap-3 rounded-lg border px-3.5 py-3 text-[14px] transition-colors ${
-              isRight ? 'border-pass bg-pass-soft' : isWrongPick ? 'border-fail bg-fail-soft' : selected ? 'border-ink bg-surface' : 'border-line hover:border-line-strong'
+            className={`group flex cursor-pointer items-start gap-3 rounded-xl px-4 py-3.5 text-[14.5px] transition-[box-shadow,background-color,transform] duration-150 active:scale-[0.995] ${
+              isRight
+                ? 'bg-pass-soft shadow-[0_0_0_1.5px_var(--pass)]'
+                : isWrongPick
+                  ? 'bg-fail-soft shadow-[0_0_0_1.5px_var(--fail)]'
+                  : selected
+                    ? 'bg-bg shadow-[0_0_0_1.5px_var(--ink),var(--shadow-sm)]'
+                    : 'bg-bg shadow-[0_0_0_1px_var(--line-strong)] hover:shadow-[0_0_0_1px_#c9c9cf,var(--shadow-sm)]'
             } ${locked ? 'cursor-default' : ''}`}
           >
             <input type="radio" name={name} className="sr-only" checked={selected} onChange={() => onChange(i)} />
             <span
               aria-hidden="true"
-              className={`mt-px inline-flex size-5 shrink-0 items-center justify-center rounded border text-[11px] font-medium tabular-nums ${
-                selected ? 'border-ink bg-ink text-white' : 'border-line-strong text-muted'
+              className={`mt-px inline-flex size-[22px] shrink-0 items-center justify-center rounded-md text-[11.5px] font-semibold tabular-nums transition-colors ${
+                selected ? 'bg-ink text-white' : 'bg-surface-2 text-muted group-hover:text-ink'
               }`}
             >
               {i + 1}
@@ -76,7 +82,7 @@ export function OutputInput({ value, onChange, locked, onSubmit }: { value: stri
             onSubmit()
           }
         }}
-        className="input mono min-h-[140px] text-[13.5px]"
+        className="input mono min-h-[160px] !bg-editor text-[14px]"
         placeholder="Type the output…"
         data-testid="output-input"
       />
@@ -111,7 +117,7 @@ export function ReorderInput({ lines, order, onChange, locked }: { lines: string
               }
             }}
             aria-label={`Line ${pos + 1}: ${lines[li]}. Alt+Up or Alt+Down to move.`}
-            className="code-view flex-1 !py-1.5"
+            className="code-view flex-1 !py-2 transition-shadow focus:shadow-[inset_0_0_0_1.5px_var(--accent)]"
           >
             {highlightPython(lines[li])}
           </div>
@@ -160,7 +166,7 @@ export function ExplainInput({
         <label htmlFor={id} className="text-[13px] text-muted">
           Say it as you would to an interviewer. Approach, invariant, complexity, edge cases.
         </label>
-        <textarea id={id} value={value} onChange={(e) => onChange(e.target.value)} readOnly={locked} rows={9} className="input text-[14px]" placeholder="My approach is…" data-testid="explain-input" />
+        <textarea id={id} value={value} onChange={(e) => onChange(e.target.value)} readOnly={locked} rows={9} className="input text-[14.5px]" placeholder="My approach is…" data-testid="explain-input" />
       </div>
       <fieldset className="flex flex-col gap-1.5">
         <legend className="mb-1 text-[13px] text-muted">Did your explanation cover…</legend>

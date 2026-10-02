@@ -1,5 +1,5 @@
 import type { DayModule } from '@/lib/types'
-import { capstone, choice, code, explain, fill, output, reorder, t } from './build'
+import { capstone, debug, explain, output, t, write } from './build'
 
 const cold = { stage: 'retrieval' as const, repType: 'cold' as const }
 const combine = { stage: 'combine' as const, repType: 'combine' as const }
@@ -9,15 +9,15 @@ export const day: DayModule = {
   date: '2026-10-06',
   short: 'Trees',
   title: 'Recursion + trees',
-  focus: 'Trust the recursive call: write the base case first, combine the children’s answers, and trace the call stack until tree DFS feels like a template.',
+  focus: 'Trust the recursive call: write the base case first, return and combine the children’s answers, and break and fix tree DFS until it feels like a template.',
   sections: [
     // ───────────────────────────── Warm-up ─────────────────────────────
     {
       id: 'd06-warmup',
       title: 'Warm-up',
-      summary: 'Cold reps on yesterday’s search and pointers, plus maps, pointers and windows.',
+      summary: 'Cold reps on yesterday’s search and pointers, plus maps, running state and windows.',
       exercises: [
-        code({
+        write({
           id: 'd06-warm-bs',
           title: 'Binary search, cold',
           ...cold,
@@ -36,12 +36,12 @@ export const day: DayModule = {
             hi = mid - 1
     return -1
 `,
-          tests: [t.eq('find([1, 4, 6, 9, 13], 9)', '3'), t.eq('find([1, 4, 6, 9, 13], 5)', '-1'), t.hidden('find([], 1)', '-1'), t.hidden('find([2], 2)', '0')],
+          tests: [t.eq('find([1, 4, 6, 9, 13], 9)', '3'), t.eq('find([1, 4, 6, 9, 13], 5)', '-1'), t.hidden('find([], 1)', '-1'), t.hidden('find([2], 2)', '0'), t.hidden('find([1, 4, 6, 9, 13], 13)', '4')],
           hints: ['lo <= hi; mid + 1 / mid - 1.'],
           signature: 'bs:cold',
           minutes: 6,
         }),
-        code({
+        write({
           id: 'd06-warm-reverse',
           title: 'Reverse a linked list, cold',
           ...cold,
@@ -62,7 +62,7 @@ export const day: DayModule = {
           signature: 'll:reverse-cold',
           minutes: 6,
         }),
-        code({
+        write({
           id: 'd06-warm-from-values',
           title: 'Dummy head, cold',
           ...cold,
@@ -82,7 +82,7 @@ export const day: DayModule = {
           signature: 'dummy:map-copy',
           minutes: 6,
         }),
-        code({
+        write({
           id: 'd06-warm-anagram',
           title: 'Same letters (frequency map)',
           ...cold,
@@ -106,7 +106,7 @@ export const day: DayModule = {
           signature: 'freq-map:anagram',
           minutes: 6,
         }),
-        code({
+        write({
           id: 'd06-warm-profit',
           title: 'Best single trade (running min)',
           ...cold,
@@ -126,7 +126,7 @@ export const day: DayModule = {
           signature: 'state:running-min',
           minutes: 5,
         }),
-        code({
+        write({
           id: 'd06-warm-unique-window',
           title: 'Longest run without repeats',
           ...cold,
@@ -158,7 +158,7 @@ export const day: DayModule = {
     {
       id: 'd06-functions',
       title: 'Functions',
-      summary: 'Parameters, return values and helpers: the parts recursion is made of.',
+      summary: 'Return values, mutation vs rebinding, inner helpers: the parts recursion is made of.',
       exercises: [
         output({
           id: 'd06-fn-print-vs-return',
@@ -176,21 +176,51 @@ print(x)`,
           signature: 'trace:fn-print-return',
           important: true,
         }),
-        output({
-          id: 'd06-fn-compose',
-          title: 'Functions calling functions',
+        write({
+          id: 'd06-fn-tuple',
+          title: 'Return two things',
+          skills: ['functions', 'tuples'],
+          prompt: 'Write `low_high(nums)` returning a tuple `(smallest, largest)` in one pass. `nums` is non-empty. No `min`/`max` on the whole list.',
+          starterCode: `def low_high(nums):\n    pass\n`,
+          solution: `def low_high(nums):
+    low = high = nums[0]
+    for x in nums:
+        if x < low:
+            low = x
+        if x > high:
+            high = x
+    return low, high
+`,
+          tests: [t.eq('low_high([3, 9, 1, 4])', '(1, 9)'), t.eq('low_high([7])', '(7, 7)'), t.hidden('low_high([-2, -8, -1])', '(-8, -1)')],
+          hints: ['Start both at nums[0].', '`return low, high` builds a tuple.'],
+          signature: 'fn:return-tuple',
+          minutes: 5,
+        }),
+        debug({
+          id: 'd06-fn-dbg-return',
+          title: 'Debug: the average disappears',
           skills: ['functions'],
-          prompt: 'Predict the output.',
-          code: `def double(n):
-    return n * 2
-
-def add_then_double(a, b):
-    return double(a + b)
-
-print(add_then_double(2, 3), double(double(1)))`,
-          expectedOutput: '10 4',
-          explanation: 'Inner calls finish first and hand their return value outward. Recursion is the same thing, with the function calling itself.',
-          signature: 'trace:fn-compose',
+          prompt: '`average(nums)` should return the mean of the numbers (0 for an empty list) so callers can use it. Callers get `None`. Fix it.',
+          brokenCode: `def average(nums):
+    if not nums:
+        return 0
+    total = 0
+    for x in nums:
+        total += x
+    print(total / len(nums))
+`,
+          solution: `def average(nums):
+    if not nums:
+        return 0
+    total = 0
+    for x in nums:
+        total += x
+    return total / len(nums)
+`,
+          tests: [t.eq('average([2, 4])', '3.0'), t.eq('average([])', '0'), t.hidden('average([5])', '5.0')],
+          hints: ['Look at what the function hands back, not what it shows.'],
+          signature: 'debug:fn-print-not-return',
+          minutes: 3,
         }),
         output({
           id: 'd06-fn-params',
@@ -212,46 +242,12 @@ print(vals, k)`,
           minutes: 2,
           important: true,
         }),
-        fill({
-          id: 'd06-fn-fill-return',
-          title: 'Fill: return a value',
-          skills: ['functions', 'conditionals'],
-          prompt: 'Fill in the return so `last(nums)` gives the last item, or `None` for an empty list.',
-          starterCode: `def last(nums):
-    return ____
-`,
-          solution: `def last(nums):
-    return nums[-1] if nums else None
-`,
-          tests: [t.eq('last([4, 5, 6])', '6'), t.eq('last([])', 'None')],
-          hints: ['A conditional expression: A if cond else B.'],
-          signature: 'fill:fn-return-expr',
-        }),
-        code({
-          id: 'd06-fn-tuple',
-          title: 'Return two things',
-          skills: ['functions', 'tuples'],
-          prompt: 'Write `low_high(nums)` returning a tuple `(smallest, largest)` in one pass. `nums` is non-empty. No `min`/`max` on the whole list.',
-          starterCode: `def low_high(nums):\n    pass\n`,
-          solution: `def low_high(nums):
-    low = high = nums[0]
-    for x in nums:
-        if x < low:
-            low = x
-        if x > high:
-            high = x
-    return low, high
-`,
-          tests: [t.eq('low_high([3, 9, 1, 4])', '(1, 9)'), t.eq('low_high([7])', '(7, 7)'), t.hidden('low_high([-2, -8, -1])', '(-8, -1)')],
-          hints: ['Start both at nums[0].', '`return low, high` builds a tuple.'],
-          signature: 'fn:return-tuple',
-          minutes: 5,
-        }),
-        code({
+        write({
           id: 'd06-fn-helper',
           title: 'Inner helper + shared list',
+          style: 'finish',
           skills: ['functions', 'list_append'],
-          prompt: 'Write `collect_big(nums, limit)` that defines an inner function `visit(x)` which appends `x` to an outer list `out` when `x > limit`. Call `visit` on every number and return `out`.\n\nThis "helper that writes into an outer list" is exactly how tree traversals collect values.',
+          prompt: 'Finish `collect_big(nums, limit)`: the inner function `visit(x)` should append `x` to the outer list `out` when `x > limit`.\n\nThis "helper that writes into an outer list" is exactly how tree traversals collect values.',
           starterCode: `def collect_big(nums, limit):
     out = []
 
@@ -276,7 +272,7 @@ print(vals, k)`,
           tests: [t.eq('collect_big([1, 8, 3, 9], 5)', '[8, 9]'), t.eq('collect_big([1, 2], 5)', '[]'), t.hidden('collect_big([6, 5, 7], 5)', '[6, 7]')],
           hints: ['The inner function can see `out` and `limit`.', 'out.append(x) mutates the list; no return needed.'],
           signature: 'fn:inner-helper-collect',
-          minutes: 5,
+          minutes: 4,
         }),
       ],
     },
@@ -285,58 +281,8 @@ print(vals, k)`,
     {
       id: 'd06-recursion',
       title: 'Recursion',
-      summary: 'Base case, smaller call, combine. Trace the call stack until it is boring.',
+      summary: 'Base case, smaller call, return the combination. Write it, break it, fix it.',
       exercises: [
-        choice({
-          id: 'd06-rec-base',
-          title: 'What is a base case?',
-          skills: ['recursion_base_case'],
-          prompt: 'In a recursive function, what is the base case?',
-          options: [
-            'An input small enough to answer directly, without another recursive call',
-            'The first call made by the user',
-            'The largest input the function can handle',
-            'The line that calls the function again',
-          ],
-          answer: 0,
-          note: 'Recursive shape: `if <smallest input>: return <direct answer>` then `return <combine>(f(smaller))`.',
-          signature: 'choice:rec-base-case',
-        }),
-        output({
-          id: 'd06-rec-countdown',
-          title: 'Work before the call',
-          skills: ['recursion_base_case'],
-          prompt: 'Predict the output.',
-          code: `def countdown(n):
-    if n == 0:
-        print("go")
-        return
-    print(n)
-    countdown(n - 1)
-
-countdown(3)`,
-          expectedOutput: '3\n2\n1\ngo',
-          explanation: 'Each call prints first, then goes deeper. Printing before the recursive call happens on the way down.',
-          signature: 'trace:rec-before-call',
-        }),
-        output({
-          id: 'd06-rec-unwind',
-          title: 'Work after the call',
-          skills: ['recursion_base_case', 'recursion_return'],
-          prompt: 'Predict the output. The print is now **after** the recursive call.',
-          code: `def up(n):
-    if n == 0:
-        return
-    up(n - 1)
-    print(n)
-
-up(3)`,
-          expectedOutput: '1\n2\n3',
-          explanation: 'up(3) waits for up(2), which waits for up(1), which waits for up(0). They print as the stack unwinds, deepest first. This is why postorder visits children before the parent.',
-          signature: 'trace:rec-after-call',
-          minutes: 2,
-          important: true,
-        }),
         output({
           id: 'd06-rec-fact-stack',
           title: 'Call stack: factorial',
@@ -352,80 +298,13 @@ up(3)`,
 
 print(fact(4))`,
           expectedOutput: 'call 4\ncall 3\ncall 2\ncall 1\nreturn 2\nreturn 6\nreturn 24\n24',
+          note: 'Recursive shape: `if <smallest input>: return <direct answer>` then `return <combine>(f(smaller))`. Base case first, always.',
           explanation: 'All four calls are open at once. fact(1) hits the base case and returns 1 without printing "return"; then each waiting call multiplies and returns.',
           signature: 'trace:rec-factorial-stack',
           minutes: 2.5,
           important: true,
         }),
-        output({
-          id: 'd06-rec-sum-stack',
-          title: 'Call stack: sum of a list',
-          skills: ['recursion_return'],
-          prompt: 'Predict the output.',
-          code: `def total(nums):
-    if not nums:
-        return 0
-    rest = total(nums[1:])
-    print(nums[0], "+", rest)
-    return nums[0] + rest
-
-print(total([2, 5, 1]))`,
-          expectedOutput: '1 + 0\n5 + 1\n2 + 6\n8',
-          explanation: 'Each call trusts total(rest) to be correct and adds its own first item. The prints happen deepest first.',
-          signature: 'trace:rec-sum-list',
-          minutes: 2.5,
-        }),
-        choice({
-          id: 'd06-rec-no-base',
-          title: 'No base case',
-          skills: ['recursion_base_case'],
-          prompt: 'What happens when you call `count(3)`?',
-          code: `def count(n):
-    return 1 + count(n - 1)`,
-          options: ['RecursionError: it never stops calling itself', 'Returns 3', 'Returns 4', 'Returns 0'],
-          answer: 0,
-          explanation: 'Nothing stops at 0, so n goes 3, 2, 1, 0, -1, ... until Python’s recursion limit. Write the base case first, always.',
-          signature: 'choice:rec-missing-base',
-        }),
-        fill({
-          id: 'd06-rec-fill-base',
-          title: 'Fill: base case value',
-          skills: ['recursion_base_case'],
-          prompt: '`power(b, e)` computes `b` to the power `e` for `e >= 0`. Fill in the base case result.',
-          starterCode: `def power(b, e):
-    if e == 0:
-        return ____
-    return b * power(b, e - 1)
-`,
-          solution: `def power(b, e):
-    if e == 0:
-        return 1
-    return b * power(b, e - 1)
-`,
-          tests: [t.eq('power(2, 5)', '32'), t.eq('power(7, 0)', '1'), t.hidden('power(3, 1)', '3')],
-          hints: ['Anything to the power 0 is...'],
-          signature: 'fill:rec-base-value',
-        }),
-        fill({
-          id: 'd06-rec-fill-combine',
-          title: 'Fill: the recursive return',
-          skills: ['recursion_return'],
-          prompt: 'Fill in the recursive combination.',
-          starterCode: `def fact(n):
-    if n <= 1:
-        return 1
-    return n * ____
-`,
-          solution: `def fact(n):
-    if n <= 1:
-        return 1
-    return n * fact(n - 1)
-`,
-          tests: [t.eq('fact(5)', '120'), t.eq('fact(1)', '1'), t.hidden('fact(0)', '1')],
-          hints: ['Call yourself on a smaller input.'],
-          signature: 'fill:rec-combine',
-        }),
-        code({
+        write({
           id: 'd06-rec-sum-to',
           title: 'Sum 1..n recursively',
           skills: ['recursion_base_case', 'recursion_return'],
@@ -441,7 +320,64 @@ print(total([2, 5, 1]))`,
           signature: 'rec:sum-to-n',
           minutes: 4,
         }),
-        code({
+        write({
+          id: 'd06-rec-power',
+          title: 'Power, recursively',
+          skills: ['recursion_base_case', 'recursion_return'],
+          prompt: 'Write `power(b, e)` returning `b` to the power `e` for `e >= 0`, recursively. No `**` and no loop.',
+          starterCode: `def power(b, e):\n    pass\n`,
+          solution: `def power(b, e):
+    if e == 0:
+        return 1
+    return b * power(b, e - 1)
+`,
+          tests: [t.eq('power(2, 5)', '32'), t.eq('power(7, 0)', '1'), t.hidden('power(3, 1)', '3'), t.hidden('power(-2, 3)', '-8')],
+          hints: ['What is anything to the power 0?', 'b^e = b * b^(e - 1).'],
+          signature: 'rec:power',
+          minutes: 4,
+        }),
+        debug({
+          id: 'd06-rec-dbg-base',
+          title: 'Debug: factorial blows up',
+          skills: ['recursion_base_case'],
+          prompt: '`fact(n)` should return n! for every `n >= 0` (and `0! = 1`). It crashes on one input. Fix it.',
+          brokenCode: `def fact(n):
+    if n == 1:
+        return 1
+    return n * fact(n - 1)
+`,
+          solution: `def fact(n):
+    if n <= 1:
+        return 1
+    return n * fact(n - 1)
+`,
+          tests: [t.eq('fact(5)', '120'), t.eq('fact(0)', '1'), t.hidden('fact(1)', '1')],
+          hints: ['Trace fact(0): which n values does it visit?', 'The base case must catch the smallest input you accept.'],
+          signature: 'debug:rec-base-case',
+        }),
+        debug({
+          id: 'd06-rec-dbg-no-return',
+          title: 'Debug: the result vanishes',
+          skills: ['recursion_return'],
+          prompt: '`total(nums)` should return the sum of a list recursively: the first item plus the total of the rest. It crashes on any non-empty list. Fix it.',
+          brokenCode: `def total(nums):
+    if not nums:
+        return 0
+    nums[0] + total(nums[1:])
+`,
+          solution: `def total(nums):
+    if not nums:
+        return 0
+    return nums[0] + total(nums[1:])
+`,
+          tests: [t.eq('total([2, 5, 1])', '8'), t.eq('total([])', '0'), t.hidden('total([-3])', '-3')],
+          hints: ['What does total([1]) return? What does its caller do with that?'],
+          explanation: 'Computing a value is not returning it. A recursive case without `return` hands None to its caller, and the caller then does None + int.',
+          signature: 'debug:rec-missing-return',
+          minutes: 3,
+          important: true,
+        }),
+        write({
           id: 'd06-rec-index-param',
           title: 'Recursion with an index parameter',
           skills: ['recursion_base_case', 'recursion_return', 'list_index'],
@@ -458,7 +394,24 @@ print(total([2, 5, 1]))`,
           signature: 'rec:index-param',
           minutes: 5,
         }),
-        code({
+        write({
+          id: 'd06-rec-fib',
+          title: 'Two recursive calls: fib',
+          skills: ['recursion_base_case', 'recursion_return'],
+          prompt: 'Write `fib(n)`: `fib(0) = 0`, `fib(1) = 1`, otherwise the sum of the previous two. Plain recursion is fine here.',
+          starterCode: `def fib(n):\n    pass\n`,
+          solution: `def fib(n):
+    if n < 2:
+        return n
+    return fib(n - 1) + fib(n - 2)
+`,
+          tests: [t.eq('fib(0)', '0'), t.eq('fib(1)', '1'), t.eq('fib(7)', '13'), t.hidden('fib(15)', '610')],
+          hints: ['Two base cases, or one: n < 2 returns n.', 'Combine two smaller answers with +.'],
+          explanation: 'Two recursive calls combined with +: the same shape as combining a left and a right subtree.',
+          signature: 'rec:fib',
+          minutes: 4,
+        }),
+        write({
           id: 'd06-rec-reverse-str',
           title: 'Reverse a string recursively',
           skills: ['recursion_base_case', 'recursion_return', 'slicing'],
@@ -474,26 +427,7 @@ print(total([2, 5, 1]))`,
           signature: 'rec:reverse-string',
           minutes: 5,
         }),
-        code({
-          id: 'd06-rec-pal',
-          title: 'Palindrome, recursively',
-          ...combine,
-          skills: ['recursion_base_case', 'recursion_return', 'two_pointer'],
-          prompt: 'Write `pal(s, i, j)` that checks whether `s[i..j]` is a palindrome by recursion, moving `i` and `j` inward like two pointers. The caller uses `pal(s, 0, len(s) - 1)`.',
-          starterCode: `def pal(s, i, j):\n    pass\n`,
-          solution: `def pal(s, i, j):
-    if i >= j:
-        return True
-    if s[i] != s[j]:
-        return False
-    return pal(s, i + 1, j - 1)
-`,
-          tests: [t.eq('pal("level", 0, 4)', 'True'), t.eq('pal("levels", 0, 5)', 'False'), t.hidden('pal("", 0, -1)', 'True'), t.hidden('pal("ab", 0, 1)', 'False'), t.hidden('pal("a", 0, 0)', 'True')],
-          hints: ['Two base cases: pointers met (True) or a mismatch (False).', 'Otherwise recurse with i + 1, j - 1.'],
-          signature: 'rec:two-pointer-palindrome',
-          minutes: 7,
-        }),
-        code({
+        write({
           id: 'd06-rec-list-len',
           title: 'Linked list length, recursively',
           ...combine,
@@ -512,21 +446,45 @@ print(total([2, 5, 1]))`,
           minutes: 5,
           important: true,
         }),
-        reorder({
-          id: 'd06-rec-reorder-fib',
-          title: 'Reassemble fib',
-          skills: ['recursion_base_case', 'recursion_return'],
-          prompt: 'Put `fib` in order: `fib(0) = 0`, `fib(1) = 1`, otherwise the sum of the previous two.',
-          lines: [
-            'def fib(n):',
-            '    if n < 2:',
-            '        return n',
-            '    return fib(n - 1) + fib(n - 2)',
-          ],
-          tests: [t.eq('fib(0)', '0'), t.eq('fib(1)', '1'), t.eq('fib(7)', '13')],
-          explanation: 'Two recursive calls combined with +: the same shape as combining a left and a right subtree.',
-          minutes: 3,
-          signature: 'reorder:rec-fib',
+        write({
+          id: 'd06-rec-translate',
+          title: 'Translate: loop → recursion',
+          ...combine,
+          style: 'translate',
+          skills: ['recursion_base_case', 'recursion_return', 'linked_list_traversal'],
+          prompt: 'Here is yesterday’s loop version:\n\n```python\ndef count_greater(head, x):\n    count = 0\n    node = head\n    while node:\n        if node.val > x:\n            count += 1\n        node = node.next\n    return count\n```\n\nWrite `count_greater(head, x)` again **recursively**: no `while`, no `for`.',
+          starterCode: `def count_greater(head, x):\n    pass\n`,
+          solution: `def count_greater(head, x):
+    if head is None:
+        return 0
+    rest = count_greater(head.next, x)
+    if head.val > x:
+        return rest + 1
+    return rest
+`,
+          tests: [t.eq('count_greater(build_list([5, 1, 7, 3]), 4)', '2'), t.eq('count_greater(None, 0)', '0'), t.hidden('count_greater(build_list([1, 1]), 1)', '0'), t.hidden('count_greater(build_list([-1, 0, 2]), -5)', '3')],
+          hints: ['The loop’s stop condition becomes the base case.', 'Ask the rest of the list for its count, then add 1 if this node qualifies.'],
+          signature: 'rec:translate-loop',
+          minutes: 5,
+        }),
+        write({
+          id: 'd06-rec-pal',
+          title: 'Palindrome, recursively',
+          ...combine,
+          skills: ['recursion_base_case', 'recursion_return', 'two_pointer'],
+          prompt: 'Write `pal(s, i, j)` that checks whether `s[i..j]` is a palindrome by recursion, moving `i` and `j` inward like two pointers. The caller uses `pal(s, 0, len(s) - 1)`.',
+          starterCode: `def pal(s, i, j):\n    pass\n`,
+          solution: `def pal(s, i, j):
+    if i >= j:
+        return True
+    if s[i] != s[j]:
+        return False
+    return pal(s, i + 1, j - 1)
+`,
+          tests: [t.eq('pal("level", 0, 4)', 'True'), t.eq('pal("levels", 0, 5)', 'False'), t.hidden('pal("", 0, -1)', 'True'), t.hidden('pal("ab", 0, 1)', 'False'), t.hidden('pal("a", 0, 0)', 'True')],
+          hints: ['Two base cases: pointers met (True) or a mismatch (False).', 'Otherwise recurse with i + 1, j - 1.'],
+          signature: 'rec:two-pointer-palindrome',
+          minutes: 7,
         }),
       ],
     },
@@ -537,28 +495,6 @@ print(total([2, 5, 1]))`,
       title: 'TreeNode',
       summary: 'val, left, right, and None where a child is missing.',
       exercises: [
-        choice({
-          id: 'd06-tn-leaf',
-          title: 'What is a leaf?',
-          skills: ['treenode'],
-          prompt: 'Which node is a leaf?',
-          options: ['A node whose left and right are both None', 'The root', 'Any node with exactly one child', 'A node whose val is 0'],
-          answer: 0,
-          note: 'class TreeNode: val, left, right. Missing children are None. An empty tree is just root = None.',
-          signature: 'choice:tree-leaf',
-        }),
-        output({
-          id: 'd06-tn-manual',
-          title: 'Build by hand',
-          skills: ['treenode'],
-          prompt: 'Predict the output. `TreeNode(val, left, right)` already exists.',
-          code: `root = TreeNode(1, TreeNode(2), TreeNode(3, TreeNode(4)))
-print(root.val, root.left.val, root.right.val)
-print(root.right.left.val, root.left.left)`,
-          expectedOutput: '1 2 3\n4 None',
-          explanation: 'TreeNode(3, TreeNode(4)) gives 3 a left child 4. Node 2 was created with no children, so its left is None.',
-          signature: 'trace:tree-manual',
-        }),
         output({
           id: 'd06-tn-level-order',
           title: 'Read a level-order list',
@@ -568,38 +504,28 @@ print(root.right.left.val, root.left.left)`,
 print(root.left.val, root.right.val)
 print(root.left.left, root.left.right.val)`,
           expectedOutput: '3 8\nNone 4',
+          note: 'class TreeNode: val, left, right. Missing children are None; an empty tree is root = None. A leaf has both children None.',
           explanation: 'Level by level, left to right: 5; then 3 and 8; then 3’s children are None and 4.',
           signature: 'trace:tree-level-order',
           minutes: 2,
         }),
-        code({
-          id: 'd06-tn-one-line',
-          title: 'One line: a three-node tree',
-          stage: 'recall',
-          skills: ['treenode'],
-          prompt: 'Write one line that sets `root` to a tree with 2 at the top, 1 on the left and 3 on the right, using `TreeNode(...)`.',
-          starterCode: `root = None\n`,
-          solution: `root = TreeNode(2, TreeNode(1), TreeNode(3))\n`,
-          tests: [t.check('tree is [2, 1, 3]', 'assert tree_to_array(root) == [2, 1, 3], tree_to_array(root)')],
-          hints: ['TreeNode(val, left, right).'],
-          signature: 'recall:treenode-nested',
-          minutes: 2,
-        }),
-        code({
+        write({
           id: 'd06-tn-is-leaf',
           title: 'is_leaf',
           skills: ['treenode', 'conditionals'],
           prompt: 'Write `is_leaf(node)` returning `True` if `node` exists and has no children. `is_leaf(None)` is `False`.',
           starterCode: `def is_leaf(node):\n    pass\n`,
           solution: `def is_leaf(node):
-    return node is not None and node.left is None and node.right is None
+    if node is None:
+        return False
+    return node.left is None and node.right is None
 `,
           tests: [t.eq('is_leaf(TreeNode(1))', 'True'), t.eq('is_leaf(build_tree([1, 2]))', 'False'), t.hidden('is_leaf(None)', 'False'), t.hidden('is_leaf(build_tree([1, None, 2]))', 'False')],
           hints: ['Check node first, then both children.'],
           signature: 'tree:is-leaf',
           minutes: 4,
         }),
-        code({
+        write({
           id: 'd06-tn-children-sum',
           title: 'Sum the children',
           skills: ['treenode', 'conditionals'],
@@ -618,6 +544,24 @@ print(root.left.left, root.left.right.val)`,
           signature: 'tree:children-sum',
           minutes: 4,
         }),
+        debug({
+          id: 'd06-tn-dbg-none',
+          title: 'Debug: left leaf check',
+          skills: ['treenode', 'conditionals'],
+          prompt: '`has_left_leaf(node)` should return `True` when `node` has a left child and that child is a leaf, otherwise `False`. `node` is not None. It crashes on some trees. Fix it.',
+          brokenCode: `def has_left_leaf(node):
+    return node.left.left is None and node.left.right is None
+`,
+          solution: `def has_left_leaf(node):
+    if node.left is None:
+        return False
+    return node.left.left is None and node.left.right is None
+`,
+          tests: [t.eq('has_left_leaf(build_tree([1, 2, 3]))', 'True'), t.eq('has_left_leaf(build_tree([1, None, 3]))', 'False'), t.hidden('has_left_leaf(build_tree([1, 2, None, 4]))', 'False'), t.hidden('has_left_leaf(TreeNode(5))', 'False')],
+          hints: ['What is node.left when there is no left child? What does .left on that do?'],
+          signature: 'debug:tree-none-child',
+          minutes: 3,
+        }),
       ],
     },
 
@@ -625,7 +569,7 @@ print(root.left.left, root.left.right.val)`,
     {
       id: 'd06-dfs',
       title: 'Tree DFS',
-      summary: 'Preorder, inorder, postorder, then combine children’s answers and carry state down.',
+      summary: 'Visit, return and combine children’s answers, carry state down, and fix the classic bugs.',
       exercises: [
         output({
           id: 'd06-dfs-pre-trace',
@@ -641,76 +585,18 @@ print(root.left.left, root.left.right.val)`,
 
 pre(build_tree([1, 2, 3, 4, 5]))`,
           expectedOutput: '1\n2\n4\n5\n3',
-          note: 'Preorder: node, left, right. Inorder: left, node, right. Postorder: left, right, node.',
+          note: 'Preorder: node, left, right. Inorder: left, node, right. Postorder: left, right, node. Values that need both children’s answers (height, size) are postorder.',
           explanation: 'Preorder handles a node before diving into its children, finishing the whole left subtree before the right.',
           signature: 'trace:dfs-preorder',
           minutes: 2,
           important: true,
         }),
-        output({
-          id: 'd06-dfs-in-post-trace',
-          title: 'Inorder and postorder',
-          skills: ['tree_dfs'],
-          prompt: 'Same tree. Predict the output.',
-          code: `def ino(node, out):
-    if node is None:
-        return
-    ino(node.left, out)
-    out.append(node.val)
-    ino(node.right, out)
-
-def post(node, out):
-    if node is None:
-        return
-    post(node.left, out)
-    post(node.right, out)
-    out.append(node.val)
-
-root = build_tree([1, 2, 3, 4, 5])
-a, b = [], []
-ino(root, a)
-post(root, b)
-print(a)
-print(b)`,
-          expectedOutput: '[4, 2, 5, 1, 3]\n[4, 5, 2, 3, 1]',
-          explanation: 'Moving one line (the append) changes the order. Postorder puts the root last because both children must finish first.',
-          signature: 'trace:dfs-in-post',
-          minutes: 4,
-        }),
-        choice({
-          id: 'd06-dfs-which-order',
-          title: 'Which order?',
-          skills: ['tree_dfs'],
-          prompt: 'To compute a node’s height you need both children’s heights first. Which traversal order does that computation follow?',
-          options: ['Postorder', 'Preorder', 'Inorder', 'Level order'],
-          answer: 0,
-          explanation: 'Children first, then combine at the node: postorder. Most "return a value from each subtree" problems (depth, size, balanced) are postorder.',
-          signature: 'choice:dfs-order',
-        }),
-        fill({
-          id: 'd06-dfs-fill-base',
-          title: 'Fill: the tree base case',
-          skills: ['tree_dfs', 'recursion_base_case'],
-          prompt: 'Fill in what an empty tree contributes to the node count.',
-          starterCode: `def count(root):
-    if root is None:
-        return ____
-    return 1 + count(root.left) + count(root.right)
-`,
-          solution: `def count(root):
-    if root is None:
-        return 0
-    return 1 + count(root.left) + count(root.right)
-`,
-          tests: [t.eq('count(build_tree([1, 2, 3, 4]))', '4'), t.eq('count(None)', '0')],
-          hints: ['How many nodes are in nothing?'],
-          signature: 'fill:dfs-base',
-        }),
-        code({
+        write({
           id: 'd06-dfs-preorder',
           title: 'Preorder into a list',
+          style: 'finish',
           skills: ['tree_dfs', 'list_append', 'functions'],
-          prompt: 'Write `preorder(root)` returning the values in preorder. Use an inner helper `visit(node)` that appends to an outer list.',
+          prompt: 'Finish `preorder(root)` so it returns the values in preorder. Fill in the inner helper `visit(node)`, which appends to the outer list.',
           starterCode: `def preorder(root):
     out = []
 
@@ -739,28 +625,11 @@ print(b)`,
           minutes: 6,
           important: true,
         }),
-        code({
-          id: 'd06-dfs-inorder-return',
-          title: 'Inorder by returning lists',
-          skills: ['tree_dfs', 'recursion_return'],
-          prompt: 'Write `inorder(root)` **without** a shared list: each call returns its own list, built from the children’s lists.',
-          starterCode: `def inorder(root):\n    pass\n`,
-          solution: `def inorder(root):
-    if root is None:
-        return []
-    return inorder(root.left) + [root.val] + inorder(root.right)
-`,
-          tests: [t.eq('inorder(build_tree([1, 2, 3, 4, 5]))', '[4, 2, 5, 1, 3]'), t.eq('inorder(None)', '[]'), t.hidden('inorder(build_tree([2, 1, 3]))', '[1, 2, 3]')],
-          hints: ['Empty tree → empty list.', 'left list + [val] + right list.'],
-          explanation: 'Two styles: share one list (state) or combine returned values. Both are O(n) visits; the shared list avoids the extra list copies.',
-          signature: 'dfs:inorder-return-combine',
-          minutes: 6,
-        }),
-        code({
+        write({
           id: 'd06-dfs-count',
           title: 'Count nodes',
           skills: ['tree_dfs', 'recursion_return'],
-          prompt: 'Write `count_nodes(root)` from scratch.',
+          prompt: 'Write `count_nodes(root)` from the signature.',
           starterCode: `def count_nodes(root):\n    pass\n`,
           solution: `def count_nodes(root):
     if root is None:
@@ -772,7 +641,54 @@ print(b)`,
           signature: 'dfs:count-nodes',
           minutes: 4,
         }),
-        code({
+        write({
+          id: 'd06-dfs-modify-count',
+          title: 'Modify: count only big values',
+          style: 'modify',
+          skills: ['tree_dfs', 'recursion_return', 'conditionals'],
+          prompt: 'This counts **every** node. Change it so `count_above(root, x)` counts only nodes whose value is greater than `x`.',
+          starterCode: `def count_above(root, x):
+    if root is None:
+        return 0
+    return 1 + count_above(root.left, x) + count_above(root.right, x)
+`,
+          solution: `def count_above(root, x):
+    if root is None:
+        return 0
+    here = 1 if root.val > x else 0
+    return here + count_above(root.left, x) + count_above(root.right, x)
+`,
+          tests: [t.eq('count_above(build_tree([5, 1, 8, None, 6]), 4)', '3'), t.eq('count_above(build_tree([1, 2]), 9)', '0'), t.hidden('count_above(None, 0)', '0'), t.hidden('count_above(build_tree([-1, -2, 0]), -2)', '2')],
+          hints: ['Only this node’s contribution changes; the children still get asked.'],
+          signature: 'dfs:count-filtered',
+          minutes: 4,
+        }),
+        debug({
+          id: 'd06-dfs-dbg-ignore',
+          title: 'Debug: tree sum',
+          skills: ['tree_dfs', 'recursion_return'],
+          prompt: '`tree_sum(root)` should return the sum of every value in the tree (0 for an empty tree). It only gets one value right. Fix it.',
+          brokenCode: `def tree_sum(root):
+    if root is None:
+        return 0
+    tree_sum(root.left)
+    tree_sum(root.right)
+    return root.val
+`,
+          solution: `def tree_sum(root):
+    if root is None:
+        return 0
+    left = tree_sum(root.left)
+    right = tree_sum(root.right)
+    return root.val + left + right
+`,
+          tests: [t.eq('tree_sum(build_tree([1, 2, 3, 4]))', '10'), t.eq('tree_sum(None)', '0'), t.hidden('tree_sum(TreeNode(-5))', '-5')],
+          hints: ['The recursive calls run. Where do their answers go?'],
+          signature: 'debug:dfs-ignored-result',
+          minutes: 4,
+          important: true,
+        }),
+        write({
           id: 'd06-dfs-max',
           title: 'Largest value',
           skills: ['tree_dfs', 'recursion_return'],
@@ -788,7 +704,7 @@ print(b)`,
           signature: 'dfs:tree-max',
           minutes: 6,
         }),
-        code({
+        write({
           id: 'd06-dfs-leaves',
           title: 'Count leaves',
           skills: ['tree_dfs', 'recursion_base_case'],
@@ -806,7 +722,28 @@ print(b)`,
           signature: 'dfs:count-leaves',
           minutes: 6,
         }),
-        code({
+        debug({
+          id: 'd06-dfs-dbg-leaf-base',
+          title: 'Debug: leaf values',
+          skills: ['tree_dfs', 'recursion_base_case'],
+          prompt: '`leaf_sum(root)` should return the sum of the values of all leaves (0 for an empty tree). It crashes on some trees. Fix it.',
+          brokenCode: `def leaf_sum(root):
+    if root.left is None and root.right is None:
+        return root.val
+    return leaf_sum(root.left) + leaf_sum(root.right)
+`,
+          solution: `def leaf_sum(root):
+    if root is None:
+        return 0
+    if root.left is None and root.right is None:
+        return root.val
+    return leaf_sum(root.left) + leaf_sum(root.right)
+`,
+          tests: [t.eq('leaf_sum(build_tree([1, 2, 3]))', '5'), t.eq('leaf_sum(build_tree([1, 2, 3, 4]))', '7'), t.eq('leaf_sum(None)', '0'), t.hidden('leaf_sum(TreeNode(6))', '6')],
+          hints: ['Which call receives None when a node has only one child?'],
+          signature: 'debug:dfs-missing-none-base',
+        }),
+        write({
           id: 'd06-dfs-contains',
           title: 'Search the tree',
           skills: ['tree_dfs', 'recursion_return'],
@@ -824,30 +761,29 @@ print(b)`,
           signature: 'dfs:contains',
           minutes: 5,
         }),
-        output({
-          id: 'd06-dfs-depth-param',
-          title: 'Carrying depth down',
-          skills: ['tree_dfs', 'recursion_base_case'],
-          prompt: 'Predict the output.',
-          code: `def show(node, depth):
-    if node is None:
-        return
-    print(node.val, depth)
-    show(node.left, depth + 1)
-    show(node.right, depth + 1)
-
-show(build_tree([1, 2, 3, None, 4]), 0)`,
-          expectedOutput: '1 0\n2 1\n4 2\n3 1',
-          explanation: 'Each call gets its own `depth`. Passing depth + 1 down never changes the parent’s depth, so no undo is needed.',
-          signature: 'trace:dfs-depth-param',
-          minutes: 2,
+        write({
+          id: 'd06-dfs-inorder-return',
+          title: 'Inorder by returning lists',
+          skills: ['tree_dfs', 'recursion_return'],
+          prompt: 'Write `inorder(root)` **without** a shared list: each call returns its own list, built from the children’s lists.',
+          starterCode: `def inorder(root):\n    pass\n`,
+          solution: `def inorder(root):
+    if root is None:
+        return []
+    return inorder(root.left) + [root.val] + inorder(root.right)
+`,
+          tests: [t.eq('inorder(build_tree([1, 2, 3, 4, 5]))', '[4, 2, 5, 1, 3]'), t.eq('inorder(None)', '[]'), t.hidden('inorder(build_tree([2, 1, 3]))', '[1, 2, 3]')],
+          hints: ['Empty tree → empty list.', 'left list + [val] + right list.'],
+          explanation: 'Two styles: share one list (state) or combine returned values. Both are O(n) visits; the shared list avoids the extra list copies.',
+          signature: 'dfs:inorder-return-combine',
+          minutes: 6,
         }),
-        code({
+        write({
           id: 'd06-dfs-at-depth',
           title: 'Values at depth d',
           ...pattern,
           skills: ['tree_dfs', 'list_append'],
-          prompt: 'Write `at_depth(root, d)` returning the values at depth `d` (root is depth 0), left to right. Carry the depth down as a parameter.',
+          prompt: 'Write `at_depth(root, d)` returning the values at depth `d` (root is depth 0), left to right. Carry the depth down as a parameter of a helper: each call gets its own `depth`.',
           starterCode: `def at_depth(root, d):\n    pass\n`,
           solution: `def at_depth(root, d):
     out = []
@@ -869,7 +805,7 @@ show(build_tree([1, 2, 3, None, 4]), 0)`,
           signature: 'dfs:depth-param-collect',
           minutes: 8,
         }),
-        code({
+        write({
           id: 'd06-dfs-path-sum',
           title: 'Root-to-leaf sum',
           ...pattern,
@@ -896,41 +832,75 @@ show(build_tree([1, 2, 3, None, 4]), 0)`,
           signature: 'dfs:path-sum',
           minutes: 10,
         }),
-        reorder({
-          id: 'd06-dfs-reorder-sum',
-          title: 'Reassemble tree sum',
-          skills: ['tree_dfs', 'recursion_return'],
-          prompt: 'Put `tree_sum` in order.',
-          lines: [
-            'def tree_sum(root):',
-            '    if root is None:',
-            '        return 0',
-            '    left = tree_sum(root.left)',
-            '    right = tree_sum(root.right)',
-            '    return root.val + left + right',
-          ],
-          tests: [t.eq('tree_sum(build_tree([1, 2, 3, 4]))', '10'), t.eq('tree_sum(None)', '0')],
-          minutes: 3,
-          signature: 'reorder:dfs-sum',
+        debug({
+          id: 'd06-dfs-dbg-path',
+          title: 'Debug: path sum stops too early',
+          skills: ['tree_dfs', 'recursion_base_case'],
+          prompt: '`path_to_leaf(root, target)` should return `True` only if some **root-to-leaf** path sums to `target` (empty tree → `False`). It says `True` for paths that stop at a node with one child. Fix it.',
+          brokenCode: `def path_to_leaf(root, target):
+    if root is None:
+        return target == 0
+    remaining = target - root.val
+    return path_to_leaf(root.left, remaining) or path_to_leaf(root.right, remaining)
+`,
+          solution: `def path_to_leaf(root, target):
+    if root is None:
+        return False
+    remaining = target - root.val
+    if root.left is None and root.right is None:
+        return remaining == 0
+    return path_to_leaf(root.left, remaining) or path_to_leaf(root.right, remaining)
+`,
+          tests: [t.eq('path_to_leaf(build_tree([1, 2]), 1)', 'False'), t.eq('path_to_leaf(build_tree([1, 2]), 3)', 'True'), t.hidden('path_to_leaf(None, 0)', 'False'), t.hidden('path_to_leaf(build_tree([5, 4, 8, 11, None, 13, 4, 7, 2]), 22)', 'True')],
+          hints: ['In [1, 2], node 1 has an empty right side. What does that None call return when target is 1?', 'A path may only end at a leaf, so the check belongs there.'],
+          signature: 'debug:dfs-path-leaf-check',
+          minutes: 5,
         }),
-        output({
-          id: 'd06-dfs-height-trace',
-          title: 'Trace a height computation',
+        write({
+          id: 'd06-dfs-translate-stack',
+          title: 'Translate: recursion → explicit stack',
+          ...combine,
+          style: 'translate',
+          difficulty: 3,
+          skills: ['tree_dfs', 'stack_push_pop'],
+          prompt: 'Recursion uses the call stack. Write `preorder_iter(root)` that returns the preorder values using your **own** list as a stack, no recursion:\n\n```python\ndef preorder(node):\n    if node is None:\n        return []\n    return [node.val] + preorder(node.left) + preorder(node.right)\n```',
+          starterCode: `def preorder_iter(root):\n    pass\n`,
+          solution: `def preorder_iter(root):
+    out = []
+    stack = [root] if root else []
+    while stack:
+        node = stack.pop()
+        out.append(node.val)
+        if node.right:
+            stack.append(node.right)
+        if node.left:
+            stack.append(node.left)
+    return out
+`,
+          tests: [t.eq('preorder_iter(build_tree([1, 2, 3, 4, 5]))', '[1, 2, 4, 5, 3]'), t.eq('preorder_iter(None)', '[]'), t.hidden('preorder_iter(build_tree([1, None, 2, 3]))', '[1, 2, 3]'), t.hidden('preorder_iter(TreeNode(9))', '[9]')],
+          hints: ['Start with the root on the stack; pop, record, push children.', 'The stack is last-in first-out: push right before left so left comes out first.'],
+          signature: 'dfs:iterative-preorder',
+          minutes: 8,
+        }),
+        debug({
+          id: 'd06-dfs-dbg-depth',
+          title: 'Debug: height is too small',
           skills: ['tree_dfs', 'recursion_return'],
-          prompt: 'Predict the output.',
-          code: `def height(node):
-    if node is None:
+          prompt: '`height(root)` should return the number of nodes on the longest root-to-leaf path (0 for an empty tree). Some answers are too small. Fix it.',
+          brokenCode: `def height(root):
+    if root is None:
         return 0
-    l = height(node.left)
-    r = height(node.right)
-    print(node.val, l, r)
-    return 1 + max(l, r)
-
-print(height(build_tree([1, 2, 3, None, 4])))`,
-          expectedOutput: '4 0 0\n2 0 1\n3 0 0\n1 2 1\n3',
-          explanation: 'Postorder: 4 reports first (both children empty). 2 sees heights 0 and 1, returns 2. The root combines 2 and 1 into 3.',
-          signature: 'trace:dfs-height',
-          minutes: 3,
+    return max(1 + height(root.left), height(root.right))
+`,
+          solution: `def height(root):
+    if root is None:
+        return 0
+    return 1 + max(height(root.left), height(root.right))
+`,
+          tests: [t.eq('height(build_tree([1, None, 2]))', '2'), t.eq('height(build_tree([1, 2]))', '2'), t.hidden('height(None)', '0'), t.hidden('height(build_tree([1, 2, 3, None, None, 4, None, 5]))', '4')],
+          hints: ['Trace the tree [1, None, 2]. Who adds the 1 for the root?', 'The current node counts once, no matter which child is deeper.'],
+          signature: 'debug:dfs-depth-plus-one',
+          minutes: 4,
           important: true,
         }),
       ],
@@ -940,7 +910,7 @@ print(height(build_tree([1, 2, 3, None, 4])))`,
     {
       id: 'd06-cap-depth',
       title: 'Capstone: Max Depth',
-      summary: 'Postorder combine from a blank editor, then explain it.',
+      summary: 'Postorder combine from a bare signature, then explain it.',
       exercises: [
         capstone({
           id: 'cap-max-depth',
@@ -1002,53 +972,38 @@ print(height(build_tree([1, 2, 3, None, 4])))`,
     {
       id: 'd06-pairs',
       title: 'Two trees at once',
-      summary: 'Recurse on a pair of nodes: base cases for None on either side.',
+      summary: 'Recurse on a pair of nodes: base cases for None on either side, then values.',
       exercises: [
-        choice({
-          id: 'd06-pair-base',
-          title: 'Base cases for a pair',
-          skills: ['recursion_base_case', 'tree_dfs'],
-          prompt: 'You recurse on two nodes `a` and `b` at once. Which base-case pair is right?',
-          options: [
-            'Both None → True; exactly one None → False',
-            'a is None → True; b is None → True',
-            'Both None → False; one None → True',
-            'Only check a.val == b.val',
-          ],
-          answer: 0,
-          note: 'if a is None and b is None: return True\nif a is None or b is None: return False',
-          explanation: 'Two empty trees match. One empty and one not cannot match. Only after both checks is it safe to read .val on both.',
-          signature: 'choice:pair-base-cases',
-        }),
-        output({
-          id: 'd06-pair-shape-trace',
-          title: 'Same shape?',
-          skills: ['tree_dfs', 'recursion_return'],
-          prompt: 'This compares shapes only, not values. Predict the output.',
-          code: `def same_shape(a, b):
+        write({
+          id: 'd06-pair-lists',
+          title: 'Equal linked lists, recursively',
+          ...combine,
+          skills: ['recursion_base_case', 'recursion_return', 'listnode'],
+          prompt: 'Write `same_list(a, b)` that returns `True` if two linked lists hold the same values in the same order. Recursive, recursing on the pair `(a.next, b.next)`.',
+          starterCode: `def same_list(a, b):\n    pass\n`,
+          solution: `def same_list(a, b):
     if a is None and b is None:
         return True
     if a is None or b is None:
         return False
-    return same_shape(a.left, b.left) and same_shape(a.right, b.right)
-
-print(same_shape(build_tree([1, 2]), build_tree([9, 8])))
-print(same_shape(build_tree([1, 2]), build_tree([1, None, 2])))`,
-          expectedOutput: 'True\nFalse',
-          explanation: 'Values never get compared. [1, 2] has a left child; [1, None, 2] has a right child, so the left pair is (node, None) → False.',
-          signature: 'trace:pair-shape',
-          minutes: 2,
+    return a.val == b.val and same_list(a.next, b.next)
+`,
+          tests: [t.eq('same_list(build_list([1, 2]), build_list([1, 2]))', 'True'), t.eq('same_list(build_list([1, 2]), build_list([1]))', 'False'), t.hidden('same_list(None, None)', 'True'), t.hidden('same_list(build_list([1, 3]), build_list([1, 2]))', 'False'), t.hidden('same_list(None, build_list([1]))', 'False')],
+          note: 'Pair base cases, in this order:\nif a is None and b is None: return True\nif a is None or b is None: return False\nOnly then is it safe to read .val on both.',
+          hints: ['Pair base cases first: both None, then exactly one None.', 'Then: values equal and the rest equal.'],
+          signature: 'rec:pair-linked-lists',
+          minutes: 6,
         }),
-        fill({
-          id: 'd06-pair-fill',
-          title: 'Fill: one side missing',
-          skills: ['recursion_base_case'],
-          prompt: 'Fill in the second base case.',
-          starterCode: `def same_shape(a, b):
+        debug({
+          id: 'd06-pair-dbg-order',
+          title: 'Debug: same shape',
+          skills: ['recursion_base_case', 'tree_dfs'],
+          prompt: '`same_shape(a, b)` should return `True` when two trees have exactly the same shape (values are ignored). It never returns `True`. Fix it.',
+          brokenCode: `def same_shape(a, b):
+    if a is None or b is None:
+        return False
     if a is None and b is None:
         return True
-    if ____:
-        return False
     return same_shape(a.left, b.left) and same_shape(a.right, b.right)
 `,
           solution: `def same_shape(a, b):
@@ -1058,35 +1013,17 @@ print(same_shape(build_tree([1, 2]), build_tree([1, None, 2])))`,
         return False
     return same_shape(a.left, b.left) and same_shape(a.right, b.right)
 `,
-          tests: [t.eq('same_shape(build_tree([1, 2]), build_tree([1]))', 'False'), t.eq('same_shape(None, None)', 'True'), t.hidden('same_shape(None, TreeNode(1))', 'False')],
-          hints: ['Both-None was already handled above.'],
-          signature: 'fill:pair-one-none',
+          tests: [t.eq('same_shape(build_tree([1, 2]), build_tree([9, 8]))', 'True'), t.eq('same_shape(build_tree([1, 2]), build_tree([1, None, 2]))', 'False'), t.hidden('same_shape(None, None)', 'True'), t.hidden('same_shape(TreeNode(1), None)', 'False')],
+          hints: ['Can the second `if` ever run?', 'Every recursion ends at a pair of Nones. What does that pair return here?'],
+          signature: 'debug:pair-base-case-order',
+          minutes: 3,
         }),
-        code({
-          id: 'd06-pair-lists',
-          title: 'Equal linked lists, recursively',
-          ...combine,
-          skills: ['recursion_base_case', 'recursion_return', 'listnode'],
-          prompt: 'Write `same_list(a, b)` that returns `True` if two linked lists hold the same values in the same order. Recursive, with the same pair base cases.',
-          starterCode: `def same_list(a, b):\n    pass\n`,
-          solution: `def same_list(a, b):
-    if a is None and b is None:
-        return True
-    if a is None or b is None:
-        return False
-    return a.val == b.val and same_list(a.next, b.next)
-`,
-          tests: [t.eq('same_list(build_list([1, 2]), build_list([1, 2]))', 'True'), t.eq('same_list(build_list([1, 2]), build_list([1]))', 'False'), t.hidden('same_list(None, None)', 'True'), t.hidden('same_list(build_list([1, 3]), build_list([1, 2]))', 'False')],
-          hints: ['Pair base cases first.', 'Then: values equal and the rest equal.'],
-          signature: 'rec:pair-linked-lists',
-          minutes: 6,
-        }),
-        code({
+        write({
           id: 'd06-pair-bigger',
           title: 'Every node bigger?',
           ...pattern,
           skills: ['tree_dfs', 'recursion_base_case', 'recursion_return'],
-          prompt: 'Two trees with the same shape. Write `all_bigger(a, b)`: `True` if every node of `a` holds a larger value than the node at the same spot in `b`. Two empty trees → `True`; if the shapes differ, return `False`.',
+          prompt: 'Write `all_bigger(a, b)`: `True` if `a` and `b` have the same shape and every node of `a` holds a larger value than the node at the same spot in `b`. Two empty trees → `True`.',
           starterCode: `def all_bigger(a, b):\n    pass\n`,
           solution: `def all_bigger(a, b):
     if a is None and b is None:
@@ -1102,6 +1039,54 @@ print(same_shape(build_tree([1, 2]), build_tree([1, None, 2])))`,
           signature: 'dfs:pair-compare-values',
           minutes: 7,
         }),
+        debug({
+          id: 'd06-pair-dbg-values',
+          title: 'Debug: values match, trees don’t',
+          skills: ['tree_dfs', 'recursion_base_case'],
+          prompt: '`trees_equal(a, b)` should return `True` only when both trees have the same shape **and** the same values everywhere. It says `True` for some trees that differ. Fix it.',
+          brokenCode: `def trees_equal(a, b):
+    if a is None or b is None:
+        return True
+    if a.val != b.val:
+        return False
+    return trees_equal(a.left, b.left) and trees_equal(a.right, b.right)
+`,
+          solution: `def trees_equal(a, b):
+    if a is None and b is None:
+        return True
+    if a is None or b is None:
+        return False
+    if a.val != b.val:
+        return False
+    return trees_equal(a.left, b.left) and trees_equal(a.right, b.right)
+`,
+          tests: [t.eq('trees_equal(build_tree([1, 2]), build_tree([1]))', 'False'), t.eq('trees_equal(build_tree([1, 2, 3]), build_tree([1, 2, 3]))', 'True'), t.hidden('trees_equal(None, TreeNode(4))', 'False'), t.hidden('trees_equal(build_tree([1, 2]), build_tree([1, 3]))', 'False')],
+          hints: ['Compare [1, 2] with [1]. Which pair of nodes reaches the first `if`?', 'Only both-None is a match.'],
+          signature: 'debug:pair-structure-check',
+          minutes: 4,
+        }),
+        write({
+          id: 'd06-pair-mirror',
+          title: 'Mirror images',
+          ...pattern,
+          difficulty: 3,
+          skills: ['tree_dfs', 'recursion_base_case', 'recursion_return'],
+          prompt: 'Write `is_mirror(a, b)`: `True` if tree `b` is the mirror image of tree `a` (same values, left and right swapped at every level). Two empty trees are mirrors.',
+          starterCode: `def is_mirror(a, b):\n    pass\n`,
+          solution: `def is_mirror(a, b):
+    if a is None and b is None:
+        return True
+    if a is None or b is None:
+        return False
+    if a.val != b.val:
+        return False
+    return is_mirror(a.left, b.right) and is_mirror(a.right, b.left)
+`,
+          tests: [t.eq('is_mirror(build_tree([1, 2, 3]), build_tree([1, 3, 2]))', 'True'), t.eq('is_mirror(build_tree([1, 2, 3]), build_tree([1, 2, 3]))', 'False'), t.hidden('is_mirror(None, None)', 'True'), t.hidden('is_mirror(build_tree([1, 2, None, 4]), build_tree([1, None, 2, None, 4]))', 'True'), t.hidden('is_mirror(build_tree([1, 2]), build_tree([1, 2]))', 'False')],
+          hints: ['Same pair base cases as same-tree.', 'Which child of a lines up with which child of b?', 'Pair (a.left, b.right) and (a.right, b.left).'],
+          signature: 'dfs:pair-mirror',
+          minutes: 7,
+        }),
       ],
     },
 
@@ -1109,7 +1094,7 @@ print(same_shape(build_tree([1, 2]), build_tree([1, None, 2])))`,
     {
       id: 'd06-cap-same',
       title: 'Capstone: Same Tree',
-      summary: 'Pair recursion from a blank editor, then explain it.',
+      summary: 'Pair recursion from a bare signature, then explain it.',
       exercises: [
         capstone({
           id: 'cap-same-tree',
@@ -1176,7 +1161,7 @@ print(same_shape(build_tree([1, 2]), build_tree([1, None, 2])))`,
     {
       id: 'd06-mutate',
       title: 'Changing trees',
-      summary: 'Swap children safely, mutate in place, and return the root.',
+      summary: 'Swap children safely, mutate in place, build new trees, and return the root.',
       exercises: [
         output({
           id: 'd06-mut-swap',
@@ -1190,37 +1175,28 @@ print(tree_to_array(root))`,
           explanation: 'The right-hand side is evaluated completely first, so both old children are saved before either is overwritten.',
           signature: 'trace:tree-swap-tuple',
         }),
-        output({
-          id: 'd06-mut-bad-swap',
-          title: 'Swap without saving',
+        debug({
+          id: 'd06-mut-dbg-swap',
+          title: 'Debug: swap the root’s children',
           skills: ['treenode', 'linked_list_reassignment'],
-          prompt: 'Predict the output.',
-          code: `root = build_tree([1, 2, 3])
-root.left = root.right
-root.right = root.left
-print(tree_to_array(root))`,
-          expectedOutput: '[1, 3, 3]',
-          explanation: 'Same bug as linked-list rewiring: after the first line, the old left child (2) is gone, so both sides end up pointing to 3. Save it in a temp or use tuple assignment.',
-          signature: 'trace:tree-swap-bug',
-          minutes: 2,
-        }),
-        code({
-          id: 'd06-mut-swap-top',
-          title: 'Swap the root’s children',
-          skills: ['treenode'],
-          prompt: 'Write `swap_top(root)` that swaps only the root’s two children (not deeper ones) and returns `root`. Handle `None`.',
-          starterCode: `def swap_top(root):\n    pass\n`,
+          prompt: '`swap_top(root)` should swap only the root’s two children (not deeper ones) and return `root`; `None` stays `None`. The result has a child missing. Fix it.',
+          brokenCode: `def swap_top(root):
+    if root:
+        root.left = root.right
+        root.right = root.left
+    return root
+`,
           solution: `def swap_top(root):
     if root:
         root.left, root.right = root.right, root.left
     return root
 `,
-          tests: [t.eq('tree_to_array(swap_top(build_tree([1, 2, 3, 4])))', '[1, 3, 2, None, None, 4]'), t.eq('swap_top(None)', 'None'), t.hidden('tree_to_array(swap_top(build_tree([1, 2])))', '[1, None, 2]')],
-          hints: ['One tuple assignment, guarded by `if root`.'],
-          signature: 'tree:swap-children',
-          minutes: 4,
+          tests: [t.eq('tree_to_array(swap_top(build_tree([1, 2, 3])))', '[1, 3, 2]'), t.eq('swap_top(None)', 'None'), t.hidden('tree_to_array(swap_top(build_tree([1, 2])))', '[1, None, 2]')],
+          hints: ['After the first assignment, where is the old left child?', 'Same rule as linked lists: save it before you overwrite it.'],
+          signature: 'debug:tree-swap-no-temp',
+          minutes: 3,
         }),
-        code({
+        write({
           id: 'd06-mut-add-one',
           title: 'Add one everywhere',
           ...combine,
@@ -1240,7 +1216,7 @@ print(tree_to_array(root))`,
           signature: 'dfs:mutate-values',
           minutes: 5,
         }),
-        code({
+        write({
           id: 'd06-mut-copy',
           title: 'Copy a tree',
           ...combine,
@@ -1260,7 +1236,33 @@ print(tree_to_array(root))`,
           hints: ['A recursive call returns a whole copied subtree.', 'Build a new TreeNode from this val plus the two copied children.'],
           explanation: 'The recursive return *is* a subtree. Building trees by returning nodes is the move behind invert, construct-from-traversals and many others.',
           signature: 'dfs:copy-tree',
-          minutes: 7,
+          minutes: 6,
+        }),
+        debug({
+          id: 'd06-mut-dbg-mirror',
+          title: 'Debug: mirrored copy',
+          skills: ['tree_dfs', 'recursion_return'],
+          prompt: '`mirror(root)` should turn the tree into its mirror image in place (left and right swapped at every node) and return the root. The result has duplicated subtrees. Fix it.',
+          brokenCode: `def mirror(root):
+    if root is None:
+        return None
+    root.left = mirror(root.right)
+    root.right = mirror(root.left)
+    return root
+`,
+          solution: `def mirror(root):
+    if root is None:
+        return None
+    left = mirror(root.left)
+    right = mirror(root.right)
+    root.left = right
+    root.right = left
+    return root
+`,
+          tests: [t.eq('tree_to_array(mirror(build_tree([2, 1, 3])))', '[2, 3, 1]'), t.eq('tree_to_array(mirror(build_tree([4, 2, 7, 1, 3, 6, 9])))', '[4, 7, 2, 9, 6, 3, 1]'), t.hidden('mirror(None)', 'None'), t.hidden('tree_to_array(mirror(build_tree([1, 2])))', '[1, None, 2]')],
+          hints: ['When the second line runs, what is root.left?', 'Compute both mirrored children before overwriting either one (temps or tuple assignment).'],
+          signature: 'debug:tree-invert-overwrite',
+          minutes: 4,
         }),
       ],
     },
@@ -1332,15 +1334,15 @@ print(tree_to_array(root))`,
     {
       id: 'd06-cold',
       title: 'Cold reps',
-      summary: 'No scaffolding: recursion and tree DFS from a blank editor.',
+      summary: 'No scaffolding: recursion and tree DFS from a bare signature.',
       exercises: [
-        code({
+        write({
           id: 'd06-cold-digits',
           title: 'Digit sum, recursively',
           ...cold,
           skills: ['recursion_base_case', 'recursion_return'],
           prompt: 'Write `digit_sum(n)` for `n >= 0` recursively: `digit_sum(4096)` is 19. Use `% 10` and `// 10`.',
-          starterCode: ``,
+          starterCode: `def digit_sum(n):\n    pass\n`,
           solution: `def digit_sum(n):
     if n < 10:
         return n
@@ -1351,13 +1353,13 @@ print(tree_to_array(root))`,
           signature: 'rec:digit-sum',
           minutes: 5,
         }),
-        code({
+        write({
           id: 'd06-cold-tree-sum',
           title: 'Tree sum, cold',
           ...cold,
           skills: ['tree_dfs', 'recursion_return'],
           prompt: 'Write `total(root)`: the sum of all values in a binary tree.',
-          starterCode: ``,
+          starterCode: `def total(root):\n    pass\n`,
           solution: `def total(root):
     if root is None:
         return 0
@@ -1368,13 +1370,13 @@ print(tree_to_array(root))`,
           signature: 'dfs:tree-sum-cold',
           minutes: 4,
         }),
-        code({
+        write({
           id: 'd06-cold-postorder',
           title: 'Postorder, cold',
           ...cold,
           skills: ['tree_dfs', 'list_append'],
           prompt: 'Write `postorder(root)` returning the values in postorder (left, right, node).',
-          starterCode: ``,
+          starterCode: `def postorder(root):\n    pass\n`,
           solution: `def postorder(root):
     out = []
 
@@ -1393,13 +1395,13 @@ print(tree_to_array(root))`,
           signature: 'dfs:postorder-cold',
           minutes: 6,
         }),
-        code({
+        write({
           id: 'd06-cold-height',
           title: 'Height, cold',
           ...cold,
           skills: ['tree_dfs', 'recursion_base_case', 'recursion_return'],
           prompt: 'Write `height(root)`: number of nodes on the longest root-to-leaf path (0 for empty).',
-          starterCode: ``,
+          starterCode: `def height(root):\n    pass\n`,
           solution: `def height(root):
     if not root:
         return 0
@@ -1410,21 +1412,40 @@ print(tree_to_array(root))`,
           signature: 'dfs:height-cold',
           minutes: 5,
         }),
-        code({
+        write({
+          id: 'd06-cold-same',
+          title: 'Same tree, cold',
+          ...cold,
+          skills: ['tree_dfs', 'recursion_base_case', 'recursion_return'],
+          prompt: 'Write `equal(a, b)`: `True` if the two trees have the same shape and the same values.',
+          starterCode: `def equal(a, b):\n    pass\n`,
+          solution: `def equal(a, b):
+    if not a and not b:
+        return True
+    if not a or not b:
+        return False
+    return a.val == b.val and equal(a.left, b.left) and equal(a.right, b.right)
+`,
+          tests: [t.eq('equal(build_tree([1, 2, 3]), build_tree([1, 2, 3]))', 'True'), t.eq('equal(build_tree([1, 2]), build_tree([1, None, 2]))', 'False'), t.hidden('equal(None, None)', 'True'), t.hidden('equal(build_tree([1]), None)', 'False')],
+          hints: ['Both None, then one None, then values and both child pairs.'],
+          signature: 'dfs:same-tree-cold',
+          minutes: 5,
+        }),
+        write({
           id: 'd06-cold-mirror',
           title: 'Mirror, cold',
           ...cold,
           skills: ['tree_dfs', 'treenode'],
-          prompt: 'Write `mirror(root)` that inverts a binary tree in place and returns the root.',
-          starterCode: ``,
-          solution: `def mirror(root):
+          prompt: 'Write `flip_tree(root)` that inverts a binary tree in place and returns the root.',
+          starterCode: `def flip_tree(root):\n    pass\n`,
+          solution: `def flip_tree(root):
     if root:
         root.left, root.right = root.right, root.left
-        mirror(root.left)
-        mirror(root.right)
+        flip_tree(root.left)
+        flip_tree(root.right)
     return root
 `,
-          tests: [t.eq('tree_to_array(mirror(build_tree([1, 2, 3, 4])))', '[1, 3, 2, None, None, None, 4]'), t.hidden('mirror(None)', 'None'), t.hidden('tree_to_array(mirror(build_tree([4, 2, 7, 1, 3, 6, 9])))', '[4, 7, 2, 9, 6, 3, 1]')],
+          tests: [t.eq('tree_to_array(flip_tree(build_tree([1, 2, 3, 4])))', '[1, 3, 2, None, None, None, 4]'), t.hidden('flip_tree(None)', 'None'), t.hidden('tree_to_array(flip_tree(build_tree([4, 2, 7, 1, 3, 6, 9])))', '[4, 7, 2, 9, 6, 3, 1]')],
           hints: ['Swap, then recurse into both.'],
           signature: 'dfs:invert-cold',
           minutes: 6,

@@ -12,7 +12,8 @@
     "test:e2e": "playwright test",
     "verify:content": "tsx scripts/verify-content.ts",
     "verify": "npm run lint && npm run type-check && npm test && npm run verify:content && npm run build",
-    "audit:curriculum": "tsx scripts/audit-curriculum.ts"
+    "audit:curriculum": "tsx scripts/audit-curriculum.ts",
+    "verify:pyodide": "tsx scripts/verify-pyodide.ts"
   },
   "dependencies": {
     "@codemirror/autocomplete": "^6.20.3",
@@ -41,6 +42,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.3.8",
+    "pyodide": "^314.0.7",
     "tailwindcss": "^4",
     "tsx": "^4.23.15",
     "typescript": "^5"

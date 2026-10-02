@@ -1,5 +1,6 @@
 import type { DayModule, Exercise } from '@/lib/types'
-import { choice, code, explain, fill, output, t } from './build'
+import { choice, debug, explain, output, t, write } from './build'
+import { modeledMinutes } from '@/lib/curriculum-audit'
 import { day as oct02 } from './oct02'
 import { day as oct03 } from './oct03'
 import { day as oct04 } from './oct04'
@@ -49,19 +50,25 @@ function coldCapstones(problemIds: string[]): Exercise[] {
     const cap = all.find((e) => e.repType === 'capstone' && e.problemId === id)
     if (!cap) continue
     const header = defLine(cap.starterCode)
-    out.push({
+    const cold: Exercise = {
       ...cap,
       id: 'cold-' + id,
       title: cap.title + ' (cold)',
       stage: 'retrieval',
       repType: 'cold',
+      // Keep the link to the canonical problem: it is what makes this a capstone-class
+      // rep for the audit (and for progress on the problems page).
+      problemId: cap.problemId ?? id,
       note: undefined,
-      minutes: Math.min(cap.minutes, 20),
       signature: cap.signature,
       prompt: 'Cold rep. No scaffolding — write it from a blank editor.\n\n' + cap.prompt,
       starterCode: header ? header + '\n    pass\n' : cap.starterCode,
       review: { important: true },
-    })
+    }
+    // Minutes follow the amount of code actually written (timed, but honest): ~1.6x the
+    // modeled time, at least 8 and never more than the original capstone or 20.
+    cold.minutes = Math.min(cap.minutes, 20, Math.max(8, Math.round(modeledMinutes(cold) * 1.6)))
+    out.push(cold)
   }
   return out
 }
@@ -72,10 +79,12 @@ const COLD_IDS = [
   'valid-parentheses',
   'reverse-linked-list',
   'number-of-islands',
+  'level-order',
   'course-schedule',
   'top-k-frequent',
   'merge-intervals',
   'subsets',
+  'house-robber',
 ]
 
 // ---------------------------------------------------------------------------
@@ -83,27 +92,31 @@ const COLD_IDS = [
 // ---------------------------------------------------------------------------
 
 const speed: Exercise[] = [
-  fill({
+  write({
     id: 'o11-speed-count',
     title: 'Count with .get',
     skills: ['frequency_map', 'dict_get'],
     ...R,
-    prompt: 'Fill the blank so `counts` maps each word to how many times it appears.',
-    starterCode: `words = ["go", "py", "go", "go", "py", "js"]
-counts = {}
-for w in words:
-    counts[w] = ____
+    prompt: 'Write `count_words(words)` returning a dict that maps each word to how many times it appears. Use `.get`, no `Counter`.',
+    starterCode: `def count_words(words):
+    pass
 `,
-    solution: `words = ["go", "py", "go", "go", "py", "js"]
-counts = {}
-for w in words:
-    counts[w] = counts.get(w, 0) + 1
+    solution: `def count_words(words):
+    counts = {}
+    for w in words:
+        counts[w] = counts.get(w, 0) + 1
+    return counts
 `,
-    tests: [t.check('counts', 'assert counts == {"go": 3, "py": 2, "js": 1}')],
-    hints: ['Default to 0 when the word is new, then add one.'],
+    tests: [
+      t.eq('count_words(["go", "py", "go", "go", "py", "js"])', '{"go": 3, "py": 2, "js": 1}'),
+      t.eq('count_words([])', '{}'),
+      t.hidden('count_words(["a"])', '{"a": 1}'),
+      t.hidden('count_words(["x", "x", "x"])', '{"x": 3}'),
+    ],
+    hints: ['Default to 0 when the word is new, then add one.', '`counts[w] = counts.get(w, 0) + 1`'],
     explanation: '`.get(w, 0)` returns 0 for a missing key, so the same line handles first sightings and repeats.',
     signature: 'freq-map:count-words',
-    minutes: 1,
+    minutes: 2.5,
   }),
   output({
     id: 'o11-speed-first-seen',
@@ -121,7 +134,7 @@ print(first)`,
     explanation: 'The second 4 at index 2 is skipped because 4 is already a key. Dicts print in insertion order.',
     signature: 'trace:index-map-first-seen',
   }),
-  code({
+  write({
     id: 'o11-speed-last-seen',
     title: 'Last index of each value',
     skills: ['enumerate', 'index_map'],
@@ -147,7 +160,7 @@ print(first)`,
     signature: 'index-map:last-seen',
     minutes: 2,
   }),
-  code({
+  write({
     id: 'o11-speed-deque',
     title: 'Pass the parcel',
     skills: ['queue_deque', 'range'],
@@ -178,7 +191,7 @@ def pass_parcel(names, passes):
     signature: 'deque:rotate',
     minutes: 2.5,
   }),
-  code({
+  write({
     id: 'o11-speed-heap-small',
     title: 'k smallest with heapq',
     skills: ['heap_push_pop', 'list_comprehension'],
@@ -227,7 +240,7 @@ while h:
     explanation: 'Tuples compare by the first item, then the second on a tie, so (1, "a") comes before (1, "z").',
     signature: 'trace:heap-tuples',
   }),
-  code({
+  write({
     id: 'o11-speed-sort-key',
     title: 'Sort by length, then alphabet',
     skills: ['sort_key', 'tuples'],
@@ -262,7 +275,7 @@ print(s[1:4], s[-3:], s[::-1][:2])`,
     explanation: '`s[1:4]` is indexes 1–3, `s[-3:]` is the last three, and `s[::-1]` is "weivretni" whose first two are "we".',
     signature: 'slicing:mixed',
   }),
-  code({
+  write({
     id: 'o11-speed-leaderboard',
     title: 'Leaderboard',
     skills: ['sort_key', 'dict_lookup'],
@@ -285,7 +298,7 @@ print(s[1:4], s[-3:], s[::-1][:2])`,
     signature: 'sort-key:negate-desc',
     minutes: 2.5,
   }),
-  code({
+  write({
     id: 'o11-speed-neighbors',
     title: 'In-bounds neighbors',
     skills: ['grid_neighbors', 'grid_nested'],
@@ -317,35 +330,547 @@ print(s[1:4], s[-3:], s[::-1][:2])`,
 ]
 
 // ---------------------------------------------------------------------------
+// Debug sprint: the classic bug from every day, fast. Fix, run, next.
+// ---------------------------------------------------------------------------
+
+const D = { stage: 'debug', repType: 'cold' } as const
+
+const bugs: Exercise[] = [
+  debug({
+    id: 'o11-bug-get',
+    title: 'Character counts',
+    skills: ['frequency_map', 'dict_get'],
+    ...D,
+    prompt: 'Return a dict mapping each character of `s` to how many times it appears.',
+    brokenCode: `def char_counts(s):
+    counts = {}
+    for ch in s:
+        counts[ch] = counts.get(ch) + 1
+    return counts
+`,
+    solution: `def char_counts(s):
+    counts = {}
+    for ch in s:
+        counts[ch] = counts.get(ch, 0) + 1
+    return counts
+`,
+    tests: [
+      t.eq('char_counts("aab")', '{"a": 2, "b": 1}'),
+      t.eq('char_counts("")', '{}'),
+      t.hidden('char_counts("zzz")', '{"z": 3}'),
+      t.hidden('char_counts("abc")', '{"a": 1, "b": 1, "c": 1}'),
+    ],
+    hints: ['Read the error message: what is `None + 1`?'],
+    explanation: '`.get(ch)` returns `None` for a missing key. The default argument is what makes the counting idiom work.',
+    signature: 'debug:get-default',
+    minutes: 2,
+  }),
+  debug({
+    id: 'o11-bug-dict-direction',
+    title: 'Pair sum, one pass',
+    skills: ['index_map', 'complement', 'enumerate'],
+    ...D,
+    prompt: 'Return the indexes `[i, j]` (with `i < j`) of two numbers that add to `target`, in one pass. Return `[]` if there is no pair.',
+    brokenCode: `def two_sum(nums, target):
+    seen = {}
+    for i, n in enumerate(nums):
+        if target - n in seen:
+            return [seen[target - n], i]
+        seen[i] = n
+    return []
+`,
+    solution: `def two_sum(nums, target):
+    seen = {}
+    for i, n in enumerate(nums):
+        if target - n in seen:
+            return [seen[target - n], i]
+        seen[n] = i
+    return []
+`,
+    tests: [
+      t.eq('two_sum([2, 7, 11, 15], 9)', '[0, 1]'),
+      t.eq('two_sum([3, 3], 6)', '[0, 1]'),
+      t.hidden('two_sum([3, 2, 4], 6)', '[1, 2]'),
+      t.hidden('two_sum([1, 2], 10)', '[]'),
+      t.hidden('two_sum([-1, 5, 4], 3)', '[0, 2]'),
+    ],
+    hints: ['What do you look up in `seen`: a value or an index?', 'The key must be the thing you search for.'],
+    explanation: 'You look up values (`target - n in seen`), so values must be the keys and indexes the values: `seen[n] = i`.',
+    signature: 'debug:dict-direction',
+    minutes: 3,
+  }),
+  debug({
+    id: 'o11-bug-bsearch-hi',
+    title: 'Search the sorted list',
+    skills: ['binary_search', 'search_invariant', 'mid_calc'],
+    ...D,
+    prompt: 'Return the index of `target` in the sorted list `nums`, or -1 if it is absent. O(log n).',
+    brokenCode: `def search(nums, target):
+    lo, hi = 0, len(nums)
+    while lo <= hi:
+        mid = (lo + hi) // 2
+        if nums[mid] == target:
+            return mid
+        if nums[mid] < target:
+            lo = mid + 1
+        else:
+            hi = mid - 1
+    return -1
+`,
+    solution: `def search(nums, target):
+    lo, hi = 0, len(nums) - 1
+    while lo <= hi:
+        mid = (lo + hi) // 2
+        if nums[mid] == target:
+            return mid
+        if nums[mid] < target:
+            lo = mid + 1
+        else:
+            hi = mid - 1
+    return -1
+`,
+    tests: [
+      t.eq('search([1, 3, 5], 3)', '1'),
+      t.eq('search([1, 3, 5], 9)', '-1'),
+      t.hidden('search([], 4)', '-1'),
+      t.hidden('search([1, 3, 5], 0)', '-1'),
+      t.hidden('search([2], 2)', '0'),
+      t.hidden('search([1, 3, 5, 7], 7)', '3'),
+    ],
+    hints: ['Which index does `mid` reach when the target is bigger than everything?', 'Inclusive bounds: is `len(nums)` a valid index?'],
+    explanation: '`while lo <= hi` with `hi = mid - 1` is the inclusive convention, so `hi` must start at the last valid index, `len(nums) - 1`.',
+    signature: 'debug:bsearch-bounds',
+    minutes: 3,
+  }),
+  debug({
+    id: 'o11-bug-reverse-order',
+    title: 'Reverse a linked list',
+    skills: ['linked_list_reassignment', 'linked_list_traversal'],
+    ...D,
+    prompt: 'Reverse the linked list in place and return the new head.',
+    brokenCode: `def reverse(head):
+    prev, curr = None, head
+    while curr:
+        curr.next = prev
+        prev = curr
+        curr = curr.next
+    return prev
+`,
+    solution: `def reverse(head):
+    prev, curr = None, head
+    while curr:
+        nxt = curr.next
+        curr.next = prev
+        prev = curr
+        curr = nxt
+    return prev
+`,
+    tests: [
+      t.eq('list_to_array(reverse(build_list([1, 2, 3])))', '[3, 2, 1]'),
+      t.eq('list_to_array(reverse(build_list([])))', '[]'),
+      t.hidden('list_to_array(reverse(build_list([7])))', '[7]'),
+      t.hidden('list_to_array(reverse(build_list([1, 2])))', '[2, 1]'),
+    ],
+    hints: ['After `curr.next = prev`, where does `curr.next` point?', 'Save the rest of the list before you cut the link.'],
+    explanation: 'Overwriting `curr.next` loses the rest of the list. Save `nxt = curr.next` first: save, reverse, advance prev, advance curr.',
+    signature: 'debug:reverse-pointer-order',
+    minutes: 3,
+  }),
+  debug({
+    id: 'o11-bug-base-case',
+    title: 'Sum a tree',
+    skills: ['recursion_base_case', 'tree_dfs', 'recursion_return'],
+    ...D,
+    prompt: 'Return the sum of all node values in the binary tree. An empty tree sums to 0.',
+    brokenCode: `def tree_sum(root):
+    if root.left is None and root.right is None:
+        return root.val
+    return root.val + tree_sum(root.left) + tree_sum(root.right)
+`,
+    solution: `def tree_sum(root):
+    if root is None:
+        return 0
+    return root.val + tree_sum(root.left) + tree_sum(root.right)
+`,
+    tests: [
+      t.eq('tree_sum(build_tree([1, 2, 3]))', '6'),
+      t.eq('tree_sum(build_tree([1, 2]))', '3'),
+      t.hidden('tree_sum(build_tree([]))', '0'),
+      t.hidden('tree_sum(build_tree([5]))', '5'),
+      t.hidden('tree_sum(build_tree([1, None, 2, None, 3]))', '6'),
+      t.hidden('tree_sum(build_tree([-1, 4, -2]))', '1'),
+    ],
+    hints: ['What happens when a node has exactly one child?', 'The smallest tree is no tree at all.'],
+    explanation: 'A leaf check is not a base case for `None`: a node with one child still recurses into the missing side. `if root is None: return 0` covers leaves, one-child nodes and the empty tree.',
+    signature: 'debug:missing-base-case',
+    minutes: 3,
+  }),
+  debug({
+    id: 'o11-bug-visited-late',
+    title: 'Count reachable cells',
+    skills: ['bfs', 'visited_set', 'grid_neighbors', 'queue_deque'],
+    ...D,
+    difficulty: 3,
+    prompt: '`grid` has `0` for open cells and `1` for walls. Starting from the open cell `(r, c)`, return how many open cells can be reached moving up, down, left or right (including the start). Each cell must be counted once.',
+    brokenCode: `from collections import deque
+
+def reachable(grid, r, c):
+    rows, cols = len(grid), len(grid[0])
+    queue = deque([(r, c)])
+    seen = set()
+    count = 0
+    while queue:
+        cr, cc = queue.popleft()
+        seen.add((cr, cc))
+        count += 1
+        for dr, dc in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            nr, nc = cr + dr, cc + dc
+            if 0 <= nr < rows and 0 <= nc < cols and grid[nr][nc] == 0 and (nr, nc) not in seen:
+                queue.append((nr, nc))
+    return count
+`,
+    solution: `from collections import deque
+
+def reachable(grid, r, c):
+    rows, cols = len(grid), len(grid[0])
+    queue = deque([(r, c)])
+    seen = {(r, c)}
+    count = 0
+    while queue:
+        cr, cc = queue.popleft()
+        count += 1
+        for dr, dc in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            nr, nc = cr + dr, cc + dc
+            if 0 <= nr < rows and 0 <= nc < cols and grid[nr][nc] == 0 and (nr, nc) not in seen:
+                seen.add((nr, nc))
+                queue.append((nr, nc))
+    return count
+`,
+    tests: [
+      t.eq('reachable([[0, 0], [0, 0]], 0, 0)', '4'),
+      t.eq('reachable([[0, 1], [1, 0]], 0, 0)', '1'),
+      t.hidden('reachable([[0, 0, 0]], 0, 1)', '3'),
+      t.hidden('reachable([[0, 0, 0], [0, 0, 0], [0, 0, 0]], 1, 1)', '9'),
+      t.hidden('reachable([[0, 1, 0], [0, 1, 0]], 1, 2)', '2'),
+    ],
+    hints: ['On the 2x2 grid, how many times does `(1, 1)` enter the queue?', 'A cell should be marked the moment it is queued.'],
+    explanation: 'Marking on pop lets two neighbors queue the same cell before either is processed. Mark when you enqueue (and seed `seen` with the start) so every cell enters the queue once.',
+    signature: 'debug:visited-late',
+    minutes: 4,
+  }),
+  debug({
+    id: 'o11-bug-path-copy',
+    title: 'All subsets',
+    skills: ['backtracking_state', 'recursion_base_case'],
+    ...D,
+    prompt: 'Return every subset of `nums` (distinct numbers). The order of subsets does not matter.',
+    brokenCode: `def subsets(nums):
+    out, path = [], []
+    def dfs(i):
+        if i == len(nums):
+            out.append(path)
+            return
+        path.append(nums[i])
+        dfs(i + 1)
+        path.pop()
+        dfs(i + 1)
+    dfs(0)
+    return out
+`,
+    solution: `def subsets(nums):
+    out, path = [], []
+    def dfs(i):
+        if i == len(nums):
+            out.append(path[:])
+            return
+        path.append(nums[i])
+        dfs(i + 1)
+        path.pop()
+        dfs(i + 1)
+    dfs(0)
+    return out
+`,
+    tests: [
+      t.eq('subsets([1, 2])', '[[], [1], [2], [1, 2]]', { compare: 'sorted-inner' }),
+      t.eq('subsets([])', '[[]]', { compare: 'sorted-inner' }),
+      t.hidden('subsets([5])', '[[], [5]]', { compare: 'sorted-inner' }),
+      t.hidden('subsets([1, 2, 3])', '[[], [1], [2], [3], [1, 2], [1, 3], [2, 3], [1, 2, 3]]', { compare: 'sorted-inner' }),
+    ],
+    hints: ['Print `out` at the end: why are all the lists the same?', 'You need a snapshot, not the live list.'],
+    explanation: '`out.append(path)` stores the same list object every time, and backtracking empties it. `path[:]` records a copy of the current state.',
+    signature: 'debug:path-copy',
+    minutes: 2.5,
+  }),
+  debug({
+    id: 'o11-bug-heap-trim',
+    title: 'k largest',
+    skills: ['heap_push_pop', 'top_k'],
+    ...D,
+    prompt: 'Return the `k` largest values, largest first, using a min-heap that never holds more than `k` items (O(n log k)). `1 <= k <= len(nums)`.',
+    brokenCode: `import heapq
+
+def k_largest(nums, k):
+    heap = []
+    for n in nums:
+        heapq.heappush(heap, n)
+    return sorted(heap, reverse=True)
+`,
+    solution: `import heapq
+
+def k_largest(nums, k):
+    heap = []
+    for n in nums:
+        heapq.heappush(heap, n)
+        if len(heap) > k:
+            heapq.heappop(heap)
+    return sorted(heap, reverse=True)
+`,
+    tests: [
+      t.eq('k_largest([3, 1, 5, 2], 2)', '[5, 3]'),
+      t.eq('k_largest([4], 1)', '[4]'),
+      t.hidden('k_largest([1, 1, 1], 2)', '[1, 1]'),
+      t.hidden('k_largest([-3, -1, -2], 1)', '[-1]'),
+      t.hidden('k_largest([9, 8, 7, 6], 4)', '[9, 8, 7, 6]'),
+    ],
+    hints: ['How big does `heap` get?', 'A min-heap pops its smallest item, exactly the one you want to evict.'],
+    explanation: 'Popping whenever the heap exceeds k keeps the k largest seen so far and holds the cost at O(log k) per item.',
+    signature: 'debug:heap-trim',
+    minutes: 3,
+  }),
+  debug({
+    id: 'o11-bug-unsorted',
+    title: 'Merge meetings',
+    skills: ['interval_overlap', 'sorting', 'sort_key'],
+    ...D,
+    prompt: 'Merge overlapping (or touching) intervals given in any order. Return the merged intervals sorted by start. Input is non-empty.',
+    brokenCode: `def merge(intervals):
+    out = [intervals[0]]
+    for start, end in intervals[1:]:
+        if start <= out[-1][1]:
+            out[-1][1] = max(out[-1][1], end)
+        else:
+            out.append([start, end])
+    return out
+`,
+    solution: `def merge(intervals):
+    intervals = sorted(intervals, key=lambda x: x[0])
+    out = [list(intervals[0])]
+    for start, end in intervals[1:]:
+        if start <= out[-1][1]:
+            out[-1][1] = max(out[-1][1], end)
+        else:
+            out.append([start, end])
+    return out
+`,
+    tests: [
+      t.eq('merge([[1, 3], [2, 6], [8, 10]])', '[[1, 6], [8, 10]]'),
+      t.eq('merge([[2, 6], [1, 3]])', '[[1, 6]]'),
+      t.hidden('merge([[8, 10], [1, 3], [2, 6]])', '[[1, 6], [8, 10]]'),
+      t.hidden('merge([[5, 6], [1, 2]])', '[[1, 2], [5, 6]]'),
+      t.hidden('merge([[1, 4]])', '[[1, 4]]'),
+    ],
+    hints: ['The scan only compares with the last merged interval. When is that enough?'],
+    explanation: 'The one-pass merge relies on sorted starts: only then can an interval overlap nothing but the last merged one. Sorting is the O(n log n) step.',
+    signature: 'debug:intervals-unsorted',
+    minutes: 2.5,
+  }),
+  debug({
+    id: 'o11-bug-dummy',
+    title: 'Merge two sorted lists',
+    skills: ['dummy_node', 'linked_list_traversal', 'linked_list_reassignment'],
+    ...D,
+    prompt: 'Merge two sorted linked lists into one sorted list and return its head.',
+    brokenCode: `def merge_lists(a, b):
+    dummy = ListNode(0)
+    tail = dummy
+    while a and b:
+        if a.val <= b.val:
+            tail.next = a
+            a = a.next
+        else:
+            tail.next = b
+            b = b.next
+        tail = tail.next
+    tail.next = a or b
+    return dummy
+`,
+    solution: `def merge_lists(a, b):
+    dummy = ListNode(0)
+    tail = dummy
+    while a and b:
+        if a.val <= b.val:
+            tail.next = a
+            a = a.next
+        else:
+            tail.next = b
+            b = b.next
+        tail = tail.next
+    tail.next = a or b
+    return dummy.next
+`,
+    tests: [
+      t.eq('list_to_array(merge_lists(build_list([1, 3]), build_list([2])))', '[1, 2, 3]'),
+      t.eq('list_to_array(merge_lists(build_list([]), build_list([])))', '[]'),
+      t.hidden('list_to_array(merge_lists(build_list([]), build_list([4])))', '[4]'),
+      t.hidden('list_to_array(merge_lists(build_list([1, 1]), build_list([1])))', '[1, 1, 1]'),
+    ],
+    hints: ['Look at the first value of the output.'],
+    explanation: 'The dummy node is a placeholder in front of the real head; the answer starts at `dummy.next`.',
+    signature: 'debug:dummy-next',
+    minutes: 2.5,
+  }),
+  debug({
+    id: 'o11-bug-window-left',
+    title: 'Longest run without repeats',
+    skills: ['sliding_window', 'window_state', 'index_map'],
+    ...D,
+    difficulty: 3,
+    prompt: 'Return the length of the longest substring of `s` with no repeated characters, in one pass.',
+    brokenCode: `def longest_unique(s):
+    last = {}
+    left = best = 0
+    for right, ch in enumerate(s):
+        if ch in last:
+            left = last[ch] + 1
+        last[ch] = right
+        best = max(best, right - left + 1)
+    return best
+`,
+    solution: `def longest_unique(s):
+    last = {}
+    left = best = 0
+    for right, ch in enumerate(s):
+        if ch in last:
+            left = max(left, last[ch] + 1)
+        last[ch] = right
+        best = max(best, right - left + 1)
+    return best
+`,
+    tests: [
+      t.eq('longest_unique("abcabcbb")', '3'),
+      t.eq('longest_unique("abba")', '2'),
+      t.hidden('longest_unique("")', '0'),
+      t.hidden('longest_unique("bbbb")', '1'),
+      t.hidden('longest_unique("pwwkew")', '3'),
+      t.hidden('longest_unique("tmmzuxt")', '5'),
+    ],
+    hints: ['Trace `"abba"`: where is `left` after the last `a`?', 'Can `left` ever move backwards in a sliding window?'],
+    explanation: 'The stored index may be left of the window already. `left = max(left, last[ch] + 1)` keeps the window from sliding backwards.',
+    signature: 'debug:window-left-backwards',
+    minutes: 3.5,
+  }),
+]
+
+// ---------------------------------------------------------------------------
 // Edge cases
 // ---------------------------------------------------------------------------
 
+const W = { stage: 'retrieval', repType: 'cold', style: 'write-test' } as const
+
 const edges: Exercise[] = [
-  choice({
-    id: 'o11-edge-profit',
-    title: 'Breaking input: profit',
+  write({
+    id: 'o11-wt-profit',
+    title: 'Break it: profit',
     skills: ['edge_cases', 'state_tracking'],
-    ...R,
-    prompt: 'Which input breaks this function?',
-    code: `def max_profit(prices):
+    ...W,
+    prompt:
+      '`max_profit(prices)` should return the best profit from buying once and selling on a later day, or 0 if no profit is possible. `prices` is never empty.\n\nDo not fix it yet. Write `edge_cases()` returning a list of at least two `(prices, expected)` pairs with correct expected values, where at least one makes `max_profit` crash or answer wrong.',
+    starterCode: `def max_profit(prices):
     best = prices[1] - prices[0]
     low = min(prices[0], prices[1])
     for p in prices[2:]:
         best = max(best, p - low)
         low = min(low, p)
-    return best`,
-    options: ['[1, 5]', '[3, 8, 2, 9]', '[7]', '[1, 2, 3]'],
-    answer: 2,
-    explanation: 'A single price raises IndexError on `prices[1]`. It also returns a negative number for falling prices; start with `best = 0` and `low = prices[0]` and loop over everything.',
-    signature: 'edge:index-assumption',
+    return best
+
+def edge_cases():
+    pass
+`,
+    solution: `def max_profit(prices):
+    best = prices[1] - prices[0]
+    low = min(prices[0], prices[1])
+    for p in prices[2:]:
+        best = max(best, p - low)
+        low = min(low, p)
+    return best
+
+def edge_cases():
+    return [
+        ([7], 0),
+        ([5, 3], 0),
+    ]
+`,
+    tests: [
+      t.check(
+        'at least two correct cases, one breaks max_profit',
+        `cases = edge_cases()
+assert isinstance(cases, list) and len(cases) >= 2, "return a list of at least two (prices, expected) pairs"
+def _ref(p):
+    best, low = 0, p[0]
+    for x in p:
+        best = max(best, x - low)
+        low = min(low, x)
+    return best
+for prices, want in cases:
+    assert len(prices) >= 1, "prices is never empty"
+    assert want == _ref(prices), f"expected value for {prices} should be {_ref(prices)}"
+def _breaks(prices, want):
+    try:
+        return max_profit(list(prices)) != want
+    except Exception:
+        return True
+assert any(_breaks(p, w) for p, w in cases), "none of your cases break max_profit"`,
+      ),
+    ],
+    hints: ['What does the first line assume about the length?', 'Also try prices that only go down: what should the answer be, and what does this return?'],
+    explanation: 'Two separate bugs: one price raises IndexError on `prices[1]`, and falling prices return a negative number. Writing the cases first is how you catch both before the interviewer does.',
+    signature: 'write-test:profit',
+    minutes: 4,
   }),
-  choice({
-    id: 'o11-edge-bsearch',
-    title: 'Breaking input: binary search',
-    skills: ['edge_cases', 'search_invariant'],
+  debug({
+    id: 'o11-dbg-profit',
+    title: 'Fix it: profit',
+    skills: ['edge_cases', 'state_tracking'],
     ...R,
-    prompt: 'Which call returns the wrong answer?',
-    code: `def search(nums, target):
+    prompt: 'Now make it correct: return the best profit from one buy followed by a later sell, or 0 if no profit is possible. `prices` is never empty.',
+    brokenCode: `def max_profit(prices):
+    best = prices[1] - prices[0]
+    low = min(prices[0], prices[1])
+    for p in prices[2:]:
+        best = max(best, p - low)
+        low = min(low, p)
+    return best
+`,
+    solution: `def max_profit(prices):
+    best = 0
+    low = prices[0]
+    for p in prices:
+        best = max(best, p - low)
+        low = min(low, p)
+    return best
+`,
+    tests: [
+      t.eq('max_profit([7])', '0'),
+      t.eq('max_profit([7, 1, 5, 3, 6, 4])', '5'),
+      t.eq('max_profit([5, 3])', '0'),
+      t.hidden('max_profit([1, 2])', '1'),
+      t.hidden('max_profit([9, 7, 4, 1])', '0'),
+      t.hidden('max_profit([2, 4, 1, 3])', '2'),
+    ],
+    hints: ['Your edge cases from the last rep are the tests.', 'Start from "no trade" and the first price, then look at every price.'],
+    explanation: '`best = 0` encodes "you may choose not to trade", and starting `low` at `prices[0]` with a loop over all prices removes the length assumption.',
+    complexity: { time: 'O(n)', space: 'O(1)' },
+    signature: 'debug:profit-init',
+    minutes: 4,
+  }),
+  write({
+    id: 'o11-wt-bsearch',
+    title: 'Break it: binary search',
+    skills: ['edge_cases', 'search_invariant'],
+    ...W,
+    prompt:
+      '`search(nums, target)` should return the index of `target` in the sorted, distinct list `nums`, or -1.\n\nWrite `edge_cases()` returning at least two `(nums, target, expected)` triples with correct expected values, where at least one makes `search` answer wrong.',
+    starterCode: `def search(nums, target):
     lo, hi = 0, len(nums) - 1
     while lo < hi:
         mid = (lo + hi) // 2
@@ -355,20 +880,59 @@ const edges: Exercise[] = [
             lo = mid + 1
         else:
             hi = mid - 1
-    return -1`,
-    options: ['search([1, 3, 5], 3)', 'search([5], 5)', 'search([], 1)', 'search([1, 3, 5], 4)'],
-    answer: 1,
-    explanation: 'With `hi = len - 1` the range is inclusive, so the loop must be `while lo <= hi`. With `<`, a one-element range is never checked.',
-    signature: 'edge:bsearch-loop-condition',
+    return -1
+
+def edge_cases():
+    pass
+`,
+    solution: `def search(nums, target):
+    lo, hi = 0, len(nums) - 1
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if nums[mid] == target:
+            return mid
+        if nums[mid] < target:
+            lo = mid + 1
+        else:
+            hi = mid - 1
+    return -1
+
+def edge_cases():
+    return [
+        ([5], 5, 0),
+        ([1, 3, 5, 7], 7, 3),
+    ]
+`,
+    tests: [
+      t.check(
+        'at least two correct cases, one breaks search',
+        `cases = edge_cases()
+assert isinstance(cases, list) and len(cases) >= 2, "return a list of at least two (nums, target, expected) triples"
+for nums, target, want in cases:
+    assert list(nums) == sorted(set(nums)), f"{nums} must be sorted with no repeats"
+    right = nums.index(target) if target in nums else -1
+    assert want == right, f"expected value for search({nums}, {target}) should be {right}"
+def _breaks(nums, target, want):
+    try:
+        return search(list(nums), target) != want
+    except Exception:
+        return True
+assert any(_breaks(n, x, w) for n, x, w in cases), "none of your cases break search"`,
+      ),
+    ],
+    hints: ['Bounds are inclusive. Which ranges does `while lo < hi` never look inside?', 'Try a one-element list, or the target at the very end.'],
+    explanation: 'With inclusive bounds the loop stops while one candidate is still unchecked, so a single-element list or a target at the last position is missed.',
+    signature: 'write-test:bsearch',
+    minutes: 4,
   }),
-  code({
+  debug({
     id: 'o11-edge-bsearch-fix',
     title: 'Fix the binary search',
     skills: ['binary_search', 'search_invariant', 'edge_cases'],
     ...R,
     difficulty: 2,
-    prompt: 'The starter is the buggy search from the last rep. Fix it so it returns the index of `target` in sorted `nums`, or -1.',
-    starterCode: `def search(nums, target):
+    prompt: 'This is the search you just broke. Make it return the index of `target` in sorted `nums`, or -1.',
+    brokenCode: `def search(nums, target):
     lo, hi = 0, len(nums) - 1
     while lo < hi:
         mid = (lo + hi) // 2
@@ -406,13 +970,13 @@ const edges: Exercise[] = [
     signature: 'edge:bsearch-fix',
     minutes: 3,
   }),
-  choice({
-    id: 'o11-edge-brackets',
-    title: 'Breaking input: brackets',
-    skills: ['edge_cases', 'matching_pairs'],
+  debug({
+    id: 'o11-dbg-brackets',
+    title: 'Fix it: brackets',
+    skills: ['edge_cases', 'matching_pairs', 'stack_push_pop'],
     ...R,
-    prompt: 'Which input does this checker get wrong?',
-    code: `def is_valid(s):
+    prompt: 'Return `True` if every bracket in `s` is closed by the matching type in the right order, and nothing is left open.',
+    brokenCode: `def is_valid(s):
     pairs = {")": "(", "]": "[", "}": "{"}
     stack = []
     for ch in s:
@@ -421,33 +985,34 @@ const edges: Exercise[] = [
                 return False
         else:
             stack.append(ch)
-    return True`,
-    options: ['"()[]"', '"(]"', '"(("', '")"'],
-    answer: 2,
-    explanation: 'Unclosed openers are left on the stack. The final line must be `return not stack`.',
-    signature: 'edge:stack-leftover',
-  }),
-  choice({
-    id: 'o11-edge-intervals',
-    title: 'Breaking input: intervals',
-    skills: ['edge_cases', 'interval_overlap'],
-    ...R,
-    prompt: 'Input is non-empty, and touching intervals count as overlapping. Which input gives the wrong answer?',
-    code: `def merge(intervals):
-    intervals.sort(key=lambda x: x[0])
-    out = [intervals[0]]
-    for start, end in intervals[1:]:
-        if start < out[-1][1]:
-            out[-1][1] = max(out[-1][1], end)
+    return True
+`,
+    solution: `def is_valid(s):
+    pairs = {")": "(", "]": "[", "}": "{"}
+    stack = []
+    for ch in s:
+        if ch in pairs:
+            if not stack or stack.pop() != pairs[ch]:
+                return False
         else:
-            out.append([start, end])
-    return out`,
-    options: ['[[1, 4], [2, 3]]', '[[1, 3], [3, 5]]', '[[5, 6], [1, 2]]', '[[1, 10], [2, 3], [4, 5]]'],
-    answer: 1,
-    explanation: 'Touching means `start == end` must merge, so the test is `start <= out[-1][1]`. Always ask the interviewer whether touching intervals overlap.',
-    signature: 'edge:interval-touching',
+            stack.append(ch)
+    return not stack
+`,
+    tests: [
+      t.eq('is_valid("()[]")', 'True'),
+      t.eq('is_valid("((")', 'False'),
+      t.hidden('is_valid("")', 'True'),
+      t.hidden('is_valid(")")', 'False'),
+      t.hidden('is_valid("([)]")', 'False'),
+      t.hidden('is_valid("{[()]}")', 'True'),
+      t.hidden('is_valid("[")', 'False'),
+    ],
+    hints: ['Run it on `"(("` in your head.', 'What is still on the stack at the end?'],
+    explanation: 'Unclosed openers are left on the stack, so the final answer is `not stack`, not `True`.',
+    signature: 'debug:stack-leftover',
+    minutes: 3,
   }),
-  code({
+  write({
     id: 'o11-edge-second',
     title: 'Second largest distinct',
     skills: ['edge_cases', 'state_tracking', 'conditionals'],
@@ -485,21 +1050,74 @@ const edges: Exercise[] = [
     signature: 'edge:second-largest',
     minutes: 4,
   }),
-  choice({
-    id: 'o11-edge-grid',
-    title: 'Breaking input: grid',
+  debug({
+    id: 'o11-dbg-touching',
+    title: 'Fix it: touching intervals',
+    skills: ['edge_cases', 'interval_overlap', 'sorting'],
+    ...R,
+    prompt: 'Merge overlapping intervals and return them sorted by start. Intervals that only touch, like `[1, 3]` and `[3, 5]`, count as overlapping. Input is non-empty.',
+    brokenCode: `def merge(intervals):
+    intervals.sort(key=lambda x: x[0])
+    out = [intervals[0]]
+    for start, end in intervals[1:]:
+        if start < out[-1][1]:
+            out[-1][1] = max(out[-1][1], end)
+        else:
+            out.append([start, end])
+    return out
+`,
+    solution: `def merge(intervals):
+    intervals.sort(key=lambda x: x[0])
+    out = [intervals[0]]
+    for start, end in intervals[1:]:
+        if start <= out[-1][1]:
+            out[-1][1] = max(out[-1][1], end)
+        else:
+            out.append([start, end])
+    return out
+`,
+    tests: [
+      t.eq('merge([[1, 4], [2, 3]])', '[[1, 4]]'),
+      t.eq('merge([[1, 3], [3, 5]])', '[[1, 5]]'),
+      t.hidden('merge([[5, 6], [1, 2]])', '[[1, 2], [5, 6]]'),
+      t.hidden('merge([[1, 2], [2, 3], [3, 4]])', '[[1, 4]]'),
+      t.hidden('merge([[4, 4]])', '[[4, 4]]'),
+      t.hidden('merge([[1, 10], [2, 3], [4, 5]])', '[[1, 10]]'),
+    ],
+    hints: ['Try `[[1, 3], [3, 5]]` by hand.', 'What should happen when the start equals the last end?'],
+    explanation: 'Touching means `start == end` must merge, so the test is `<=`. Always ask the interviewer whether touching intervals overlap.',
+    signature: 'debug:interval-touching',
+    minutes: 3,
+  }),
+  debug({
+    id: 'o11-dbg-empty-grid',
+    title: 'Fix it: empty grid',
     skills: ['edge_cases', 'grid_nested'],
     ...R,
-    prompt: 'Which input makes the first line raise?',
-    code: `def count_land(grid):
+    prompt: 'Return the total of all values in `grid`, a list of equal-length rows of numbers. An empty grid (`[]`) has total 0.',
+    brokenCode: `def grid_total(grid):
     rows, cols = len(grid), len(grid[0])
-    return sum(grid[r][c] for r in range(rows) for c in range(cols))`,
-    options: ['[[0]]', '[]', '[[1, 1], [0, 1]]', '[[0, 0, 0]]'],
-    answer: 1,
-    explanation: '`grid[0]` on an empty grid raises IndexError. Guard with `if not grid: return 0` when empty input is allowed.',
-    signature: 'edge:empty-grid',
+    return sum(grid[r][c] for r in range(rows) for c in range(cols))
+`,
+    solution: `def grid_total(grid):
+    if not grid:
+        return 0
+    rows, cols = len(grid), len(grid[0])
+    return sum(grid[r][c] for r in range(rows) for c in range(cols))
+`,
+    tests: [
+      t.eq('grid_total([[1, 1], [0, 1]])', '3'),
+      t.eq('grid_total([])', '0'),
+      t.hidden('grid_total([[5]])', '5'),
+      t.hidden('grid_total([[0, 0, 0]])', '0'),
+      t.hidden('grid_total([[1], [2], [3]])', '6'),
+    ],
+    hints: ['Which line touches `grid[0]`?', 'Guard before indexing.'],
+    explanation: '`grid[0]` on an empty grid raises IndexError. A one-line guard is cheap; ask whether empty input is allowed.',
+    signature: 'debug:empty-grid',
+    minutes: 2.5,
   }),
-  code({
+  write({
     id: 'o11-edge-kth-end',
     title: 'k-th node from the end',
     skills: ['edge_cases', 'linked_list_traversal', 'two_pointer'],
@@ -541,22 +1159,58 @@ const edges: Exercise[] = [
     signature: 'edge:kth-from-end',
     minutes: 5,
   }),
-  choice({
-    id: 'o11-edge-two-sum',
-    title: 'Breaking input: pair sum',
+  write({
+    id: 'o11-wt-two-sum',
+    title: 'Break it: pair sum',
     skills: ['edge_cases', 'index_map', 'complement'],
-    ...R,
-    prompt: 'This returns two indexes whose values add to `target`. Which call returns a wrong answer?',
-    code: `def two_sum(nums, target):
+    ...W,
+    prompt:
+      '`two_sum(nums, target)` should return two **different** indexes whose values add to `target` (an answer always exists).\n\nWrite `edge_cases()` returning at least two `(nums, target)` pairs that each have an answer, where at least one makes `two_sum` return something invalid.',
+    starterCode: `def two_sum(nums, target):
     pos = {n: i for i, n in enumerate(nums)}
     for i, n in enumerate(nums):
         if target - n in pos:
             return [i, pos[target - n]]
-    return []`,
-    options: ['two_sum([2, 7, 11], 9)', 'two_sum([3, 2, 4], 6)', 'two_sum([3, 3], 6)', 'two_sum([1, 5], 6)'],
-    answer: 1,
-    explanation: 'For 3 it finds 6 - 3 = 3 at its own index and returns [0, 0]. Checking the map before inserting the current number (one pass) makes self-pairing impossible.',
-    signature: 'edge:self-pair',
+    return []
+
+def edge_cases():
+    pass
+`,
+    solution: `def two_sum(nums, target):
+    pos = {n: i for i, n in enumerate(nums)}
+    for i, n in enumerate(nums):
+        if target - n in pos:
+            return [i, pos[target - n]]
+    return []
+
+def edge_cases():
+    return [
+        ([3, 2, 4], 6),
+        ([2, 7, 11], 9),
+    ]
+`,
+    tests: [
+      t.check(
+        'at least two solvable cases, one breaks two_sum',
+        `cases = edge_cases()
+assert isinstance(cases, list) and len(cases) >= 2, "return a list of at least two (nums, target) pairs"
+for nums, target in cases:
+    ok = any(nums[i] + nums[j] == target for i in range(len(nums)) for j in range(i + 1, len(nums)))
+    assert ok, f"{nums} has no pair adding to {target}"
+def _breaks(nums, target):
+    try:
+        r = two_sum(list(nums), target)
+        i, j = r
+        return i == j or nums[i] + nums[j] != target
+    except Exception:
+        return True
+assert any(_breaks(n, x) for n, x in cases), "none of your cases break two_sum"`,
+      ),
+    ],
+    hints: ['Can a number be paired with itself here?', 'Look for a target that is exactly twice one of the values.'],
+    explanation: 'With every value preloaded, `3` finds `6 - 3 = 3` at its own index and returns `[0, 0]`. The one-pass version checks the map before inserting, so self-pairing is impossible.',
+    signature: 'write-test:self-pair',
+    minutes: 3.5,
   }),
 ]
 
@@ -567,46 +1221,55 @@ const edges: Exercise[] = [
 const BIG_O = { stage: 'retrieval', repType: 'cold' } as const
 
 const complexity: Exercise[] = [
-  choice({
-    id: 'o11-cx-list-in',
-    title: 'Membership in a list',
-    skills: ['complexity', 'hash_reasoning'],
-    ...BIG_O,
-    prompt: '`a` and `b` both have n items. Time complexity?',
-    code: `def common(a, b):
+  write({
+    id: 'o11-opt-common',
+    title: 'Make it linear',
+    skills: ['hash_reasoning', 'set_membership', 'complexity'],
+    ...R,
+    style: 'optimize',
+    difficulty: 2,
+    prompt:
+      'This returns the items of `a` that also appear in `b`, in the order of `a` (repeats in `a` kept). It is O(n·m) because `x in b` scans a list. Rewrite it to run in O(n + m) with the same output.',
+    starterCode: `def common(a, b):
     out = []
     for x in a:
         if x in b:
             out.append(x)
-    return out`,
-    options: ['O(n)', 'O(n log n)', 'O(n^2)', 'O(1)'],
-    answer: 2,
-    explanation: '`x in b` scans the list, O(n) per check. Converting `b` to a set first makes the whole thing O(n).',
-    signature: 'complexity:list-membership',
-  }),
-  choice({
-    id: 'o11-cx-sort-scan',
-    title: 'Sort then scan',
-    skills: ['complexity', 'sorting'],
-    ...BIG_O,
-    prompt: 'Time complexity?',
-    code: `def has_close_pair(nums):
-    nums = sorted(nums)
-    for i in range(1, len(nums)):
-        if nums[i] - nums[i - 1] <= 1:
-            return True
-    return False`,
-    options: ['O(n)', 'O(n log n)', 'O(n^2)', 'O(log n)'],
-    answer: 1,
-    explanation: 'Sorting costs O(n log n) and dominates the O(n) scan.',
-    signature: 'complexity:sort-then-scan',
+    return out
+`,
+    solution: `def common(a, b):
+    lookup = set(b)
+    out = []
+    for x in a:
+        if x in lookup:
+            out.append(x)
+    return out
+`,
+    tests: [
+      t.eq('common([1, 2, 3, 2], [2, 3])', '[2, 3, 2]'),
+      t.check(
+        'never scans b with `in`',
+        `class _NoScan(list):
+    def __contains__(self, x):
+        raise AssertionError("x in b scans the whole list: build a set from b first")
+assert common([1, 2, 3, 2], _NoScan([2, 3])) == [2, 3, 2]
+assert common([], _NoScan([1])) == []`,
+      ),
+      t.hidden('common([4, 5], [])', '[]'),
+      t.hidden('common(["a", "b"], ["b", "b"])', '["b"]'),
+    ],
+    hints: ['Which operation runs n times and costs O(m) each?', 'Build a set from `b` once, before the loop.'],
+    explanation: 'One O(m) pass builds the set and each lookup is then O(1) on average: O(n + m) time, O(m) extra space. Spot "`in` on a list inside a loop" on sight.',
+    complexity: { time: 'O(n + m)', space: 'O(m)' },
+    signature: 'optimize:list-to-set',
+    minutes: 3,
   }),
   choice({
     id: 'o11-cx-heap-k',
     title: 'Size-k heap',
     skills: ['complexity', 'top_k'],
     ...BIG_O,
-    prompt: 'n numbers, heap capped at size k. Time complexity?',
+    prompt: 'You just kept a size-k heap for the closest points. Same shape here: n numbers, heap capped at size k. Time complexity?',
     code: `import heapq
 
 def k_largest(nums, k):
@@ -626,7 +1289,7 @@ def k_largest(nums, k):
     title: 'All subsets',
     skills: ['complexity', 'backtracking_state'],
     ...BIG_O,
-    prompt: 'Time complexity for n numbers?',
+    prompt: 'You just generated every subset. Time complexity of this version for n numbers?',
     code: `def subsets(nums):
     out, path = [], []
     def dfs(i):
@@ -649,7 +1312,7 @@ def k_largest(nums, k):
     title: 'Memoized recursion',
     skills: ['complexity', 'memoization'],
     ...BIG_O,
-    prompt: 'Time complexity of `ways(n)`?',
+    prompt: 'You just solved a one-dimensional DP bottom-up. Here is the top-down version of a similar recurrence: time complexity of `ways(n)`?',
     code: `def ways(n):
     memo = {}
     def go(i):
@@ -670,7 +1333,7 @@ def k_largest(nums, k):
     title: 'Space of tree recursion',
     skills: ['complexity', 'tree_dfs'],
     ...BIG_O,
-    prompt: 'Extra space used by this function (n nodes, height h)?',
+    prompt: 'Your path-sum solution recursed down the tree with no extra data structure. Extra space used by this function (n nodes, height h)?',
     code: `def depth(root):
     if root is None:
         return 0
@@ -685,7 +1348,7 @@ def k_largest(nums, k):
     title: 'Grid traversal',
     skills: ['complexity', 'bfs'],
     ...BIG_O,
-    prompt: 'A BFS from every unvisited land cell, marking cells visited when queued. Time complexity on an R × C grid?',
+    prompt: 'You just counted islands. Assume a traversal from every unvisited land cell, marking cells visited when queued. Time complexity on an R × C grid?',
     code: `for r in range(rows):
     for c in range(cols):
         if grid[r][c] == "1" and (r, c) not in seen:
@@ -701,7 +1364,7 @@ def k_largest(nums, k):
     title: 'pop(0) in a loop',
     skills: ['complexity', 'queue_deque'],
     ...BIG_O,
-    prompt: 'Time complexity for a list of n numbers?',
+    prompt: 'You just rotated a deque with `popleft()`. Why not a list? Time complexity of this for n numbers?',
     code: `def drain(nums):
     total = 0
     while nums:
@@ -779,7 +1442,7 @@ def can_finish(n, prereqs):
 const P = { stage: 'pattern', repType: 'pattern' } as const
 
 const mixed: Exercise[] = [
-  code({
+  write({
     id: 'o11-mix-nearby-repeat',
     title: 'Nearby repeat',
     skills: ['index_map', 'enumerate', 'early_return'],
@@ -817,7 +1480,7 @@ const mixed: Exercise[] = [
     signature: 'index-map:nearby-repeat',
     minutes: 5,
   }),
-  code({
+  write({
     id: 'o11-mix-sorted-squares',
     title: 'Squares in order',
     skills: ['two_pointer', 'pointer_update', 'range'],
@@ -858,7 +1521,7 @@ const mixed: Exercise[] = [
     signature: 'two-pointer:sorted-squares',
     minutes: 6,
   }),
-  code({
+  write({
     id: 'o11-mix-two-kinds',
     title: 'At most two kinds',
     skills: ['sliding_window', 'window_state', 'frequency_map'],
@@ -902,7 +1565,7 @@ const mixed: Exercise[] = [
     signature: 'window:at-most-k-distinct',
     minutes: 7,
   }),
-  code({
+  write({
     id: 'o11-mix-first-at-least',
     title: 'First position at least target',
     skills: ['binary_search', 'mid_calc', 'search_invariant'],
@@ -942,7 +1605,7 @@ const mixed: Exercise[] = [
     signature: 'bsearch:lower-bound',
     minutes: 6,
   }),
-  code({
+  write({
     id: 'o11-mix-path-sum',
     title: 'Root-to-leaf total',
     skills: ['tree_dfs', 'recursion_base_case', 'recursion_return'],
@@ -980,7 +1643,7 @@ const mixed: Exercise[] = [
     signature: 'tree-dfs:path-sum',
     minutes: 6,
   }),
-  code({
+  write({
     id: 'o11-mix-groups',
     title: 'Count friend groups',
     skills: ['connected_components', 'graph_adjacency', 'visited_set'],
@@ -1030,7 +1693,7 @@ const mixed: Exercise[] = [
     signature: 'graph:count-components',
     minutes: 7,
   }),
-  code({
+  write({
     id: 'o11-mix-k-closest',
     title: 'Closest k points',
     skills: ['top_k', 'heap_push_pop', 'tuples'],
@@ -1070,7 +1733,7 @@ def k_closest(points, k):
     signature: 'heap:k-closest',
     minutes: 6,
   }),
-  code({
+  write({
     id: 'o11-mix-cheapest-climb',
     title: 'Cheapest climb',
     skills: ['recurrence', 'dp_table', 'state_tracking'],
@@ -1106,7 +1769,7 @@ def k_closest(points, k):
     signature: 'dp:min-cost-stairs',
     minutes: 6,
   }),
-  code({
+  write({
     id: 'o11-mix-choose',
     title: 'Pick k of n',
     skills: ['backtracking_state', 'recursion_base_case'],
@@ -1148,7 +1811,7 @@ def k_closest(points, k):
     signature: 'backtrack:combinations',
     minutes: 7,
   }),
-  code({
+  write({
     id: 'o11-mix-fewest-steps',
     title: 'Fewest steps through a maze',
     skills: ['bfs', 'grid_neighbors', 'visited_set', 'queue_deque'],
@@ -1227,7 +1890,7 @@ const sayIt: Exercise[] = [
     title: 'Clarifying questions',
     skills: ['explanation', 'edge_cases'],
     prompt:
-      'Prompt: "Combine overlapping time ranges." Write the clarifying questions you would ask in the first two minutes, and the inputs you would test with.',
+      'You just merged intervals from a blank editor. In the real interview the first two minutes come before the code: write the clarifying questions you would ask for "combine overlapping time ranges", and the inputs you would test with.',
     rubric: [
       'Asks whether the input is sorted.',
       'Asks whether touching ranges like [1, 3] and [3, 5] count as overlapping.',
@@ -1240,27 +1903,10 @@ const sayIt: Exercise[] = [
     minutes: 4,
   }),
   explain({
-    id: 'o11-say-ordering',
-    title: 'Is an order possible?',
-    skills: ['explanation', 'cycle_detection', 'graph_adjacency'],
-    prompt:
-      'Prompt: "You have n tasks and pairs [a, b] meaning b must happen before a. Can all tasks be done?" Explain your approach out loud, then write it: how you model it, the algorithm, and the complexity.',
-    rubric: [
-      'Models tasks as nodes and each pair as a directed edge b → a.',
-      'Says the answer is "no" exactly when there is a cycle.',
-      'Describes one detection method: in-degree queue (count processed nodes) or DFS with visiting/done states.',
-      'States O(n + e) time and space.',
-      'Mentions tasks with no pairs and a task depending on itself.',
-    ],
-    explanation: 'Translating the story into "directed graph, cycle?" is the whole problem. Say that sentence early.',
-    signature: 'explain:model-as-graph',
-    minutes: 4,
-  }),
-  explain({
     id: 'o11-say-dry-run',
     title: 'Dry-run out loud',
     skills: ['explanation', 'sliding_window', 'window_state'],
-    prompt: 'You just wrote this. Trace it on `"abba"` the way you would for an interviewer: after each character, say `left`, the set, and `best`.',
+    prompt: 'A set-based version of the window you just wrote. Trace it on `"abba"` the way you would for an interviewer: after each character, say `left`, the set, and `best`.',
     code: `def longest_unique(s):
     seen = set()
     left = best = 0
@@ -1300,18 +1946,89 @@ const sayIt: Exercise[] = [
   }),
 ]
 
+// ---------------------------------------------------------------------------
+// Assembly. Complexity and "say it out loud" reps are follow-ups placed right
+// after the implementation they talk about, never more than two in a row.
+// ---------------------------------------------------------------------------
+
+const POOL = new Map([...speed, ...bugs, ...edges, ...complexity, ...mixed, ...sayIt].map((e) => [e.id, e]))
+
+function pick(ids: string[]): Exercise[] {
+  return ids.map((id) => {
+    const e = POOL.get(id)
+    if (!e) throw new Error(`oct11: unknown rep ${id}`)
+    return e
+  })
+}
+
+/** Cold capstones, each followed by its (short) talk-about-it reps. */
+const COLD_FOLLOW_UPS: Record<string, string[]> = {
+  'two-sum': ['o11-say-pair-sum'],
+  'longest-substring': ['o11-cx-window-explain', 'o11-say-dry-run'],
+  'number-of-islands': ['o11-cx-grid-bfs'],
+  'course-schedule': ['o11-cx-graph-explain'],
+  'merge-intervals': ['o11-say-clarify'],
+  subsets: ['o11-cx-subsets'],
+  'house-robber': ['o11-cx-memo'],
+}
+
+function coldSection(): Exercise[] {
+  return coldCapstones(COLD_IDS).flatMap((e) => [e, ...pick(COLD_FOLLOW_UPS[e.problemId ?? ''] ?? [])])
+}
+
 export const day: DayModule = {
   date: '2026-10-11',
   short: 'Interview',
   title: 'Interview Reps',
-  focus: 'No new concepts: cold retrieval across every pattern, edge cases, complexity, saying the approach out loud, and two timed mocks.',
+  focus: 'No new concepts, maximum reps: fast recall, a debug sprint over every day\'s classic bugs, edge cases written as code, cold capstones from a bare signature, mixed patterns, then two timed mocks.',
   sections: [
-    { id: 'o11-speed', title: 'Python speed round', summary: 'Fast mixed primitives: .get counting, enumerate, deque, heapq, sort keys, slicing.', exercises: speed },
-    { id: 'o11-cold', title: 'Cold capstones', summary: 'Core problems from a blank editor, no notes, ~20 minutes each.', exercises: coldCapstones(COLD_IDS) },
-    { id: 'o11-edges', title: 'Edge cases', summary: 'Spot the input that breaks the code, then handle it.', exercises: edges },
-    { id: 'o11-complexity', title: 'Complexity', summary: 'State time and space from the code, and justify it.', exercises: complexity },
-    { id: 'o11-mixed', title: 'Mixed patterns', summary: 'Fresh short problems; recognizing the pattern is part of the rep.', exercises: mixed },
-    { id: 'o11-say', title: 'Say it out loud', summary: 'Approach, questions, dry runs and recovery before code.', exercises: sayIt },
+    {
+      id: 'o11-speed',
+      title: 'Python speed round',
+      summary: 'Fast mixed primitives from a signature: .get counting, enumerate, deque, heapq, sort keys, grid neighbors.',
+      exercises: pick([
+        'o11-speed-count',
+        'o11-speed-first-seen',
+        'o11-speed-last-seen',
+        'o11-speed-deque',
+        'o11-cx-pop-front',
+        'o11-speed-heap-small',
+        'o11-speed-heap-tuples',
+        'o11-speed-sort-key',
+        'o11-speed-slicing',
+        'o11-speed-leaderboard',
+        'o11-speed-neighbors',
+      ]),
+    },
+    { id: 'o11-debug', title: 'Debug sprint', summary: 'One classic bug from every day. Read the failing test, fix, run, next.', exercises: bugs },
+    {
+      id: 'o11-edges',
+      title: 'Edge cases',
+      summary: 'Write the input that breaks the code, then fix the code so it survives it.',
+      exercises: edges,
+    },
+    { id: 'o11-cold', title: 'Cold capstones', summary: 'Core problems from a bare signature, timed, then a short complexity or approach follow-up.', exercises: coldSection() },
+    {
+      id: 'o11-mixed',
+      title: 'Mixed patterns',
+      summary: 'Fresh short problems; recognizing the pattern is part of the rep.',
+      exercises: pick([
+        'o11-mix-nearby-repeat',
+        'o11-opt-common',
+        'o11-mix-sorted-squares',
+        'o11-mix-two-kinds',
+        'o11-mix-first-at-least',
+        'o11-mix-path-sum',
+        'o11-cx-tree-space',
+        'o11-mix-k-closest',
+        'o11-cx-heap-k',
+        'o11-mix-groups',
+        'o11-mix-cheapest-climb',
+        'o11-mix-choose',
+        'o11-mix-fewest-steps',
+        'o11-say-stuck',
+      ]),
+    },
   ],
   capstones: [],
   mocks: ['mock-1', 'mock-2'],

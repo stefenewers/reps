@@ -35,13 +35,14 @@ const style = HighlightStyle.define([
 ])
 
 const theme = EditorView.theme({
-  '&': { fontSize: '13.5px', height: '100%', backgroundColor: '#fff' },
-  '.cm-scroller': { fontFamily: 'var(--font-geist-mono), ui-monospace, monospace', lineHeight: '1.65' },
-  '.cm-content': { padding: '12px 0', caretColor: '#0b0b0c' },
-  '.cm-gutters': { backgroundColor: '#fff', border: 'none', color: '#c4c4ca' },
-  '.cm-lineNumbers .cm-gutterElement': { padding: '0 12px 0 16px' },
-  '.cm-activeLine': { backgroundColor: '#fafafa' },
-  '.cm-activeLineGutter': { backgroundColor: '#fafafa', color: '#6b6b70' },
+  '&': { fontSize: '14px', height: '100%', backgroundColor: '#fbfbfc' },
+  '.cm-scroller': { fontFamily: 'var(--font-geist-mono), ui-monospace, monospace', lineHeight: '1.7' },
+  '.cm-content': { padding: '16px 0', caretColor: '#0b0b0c' },
+  '.cm-cursor': { borderLeftWidth: '2px', borderLeftColor: '#0b0b0c' },
+  '.cm-gutters': { backgroundColor: '#fbfbfc', border: 'none', color: '#c6c6cc' },
+  '.cm-lineNumbers .cm-gutterElement': { padding: '0 14px 0 18px', minWidth: '44px' },
+  '.cm-activeLine': { backgroundColor: 'rgba(15,15,20,0.028)' },
+  '.cm-activeLineGutter': { backgroundColor: 'transparent', color: '#66666d' },
   '&.cm-focused': { outline: 'none' },
   '.cm-selectionBackground, &.cm-focused .cm-selectionBackground, ::selection': { backgroundColor: '#dfe6fb !important' },
   '.cm-matchingBracket': { backgroundColor: '#eef2fd', outline: 'none' },
@@ -61,9 +62,11 @@ export interface CodeEditorProps {
   placeholder?: string
   autoFocus?: boolean
   minHeight?: number
+  /** Bump to move focus into the editor (e.g. "Back to code"). */
+  focusToken?: number
 }
 
-export default function CodeEditor({ value, onChange, onRun, onSubmit, assist = true, readOnly = false, ariaLabel = 'Python editor', placeholder, autoFocus, minHeight = 220 }: CodeEditorProps) {
+export default function CodeEditor({ value, onChange, onRun, onSubmit, assist = true, readOnly = false, ariaLabel = 'Python editor', placeholder, autoFocus, minHeight = 220, focusToken }: CodeEditorProps) {
   const host = useRef<HTMLDivElement>(null)
   const view = useRef<EditorView | null>(null)
   const assistC = useRef(new Compartment())
@@ -134,6 +137,10 @@ export default function CodeEditor({ value, onChange, onRun, onSubmit, assist = 
   useEffect(() => {
     view.current?.dispatch({ effects: readOnlyC.current.reconfigure(EditorState.readOnly.of(readOnly)) })
   }, [readOnly])
+
+  useEffect(() => {
+    if (focusToken) view.current?.focus()
+  }, [focusToken])
 
   return <div ref={host} className="h-full overflow-hidden" style={{ minHeight }} data-testid="code-editor" />
 }

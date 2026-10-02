@@ -117,9 +117,13 @@ export default function SignInPage() {
 
 function Shell({ children }: { children: React.ReactNode }) {
   return (
-    <main className="mx-auto w-full max-w-[420px] px-5 pb-28 pt-16">
-      <h1 className="text-[24px] font-semibold tracking-tight">Sign in to Reps</h1>
-      <div className="mt-3">{children}</div>
+    <main className="flex-1 bg-canvas">
+      <div className="mx-auto w-full max-w-[440px] px-5 pb-28 pt-16">
+        <div className="panel p-7">
+          <h1 className="h1">Sign in to Reps</h1>
+          <div className="mt-3">{children}</div>
+        </div>
+      </div>
     </main>
   )
 }

@@ -1,5 +1,5 @@
 import type { DayModule } from '@/lib/types'
-import { choice, output, fill, code, reorder, capstone, explain, t } from '@/data/exercises/build'
+import { output, code, write, debug, reorder, capstone, explain, t } from '@/data/exercises/build'
 
 const cold = { stage: 'retrieval' as const, repType: 'cold' as const }
 
@@ -13,32 +13,9 @@ export const day: DayModule = {
     {
       id: 'd4-warmup',
       title: 'Warm-up',
-      summary: 'Cold recall: pointers, running min, slicing, sets and maps.',
+      summary: 'Yesterday from a bare signature: slicing, running min, pointers, sets.',
       exercises: [
-        output({
-          id: 'd4-warm-trace-pointers',
-          title: 'Trace a sorted pair search',
-          skills: ['two_pointer', 'pointer_update'],
-          ...cold,
-          prompt: 'What does this print?',
-          code: `nums = [1, 2, 5, 7, 10]
-target = 12
-left, right = 0, len(nums) - 1
-while left < right:
-    total = nums[left] + nums[right]
-    if total == target:
-        break
-    if total < target:
-        left += 1
-    else:
-        right -= 1
-print(left, right, nums[left] + nums[right])`,
-          expectedOutput: '1 4 12',
-          explanation: '1 + 10 = 11 is too small, so left moves; 2 + 10 = 12 matches.',
-          signature: 'trace:sorted-pair-sum',
-          minutes: 2,
-        }),
-        code({
+        write({
           id: 'd4-warm-reverse-each',
           title: 'Reverse each word',
           skills: ['string_methods', 'slicing', 'list_append'],
@@ -56,7 +33,7 @@ print(left, right, nums[left] + nums[right])`,
           signature: 'string:split-map-join',
           minutes: 4,
         }),
-        code({
+        write({
           id: 'd4-warm-profit',
           title: 'Best profit from memory',
           skills: ['state_tracking'],
@@ -73,10 +50,10 @@ print(left, right, nums[left] + nums[right])`,
     return best`,
           tests: [t.eq('max_profit([7, 1, 5, 3, 6, 4])', '5'), t.eq('max_profit([5, 4, 3])', '0'), t.hidden('max_profit([])', '0'), t.hidden('max_profit([2, 9, 1, 3])', '7')],
           signature: 'running:min-profit',
-          minutes: 4,
+          minutes: 5,
           important: true,
         }),
-        code({
+        write({
           id: 'd4-warm-palindrome',
           title: 'Valid Palindrome from memory',
           skills: ['two_pointer', 'pointer_update', 'string_methods'],
@@ -100,10 +77,10 @@ print(left, right, nums[left] + nums[right])`,
           tests: [t.eq('is_palindrome("Never odd or even.")', 'True'), t.eq('is_palindrome("0P")', 'False'), t.hidden('is_palindrome("")', 'True'), t.hidden('is_palindrome("!!")', 'True'), t.hidden('is_palindrome("ab")', 'False')],
           hints: ['Skip non-alphanumerics with inner while loops that also check left < right.'],
           signature: 'two-pointer:skip-chars',
-          minutes: 7,
+          minutes: 8,
           important: true,
         }),
-        code({
+        write({
           id: 'd4-warm-first-repeat',
           title: 'First repeated character',
           skills: ['set_add', 'set_membership', 'string_iterate'],
@@ -122,7 +99,7 @@ print(left, right, nums[left] + nums[right])`,
           signature: 'set:seen-early-return',
           minutes: 4,
         }),
-        code({
+        write({
           id: 'd4-warm-two-sum-ii',
           title: 'Two Sum II from memory',
           skills: ['two_pointer', 'pointer_update'],
@@ -143,7 +120,7 @@ print(left, right, nums[left] + nums[right])`,
     return []`,
           tests: [t.eq('two_sum_sorted([2, 7, 11, 15], 9)', '[1, 2]'), t.eq('two_sum_sorted([1, 3, 4, 6], 10)', '[3, 4]'), t.hidden('two_sum_sorted([-3, 0, 2], -1)', '[1, 3]')],
           signature: 'sorted-pair:indices',
-          minutes: 4,
+          minutes: 6,
           important: true,
         }),
       ],
@@ -155,18 +132,6 @@ print(left, right, nums[left] + nums[right])`,
       title: 'Windows',
       summary: 'A window is s[left..right]; slide it by moving its edges.',
       exercises: [
-        choice({
-          id: 'd4-win-size',
-          title: 'Window size',
-          skills: ['sliding_window'],
-          prompt: 'A window covers indexes `left` through `right`, **both included**. How many items does it hold?',
-          options: ['right - left + 1', 'right - left', 'right + left', 'right - left - 1'],
-          answer: 0,
-          note: 'Inclusive window `[left, right]`: size is `right - left + 1`; as a slice it is `s[left:right + 1]`.',
-          explanation: 'With left = right the window holds one item, and `right - left + 1` gives 1.',
-          signature: 'recognize:window-size',
-          minutes: 1,
-        }),
         output({
           id: 'd4-win-trace-slices',
           title: 'Trace fixed windows',
@@ -178,11 +143,12 @@ for right in range(k - 1, len(s)):
     left = right - k + 1
     print(left, right, s[left:right + 1])`,
           expectedOutput: '0 2 abc\n1 3 bcd\n2 4 cde',
+          note: 'Inclusive window `[left, right]`: size is `right - left + 1`; as a slice it is `s[left:right + 1]`.',
           explanation: 'The right edge drives the loop; for a fixed size k, left is always `right - k + 1`. The slice needs `right + 1` because the end is excluded.',
           signature: 'trace:fixed-window-slices',
           minutes: 2,
         }),
-        code({
+        write({
           id: 'd4-win-all-windows',
           title: 'List every window',
           skills: ['sliding_window', 'slicing', 'range'],
@@ -199,19 +165,14 @@ for right in range(k - 1, len(s)):
           signature: 'window:enumerate-fixed',
           minutes: 4,
         }),
-        fill({
-          id: 'd4-win-fill-slide-sum',
+        write({
+          id: 'd4-win-max-sum-k',
           title: 'Slide a running sum',
           skills: ['sliding_window', 'state_tracking'],
-          prompt: 'Fill the blank: when the window moves right by one, which value leaves it?',
+          style: 'optimize',
+          prompt: 'This re-sums every window, O(n·k):\n\n```python\ndef max_sum_k(nums, k):\n    best = None\n    for i in range(len(nums) - k + 1):\n        total = sum(nums[i:i + k])\n        if best is None or total > best:\n            best = total\n    return best\n```\n\nRewrite `max_sum_k(nums, k)` in O(n): sum the first window once, then for each step add the value entering on the right and subtract the value leaving on the left. Assume `1 <= k <= len(nums)`.',
           starterCode: `def max_sum_k(nums, k):
-    window = sum(nums[:k])
-    best = window
-    for right in range(k, len(nums)):
-        window += nums[right]
-        window -= ____
-        best = max(best, window)
-    return best`,
+    pass`,
           solution: `def max_sum_k(nums, k):
     window = sum(nums[:k])
     best = window
@@ -220,13 +181,41 @@ for right in range(k - 1, len(s)):
         window -= nums[right - k]
         best = max(best, window)
     return best`,
-          tests: [t.eq('max_sum_k([1, 4, 2, 10, 2, 3, 1, 0, 20], 4)', '24'), t.eq('max_sum_k([5], 1)', '5'), t.hidden('max_sum_k([-1, -2, -3], 2)', '-3')],
-          hints: ['The new window is `nums[right - k + 1 .. right]`. Which index just fell off?'],
+          tests: [t.eq('max_sum_k([1, 4, 2, 10, 2, 3, 1, 0, 20], 4)', '24'), t.eq('max_sum_k([5], 1)', '5'), t.hidden('max_sum_k([-1, -2, -3], 2)', '-3'), t.hidden('max_sum_k([3, 3, 3], 3)', '9')],
+          hints: ['Start with `window = sum(nums[:k])`.', 'Loop `right` from `k` to the end.', 'The new window is `nums[right - k + 1 .. right]`, so `nums[right - k]` just left.'],
           note: 'Fixed window: add the item entering on the right, subtract the item leaving on the left. O(1) per step instead of re-summing.',
-          signature: 'fill:fixed-window-sum',
-          minutes: 2,
+          signature: 'window:fixed-sum',
+          minutes: 7,
+          important: true,
         }),
-        code({
+        debug({
+          id: 'd4-win-debug-leaving',
+          title: 'Fix the smallest window sum',
+          skills: ['sliding_window', 'state_tracking'],
+          prompt: '`min_sum_k(nums, k)` should return the smallest sum of any `k` consecutive values, sliding a running sum. Assume `1 <= k <= len(nums)`. Make the tests pass.',
+          brokenCode: `def min_sum_k(nums, k):
+    window = sum(nums[:k])
+    best = window
+    for right in range(k, len(nums)):
+        window += nums[right]
+        window -= nums[right - k + 1]
+        best = min(best, window)
+    return best`,
+          solution: `def min_sum_k(nums, k):
+    window = sum(nums[:k])
+    best = window
+    for right in range(k, len(nums)):
+        window += nums[right]
+        window -= nums[right - k]
+        best = min(best, window)
+    return best`,
+          tests: [t.eq('min_sum_k([3, 1, 2, 5], 2)', '3'), t.eq('min_sum_k([4], 1)', '4'), t.hidden('min_sum_k([5, -2, 4, -6, 1], 3)', '-4')],
+          hints: ['Write out the window before and after one step for the first test.', 'Which index is in the old window but not the new one?'],
+          explanation: 'When right reaches index `right`, the item that falls out is at `right - k`. Subtracting `right - k + 1` removes an item that is still inside.',
+          signature: 'debug:window-leaving-index',
+          minutes: 4,
+        }),
+        write({
           id: 'd4-win-max-vowels',
           title: 'Most vowels in k letters',
           skills: ['sliding_window', 'window_state', 'conditionals'],
@@ -252,18 +241,6 @@ for right in range(k - 1, len(s)):
           signature: 'window:fixed-count',
           minutes: 7,
         }),
-        choice({
-          id: 'd4-win-when-shrink',
-          title: 'When does left move?',
-          skills: ['sliding_window'],
-          prompt: 'In a **variable-size** window where right advances every iteration, when should `left` move?',
-          options: ['While the window breaks the rule', 'Every iteration, together with right', 'Only once the loop has finished', 'Whenever right is even'],
-          answer: 0,
-          note: 'Variable window: `for right in ...:` add `right`; `while invalid:` remove `left`, `left += 1`; then the window is valid, so record the answer.',
-          explanation: 'Grow on the right greedily; shrink on the left only as much as needed to make the window valid again.',
-          signature: 'recognize:window-shrink-when',
-          minutes: 1,
-        }),
         output({
           id: 'd4-win-trace-variable',
           title: 'Trace grow and shrink',
@@ -281,24 +258,20 @@ for right in range(len(nums)):
         left += 1
     print(right, left, total)`,
           expectedOutput: '0 0 2\n1 0 3\n2 0 6\n3 1 6\n4 3 6',
+          note: 'Variable window: `for right in ...:` add `right`; `while invalid:` remove `left`, `left += 1`; then the window is valid, so record the answer.',
           explanation: 'At right = 4 the total is 10, so the while loop removes 1 and then 3 before the window is valid again.',
           signature: 'trace:variable-window-sum',
           minutes: 2.5,
         }),
-        code({
+        write({
           id: 'd4-win-longest-under',
           title: 'Longest run under a limit',
           skills: ['sliding_window', 'state_tracking', 'while_loop'],
           difficulty: 3,
-          prompt: 'Write `longest_under(nums, limit)`. All numbers are positive. Return the length of the longest contiguous run whose sum is at most `limit` (0 if none).',
+          style: 'optimize',
+          prompt: 'This tries every start, O(n²):\n\n```python\ndef longest_under(nums, limit):\n    best = 0\n    for i in range(len(nums)):\n        total = 0\n        for j in range(i, len(nums)):\n            total += nums[j]\n            if total > limit:\n                break\n            best = max(best, j - i + 1)\n    return best\n```\n\nAll numbers are positive. Rewrite `longest_under(nums, limit)` as one sliding window in O(n): grow on the right, shrink on the left while the sum is over the limit, then record the size.',
           starterCode: `def longest_under(nums, limit):
-    left = 0
-    total = 0
-    best = 0
-    for right in range(len(nums)):
-        # grow, shrink while invalid, record
-        pass
-    return best`,
+    pass`,
           solution: `def longest_under(nums, limit):
     left = 0
     total = 0
@@ -314,31 +287,41 @@ for right in range(len(nums)):
           hints: ['Grow by adding `nums[right]`.', 'While too big, subtract `nums[left]` and move left.', 'After shrinking the window is valid: `best = max(best, right - left + 1)`.'],
           explanation: 'If the window is empty (left = right + 1), its size is 0, so a single item larger than the limit is handled with no special case.',
           signature: 'window:longest-valid-sum',
-          minutes: 7,
+          minutes: 8,
           important: true,
         }),
-        reorder({
-          id: 'd4-win-reorder',
-          title: 'Rebuild the variable window',
+        debug({
+          id: 'd4-win-debug-shrink',
+          title: 'Fix the shortest window',
           skills: ['sliding_window', 'while_loop'],
-          prompt: 'Put the lines in order: shortest run (in a list of positive numbers) whose sum is at least `goal`, or 0.',
-          lines: [
-            'def shortest_at_least(nums, goal):',
-            '    left = 0',
-            '    total = 0',
-            '    best = float("inf")',
-            '    for right in range(len(nums)):',
-            '        total += nums[right]',
-            '        while total >= goal:',
-            '            best = min(best, right - left + 1)',
-            '            total -= nums[left]',
-            '            left += 1',
-            '    return best if best != float("inf") else 0',
-          ],
-          tests: [t.eq('shortest_at_least([2, 3, 1, 2, 4, 3], 7)', '2'), t.eq('shortest_at_least([1, 1], 5)', '0'), t.hidden('shortest_at_least([1, 4, 4], 4)', '1')],
-          explanation: 'Here the answer is recorded inside the shrink loop: the window is valid while it is being shrunk, and we want the smallest valid one.',
-          signature: 'reorder:window-shortest',
-          minutes: 3,
+          prompt: '`shortest_at_least(nums, goal)` takes positive numbers and should return the length of the shortest run whose sum is at least `goal`, or `0` if none is. Make the tests pass.',
+          brokenCode: `def shortest_at_least(nums, goal):
+    left = 0
+    total = 0
+    best = float("inf")
+    for right in range(len(nums)):
+        total += nums[right]
+        if total >= goal:
+            best = min(best, right - left + 1)
+            total -= nums[left]
+            left += 1
+    return best if best != float("inf") else 0`,
+          solution: `def shortest_at_least(nums, goal):
+    left = 0
+    total = 0
+    best = float("inf")
+    for right in range(len(nums)):
+        total += nums[right]
+        while total >= goal:
+            best = min(best, right - left + 1)
+            total -= nums[left]
+            left += 1
+    return best if best != float("inf") else 0`,
+          tests: [t.eq('shortest_at_least([2, 3, 1, 2, 4, 3], 7)', '2'), t.eq('shortest_at_least([1, 1], 5)', '0'), t.hidden('shortest_at_least([1, 4, 4], 4)', '1'), t.hidden('shortest_at_least([1, 1, 1, 10], 10)', '1')],
+          hints: ['After one item leaves, could the window still be valid?', 'Shrinking has to continue as long as the window stays valid.'],
+          explanation: 'An `if` shrinks by at most one item per step, so the window can stay longer than needed. A `while` keeps shrinking and recording until the window stops being valid.',
+          signature: 'debug:window-if-vs-while',
+          minutes: 5,
         }),
       ],
     },
@@ -349,18 +332,6 @@ for right in range(len(nums)):
       title: 'Window state',
       summary: 'A set or count map that mirrors what is inside the window, updated on both edges.',
       exercises: [
-        choice({
-          id: 'd4-ws-set-remove',
-          title: 'Leaving the window',
-          skills: ['window_state', 'set_membership'],
-          prompt: '`seen` holds exactly the characters in `s[left..right]`. You are about to do `left += 1`. What must happen first?',
-          options: ['seen.remove(s[left])', 'seen.add(s[left])', 'seen.remove(s[right])', 'seen.clear()'],
-          answer: 0,
-          note: 'The window state must match the window. Something enters → add it. Something leaves → remove it, **before** the edge moves past it.',
-          explanation: 's[left] is the character leaving the window, so it must leave the set too.',
-          signature: 'recognize:window-set-remove',
-          minutes: 1,
-        }),
         output({
           id: 'd4-ws-trace-set',
           title: 'Trace a set window',
@@ -377,40 +348,12 @@ for right in range(len(s)):
     seen.add(s[right])
     print(right, left, sorted(seen))`,
           expectedOutput: "0 0 ['a']\n1 0 ['a', 'b']\n2 0 ['a', 'b', 'c']\n3 1 ['a', 'b', 'c']",
+          note: 'The window state must match the window. Something enters → add it. Something leaves → remove it **before** the edge moves past it. Use a count map when the window can hold duplicates.',
           explanation: 'At right = 3, "a" is already inside, so the old "a" at index 0 is removed and left moves to 1. Then the new "a" is added.',
           signature: 'trace:window-set',
           minutes: 2.5,
         }),
-        fill({
-          id: 'd4-ws-fill-nearby',
-          title: 'Keep only the last k',
-          skills: ['window_state', 'set_add', 'enumerate'],
-          difficulty: 2,
-          prompt: '`has_nearby_duplicate(nums, k)` returns `True` if two equal values are at most `k` positions apart. `window` holds the last `k` values. Fill the blank with the value that just fell out.',
-          starterCode: `def has_nearby_duplicate(nums, k):
-    window = set()
-    for i, x in enumerate(nums):
-        if x in window:
-            return True
-        window.add(x)
-        if len(window) > k:
-            window.remove(____)
-    return False`,
-          solution: `def has_nearby_duplicate(nums, k):
-    window = set()
-    for i, x in enumerate(nums):
-        if x in window:
-            return True
-        window.add(x)
-        if len(window) > k:
-            window.remove(nums[i - k])
-    return False`,
-          tests: [t.eq('has_nearby_duplicate([1, 2, 3, 1], 3)', 'True'), t.eq('has_nearby_duplicate([1, 2, 3, 1, 2, 3], 2)', 'False'), t.hidden('has_nearby_duplicate([1, 0, 1, 1], 1)', 'True'), t.hidden('has_nearby_duplicate([], 2)', 'False'), t.hidden('has_nearby_duplicate([1, 1], 0)', 'False')],
-          hints: ['After adding index i, the window should be indexes i-k+1..i. Which index is now too old?'],
-          signature: 'fill:window-set-fixed',
-          minutes: 3,
-        }),
-        code({
+        write({
           id: 'd4-ws-remove-one',
           title: 'Decrement and delete',
           skills: ['window_state', 'dict_lookup', 'dict_assign'],
@@ -428,40 +371,29 @@ for right in range(len(s)):
           signature: 'window:count-decrement',
           minutes: 4,
         }),
-        choice({
-          id: 'd4-ws-set-or-map',
-          title: 'Set or count map?',
-          skills: ['window_state', 'frequency_map'],
-          prompt: 'A window may contain the same value several times. When the left edge drops one copy, you need to know whether another copy is still inside. What should the window state be?',
-          options: ['A count map: value → how many are inside', 'A set of values', 'A single integer total', 'A list of the window items, searched each step'],
-          answer: 0,
-          explanation: 'A set forgets how many copies there are, so removing one copy would wrongly remove the value. A set is enough only when the window never holds duplicates.',
-          signature: 'recognize:window-set-vs-map',
-          minutes: 1,
-        }),
-        output({
-          id: 'd4-ws-trace-map',
-          title: 'Trace a count-map shrink',
-          skills: ['window_state', 'frequency_map', 'while_loop'],
+        write({
+          id: 'd4-ws-nearby-dup',
+          title: 'Duplicate within k',
+          skills: ['window_state', 'set_add', 'enumerate'],
           difficulty: 3,
-          prompt: 'What does this print? (At most two kinds of characters allowed in the window.)',
-          code: `s = "abac"
-counts = {}
-left = 0
-for right in range(len(s)):
-    counts[s[right]] = counts.get(s[right], 0) + 1
-    while len(counts) > 2:
-        counts[s[left]] -= 1
-        if counts[s[left]] == 0:
-            del counts[s[left]]
-        left += 1
-    print(right, left, sorted(counts.items()))`,
-          expectedOutput: "0 0 [('a', 1)]\n1 0 [('a', 1), ('b', 1)]\n2 0 [('a', 2), ('b', 1)]\n3 2 [('a', 1), ('c', 1)]",
-          explanation: 'At right = 3 there are three kinds. Dropping the first "a" only lowers its count to 1, so left must keep going; dropping "b" deletes it and the window is valid at left = 2.',
-          signature: 'trace:window-count-map-shrink',
-          minutes: 2.5,
+          prompt: 'Write `has_nearby_duplicate(nums, k)`: `True` if two equal values sit at most `k` positions apart. Keep a set holding only the last `k` values; remove the one that falls out as you move on.',
+          starterCode: `def has_nearby_duplicate(nums, k):
+    pass`,
+          solution: `def has_nearby_duplicate(nums, k):
+    window = set()
+    for i, x in enumerate(nums):
+        if x in window:
+            return True
+        window.add(x)
+        if len(window) > k:
+            window.remove(nums[i - k])
+    return False`,
+          tests: [t.eq('has_nearby_duplicate([1, 2, 3, 1], 3)', 'True'), t.eq('has_nearby_duplicate([1, 2, 3, 1, 2, 3], 2)', 'False'), t.hidden('has_nearby_duplicate([1, 0, 1, 1], 1)', 'True'), t.hidden('has_nearby_duplicate([], 2)', 'False'), t.hidden('has_nearby_duplicate([1, 1], 0)', 'False')],
+          hints: ['Check membership before adding.', 'After adding index i, the window should be indexes i-k+1..i.', 'Once the set is larger than k, remove `nums[i - k]`.'],
+          signature: 'window:set-fixed',
+          minutes: 7,
         }),
-        code({
+        write({
           id: 'd4-ws-longest-run',
           title: 'Longest run of one character',
           skills: ['sliding_window', 'string_index', 'state_tracking'],
@@ -480,9 +412,40 @@ for right in range(len(s)):
           hints: ['The window is valid when every character equals `s[left]`.', 'When `s[right] != s[left]`, jump `left = right`.'],
           explanation: 'Sometimes the left edge can jump straight to a new spot instead of stepping one at a time.',
           signature: 'window:jump-left',
+          minutes: 5,
+        }),
+        debug({
+          id: 'd4-ws-debug-size',
+          title: 'Fix the rising run',
+          skills: ['sliding_window', 'state_tracking'],
+          prompt: '`longest_rising(nums)` should return the length of the longest stretch of consecutive values where each is strictly bigger than the one before. A single value is a stretch of 1; an empty list gives 0. Make the tests pass.',
+          brokenCode: `def longest_rising(nums):
+    if not nums:
+        return 0
+    best = 1
+    left = 0
+    for right in range(1, len(nums)):
+        if nums[right] <= nums[right - 1]:
+            left = right
+        best = max(best, right - left)
+    return best`,
+          solution: `def longest_rising(nums):
+    if not nums:
+        return 0
+    best = 1
+    left = 0
+    for right in range(1, len(nums)):
+        if nums[right] <= nums[right - 1]:
+            left = right
+        best = max(best, right - left + 1)
+    return best`,
+          tests: [t.eq('longest_rising([1, 2, 3, 1, 2])', '3'), t.eq('longest_rising([])', '0'), t.hidden('longest_rising([5])', '1'), t.hidden('longest_rising([3, 3, 3])', '1')],
+          hints: ['How many items are in the window when `left == right`?'],
+          explanation: 'An inclusive window `[left, right]` holds `right - left + 1` items. Forgetting the `+ 1` undercounts every window by one.',
+          signature: 'debug:window-size-off-by-one',
           minutes: 4,
         }),
-        code({
+        write({
           id: 'd4-ws-distinct-windows',
           title: 'Distinct values per window',
           skills: ['window_state', 'frequency_map', 'sliding_window'],
@@ -516,7 +479,42 @@ for right in range(len(s)):
           minutes: 11,
           important: true,
         }),
-        code({
+        debug({
+          id: 'd4-ws-debug-no-del',
+          title: 'Fix the distinct counter',
+          skills: ['window_state', 'frequency_map'],
+          prompt: '`max_distinct(nums, k)` should return the largest number of distinct values found in any window of `k` consecutive items, using a count map updated on both edges. Make the tests pass.',
+          brokenCode: `def max_distinct(nums, k):
+    counts = {}
+    best = 0
+    for right, x in enumerate(nums):
+        counts[x] = counts.get(x, 0) + 1
+        if right >= k:
+            old = nums[right - k]
+            counts[old] -= 1
+        if right >= k - 1:
+            best = max(best, len(counts))
+    return best`,
+          solution: `def max_distinct(nums, k):
+    counts = {}
+    best = 0
+    for right, x in enumerate(nums):
+        counts[x] = counts.get(x, 0) + 1
+        if right >= k:
+            old = nums[right - k]
+            counts[old] -= 1
+            if counts[old] == 0:
+                del counts[old]
+        if right >= k - 1:
+            best = max(best, len(counts))
+    return best`,
+          tests: [t.eq('max_distinct([1, 2, 3, 3, 3], 2)', '2'), t.eq('max_distinct([4, 4, 4], 3)', '1'), t.hidden('max_distinct([1, 2, 1, 3], 3)', '3')],
+          hints: ['Print `counts` after each step of the first test.', 'What does `len(counts)` count when a value’s count is 0?'],
+          explanation: 'A key with count 0 is still a key, so `len(counts)` keeps counting values that already left the window. Delete at 0.',
+          signature: 'debug:count-map-zero-key',
+          minutes: 5,
+        }),
+        write({
           id: 'd4-ws-anagram-window',
           title: 'Hidden anagram',
           skills: ['window_state', 'frequency_map', 'sliding_window', 'dict_get'],
@@ -553,7 +551,7 @@ for right in range(len(s)):
             t.hidden('has_anagram("aab", "abbb")', 'False'),
           ],
           hints: [
-            'Two strings are anagrams when their frequency maps are equal (yesterday’s Valid Anagram).',
+            'Two strings are anagrams when their frequency maps are equal (Valid Anagram).',
             'Build the pattern’s map once; keep a window map of the last k characters.',
             'Add the entering character, remove the leaving one (`del` at 0 so the maps compare equal).',
             'After each update, `if window == need: return True`.',
@@ -562,7 +560,7 @@ for right in range(len(s)):
           signature: 'window:fixed-count-map-compare',
           minutes: 11,
         }),
-        code({
+        write({
           id: 'd4-ws-flip-zeros',
           title: 'Longest ones with k flips',
           skills: ['sliding_window', 'state_tracking', 'while_loop'],
@@ -600,9 +598,9 @@ for right in range(len(s)):
           ],
           explanation: 'Reframing the question as "longest window with at most k bad items" turns it into the standard grow/shrink template with an integer as the state.',
           signature: 'window:count-bad-items',
-          minutes: 11,
+          minutes: 10,
         }),
-        code({
+        write({
           id: 'd4-ws-two-kinds',
           title: 'Longest with at most two kinds',
           skills: ['window_state', 'sliding_window', 'frequency_map', 'state_tracking'],
@@ -635,9 +633,9 @@ for right in range(len(s)):
           ],
           explanation: 'This is the general shape: count map as window state, `len(counts)` as the validity test, shrink on the left until valid.',
           signature: 'window:count-map-variable',
-          minutes: 11,
+          minutes: 10,
         }),
-        code({
+        write({
           id: 'd4-ws-k-kinds',
           title: 'At most k kinds',
           skills: ['window_state', 'sliding_window', 'frequency_map'],
@@ -663,7 +661,7 @@ for right in range(len(s)):
           tests: [t.eq('longest_k_kinds("eceba", 2)', '3'), t.eq('longest_k_kinds("aa", 1)', '2'), t.hidden('longest_k_kinds("abc", 0)', '0'), t.hidden('longest_k_kinds("", 3)', '0'), t.hidden('longest_k_kinds("abaccc", 3)', '6')],
           hints: ['Same template as two kinds; only the validity test changes.'],
           signature: 'window:count-map-variable',
-          minutes: 7,
+          minutes: 8,
         }),
       ],
     },
@@ -737,21 +735,49 @@ for right in range(len(s)):
           signature: 'explain:longest-substring',
           minutes: 5,
         }),
-        code({
+        debug({
+          id: 'd4-ls-debug-shrink',
+          title: 'Fix the unique window',
+          skills: ['sliding_window', 'window_state', 'set_membership'],
+          prompt: '`longest_unique(s)` should return the length of the longest substring with no repeated characters. Make the tests pass.',
+          brokenCode: `def longest_unique(s):
+    seen = set()
+    left = 0
+    best = 0
+    for right in range(len(s)):
+        if s[right] in seen:
+            seen.remove(s[left])
+            left += 1
+        seen.add(s[right])
+        best = max(best, right - left + 1)
+    return best`,
+          solution: `def longest_unique(s):
+    seen = set()
+    left = 0
+    best = 0
+    for right in range(len(s)):
+        while s[right] in seen:
+            seen.remove(s[left])
+            left += 1
+        seen.add(s[right])
+        best = max(best, right - left + 1)
+    return best`,
+          tests: [t.eq('longest_unique("abba")', '2'), t.eq('longest_unique("abcabcbb")', '3'), t.hidden('longest_unique("")', '0'), t.hidden('longest_unique("dvdf")', '3')],
+          hints: ['Trace "abba". When the second "b" arrives, which "b" is still in the window after one removal?', 'The duplicate may sit several places to the left.'],
+          explanation: 'One removal only drops `s[left]`, which may not be the duplicate. The window must keep shrinking until the duplicate is gone.',
+          signature: 'debug:window-not-shrinking',
+          minutes: 5,
+        }),
+        write({
           id: 'd4-ls-last-seen',
           title: 'Jump with a last-seen map',
           skills: ['sliding_window', 'index_map', 'state_tracking'],
           difficulty: 4,
           stage: 'pattern',
           repType: 'pattern',
-          prompt: 'Rewrite the longest-unique length with a dict `last` mapping each character to its most recent index. Instead of stepping left one at a time, **jump** it past the previous copy. Careful: left must never move backwards (try `"abba"`).',
+          prompt: 'Write `longest_unique_jump(s)` (same answer as the capstone) with a dict `last` mapping each character to its most recent index. Instead of stepping left one at a time, **jump** it past the previous copy. Careful: left must never move backwards (try `"abba"`).',
           starterCode: `def longest_unique_jump(s):
-    last = {}
-    left = 0
-    best = 0
-    for right, ch in enumerate(s):
-        pass
-    return best`,
+    pass`,
           solution: `def longest_unique_jump(s):
     last = {}
     left = 0
@@ -770,7 +796,28 @@ for right in range(len(s)):
           ],
           explanation: 'In "abba", the final "a" was last seen at 0, which is already outside the window [2, 3]. Without the guard left would jump back to 1.',
           signature: 'window:index-map-jump',
-          minutes: 11,
+          minutes: 10,
+        }),
+        code({
+          id: 'd4-ls-break-jump',
+          title: 'Break the jump',
+          skills: ['sliding_window', 'index_map', 'edge_cases'],
+          style: 'write-test',
+          prompt: 'A teammate dropped the guard:\n\n```python\ndef longest_unique_jump(s):\n    last = {}\n    left = 0\n    best = 0\n    for right, ch in enumerate(s):\n        if ch in last:\n            left = last[ch] + 1\n        last[ch] = right\n        best = max(best, right - left + 1)\n    return best\n```\n\nWrite `breaking_input()` returning a string on which this gives the wrong length.',
+          starterCode: `def breaking_input():
+    pass`,
+          solution: `def breaking_input():
+    return "abba"`,
+          tests: [
+            t.check(
+              'your input breaks it',
+              'def _buggy(s):\n    last = {}\n    left = 0\n    best = 0\n    for right, ch in enumerate(s):\n        if ch in last:\n            left = last[ch] + 1\n        last[ch] = right\n        best = max(best, right - left + 1)\n    return best\ndef _good(s):\n    seen = set()\n    left = 0\n    best = 0\n    for right in range(len(s)):\n        while s[right] in seen:\n            seen.remove(s[left])\n            left += 1\n        seen.add(s[right])\n        best = max(best, right - left + 1)\n    return best\nx = breaking_input()\nassert isinstance(x, str), "return a string"\nassert _buggy(x) != _good(x), "the buggy version is right on this input"',
+            ),
+          ],
+          hints: ['The bug needs a repeat whose earlier copy is already outside the window.', 'Make the window move past one character, then repeat that character.'],
+          explanation: 'Any input where a character repeats after the window has already moved past its first copy, like "abba", sends `left` backwards.',
+          signature: 'write-test:window-jump-guard',
+          minutes: 3,
         }),
         code({
           id: 'd4-ls-return-substring',
@@ -779,9 +826,19 @@ for right in range(len(s)):
           difficulty: 3,
           stage: 'pattern',
           repType: 'pattern',
-          prompt: 'Write `longest_unique_text(s)` returning the longest substring with no repeated characters. If several tie, return the one that starts first.',
+          style: 'modify',
+          prompt: 'This returns the **length** of the longest substring with no repeated characters. Change `longest_unique_text(s)` to return the substring itself. If several tie, return the one that starts first.',
           starterCode: `def longest_unique_text(s):
-    pass`,
+    seen = set()
+    left = 0
+    best = 0
+    for right in range(len(s)):
+        while s[right] in seen:
+            seen.remove(s[left])
+            left += 1
+        seen.add(s[right])
+        best = max(best, right - left + 1)
+    return best`,
           solution: `def longest_unique_text(s):
     seen = set()
     left = 0
@@ -808,20 +865,6 @@ for right in range(len(s)):
       title: 'Stacks',
       summary: 'A list as a stack: append pushes, pop removes the top, stack[-1] peeks.',
       exercises: [
-        choice({
-          id: 'd4-st-pop-returns',
-          title: 'What does pop return?',
-          skills: ['stack_push_pop'],
-          prompt: 'What is `x` after this runs?',
-          code: `stack = [1, 2, 3]
-x = stack.pop()`,
-          options: ['3', '1', '[1, 2]', 'None'],
-          answer: 0,
-          note: 'Stack via list: push `stack.append(x)`, pop `stack.pop()` (removes and returns the last item), peek `stack[-1]`. All O(1).',
-          explanation: '`.pop()` with no argument removes and returns the last item. The list becomes [1, 2].',
-          signature: 'recognize:stack-pop',
-          minutes: 1,
-        }),
         output({
           id: 'd4-st-trace',
           title: 'Trace push and pop',
@@ -836,59 +879,12 @@ print(top, stack)
 stack.append("d")
 print(stack[-1], len(stack))`,
           expectedOutput: "c ['a', 'b']\nd 3",
+          note: 'Stack via list: push `stack.append(x)`, pop `stack.pop()` (removes and returns the last item), peek `stack[-1]`. Both `pop()` and `[-1]` raise IndexError on an empty list, so guard with `if stack:`.',
           explanation: 'Last in, first out: "c" was pushed last, so it pops first. Peeking with `stack[-1]` does not remove anything.',
           signature: 'trace:stack-push-pop',
           minutes: 2,
         }),
-        choice({
-          id: 'd4-st-empty-pop',
-          title: 'Popping an empty stack',
-          skills: ['stack_push_pop'],
-          prompt: 'What happens?',
-          code: `stack = []
-stack.pop()`,
-          options: ['IndexError: pop from empty list', 'Returns None', 'Returns []', 'Nothing happens'],
-          answer: 0,
-          note: 'Guard before `pop()` or `stack[-1]`: `if stack:` (an empty list is falsy).',
-          explanation: 'Both `stack.pop()` and `stack[-1]` raise IndexError on an empty list, so check `if stack` (or `if not stack`) first.',
-          signature: 'recognize:stack-empty-pop',
-          minutes: 1,
-        }),
-        output({
-          id: 'd4-st-trace-peek',
-          title: 'Peek, then empty it',
-          skills: ['stack_push_pop', 'conditionals'],
-          prompt: 'What does this print?',
-          code: `stack = [4, 7]
-print(stack[-1])
-print(len(stack))
-stack.pop()
-stack.pop()
-print(bool(stack), stack[-1] if stack else "empty")`,
-          expectedOutput: '7\n2\nFalse empty',
-          explanation: 'Peeking leaves the length at 2. After two pops the list is empty, so `bool(stack)` is False and the guard avoids `stack[-1]`.',
-          signature: 'trace:stack-peek-empty',
-          minutes: 2,
-        }),
-        fill({
-          id: 'd4-st-fill-guard',
-          title: 'Safe peek',
-          skills: ['stack_push_pop', 'conditionals'],
-          prompt: 'Fill the blank so `safe_top` returns the top item, or `None` for an empty stack.',
-          starterCode: `def safe_top(stack):
-    if ____:
-        return stack[-1]
-    return None`,
-          solution: `def safe_top(stack):
-    if stack:
-        return stack[-1]
-    return None`,
-          tests: [t.eq('safe_top([1, 2])', '2'), t.eq('safe_top([])', 'None')],
-          hints: ['An empty list is falsy.'],
-          signature: 'fill:stack-guard',
-          minutes: 2,
-        }),
-        code({
+        write({
           id: 'd4-st-reverse',
           title: 'Reverse with a stack',
           skills: ['stack_push_pop', 'string_iterate', 'while_loop'],
@@ -908,7 +904,7 @@ print(bool(stack), stack[-1] if stack else "empty")`,
           signature: 'stack:reverse',
           minutes: 4,
         }),
-        code({
+        write({
           id: 'd4-st-backspace',
           title: 'Apply backspaces',
           skills: ['stack_push_pop', 'conditionals', 'string_methods'],
@@ -928,9 +924,37 @@ print(bool(stack), stack[-1] if stack else "empty")`,
           tests: [t.eq('type_out("ab#c")', '"ac"'), t.eq('type_out("a##b")', '"b"'), t.hidden('type_out("###")', '""'), t.hidden('type_out("abc")', '"abc"'), t.hidden('type_out("")', '""')],
           hints: ['The text typed so far behaves like a stack.', 'On `#`, pop only if the stack is non-empty.'],
           signature: 'stack:backspace',
-          minutes: 7,
+          minutes: 6,
         }),
-        code({
+        debug({
+          id: 'd4-st-debug-empty-pop',
+          title: 'Fix the star remover',
+          skills: ['stack_push_pop', 'conditionals'],
+          prompt: '`remove_stars(s)`: each `*` removes the nearest remaining non-star character to its left. A `*` with nothing to remove does nothing. Return what is left. Make the tests pass.',
+          brokenCode: `def remove_stars(s):
+    stack = []
+    for ch in s:
+        if ch == "*":
+            stack.pop()
+        else:
+            stack.append(ch)
+    return "".join(stack)`,
+          solution: `def remove_stars(s):
+    stack = []
+    for ch in s:
+        if ch == "*":
+            if stack:
+                stack.pop()
+        else:
+            stack.append(ch)
+    return "".join(stack)`,
+          tests: [t.eq('remove_stars("ab*c")', '"ac"'), t.eq('remove_stars("*a")', '"a"'), t.hidden('remove_stars("**")', '""'), t.hidden('remove_stars("abc**")', '"a"')],
+          hints: ['Read the error on the second test.', 'What does `.pop()` do on an empty list?'],
+          explanation: '`[].pop()` raises IndexError. Guard every pop (and every `stack[-1]`) with `if stack:` unless you know the stack is non-empty.',
+          signature: 'debug:stack-empty-pop',
+          minutes: 3,
+        }),
+        write({
           id: 'd4-st-adjacent-pairs',
           title: 'Cancel adjacent twins',
           skills: ['stack_push_pop', 'conditionals'],
@@ -954,10 +978,10 @@ print(bool(stack), stack[-1] if stack else "empty")`,
           ],
           explanation: 'The stack top is always the nearest surviving character to the left, which is exactly what a new character might cancel with. One pass, O(n).',
           signature: 'stack:cancel-adjacent',
-          minutes: 7,
+          minutes: 6,
           important: true,
         }),
-        code({
+        write({
           id: 'd4-st-round-balanced',
           title: 'Balanced round brackets',
           skills: ['stack_push_pop', 'conditionals', 'early_return'],
@@ -977,9 +1001,9 @@ print(bool(stack), stack[-1] if stack else "empty")`,
           tests: [t.eq('balanced("(())()")', 'True'), t.eq('balanced(")(")', 'False'), t.hidden('balanced("")', 'True'), t.hidden('balanced("(((")', 'False'), t.hidden('balanced("())")', 'False')],
           hints: ['Two ways to fail: a closer with an empty stack, or openers left over.', 'Return `not stack` at the end (True only if empty).'],
           signature: 'stack:balanced-one-kind',
-          minutes: 4,
+          minutes: 5,
         }),
-        code({
+        write({
           id: 'd4-st-max-depth',
           title: 'Deepest nesting',
           skills: ['stack_push_pop', 'state_tracking'],
@@ -1000,18 +1024,31 @@ print(bool(stack), stack[-1] if stack else "empty")`,
           hints: ['The stack height is the current depth.', 'Update the best right after a push.'],
           explanation: 'With one bracket type the stack only stores its height, so a counter works too. Mixed types are where you need the actual stack contents.',
           signature: 'stack:depth',
-          minutes: 4,
+          minutes: 5,
         }),
-        code({
-          id: 'd4-st-postfix',
-          title: 'Evaluate postfix',
+        debug({
+          id: 'd4-st-debug-postfix',
+          title: 'Fix the postfix calculator',
           skills: ['stack_push_pop', 'conditionals', 'string_methods'],
           difficulty: 3,
           stage: 'pattern',
           repType: 'pattern',
-          prompt: 'Write `eval_postfix(expr)`. `expr` is space-separated tokens in postfix order: numbers (possibly negative) and the operators `+ - *`. An operator applies to the two most recent values. Return the result.\n\n`"3 4 + 2 *"` → `14`',
-          starterCode: `def eval_postfix(expr):
-    pass`,
+          prompt: '`eval_postfix(expr)` evaluates space-separated tokens in postfix order: numbers (possibly negative) and the operators `+ - *`. An operator applies to the two most recent values, the older one on its left: `"9 2 -"` is `7`. Make the tests pass.',
+          brokenCode: `def eval_postfix(expr):
+    stack = []
+    for tok in expr.split():
+        if tok in ("+", "-", "*"):
+            a = stack.pop()
+            b = stack.pop()
+            if tok == "+":
+                stack.append(a + b)
+            elif tok == "-":
+                stack.append(a - b)
+            else:
+                stack.append(a * b)
+        else:
+            stack.append(int(tok))
+    return stack[-1]`,
           solution: `def eval_postfix(expr):
     stack = []
     for tok in expr.split():
@@ -1028,22 +1065,18 @@ print(bool(stack), stack[-1] if stack else "empty")`,
             stack.append(int(tok))
     return stack[-1]`,
           tests: [
+            t.eq('eval_postfix("9 2 -")', '7'),
             t.eq('eval_postfix("3 4 + 2 *")', '14'),
-            t.eq('eval_postfix("5 1 2 + 4 * + 3 -")', '14'),
+            t.hidden('eval_postfix("5 1 2 + 4 * + 3 -")', '14'),
             t.hidden('eval_postfix("7")', '7'),
-            t.hidden('eval_postfix("2 9 -")', '-7'),
             t.hidden('eval_postfix("-3 4 *")', '-12'),
           ],
-          hints: [
-            'Numbers wait on a stack until an operator needs them.',
-            'On an operator pop twice: the first pop is the right operand.',
-            '`b = stack.pop(); a = stack.pop()` then push `a - b` (order matters).',
-          ],
-          explanation: 'The stack holds values not yet consumed. Popping order matters for `-`: the top is the second operand.',
-          signature: 'stack:postfix-eval',
-          minutes: 7,
+          hints: ['Which value is on top of the stack after "9 2"?', 'The first pop gives the right-hand operand.'],
+          explanation: 'The most recent value is on top, and it is the right operand. Order does not matter for `+` and `*`, which is why only subtraction exposes the bug.',
+          signature: 'debug:stack-pop-order',
+          minutes: 5,
         }),
-        code({
+        write({
           id: 'd4-st-simplify-path',
           title: 'Simplify a file path',
           skills: ['stack_push_pop', 'string_methods', 'conditionals'],
@@ -1079,7 +1112,7 @@ print(bool(stack), stack[-1] if stack else "empty")`,
           signature: 'stack:path-simplify',
           minutes: 7,
         }),
-        code({
+        write({
           id: 'd4-st-next-greater',
           title: 'Next greater value',
           skills: ['stack_push_pop', 'enumerate', 'while_loop'],
@@ -1112,7 +1145,7 @@ print(bool(stack), stack[-1] if stack else "empty")`,
           ],
           explanation: 'Each index is pushed once and popped once, so the while loop is O(n) in total. This "monotonic stack" shape appears in many interview problems.',
           signature: 'stack:monotonic-next-greater',
-          minutes: 11,
+          minutes: 10,
         }),
       ],
     },
@@ -1123,23 +1156,6 @@ print(bool(stack), stack[-1] if stack else "empty")`,
       title: 'Matching pairs',
       summary: 'A closer→opener dict plus the stack top decides every closer.',
       exercises: [
-        choice({
-          id: 'd4-mp-dict-direction',
-          title: 'Which way does the dict map?',
-          skills: ['matching_pairs', 'dict_lookup'],
-          prompt: 'When you read a closing bracket, you need to know which opener must be on top of the stack. Which dict makes that one lookup?',
-          options: [
-            '{")": "(", "]": "[", "}": "{"}',
-            '{"(": ")", "[": "]", "{": "}"}',
-            '{"(": 1, "[": 2, "{": 3}',
-            '["()", "[]", "{}"]',
-          ],
-          answer: 0,
-          note: '`pairs = {")": "(", "]": "[", "}": "{"}`: `ch in pairs` tells you ch is a closer, and `pairs[ch]` is the opener it needs.',
-          explanation: 'Keys are closers, so `ch in pairs` doubles as the "is this a closer?" test and `pairs[ch]` gives the required opener.',
-          signature: 'recognize:closer-opener-map',
-          minutes: 1,
-        }),
         output({
           id: 'd4-mp-trace',
           title: 'Trace a closer lookup',
@@ -1156,6 +1172,7 @@ for ch in "([]{":
         stack.append(ch)
 print(stack)`,
           expectedOutput: "] needs [ top is [\n['(', '{']",
+          note: '`pairs = {")": "(", "]": "[", "}": "{"}`: keys are closers, so `ch in pairs` tells you ch is a closer, and `pairs[ch]` is the opener it needs on top.',
           explanation: 'Openers are pushed. The single closer "]" finds "[" on top and pops it. "(" and "{" are left unclosed.',
           signature: 'trace:bracket-stack',
           minutes: 2.5,
@@ -1178,24 +1195,23 @@ missing = pairs.get(other)`,
           tests: [t.check('opener', 'assert opener == "["'), t.check('missing', 'assert missing is None')],
           hints: ['`.get(key)` returns None for a missing key.'],
           signature: 'dict:lookup-vs-get',
-          minutes: 4,
+          minutes: 3,
         }),
-        fill({
-          id: 'd4-mp-fill-closes-top',
+        write({
+          id: 'd4-mp-closes-top',
           title: 'Does it close the top?',
-          skills: ['matching_pairs', 'stack_push_pop'],
-          prompt: 'Fill the blank so `closes_top` is `True` only when the stack is non-empty and its top is the opener `ch` needs.',
+          skills: ['matching_pairs', 'stack_push_pop', 'dict_lookup'],
+          prompt: 'Write `closes_top(stack, ch)`: `ch` is a closing bracket. Return `True` only when the stack is non-empty and its top is the opener `ch` needs. Build the closer→opener dict inside the function.',
           starterCode: `def closes_top(stack, ch):
-    pairs = {")": "(", "]": "[", "}": "{"}
-    return len(stack) > 0 and stack[-1] == ____`,
+    pass`,
           solution: `def closes_top(stack, ch):
     pairs = {")": "(", "]": "[", "}": "{"}
     return len(stack) > 0 and stack[-1] == pairs[ch]`,
-          tests: [t.eq('closes_top(["(", "["], "]")', 'True'), t.eq('closes_top([], ")")', 'False'), t.hidden('closes_top(["{"], ")")', 'False')],
-          hints: ['Which opener does `ch` need?'],
+          tests: [t.eq('closes_top(["(", "["], "]")', 'True'), t.eq('closes_top([], ")")', 'False'), t.hidden('closes_top(["{"], ")")', 'False'), t.hidden('closes_top(["{"], "}")', 'True')],
+          hints: ['Keys are closers, values are openers.', 'Check the stack is non-empty before reading `stack[-1]`; `and` short-circuits.'],
           explanation: '`and` short-circuits: on an empty stack, `stack[-1]` is never evaluated.',
-          signature: 'fill:closer-matches-top',
-          minutes: 2,
+          signature: 'stack:closer-matches-top',
+          minutes: 4,
         }),
         code({
           id: 'd4-mp-first-bad',
@@ -1204,7 +1220,8 @@ missing = pairs.get(other)`,
           difficulty: 3,
           stage: 'combine',
           repType: 'combine',
-          prompt: 'Write `first_bad(s)` for a string of brackets `()[]{}`. Return the index of the first closer that has nothing to close or closes the wrong kind. Return `-1` if no closer is bad (leftover openers are fine here).',
+          style: 'finish',
+          prompt: 'Finish `first_bad(s)` for a string of brackets `()[]{}`. Return the index of the first closer that has nothing to close or closes the wrong kind. Return `-1` if no closer is bad (leftover openers are fine here).',
           starterCode: `def first_bad(s):
     pairs = {")": "(", "]": "[", "}": "{"}
     stack = []
@@ -1225,7 +1242,7 @@ missing = pairs.get(other)`,
           signature: 'stack:first-bad-closer',
           minutes: 7,
         }),
-        code({
+        write({
           id: 'd4-mp-pair-positions',
           title: 'Where does each pair close?',
           skills: ['matching_pairs', 'stack_push_pop', 'enumerate', 'dict_assign'],
@@ -1248,9 +1265,40 @@ missing = pairs.get(other)`,
           hints: ['The stack can hold where an opener was, not just what it was.', 'On ")", the popped index is its partner: `match[stack.pop()] = i`.'],
           explanation: 'Storing indexes on the stack is a common upgrade: you still get LIFO matching, plus positions for lengths or spans.',
           signature: 'stack:index-matching',
-          minutes: 7,
+          minutes: 6,
         }),
-        code({
+        debug({
+          id: 'd4-mp-debug-peek',
+          title: 'Fix the widest pair',
+          skills: ['matching_pairs', 'stack_push_pop', 'enumerate'],
+          prompt: '`widest_pair(s)` takes a balanced string of `(` and `)` and should return the length (closer index − opener index + 1) of the widest matching pair. Make the tests pass.',
+          brokenCode: `def widest_pair(s):
+    stack = []
+    best = 0
+    for i, ch in enumerate(s):
+        if ch == "(":
+            stack.append(i)
+        else:
+            start = stack[-1]
+            best = max(best, i - start + 1)
+    return best`,
+          solution: `def widest_pair(s):
+    stack = []
+    best = 0
+    for i, ch in enumerate(s):
+        if ch == "(":
+            stack.append(i)
+        else:
+            start = stack.pop()
+            best = max(best, i - start + 1)
+    return best`,
+          tests: [t.eq('widest_pair("(())")', '4'), t.eq('widest_pair("()")', '2'), t.hidden('widest_pair("()(())")', '4'), t.hidden('widest_pair("")', '0')],
+          hints: ['Trace "(())": which opener does the second ")" get?', 'Once an opener is matched, should it stay on the stack?'],
+          explanation: 'Peeking leaves the matched opener on the stack, so the next closer matches it again. Matching consumes the opener: `pop()`.',
+          signature: 'debug:stack-peek-vs-pop',
+          minutes: 4,
+        }),
+        write({
           id: 'd4-mp-min-to-fix',
           title: 'Brackets to add',
           skills: ['stack_push_pop', 'accumulator', 'conditionals'],
@@ -1371,14 +1419,13 @@ missing = pairs.get(other)`,
           signature: 'explain:valid-parentheses',
           minutes: 5,
         }),
-        code({
+        debug({
           id: 'd4-vp-fix-bug',
           title: 'Fix the bracket checker',
           skills: ['matching_pairs', 'stack_push_pop', 'edge_cases'],
           difficulty: 3,
-          stage: 'reconstruct',
-          prompt: 'A teammate wrote this checker. It passes `"()[]"` but is wrong on some inputs. Find the inputs that break it (think about the three ways brackets fail) and fix the code.',
-          starterCode: `def is_valid(s):
+          prompt: 'A teammate’s `is_valid(s)` should return `True` exactly when every bracket in `s` is closed by the same kind in the right order. It passes `"()[]"` but not every input. Make the tests pass.',
+          brokenCode: `def is_valid(s):
     pairs = {")": "(", "]": "[", "}": "{"}
     stack = []
     for ch in s:
@@ -1400,13 +1447,13 @@ missing = pairs.get(other)`,
         else:
             stack.append(ch)
     return not stack`,
-          tests: [t.eq('is_valid("()[]")', 'True'), t.eq('is_valid("((")', 'False'), t.hidden('is_valid(")")', 'False'), t.hidden('is_valid("([)]")', 'False'), t.hidden('is_valid("{}")', 'True')],
-          hints: ['What happens on `")"` alone? On `"(("`?', 'One bug raises IndexError; the other returns True with openers left over.'],
+          tests: [t.eq('is_valid("()[]")', 'True'), t.eq('is_valid("((")', 'False'), t.eq('is_valid(")")', 'False'), t.hidden('is_valid("([)]")', 'False'), t.hidden('is_valid("{}")', 'True')],
+          hints: ['Run each failing test. One raises, one returns the wrong answer.', 'Think about the three ways brackets fail.'],
           explanation: 'Two missing checks: the empty stack before peeking, and leftovers at the end. These are exactly the bugs interviewers look for.',
           signature: 'stack:fix-valid-brackets',
-          minutes: 7,
+          minutes: 6,
         }),
-        code({
+        write({
           id: 'd4-vp-with-text',
           title: 'Brackets inside code',
           skills: ['matching_pairs', 'stack_push_pop', 'conditionals'],
@@ -1432,6 +1479,39 @@ missing = pairs.get(other)`,
           signature: 'stack:brackets-ignore-other',
           minutes: 7,
         }),
+        debug({
+          id: 'd4-vp-debug-map-direction',
+          title: 'Fix the bracket map',
+          skills: ['matching_pairs', 'dict_lookup', 'dict_membership'],
+          prompt: '`brackets_ok(s)` takes a string of `()[]{}` and should return `True` when every bracket is closed by the same kind in the right order. Make the tests pass.',
+          brokenCode: `def brackets_ok(s):
+    pairs = {"(": ")", "[": "]", "{": "}"}
+    stack = []
+    for ch in s:
+        if ch in pairs:
+            if not stack or stack[-1] != pairs[ch]:
+                return False
+            stack.pop()
+        else:
+            stack.append(ch)
+    return not stack`,
+          solution: `def brackets_ok(s):
+    pairs = {")": "(", "]": "[", "}": "{"}
+    stack = []
+    for ch in s:
+        if ch in pairs:
+            if not stack or stack[-1] != pairs[ch]:
+                return False
+            stack.pop()
+        else:
+            stack.append(ch)
+    return not stack`,
+          tests: [t.eq('brackets_ok("([]){}")', 'True'), t.eq('brackets_ok("(]")', 'False'), t.hidden('brackets_ok("")', 'True'), t.hidden('brackets_ok("]")', 'False')],
+          hints: ['On the very first character "(", which branch runs?', 'When you read a closer, you need to look up the opener it needs.'],
+          explanation: 'The lookup happens when a closer arrives, so the keys must be closers: `{")": "(", ...}`. Reversed, `ch in pairs` treats openers as closers.',
+          signature: 'debug:closer-opener-direction',
+          minutes: 5,
+        }),
       ],
     },
 
@@ -1439,51 +1519,17 @@ missing = pairs.get(other)`,
     {
       id: 'd4-cold',
       title: 'Cold reps',
-      summary: 'Windows and stacks once more, from a blank editor.',
+      summary: 'Windows and stacks once more: a signature and nothing else.',
       exercises: [
-        choice({
-          id: 'd4-cold-which-structure',
-          title: 'Pick the structure',
-          skills: ['stack_push_pop', 'sliding_window'],
-          ...cold,
-          prompt: 'You must undo the most recent edit first, then the one before it. Which structure fits?',
-          options: ['A stack (list with append/pop)', 'A set', 'A sliding window', 'A sorted list with two pointers'],
-          answer: 0,
-          explanation: 'Most recent first is last in, first out.',
-          signature: 'recognize:pick-stack',
-          minutes: 1,
-        }),
-        output({
-          id: 'd4-cold-trace-counts',
-          title: 'Trace a count-map window',
-          skills: ['window_state', 'frequency_map'],
-          ...cold,
-          difficulty: 2,
-          prompt: 'What does this print?',
-          code: `s = "aabc"
-counts = {}
-for ch in s[:3]:
-    counts[ch] = counts.get(ch, 0) + 1
-print(len(counts), counts["a"])
-counts["a"] -= 1
-counts["c"] = counts.get("c", 0) + 1
-print(len(counts), counts["a"])
-counts["a"] -= 1
-if counts["a"] == 0:
-    del counts["a"]
-print(sorted(counts))`,
-          expectedOutput: "2 2\n3 1\n['b', 'c']",
-          explanation: 'Without the `del`, "a" would stay as a key with count 0 and `len(counts)` would overcount distinct values.',
-          signature: 'trace:window-count-map',
-          minutes: 2.5,
-        }),
-        code({
+        write({
           id: 'd4-cold-longest-unique',
-          title: 'Longest unique, from blank',
+          title: 'Longest unique, from a signature',
           skills: ['sliding_window', 'window_state', 'set_membership'],
           ...cold,
           difficulty: 3,
           prompt: 'Write `longest_unique(s)`: the length of the longest substring with no repeated characters.',
+          starterCode: `def longest_unique(s):
+    pass`,
           solution: `def longest_unique(s):
     seen = set()
     left = 0
@@ -1497,16 +1543,18 @@ print(sorted(counts))`,
     return best`,
           tests: [t.eq('longest_unique("abcabcbb")', '3'), t.eq('longest_unique("")', '0'), t.hidden('longest_unique("abba")', '2'), t.hidden('longest_unique("dvdf")', '3')],
           signature: 'window:longest-unique',
-          minutes: 7,
+          minutes: 8,
           important: true,
         }),
-        code({
+        write({
           id: 'd4-cold-valid',
-          title: 'Brackets, from blank',
+          title: 'Brackets, from a signature',
           skills: ['matching_pairs', 'stack_push_pop'],
           ...cold,
           difficulty: 3,
           prompt: 'Write `is_valid(s)` for a string of `()[]{}`: `True` if every bracket is closed by the same kind in the right order.',
+          starterCode: `def is_valid(s):
+    pass`,
           solution: `def is_valid(s):
     pairs = {")": "(", "]": "[", "}": "{"}
     stack = []
@@ -1520,15 +1568,41 @@ print(sorted(counts))`,
     return not stack`,
           tests: [t.eq('is_valid("([]){}")', 'True'), t.eq('is_valid("(]")', 'False'), t.hidden('is_valid("]")', 'False'), t.hidden('is_valid("[")', 'False'), t.hidden('is_valid("")', 'True')],
           signature: 'stack:valid-brackets',
-          minutes: 7,
+          minutes: 8,
           important: true,
         }),
-        code({
+        write({
+          id: 'd4-cold-shortest',
+          title: 'Shortest window, from a signature',
+          skills: ['sliding_window', 'while_loop', 'state_tracking'],
+          ...cold,
+          difficulty: 3,
+          prompt: 'Write `shortest_at_least(nums, goal)`: `nums` holds positive numbers. Return the length of the shortest run whose sum is at least `goal`, or `0` if there is none.',
+          starterCode: `def shortest_at_least(nums, goal):
+    pass`,
+          solution: `def shortest_at_least(nums, goal):
+    left = 0
+    total = 0
+    best = float("inf")
+    for right in range(len(nums)):
+        total += nums[right]
+        while total >= goal:
+            best = min(best, right - left + 1)
+            total -= nums[left]
+            left += 1
+    return best if best != float("inf") else 0`,
+          tests: [t.eq('shortest_at_least([2, 3, 1, 2, 4, 3], 7)', '2'), t.eq('shortest_at_least([1, 1], 5)', '0'), t.hidden('shortest_at_least([1, 4, 4], 4)', '1'), t.hidden('shortest_at_least([], 1)', '0')],
+          signature: 'window:shortest-valid-sum',
+          minutes: 8,
+        }),
+        write({
           id: 'd4-cold-backspace-equal',
           title: 'Same after backspaces?',
           skills: ['stack_push_pop', 'functions'],
           ...cold,
           prompt: 'Write `same_typed(a, b)`: `#` is a backspace. Return `True` if both strings produce the same final text.',
+          starterCode: `def same_typed(a, b):
+    pass`,
           solution: `def same_typed(a, b):
     def build(s):
         stack = []
@@ -1543,14 +1617,16 @@ print(sorted(counts))`,
     return build(a) == build(b)`,
           tests: [t.eq('same_typed("ab#c", "ad#c")', 'True'), t.eq('same_typed("a#c", "b")', 'False'), t.hidden('same_typed("a##c", "#a#c")', 'True'), t.hidden('same_typed("", "#")', 'True')],
           signature: 'stack:backspace',
-          minutes: 4,
+          minutes: 7,
         }),
-        code({
+        write({
           id: 'd4-cold-avg-window',
           title: 'Count good windows',
           skills: ['sliding_window', 'state_tracking'],
           ...cold,
           prompt: 'Write `count_windows(nums, k, threshold)`: how many windows of size `k` have a sum of at least `threshold`? Slide a running sum.',
+          starterCode: `def count_windows(nums, k, threshold):
+    pass`,
           solution: `def count_windows(nums, k, threshold):
     if k > len(nums):
         return 0
@@ -1563,7 +1639,7 @@ print(sorted(counts))`,
     return count`,
           tests: [t.eq('count_windows([2, 2, 2, 2, 5, 5, 5, 8], 3, 12)', '3'), t.eq('count_windows([1, 1], 3, 1)', '0'), t.hidden('count_windows([4], 1, 4)', '1'), t.hidden('count_windows([1, 2, 3], 2, 10)', '0')],
           signature: 'window:fixed-count-threshold',
-          minutes: 4,
+          minutes: 7,
         }),
       ],
     },

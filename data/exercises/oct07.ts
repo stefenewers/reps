@@ -1,18 +1,21 @@
 import type { DayModule } from '@/lib/types'
-import { capstone, choice, code, explain, fill, output, reorder, t } from './build'
+import { capstone, choice, debug, explain, output, t, write } from './build'
 
 /**
  * October 7: BFS + grid traversal.
  * deque → grids → neighbors & bounds → visited + grid BFS → tree BFS by level
  * → Level Order capstone → flood fill / islands → Number of Islands capstone.
+ *
+ * Code-first: each construct gets at most one trace, then several write reps in
+ * different shapes, Debug Reps on the classic BFS slips, and a cold rewrite.
  */
 
 const warmup = {
   id: 'o7-warmup',
   title: 'Warm-up',
-  summary: 'Cold reps on dicts, two pointers, windows, stacks, binary search and tree DFS.',
+  summary: 'Cold reps on dicts, two pointers, stacks and tree DFS.',
   exercises: [
-    code({
+    write({
       id: 'o7-wu-word-counts',
       title: 'Count words',
       skills: ['frequency_map', 'dict_get'],
@@ -33,9 +36,9 @@ const warmup = {
       ],
       hints: ['counts[w] = counts.get(w, 0) + 1'],
       signature: 'freq-map:count-words',
-      minutes: 3,
+      minutes: 4,
     }),
-    code({
+    write({
       id: 'o7-wu-pair-sorted',
       title: 'Pair in sorted list',
       skills: ['two_pointer', 'pointer_update'],
@@ -64,35 +67,9 @@ const warmup = {
       ],
       hints: ['Sum too small → move the left pointer right. Too big → move the right pointer left.'],
       signature: 'two-pointer:pair-sum-sorted',
-      minutes: 4,
+      minutes: 6,
     }),
-    code({
-      id: 'o7-wu-window-sum',
-      title: 'Best window of size k',
-      skills: ['sliding_window'],
-      stage: 'retrieval',
-      repType: 'cold',
-      prompt: 'Write `max_window_sum(nums, k)`: the largest sum of any `k` consecutive numbers. Assume `1 <= k <= len(nums)`. Slide the window in O(n).',
-      starterCode: 'def max_window_sum(nums, k):\n    pass\n',
-      solution: `def max_window_sum(nums, k):
-    window = sum(nums[:k])
-    best = window
-    for right in range(k, len(nums)):
-        window += nums[right] - nums[right - k]
-        best = max(best, window)
-    return best
-`,
-      tests: [
-        t.eq('max_window_sum([1, 4, 2, 10, 2], 2)', '12'),
-        t.hidden('max_window_sum([-1, -2, -3], 1)', '-1'),
-        t.hidden('max_window_sum([5], 1)', '5'),
-        t.hidden('max_window_sum([1, 2, 3], 3)', '6'),
-      ],
-      hints: ['Add the entering number, subtract the leaving one: nums[right - k].'],
-      signature: 'window:fixed-max-sum',
-      minutes: 4,
-    }),
-    code({
+    write({
       id: 'o7-wu-balanced',
       title: 'Balanced brackets',
       skills: ['stack_push_pop', 'matching_pairs'],
@@ -120,41 +97,9 @@ const warmup = {
       ],
       hints: ['Map closers to openers. On a closer, the stack top must be its opener. At the end the stack must be empty.'],
       signature: 'stack:balanced-brackets',
-      minutes: 4,
+      minutes: 6,
     }),
-    code({
-      id: 'o7-wu-binary-search',
-      title: 'Binary search',
-      skills: ['binary_search', 'mid_calc'],
-      stage: 'retrieval',
-      repType: 'cold',
-      prompt: 'Write `search(nums, target)` for a sorted list: return the index of `target`, or `-1`.',
-      starterCode: 'def search(nums, target):\n    pass\n',
-      solution: `def search(nums, target):
-    lo, hi = 0, len(nums) - 1
-    while lo <= hi:
-        mid = (lo + hi) // 2
-        if nums[mid] == target:
-            return mid
-        if nums[mid] < target:
-            lo = mid + 1
-        else:
-            hi = mid - 1
-    return -1
-`,
-      tests: [
-        t.eq('search([1, 3, 5, 7, 9], 7)', '3'),
-        t.eq('search([1, 3, 5], 4)', '-1'),
-        t.hidden('search([], 1)', '-1'),
-        t.hidden('search([2], 2)', '0'),
-        t.hidden('search([1, 3, 5, 7, 9], 1)', '0'),
-        t.hidden('search([1, 3, 5, 7, 9], 9)', '4'),
-      ],
-      hints: ['while lo <= hi, mid = (lo + hi) // 2, then move lo = mid + 1 or hi = mid - 1.'],
-      signature: 'binary-search:exact',
-      minutes: 4,
-    }),
-    code({
+    write({
       id: 'o7-wu-max-depth',
       title: 'Tree depth (DFS)',
       skills: ['tree_dfs', 'recursion_return'],
@@ -219,38 +164,12 @@ print(list(q))
       explanation: 'append adds at the right, popleft removes from the left: first in, first out.',
       signature: 'trace:deque-basic',
     }),
-    output({
-      id: 'o7-dq-stack-vs-queue',
-      title: 'Stack end vs queue end',
-      skills: ['queue_deque', 'stack_push_pop'],
-      prompt: 'Same items, two containers. What prints?',
-      code: `from collections import deque
-items = [1, 2, 3]
-stack = list(items)
-queue = deque(items)
-print(stack.pop(), queue.popleft())
-stack.append(9)
-queue.append(9)
-print(stack.pop(), queue.popleft())
-`,
-      expectedOutput: '3 1\n9 2',
-      explanation: 'A stack hands back the newest item (LIFO); a queue hands back the oldest (FIFO). That difference is DFS vs BFS.',
-      signature: 'trace:stack-vs-queue',
-    }),
-    fill({
-      id: 'o7-dq-fill-popleft',
+    write({
+      id: 'o7-dq-drain',
       title: 'Drain a queue',
-      skills: ['queue_deque'],
-      prompt: 'Fill the blank so items come out in the order they went in.',
-      starterCode: `from collections import deque
-
-def drain(items):
-    q = deque(items)
-    out = []
-    while q:
-        out.append(q.____())
-    return out
-`,
+      skills: ['queue_deque', 'while_loop'],
+      prompt: 'Write `drain(items)`: put `items` into a deque, then pop from the front until it is empty, collecting what comes out. Import `deque` yourself.',
+      starterCode: 'def drain(items):\n    pass\n',
       solution: `from collections import deque
 
 def drain(items):
@@ -260,58 +179,56 @@ def drain(items):
         out.append(q.popleft())
     return out
 `,
-      tests: [t.eq('drain([3, 1, 2])', '[3, 1, 2]'), t.hidden('drain([])', '[]')],
-      signature: 'deque:fill-popleft',
-    }),
-    code({
-      id: 'o7-dq-one-line',
-      title: 'Seed a queue',
-      skills: ['queue_deque', 'tuples'],
-      stage: 'recall',
-      prompt: 'Replace `q = None` with one line: a deque containing just the coordinate `start`.',
-      starterCode: `from collections import deque
-start = (0, 0)
-q = None
-`,
-      solution: `from collections import deque
-start = (0, 0)
-q = deque([start])
-`,
-      tests: [t.check('q holds start', 'assert isinstance(q, deque) and list(q) == [(0, 0)]')],
-      hints: ['deque takes an iterable. deque(start) would give deque([0, 0]), not one tuple.'],
-      note: '`deque([start])` wraps the single item in a list first.',
-      explanation: 'deque(iterable) unpacks its argument, so a tuple must be wrapped: deque([(0, 0)]).',
-      signature: 'deque:seed',
-      minutes: 2,
+      tests: [t.eq('drain([3, 1, 2])', '[3, 1, 2]'), t.hidden('drain([])', '[]'), t.hidden('drain(["a"])', '["a"]')],
+      hints: ['from collections import deque. while q: out.append(q.popleft())'],
+      signature: 'deque:drain',
+      minutes: 4,
       important: true,
     }),
-    output({
-      id: 'o7-dq-trace-expand',
-      title: 'Queue that grows',
+    debug({
+      id: 'o7-dq-dbg-pop-end',
+      title: 'Debug: wrong end of the queue',
       skills: ['queue_deque', 'bfs'],
-      prompt: 'Each popped number may enqueue two more. What prints?',
-      code: `from collections import deque
-q = deque([1])
-order = []
-while q:
-    x = q.popleft()
-    order.append(x)
-    if x < 4:
-        q.append(2 * x)
-        q.append(2 * x + 1)
-print(order)
+      prompt: 'Think of the numbers as a tree where `x` has children `2x` and `2x + 1`. `bfs_numbers(limit)` should visit them breadth-first starting at 1, which simply gives `[1, 2, 3, …, limit]`. It returns a jumbled order. Make the tests pass.',
+      brokenCode: `from collections import deque
+
+def bfs_numbers(limit):
+    q = deque([1])
+    order = []
+    while q:
+        x = q.pop()
+        order.append(x)
+        for child in (2 * x, 2 * x + 1):
+            if child <= limit:
+                q.append(child)
+    return order
 `,
-      expectedOutput: '[1, 2, 3, 4, 5, 6, 7]',
-      explanation: 'This is BFS on an implicit tree (children of x are 2x and 2x+1): everything at one depth comes out before anything deeper.',
-      signature: 'trace:deque-expand',
-      minutes: 2.5,
+      solution: `from collections import deque
+
+def bfs_numbers(limit):
+    q = deque([1])
+    order = []
+    while q:
+        x = q.popleft()
+        order.append(x)
+        for child in (2 * x, 2 * x + 1):
+            if child <= limit:
+                q.append(child)
+    return order
+`,
+      tests: [t.eq('bfs_numbers(7)', '[1, 2, 3, 4, 5, 6, 7]'), t.eq('bfs_numbers(1)', '[1]'), t.hidden('bfs_numbers(10)', 'list(range(1, 11))')],
+      hints: ['Which end does the oldest item come out of?', 'deque.pop() takes the newest item (stack). A queue needs popleft().'],
+      explanation: 'pop() turns the deque into a stack and the traversal into DFS. Every BFS needs popleft().',
+      signature: 'debug:deque-pop-end',
+      minutes: 4,
     }),
-    code({
+    write({
       id: 'o7-dq-recent',
       title: 'Recent events counter',
       skills: ['queue_deque', 'while_loop'],
       stage: 'microbuild',
-      prompt: 'Times arrive in increasing order. For each time `t`, report how many events (including this one) happened in `[t - window + 1, t]`. Write `recent_counts(times, window)` returning the list of counts. Keep a deque; drop expired times from the left.',
+      style: 'finish',
+      prompt: 'Times arrive in increasing order. For each time `t`, report how many events (including this one) happened in `[t - window + 1, t]`. Finish `recent_counts(times, window)`. Keep a deque; drop expired times from the left.',
       starterCode: `from collections import deque
 
 def recent_counts(times, window):
@@ -346,7 +263,7 @@ def recent_counts(times, window):
       minutes: 5,
       difficulty: 2,
     }),
-    code({
+    write({
       id: 'o7-dq-rotate-elim',
       title: 'Pass and eliminate',
       skills: ['queue_deque', 'while_loop'],
@@ -382,19 +299,6 @@ const grids = {
   title: 'Grids',
   summary: 'Nested lists: grid[r][c], rows = len(grid), cols = len(grid[0]).',
   exercises: [
-    choice({
-      id: 'o7-g-index',
-      title: 'Row first, then column',
-      skills: ['grid_nested'],
-      prompt: 'What is `grid[1][0]`?',
-      code: `grid = [["a", "b", "c"],
-        ["d", "e", "f"]]`,
-      options: ['"d"', '"b"', '"e"', 'IndexError'],
-      answer: 0,
-      note: '`grid[r]` is a whole row (a list). `grid[r][c]` is one cell. r goes down, c goes across.',
-      explanation: 'grid[1] is the second row ["d", "e", "f"], and [0] takes its first cell.',
-      signature: 'grid:index',
-    }),
     output({
       id: 'o7-g-trace-dims',
       title: 'Rows, cols, cells',
@@ -410,84 +314,11 @@ print(grid[2][1], grid[0][3])
 print(grid[-1])
 `,
       expectedOutput: '3 4\n1 1\n[1, 1, 0, 0]',
+      note: '`grid[r]` is a whole row. `grid[r][c]` is one cell: r goes down, c goes across.',
       explanation: 'len(grid) counts rows; len(grid[0]) counts cells in a row. grid[-1] is the last row.',
       signature: 'trace:grid-dims',
     }),
-    output({
-      id: 'o7-g-trace-scan',
-      title: 'Scan every cell',
-      skills: ['grid_nested', 'range'],
-      prompt: 'The grid holds strings, like LeetCode grids. What prints?',
-      code: `grid = [["1", "0"],
-        ["0", "1"],
-        ["1", "1"]]
-for r in range(len(grid)):
-    for c in range(len(grid[0])):
-        if grid[r][c] == "1":
-            print(r, c)
-`,
-      expectedOutput: '0 0\n1 1\n2 0\n2 1',
-      explanation: 'The outer loop walks rows top to bottom, the inner loop walks columns left to right: row-major order. Compare with the string "1", not the int 1.',
-      signature: 'trace:grid-scan',
-      important: true,
-    }),
-    output({
-      id: 'o7-g-trace-alias',
-      title: 'The [[0] * 3] * 2 trap',
-      skills: ['grid_nested', 'list_comprehension'],
-      prompt: 'Two ways to build a 2x3 grid of zeros. What prints?',
-      code: `bad = [[0] * 3] * 2
-good = [[0] * 3 for _ in range(2)]
-bad[0][0] = 1
-good[0][0] = 1
-print(bad)
-print(good)
-`,
-      expectedOutput: '[[1, 0, 0], [1, 0, 0]]\n[[1, 0, 0], [0, 0, 0]]',
-      note: 'Build grids with a comprehension: `[[0] * cols for _ in range(rows)]`.',
-      explanation: '`* 2` copies the reference to the same inner list, so both rows are one object. The comprehension creates a new row each iteration.',
-      signature: 'trace:grid-alias',
-      minutes: 2,
-    }),
-    fill({
-      id: 'o7-g-fill-dims',
-      title: 'Grid size',
-      skills: ['grid_nested', 'len'],
-      prompt: 'Fill both blanks. Assume the grid has at least one row.',
-      starterCode: `def cell_count(grid):
-    rows = ____
-    cols = ____
-    return rows * cols
-`,
-      solution: `def cell_count(grid):
-    rows = len(grid)
-    cols = len(grid[0])
-    return rows * cols
-`,
-      tests: [t.eq('cell_count([[1, 2, 3], [4, 5, 6]])', '6'), t.hidden('cell_count([["1"]])', '1'), t.hidden('cell_count([[0], [0], [0]])', '3')],
-      signature: 'grid:fill-dims',
-    }),
-    code({
-      id: 'o7-g-make',
-      title: 'Build a grid',
-      skills: ['grid_nested', 'list_comprehension'],
-      stage: 'recall',
-      prompt: 'Write `make_grid(rows, cols, value)` returning a rows x cols grid filled with `value`, where each row is a separate list.',
-      starterCode: 'def make_grid(rows, cols, value):\n    pass\n',
-      solution: `def make_grid(rows, cols, value):
-    return [[value] * cols for _ in range(rows)]
-`,
-      tests: [
-        t.eq('make_grid(2, 3, 0)', '[[0, 0, 0], [0, 0, 0]]'),
-        t.check('rows are independent', 'g = make_grid(2, 2, 0)\ng[0][0] = 5\nassert g[1][0] == 0'),
-        t.hidden('make_grid(0, 3, 0)', '[]'),
-        t.hidden('make_grid(1, 1, "x")', '[["x"]]'),
-      ],
-      hints: ['One new row per iteration: [[value] * cols for _ in range(rows)].'],
-      signature: 'grid:make',
-      minutes: 3,
-    }),
-    code({
+    write({
       id: 'o7-g-count',
       title: 'Count a value',
       skills: ['grid_nested', 'accumulator'],
@@ -510,34 +341,45 @@ print(good)
       ],
       hints: ['Two nested range loops; compare grid[r][c] to target.'],
       signature: 'grid:count-value',
-      minutes: 4,
+      minutes: 5,
+      important: true,
     }),
-    code({
-      id: 'o7-g-col-sums',
-      title: 'Column sums',
-      skills: ['grid_nested', 'range'],
-      prompt: 'Write `column_sums(grid)` for a grid of ints: a list whose i-th entry is the sum of column i. Columns outer, rows inner this time.',
-      starterCode: 'def column_sums(grid):\n    pass\n',
-      solution: `def column_sums(grid):
+    debug({
+      id: 'o7-g-dbg-dims',
+      title: 'Debug: row maximums',
+      skills: ['grid_nested', 'len'],
+      prompt: '`row_maxes(grid)` should return the largest value in each row, top to bottom. It works on square grids but not on others. Make the tests pass.',
+      brokenCode: `def row_maxes(grid):
+    rows, cols = len(grid[0]), len(grid)
+    out = []
+    for r in range(rows):
+        best = grid[r][0]
+        for c in range(cols):
+            best = max(best, grid[r][c])
+        out.append(best)
+    return out
+`,
+      solution: `def row_maxes(grid):
     rows, cols = len(grid), len(grid[0])
     out = []
-    for c in range(cols):
-        total = 0
-        for r in range(rows):
-            total += grid[r][c]
-        out.append(total)
+    for r in range(rows):
+        best = grid[r][0]
+        for c in range(cols):
+            best = max(best, grid[r][c])
+        out.append(best)
     return out
 `,
       tests: [
-        t.eq('column_sums([[1, 2, 3], [4, 5, 6]])', '[5, 7, 9]'),
-        t.hidden('column_sums([[1], [2], [3]])', '[6]'),
-        t.hidden('column_sums([[-1, 1]])', '[-1, 1]'),
+        t.eq('row_maxes([[1, 5], [7, 0]])', '[5, 7]'),
+        t.eq('row_maxes([[1, 5, 2], [7, 0, 3]])', '[5, 7]'),
+        t.hidden('row_maxes([[4], [9], [-1]])', '[4, 9, -1]'),
       ],
-      hints: ['The index you loop over outside decides what you sum: for c in range(cols), then for r in range(rows).'],
-      signature: 'grid:column-sums',
+      hints: ['How many rows does a 2 x 3 grid have, and which len() gives it?'],
+      explanation: 'rows = len(grid), cols = len(grid[0]). Square test grids hide a swap, so always test a non-square grid.',
+      signature: 'debug:grid-dims-swapped',
       minutes: 4,
     }),
-    code({
+    write({
       id: 'o7-g-find-all',
       title: 'Coordinates of a value',
       skills: ['grid_nested', 'tuples', 'list_append'],
@@ -559,7 +401,67 @@ print(good)
       hints: ['Append a tuple: out.append((r, c)) with double parentheses.'],
       explanation: 'Tuples are how BFS and visited sets represent cells: they are hashable, lists are not.',
       signature: 'grid:find-coords',
+      minutes: 5,
+    }),
+    debug({
+      id: 'o7-g-dbg-alias',
+      title: 'Debug: identity grid',
+      skills: ['grid_nested', 'list_comprehension'],
+      prompt: '`identity(n)` should return an n x n grid of zeros with ones on the main diagonal, like `[[1, 0], [0, 1]]`. Make the tests pass.',
+      brokenCode: `def identity(n):
+    grid = [[0] * n] * n
+    for i in range(n):
+        grid[i][i] = 1
+    return grid
+`,
+      solution: `def identity(n):
+    grid = [[0] * n for _ in range(n)]
+    for i in range(n):
+        grid[i][i] = 1
+    return grid
+`,
+      tests: [
+        t.eq('identity(2)', '[[1, 0], [0, 1]]'),
+        t.eq('identity(1)', '[[1]]'),
+        t.hidden('identity(3)', '[[1, 0, 0], [0, 1, 0], [0, 0, 1]]'),
+      ],
+      hints: ['Print the grid after setting only grid[0][0]. How many rows changed?', '`* n` on the outer list copies a reference to the same row.'],
+      note: 'Build grids with a comprehension: `[[0] * cols for _ in range(rows)]`.',
+      explanation: '`[[0] * n] * n` is n references to one row object. The comprehension builds a new row each iteration.',
+      signature: 'debug:grid-alias',
       minutes: 4,
+      important: true,
+    }),
+    debug({
+      id: 'o7-g-dbg-strings',
+      title: 'Debug: count the land',
+      skills: ['grid_nested', 'accumulator'],
+      prompt: 'Grids in interview problems often hold strings. `count_land(grid)` should count the cells holding `"1"`. Make the tests pass.',
+      brokenCode: `def count_land(grid):
+    total = 0
+    for r in range(len(grid)):
+        for c in range(len(grid[0])):
+            if grid[r][c] == 1:
+                total += 1
+    return total
+`,
+      solution: `def count_land(grid):
+    total = 0
+    for r in range(len(grid)):
+        for c in range(len(grid[0])):
+            if grid[r][c] == "1":
+                total += 1
+    return total
+`,
+      tests: [
+        t.eq('count_land([["1", "0"], ["1", "1"]])', '3'),
+        t.hidden('count_land([["0"]])', '0'),
+        t.hidden('count_land([["1", "1", "1"]])', '3'),
+      ],
+      hints: ['"1" == 1 is False in Python.'],
+      explanation: 'A string never equals an int. Check the input type in the examples before writing the comparison.',
+      signature: 'debug:grid-string-cells',
+      minutes: 3,
     }),
   ],
 }
@@ -569,38 +471,6 @@ const neighbors = {
   title: 'Neighbors',
   summary: 'A directions list plus a bounds check generates every valid neighbor.',
   exercises: [
-    choice({
-      id: 'o7-n-dirs',
-      title: 'The directions list',
-      skills: ['grid_neighbors', 'tuples'],
-      prompt: 'Which list gives exactly the four up/down/left/right moves as `(dr, dc)`?',
-      options: [
-        '[(-1, 0), (1, 0), (0, -1), (0, 1)]',
-        '[(1, 1), (-1, -1), (1, -1), (-1, 1)]',
-        '[(0, 0), (1, 0), (0, 1)]',
-        '[(-1, 0), (1, 0), (0, -1), (0, 1), (1, 1)]',
-      ],
-      answer: 0,
-      note: '`DIRS = [(-1, 0), (1, 0), (0, -1), (0, 1)]`, then `nr, nc = r + dr, c + dc`.',
-      explanation: 'Each move changes exactly one coordinate by 1. Diagonals change both.',
-      signature: 'neighbors:dirs',
-    }),
-    choice({
-      id: 'o7-n-negative-wrap',
-      title: 'Why bounds-check -1?',
-      skills: ['grid_neighbors', 'list_index'],
-      prompt: 'At cell `(0, 2)` you look up without a bounds check: `grid[0 - 1][2]`. What happens?',
-      options: [
-        'It silently reads the last row, grid[-1][2], which is wrong',
-        'It raises IndexError, so the bug is easy to spot',
-        'It returns None',
-        'It reads grid[0][2] again',
-      ],
-      answer: 0,
-      explanation: 'Negative indexes wrap in Python. Going off the bottom raises IndexError, but going off the top or left quietly reads the far edge. Always check 0 <= nr < rows and 0 <= nc < cols.',
-      signature: 'neighbors:negative-wrap',
-      important: true,
-    }),
     output({
       id: 'o7-n-trace',
       title: 'Trace a neighbor loop',
@@ -616,37 +486,17 @@ for dr, dc in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
         print(nr, nc, grid[nr][nc])
 `,
       expectedOutput: '1 1 9\n0 2 7\n0 0 5',
+      note: '`DIRS = [(-1, 0), (1, 0), (0, -1), (0, 1)]`, then `nr, nc = r + dr, c + dc` and `0 <= nr < rows and 0 <= nc < cols`.',
       explanation: '(-1, 1) fails 0 <= nr. The rest are inside the grid and printed in directions-list order.',
       signature: 'trace:neighbors',
       minutes: 2,
     }),
-    fill({
-      id: 'o7-n-fill-bounds',
-      title: 'Bounds check',
-      skills: ['grid_neighbors'],
-      prompt: 'Fill the blanks with chained comparisons.',
-      starterCode: `def in_bounds(grid, r, c):
-    rows, cols = len(grid), len(grid[0])
-    return 0 <= r < ____ and 0 <= c < ____
-`,
-      solution: `def in_bounds(grid, r, c):
-    rows, cols = len(grid), len(grid[0])
-    return 0 <= r < rows and 0 <= c < cols
-`,
-      tests: [
-        t.eq('in_bounds([[1, 2], [3, 4]], 1, 1)', 'True'),
-        t.eq('in_bounds([[1, 2], [3, 4]], -1, 0)', 'False'),
-        t.hidden('in_bounds([[1, 2, 3]], 0, 3)', 'False'),
-        t.hidden('in_bounds([[1, 2, 3]], 1, 0)', 'False'),
-      ],
-      signature: 'neighbors:fill-bounds',
-      important: true,
-    }),
-    code({
+    write({
       id: 'o7-n-list',
       title: 'List the neighbors',
       skills: ['grid_neighbors', 'tuples'],
-      prompt: 'Write `neighbors(grid, r, c)` returning valid neighbor coordinates as tuples in the order up, down, left, right.',
+      style: 'finish',
+      prompt: 'Finish `neighbors(grid, r, c)`: return valid neighbor coordinates as tuples in the order up, down, left, right.',
       starterCode: `def neighbors(grid, r, c):
     rows, cols = len(grid), len(grid[0])
     out = []
@@ -674,7 +524,7 @@ for dr, dc in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
       minutes: 4,
       important: true,
     }),
-    code({
+    write({
       id: 'o7-n-land',
       title: 'Count land neighbors',
       skills: ['grid_neighbors', 'accumulator'],
@@ -697,39 +547,125 @@ for dr, dc in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
       ],
       hints: ['Bounds check first, then the cell check, joined with and: short-circuiting prevents bad indexes.'],
       signature: 'neighbors:count-matching',
+      minutes: 6,
+      important: true,
+    }),
+    debug({
+      id: 'o7-n-dbg-bounds',
+      title: 'Debug: neighbors off the edge',
+      skills: ['grid_neighbors'],
+      prompt: '`neighbors4(rows, cols, r, c)` should return the in-grid 4-neighbors of `(r, c)` (up, down, left, right) for a grid of size rows x cols. Make the tests pass.',
+      brokenCode: `def neighbors4(rows, cols, r, c):
+    out = []
+    for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+        nr, nc = r + dr, c + dc
+        if 0 <= nr <= rows and 0 <= nc <= cols:
+            out.append((nr, nc))
+    return out
+`,
+      solution: `def neighbors4(rows, cols, r, c):
+    out = []
+    for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+        nr, nc = r + dr, c + dc
+        if 0 <= nr < rows and 0 <= nc < cols:
+            out.append((nr, nc))
+    return out
+`,
+      tests: [
+        t.eq('neighbors4(2, 2, 1, 1)', '[(0, 1), (1, 0)]'),
+        t.eq('neighbors4(3, 3, 1, 1)', '[(0, 1), (2, 1), (1, 0), (1, 2)]'),
+        t.hidden('neighbors4(1, 1, 0, 0)', '[]'),
+      ],
+      hints: ['What is the largest valid row index in a grid with `rows` rows?'],
+      explanation: 'Valid indexes are 0..rows-1, so the check is nr < rows. With <= the last row index plus one sneaks in.',
+      signature: 'debug:bounds-off-by-one',
       minutes: 4,
     }),
-    code({
-      id: 'o7-n-eight',
-      title: 'Eight neighbors',
-      skills: ['grid_neighbors', 'range'],
-      stage: 'combine',
-      repType: 'combine',
-      prompt: 'Minesweeper style: the grid holds `"*"` for mines and `"."` for empty. Write `count_mines(grid, r, c)`: mines among all 8 surrounding cells (diagonals included). Build the 8 directions with two loops instead of typing them.',
-      starterCode: 'def count_mines(grid, r, c):\n    pass\n',
-      solution: `def count_mines(grid, r, c):
+    debug({
+      id: 'o7-n-dbg-dirs',
+      title: 'Debug: a missing direction',
+      skills: ['grid_neighbors', 'tuples'],
+      prompt: '`open_neighbors(grid, r, c)` should count the 4-neighbors (up, down, left, right) of `(r, c)` that hold `"."`. Make the tests pass.',
+      brokenCode: `def open_neighbors(grid, r, c):
     rows, cols = len(grid), len(grid[0])
     count = 0
-    for dr in (-1, 0, 1):
-        for dc in (-1, 0, 1):
-            if dr == 0 and dc == 0:
-                continue
-            nr, nc = r + dr, c + dc
-            if 0 <= nr < rows and 0 <= nc < cols and grid[nr][nc] == "*":
-                count += 1
+    for dr, dc in [(-1, 0), (1, 0), (0, -1), (1, 0)]:
+        nr, nc = r + dr, c + dc
+        if 0 <= nr < rows and 0 <= nc < cols and grid[nr][nc] == ".":
+            count += 1
+    return count
+`,
+      solution: `def open_neighbors(grid, r, c):
+    rows, cols = len(grid), len(grid[0])
+    count = 0
+    for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+        nr, nc = r + dr, c + dc
+        if 0 <= nr < rows and 0 <= nc < cols and grid[nr][nc] == ".":
+            count += 1
     return count
 `,
       tests: [
-        t.eq('count_mines([["*", ".", "*"], [".", ".", "."], ["*", ".", "*"]], 1, 1)', '4'),
-        t.eq('count_mines([["*", "*"], ["*", "."]], 1, 1)', '3'),
-        t.hidden('count_mines([["*"]], 0, 0)', '0'),
-        t.hidden('count_mines([[".", "*", "."]], 0, 0)', '1'),
+        t.eq('open_neighbors([[".", "."], ["#", "#"]], 0, 0)', '1'),
+        t.eq('open_neighbors([["#", ".", "#"], [".", ".", "."], ["#", ".", "#"]], 1, 1)', '4'),
+        t.hidden('open_neighbors([["."]], 0, 0)', '0'),
+        t.hidden('open_neighbors([[".", ".", "."]], 0, 1)', '2'),
       ],
-      hints: ['for dr in (-1, 0, 1): for dc in (-1, 0, 1): skip (0, 0).'],
-      signature: 'neighbors:eight-dirs',
-      minutes: 6,
+      hints: ['Read the four (dr, dc) pairs out loud: up, down, left, …?'],
+      explanation: 'Each direction changes one coordinate by one: (-1, 0), (1, 0), (0, -1), (0, 1). Type it the same way every time so a typo stands out.',
+      signature: 'debug:dirs-missing',
+      minutes: 4,
     }),
-    code({
+    write({
+      id: 'o7-n-wt-wrap',
+      title: 'Break it: negative indexes',
+      skills: ['grid_neighbors', 'list_index'],
+      style: 'write-test',
+      prompt: '`land_count_buggy` only checks `nr < rows and nc < cols`. In Python `grid[-1]` does not raise, it quietly reads the last row. Write `breaking_input()` returning a `(grid, r, c)` triple (a `"1"`/`"0"` strings grid) on which `land_count_buggy` returns the wrong count.',
+      starterCode: `def land_count_buggy(grid, r, c):
+    rows, cols = len(grid), len(grid[0])
+    count = 0
+    for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+        nr, nc = r + dr, c + dc
+        if nr < rows and nc < cols and grid[nr][nc] == "1":
+            count += 1
+    return count
+
+def breaking_input():
+    pass
+`,
+      solution: `def land_count_buggy(grid, r, c):
+    rows, cols = len(grid), len(grid[0])
+    count = 0
+    for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+        nr, nc = r + dr, c + dc
+        if nr < rows and nc < cols and grid[nr][nc] == "1":
+            count += 1
+    return count
+
+def breaking_input():
+    grid = [["0"], ["1"]]
+    return grid, 0, 0
+`,
+      tests: [
+        t.check(
+          'buggy count is wrong on your input',
+          `g, r, c = breaking_input()
+def _ok(grid, r, c):
+    n = 0
+    for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+        nr, nc = r + dr, c + dc
+        if 0 <= nr < len(grid) and 0 <= nc < len(grid[0]) and grid[nr][nc] == "1":
+            n += 1
+    return n
+assert land_count_buggy(g, r, c) != _ok(g, r, c), "the buggy function still gets this one right"`,
+        ),
+      ],
+      hints: ['Pick a cell on the top row or the left column.', 'Put land on the opposite edge so the wrap-around read lands on a "1".'],
+      explanation: 'Going off the bottom or right raises IndexError, but going off the top or left wraps silently. That is why both halves of 0 <= nr < rows matter.',
+      signature: 'write-test:negative-wrap',
+      minutes: 4,
+    }),
+    write({
       id: 'o7-n-perimeter',
       title: 'Island perimeter',
       skills: ['grid_neighbors', 'grid_nested', 'accumulator'],
@@ -765,25 +701,7 @@ for dr, dc in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
       ],
       explanation: 'Here out-of-bounds is not "skip" but "count". The or short-circuits, so grid[nr][nc] is only read when in bounds.',
       signature: 'neighbors:perimeter',
-      minutes: 8,
-    }),
-    reorder({
-      id: 'o7-n-reorder',
-      title: 'Rebuild the neighbor loop',
-      skills: ['grid_neighbors'],
-      prompt: 'Put the lines in order to return the valid 4-neighbors of `(r, c)`.',
-      lines: [
-        'def valid_neighbors(rows, cols, r, c):',
-        '    out = []',
-        '    for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:',
-        '        nr, nc = r + dr, c + dc',
-        '        if 0 <= nr < rows and 0 <= nc < cols:',
-        '            out.append((nr, nc))',
-        '    return out',
-      ],
-      tests: [t.eq('valid_neighbors(2, 2, 0, 0)', '[(1, 0), (0, 1)]'), t.hidden('valid_neighbors(1, 1, 0, 0)', '[]')],
-      signature: 'reorder:neighbors',
-      minutes: 3,
+      minutes: 9,
     }),
   ],
 }
@@ -793,91 +711,38 @@ const gridBfs = {
   title: 'Grid BFS',
   summary: 'Queue + directions + bounds + visited set, marked when enqueuing.',
   exercises: [
-    choice({
-      id: 'o7-v-tuple',
-      title: 'What goes in visited?',
-      skills: ['visited_set', 'tuples'],
-      prompt: 'Which line stores the cell `(r, c)` in a set correctly?',
-      options: ['visited.add((r, c))', 'visited.add([r, c])', 'visited.add(r, c)', 'visited[r][c] = True  # visited = set()'],
-      answer: 0,
-      note: 'Set members must be hashable. Tuples are, lists are not.',
-      explanation: 'add([r, c]) raises TypeError: unhashable type: list. add(r, c) passes two arguments, which add does not accept.',
-      signature: 'visited:tuple',
-    }),
-    choice({
-      id: 'o7-v-when',
-      title: 'When to mark visited',
-      skills: ['visited_set', 'bfs'],
-      prompt: 'In BFS, when should a cell be added to `visited`?',
-      options: [
-        'Right when it is appended to the queue',
-        'Right after it is popped from the queue',
-        'After all its neighbors have been processed',
-        'Only for the start cell',
-      ],
-      answer: 0,
-      note: 'Mark on enqueue: `visited.add(nxt); q.append(nxt)` together.',
-      explanation: 'If you wait until popping, two cells already in the queue can both enqueue the same neighbor, so it gets processed twice and the queue bloats.',
-      signature: 'visited:when-mark',
-      important: true,
-    }),
     output({
-      id: 'o7-v-trace-late-mark',
-      title: 'Cost of marking late',
-      skills: ['visited_set', 'bfs'],
-      prompt: 'This BFS marks cells when popping (and skips repeats). How many distinct cells are seen, and how many pushes happen in total?',
+      id: 'o7-v-trace-order',
+      title: 'BFS visit order',
+      skills: ['bfs', 'grid_neighbors'],
+      prompt: 'Directions are down, right, up, left. In what order are cells popped?',
       code: `from collections import deque
+grid = [[1, 1, 1],
+        [1, 0, 1]]
+visited = {(0, 0)}
 q = deque([(0, 0)])
-seen = set()
-pushes = 1
 while q:
     r, c = q.popleft()
-    if (r, c) in seen:
-        continue
-    seen.add((r, c))
+    print(r, c)
     for dr, dc in [(1, 0), (0, 1), (-1, 0), (0, -1)]:
         nr, nc = r + dr, c + dc
-        if 0 <= nr < 2 and 0 <= nc < 2 and (nr, nc) not in seen:
+        if 0 <= nr < 2 and 0 <= nc < 3 and grid[nr][nc] == 1 and (nr, nc) not in visited:
+            visited.add((nr, nc))
             q.append((nr, nc))
-            pushes += 1
-print(len(seen), pushes)
 `,
-      expectedOutput: '4 5',
-      explanation: '(1, 1) is pushed by both (1, 0) and (0, 1) because neither had marked it yet. On a big open grid these duplicates multiply. Marking on enqueue gives exactly one push per cell.',
-      signature: 'trace:visited-late',
+      expectedOutput: '0 0\n1 0\n0 1\n0 2\n1 2',
+      note: 'Mark on enqueue: `visited.add(nxt)` and `q.append(nxt)` always travel together.',
+      explanation: 'BFS pops cells in order of distance from the start: (0,0) at 0, then (1,0) and (0,1) at 1, then (0,2) at 2, then (1,2) at 3.',
+      signature: 'trace:grid-bfs-order',
       minutes: 3,
-      difficulty: 3,
+      difficulty: 2,
     }),
-    reorder({
-      id: 'o7-v-reorder',
-      title: 'Grid BFS template',
-      skills: ['bfs', 'visited_set', 'grid_neighbors', 'queue_deque'],
-      prompt: 'Order the lines: count the open cells (`1`) reachable from `(sr, sc)`, which is open. Ints grid.',
-      lines: [
-        'from collections import deque',
-        'def reachable(grid, sr, sc):',
-        '    rows, cols = len(grid), len(grid[0])',
-        '    visited = {(sr, sc)}',
-        '    q = deque([(sr, sc)])',
-        '    while q:',
-        '        r, c = q.popleft()',
-        '        for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:',
-        '            nr, nc = r + dr, c + dc',
-        '            if 0 <= nr < rows and 0 <= nc < cols and grid[nr][nc] == 1 and (nr, nc) not in visited:',
-        '                visited.add((nr, nc))',
-        '                q.append((nr, nc))',
-        '    return len(visited)',
-      ],
-      tests: [t.eq('reachable([[1, 1, 0], [0, 1, 0], [1, 0, 1]], 0, 0)', '3'), t.hidden('reachable([[1]], 0, 0)', '1')],
-      signature: 'reorder:grid-bfs',
-      minutes: 4,
-      important: true,
-    }),
-    fill({
-      id: 'o7-v-fill',
-      title: 'Mark and enqueue',
-      skills: ['bfs', 'visited_set'],
-      prompt: 'Fill the two blanks inside the neighbor check.',
+    write({
+      id: 'o7-v-finish',
+      title: 'Finish the grid BFS',
+      skills: ['bfs', 'visited_set', 'grid_neighbors'],
+      style: 'finish',
+      prompt: 'Ints grid, `1` is open. `reachable(grid, sr, sc)` counts the open cells reachable from the open start. The skeleton is there; write the neighbor loop: in bounds, open, not visited → mark and enqueue.',
       starterCode: `from collections import deque
 
 def reachable(grid, sr, sc):
@@ -886,11 +751,7 @@ def reachable(grid, sr, sc):
     q = deque([(sr, sc)])
     while q:
         r, c = q.popleft()
-        for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
-            nr, nc = r + dr, c + dc
-            if 0 <= nr < rows and 0 <= nc < cols and grid[nr][nc] == 1 and (nr, nc) not in visited:
-                ____
-                ____
+        pass
     return len(visited)
 `,
       solution: `from collections import deque
@@ -908,10 +769,18 @@ def reachable(grid, sr, sc):
                 q.append((nr, nc))
     return len(visited)
 `,
-      tests: [t.eq('reachable([[1, 1], [1, 0]], 0, 0)', '3'), t.hidden('reachable([[1, 0, 1]], 0, 0)', '1')],
-      signature: 'grid-bfs:fill-mark',
+      tests: [
+        t.eq('reachable([[1, 1, 0], [0, 1, 0], [1, 0, 1]], 0, 0)', '3'),
+        t.eq('reachable([[1, 1], [1, 0]], 0, 0)', '3'),
+        t.hidden('reachable([[1, 0, 1]], 0, 0)', '1'),
+        t.hidden('reachable([[1]], 0, 0)', '1'),
+      ],
+      hints: ['Directions loop, nr/nc, one combined if, then visited.add and q.append together.'],
+      signature: 'grid-bfs:finish-neighbors',
+      minutes: 6,
+      important: true,
     }),
-    code({
+    write({
       id: 'o7-v-reachable-strings',
       title: 'Reachable land, from scratch',
       skills: ['bfs', 'visited_set', 'grid_neighbors', 'queue_deque'],
@@ -944,56 +813,115 @@ def land_reachable(grid, sr, sc):
         t.hidden('land_reachable([["1", "1", "1", "1", "1"]], 0, 4)', '5'),
       ],
       hints: [
-        'Same shape as the template you just ordered.',
+        'Same shape as the rep you just finished.',
         'Seed both visited and the queue with the start.',
         'Neighbor condition: in bounds, "1", not in visited.',
         'Mark and enqueue together; return len(visited).',
       ],
       signature: 'grid-bfs:reachable-count',
-      minutes: 7,
+      minutes: 9,
       important: true,
     }),
-    output({
-      id: 'o7-v-trace-order',
-      title: 'BFS visit order',
-      skills: ['bfs', 'grid_neighbors'],
-      prompt: 'Directions are down, right, up, left. In what order are cells popped?',
-      code: `from collections import deque
-grid = [[1, 1, 1],
-        [1, 0, 1]]
-visited = {(0, 0)}
-q = deque([(0, 0)])
-while q:
-    r, c = q.popleft()
-    print(r, c)
-    for dr, dc in [(1, 0), (0, 1), (-1, 0), (0, -1)]:
-        nr, nc = r + dr, c + dc
-        if 0 <= nr < 2 and 0 <= nc < 3 and grid[nr][nc] == 1 and (nr, nc) not in visited:
-            visited.add((nr, nc))
-            q.append((nr, nc))
+    debug({
+      id: 'o7-v-dbg-late-mark',
+      title: 'Debug: cells visited twice',
+      skills: ['bfs', 'visited_set'],
+      prompt: '`visit_order(grid)` should return each open cell (`1`) reachable from `(0, 0)` exactly once, in the order BFS pops them. Directions are down, right, up, left. Make the tests pass.',
+      brokenCode: `from collections import deque
+
+def visit_order(grid):
+    rows, cols = len(grid), len(grid[0])
+    visited = set()
+    q = deque([(0, 0)])
+    order = []
+    while q:
+        r, c = q.popleft()
+        visited.add((r, c))
+        order.append((r, c))
+        for dr, dc in [(1, 0), (0, 1), (-1, 0), (0, -1)]:
+            nr, nc = r + dr, c + dc
+            if 0 <= nr < rows and 0 <= nc < cols and grid[nr][nc] == 1 and (nr, nc) not in visited:
+                q.append((nr, nc))
+    return order
 `,
-      expectedOutput: '0 0\n1 0\n0 1\n0 2\n1 2',
-      explanation: 'BFS pops cells in order of distance from the start: (0,0) at 0, then (1,0) and (0,1) at 1, then (0,2) at 2, then (1,2) at 3.',
-      signature: 'trace:grid-bfs-order',
-      minutes: 3,
-      difficulty: 2,
-    }),
-    choice({
-      id: 'o7-v-bfs-shortest',
-      title: 'Why BFS for shortest steps?',
-      skills: ['bfs'],
-      prompt: 'In a grid where every move costs 1, why does BFS find the fewest steps to a target?',
-      options: [
-        'It pops cells in nondecreasing distance order, so the first time it reaches the target is via a shortest path',
-        'It explores the deepest path first',
-        'It tries every possible path and keeps the minimum',
-        'It only works if the grid has no walls',
+      solution: `from collections import deque
+
+def visit_order(grid):
+    rows, cols = len(grid), len(grid[0])
+    visited = {(0, 0)}
+    q = deque([(0, 0)])
+    order = []
+    while q:
+        r, c = q.popleft()
+        order.append((r, c))
+        for dr, dc in [(1, 0), (0, 1), (-1, 0), (0, -1)]:
+            nr, nc = r + dr, c + dc
+            if 0 <= nr < rows and 0 <= nc < cols and grid[nr][nc] == 1 and (nr, nc) not in visited:
+                visited.add((nr, nc))
+                q.append((nr, nc))
+    return order
+`,
+      tests: [
+        t.eq('visit_order([[1, 1], [1, 1]])', '[(0, 0), (1, 0), (0, 1), (1, 1)]'),
+        t.eq('visit_order([[1, 0], [1, 0]])', '[(0, 0), (1, 0)]'),
+        t.hidden('visit_order([[1, 1, 1], [1, 1, 1]])', '[(0, 0), (1, 0), (0, 1), (1, 1), (0, 2), (1, 2)]'),
       ],
-      answer: 0,
-      explanation: 'All distance-d cells are enqueued before any distance-(d+1) cell. DFS can reach the target first via a long detour.',
-      signature: 'bfs:why-shortest',
+      hints: [
+        'Which cell shows up twice? Who enqueued it each time?',
+        'When a cell is still waiting in the queue, nothing stops another cell from enqueuing it again.',
+        'Mark a cell at the moment you append it, and seed visited with the start.',
+      ],
+      explanation: 'Marking on pop leaves a gap: between enqueue and pop, other cells can enqueue the same cell. Marking on enqueue gives exactly one push per cell.',
+      signature: 'debug:bfs-mark-late',
+      minutes: 6,
+      important: true,
     }),
-    code({
+    debug({
+      id: 'o7-v-dbg-tuple',
+      title: 'Debug: what goes in visited',
+      skills: ['visited_set', 'tuples'],
+      prompt: '`open_area(grid, sr, sc)` should count the `"."` cells reachable from the start (which is `"."`), moving in 4 directions. Make the tests pass.',
+      brokenCode: `from collections import deque
+
+def open_area(grid, sr, sc):
+    rows, cols = len(grid), len(grid[0])
+    visited = {(sr, sc)}
+    q = deque([(sr, sc)])
+    while q:
+        r, c = q.popleft()
+        for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+            nr, nc = r + dr, c + dc
+            if 0 <= nr < rows and 0 <= nc < cols and grid[nr][nc] == "." and (nr, nc) not in visited:
+                visited.add([nr, nc])
+                q.append((nr, nc))
+    return len(visited)
+`,
+      solution: `from collections import deque
+
+def open_area(grid, sr, sc):
+    rows, cols = len(grid), len(grid[0])
+    visited = {(sr, sc)}
+    q = deque([(sr, sc)])
+    while q:
+        r, c = q.popleft()
+        for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+            nr, nc = r + dr, c + dc
+            if 0 <= nr < rows and 0 <= nc < cols and grid[nr][nc] == "." and (nr, nc) not in visited:
+                visited.add((nr, nc))
+                q.append((nr, nc))
+    return len(visited)
+`,
+      tests: [
+        t.eq('open_area([[".", "."], ["#", "."]], 0, 0)', '3'),
+        t.eq('open_area([["."]], 0, 0)', '1'),
+        t.hidden('open_area([[".", "#", "."]], 0, 2)', '1'),
+      ],
+      hints: ['Read the error message: what type is unhashable?'],
+      explanation: 'Set members must be hashable. A tuple (nr, nc) is; a list [nr, nc] is not.',
+      signature: 'debug:visited-list-not-tuple',
+      minutes: 4,
+    }),
+    write({
       id: 'o7-v-shortest',
       title: 'Fewest steps to the corner',
       skills: ['bfs', 'visited_set', 'grid_neighbors', 'tuples'],
@@ -1037,11 +965,12 @@ def shortest_steps(grid):
         'Pop (r, c, dist); if target return dist; else enqueue unvisited open neighbors; after the loop return -1.',
       ],
       complexity: { time: 'O(rows * cols)', space: 'O(rows * cols)' },
+      explanation: 'All distance-d cells are enqueued before any distance-(d+1) cell, so the first pop of the target is along a shortest path. DFS could reach it first via a detour.',
       signature: 'grid-bfs:shortest-steps',
-      minutes: 10,
+      minutes: 12,
       important: true,
     }),
-    code({
+    write({
       id: 'o7-v-flood-fill',
       title: 'Flood fill (BFS)',
       skills: ['bfs', 'grid_neighbors', 'queue_deque'],
@@ -1083,19 +1012,58 @@ def flood_fill(image, sr, sc, color):
       ],
       explanation: 'The grid itself is the visited set: a repainted cell no longer matches old. That trick breaks exactly when color == old, hence the early return.',
       signature: 'grid-bfs:flood-fill',
-      minutes: 9,
+      minutes: 11,
       important: true,
     }),
-    code({
+    write({
       id: 'o7-v-dfs-stack',
-      title: 'Same traversal, stack instead',
+      title: 'Translate: queue to stack',
       skills: ['stack_push_pop', 'visited_set', 'grid_neighbors'],
       stage: 'combine',
       repType: 'combine',
+      style: 'translate',
       difficulty: 3,
-      prompt: 'Swap the deque for a plain list used as a stack (`append` / `pop()`) and the BFS becomes an iterative DFS. Write `land_reachable_dfs(grid, sr, sc)` on a `"1"`/`"0"` strings grid: the number of land cells connected to the start (0 if the start is water). No deque, no recursion.',
-      starterCode: 'def land_reachable_dfs(grid, sr, sc):\n    pass\n',
-      solution: `def land_reachable_dfs(grid, sr, sc):
+      prompt: 'Below is the BFS `land_reachable`. Under it, write `land_reachable_dfs(grid, sr, sc)` with the same behaviour as an iterative DFS: a plain list used as a stack (`append` / `pop()`), no deque, no recursion.',
+      starterCode: `from collections import deque
+
+def land_reachable(grid, sr, sc):
+    if grid[sr][sc] != "1":
+        return 0
+    rows, cols = len(grid), len(grid[0])
+    visited = {(sr, sc)}
+    q = deque([(sr, sc)])
+    while q:
+        r, c = q.popleft()
+        for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+            nr, nc = r + dr, c + dc
+            if 0 <= nr < rows and 0 <= nc < cols and grid[nr][nc] == "1" and (nr, nc) not in visited:
+                visited.add((nr, nc))
+                q.append((nr, nc))
+    return len(visited)
+
+
+def land_reachable_dfs(grid, sr, sc):
+    pass
+`,
+      solution: `from collections import deque
+
+def land_reachable(grid, sr, sc):
+    if grid[sr][sc] != "1":
+        return 0
+    rows, cols = len(grid), len(grid[0])
+    visited = {(sr, sc)}
+    q = deque([(sr, sc)])
+    while q:
+        r, c = q.popleft()
+        for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+            nr, nc = r + dr, c + dc
+            if 0 <= nr < rows and 0 <= nc < cols and grid[nr][nc] == "1" and (nr, nc) not in visited:
+                visited.add((nr, nc))
+                q.append((nr, nc))
+    return len(visited)
+
+
+def land_reachable_dfs(grid, sr, sc):
     if grid[sr][sc] != "1":
         return 0
     rows, cols = len(grid), len(grid[0])
@@ -1119,16 +1087,17 @@ def flood_fill(image, sr, sc, color):
       hints: ['Only the container changes: stack = [start], stack.pop(). Visited logic is identical.'],
       explanation: 'For "what can I reach" questions, BFS and DFS give the same set; only the visiting order differs. For "fewest steps" you need BFS.',
       signature: 'grid-dfs:iterative-stack',
-      minutes: 5,
+      minutes: 10,
     }),
-    code({
+    write({
       id: 'o7-v-multi-source',
       title: 'Distance to nearest exit',
       skills: ['bfs', 'grid_neighbors', 'queue_deque', 'grid_nested'],
       stage: 'pattern',
       repType: 'pattern',
+      style: 'finish',
       difficulty: 4,
-      prompt: 'Ints grid: `0` marks an exit, `1` an ordinary cell. Write `nearest_exit(grid)` returning a new grid where each cell holds the fewest 4-directional steps to any exit. There is at least one exit. Start the BFS from **all** exits at once.',
+      prompt: 'Ints grid: `0` marks an exit, `1` an ordinary cell. Finish `nearest_exit(grid)`: return a new grid where each cell holds the fewest 4-directional steps to any exit. There is at least one exit. Start the BFS from **all** exits at once.',
       starterCode: `from collections import deque
 
 def nearest_exit(grid):
@@ -1175,7 +1144,7 @@ def nearest_exit(grid):
       explanation: 'Multi-source BFS behaves like one BFS from an imaginary super-source joined to every exit, so cells are still popped in order of distance to the nearest exit. One pass, O(rows * cols).',
       complexity: { time: 'O(rows * cols)', space: 'O(rows * cols)' },
       signature: 'grid-bfs:multi-source',
-      minutes: 9,
+      minutes: 11,
       important: true,
     }),
   ],
@@ -1187,50 +1156,10 @@ const treeLevels = {
   summary: 'Snapshot size = len(q) and pop exactly that many to handle one level.',
   exercises: [
     output({
-      id: 'o7-t-trace-flat',
-      title: 'Tree BFS order',
-      skills: ['bfs', 'treenode', 'queue_deque'],
-      prompt: '`build_tree` makes a tree from a level-order list (None = no node). What prints?',
-      code: `from collections import deque
-root = build_tree([1, 2, 3, 4, None, 5])
-q = deque([root])
-out = []
-while q:
-    node = q.popleft()
-    out.append(node.val)
-    if node.left:
-        q.append(node.left)
-    if node.right:
-        q.append(node.right)
-print(out)
-`,
-      expectedOutput: '[1, 2, 3, 4, 5]',
-      note: 'Trees need no visited set: each node has one parent, so it is enqueued once.',
-      explanation: 'BFS on a tree visits nodes top to bottom, left to right: exactly the level-order list without the Nones.',
-      signature: 'trace:tree-bfs-flat',
-    }),
-    choice({
-      id: 'o7-t-why-snapshot',
-      title: 'Why snapshot len(q)?',
-      skills: ['bfs_levels'],
-      prompt: 'Inside `while q:` we write `for _ in range(len(q)):`. Why read the length before the inner loop?',
-      options: [
-        'At that moment the queue holds exactly one full level; children added during the loop belong to the next level',
-        'len(q) is O(n) on a deque, so it must be cached',
-        'range needs a constant to avoid an infinite loop, any number works',
-        'It makes popleft faster',
-      ],
-      answer: 0,
-      note: '```python\nwhile q:\n    level = []\n    for _ in range(len(q)):\n        node = q.popleft()\n        ...\n```',
-      explanation: 'range(len(q)) is evaluated once, so the inner loop pops only the nodes that were in the queue at the start of the level, even though the queue grows during it.',
-      signature: 'bfs-levels:why-snapshot',
-      important: true,
-    }),
-    output({
       id: 'o7-t-trace-levels',
       title: 'Trace levels',
       skills: ['bfs_levels', 'treenode'],
-      prompt: 'What prints?',
+      prompt: '`build_tree` makes a tree from a level-order list (None = no node). What prints?',
       code: `from collections import deque
 root = build_tree([1, 2, 3, 4, None, 5, 6])
 q = deque([root])
@@ -1246,68 +1175,12 @@ while q:
     print(row)
 `,
       expectedOutput: '[1]\n[2, 3]\n[4, 5, 6]',
+      note: '`range(len(q))` is evaluated once, when the level starts: at that moment the queue holds exactly one level. Trees need no visited set.',
       explanation: 'Each pass of the outer loop drains exactly one level and enqueues the next.',
       signature: 'trace:tree-bfs-levels',
       minutes: 2,
     }),
-    choice({
-      id: 'o7-t-no-snapshot-bug',
-      title: 'Forgot the snapshot',
-      skills: ['bfs_levels'],
-      prompt: 'Someone writes the inner loop as `while q:` instead of `for _ in range(len(q)):`. What does their level-order function return for a 3-level tree?',
-      options: [
-        'One list containing every value',
-        'The correct list of levels',
-        'An infinite loop',
-        'Only the root level',
-      ],
-      answer: 0,
-      explanation: 'The inner while keeps popping children as they arrive, so the first "level" swallows the whole tree.',
-      signature: 'bfs-levels:no-snapshot-bug',
-    }),
-    fill({
-      id: 'o7-t-fill-snapshot',
-      title: 'Level sizes',
-      skills: ['bfs_levels', 'queue_deque'],
-      prompt: 'Return how many nodes are on each level. Fill the blanks.',
-      starterCode: `from collections import deque
-
-def level_sizes(root):
-    if root is None:
-        return []
-    out = []
-    q = deque([root])
-    while q:
-        out.append(____)
-        for _ in range(____):
-            node = q.popleft()
-            if node.left:
-                q.append(node.left)
-            if node.right:
-                q.append(node.right)
-    return out
-`,
-      solution: `from collections import deque
-
-def level_sizes(root):
-    if root is None:
-        return []
-    out = []
-    q = deque([root])
-    while q:
-        out.append(len(q))
-        for _ in range(len(q)):
-            node = q.popleft()
-            if node.left:
-                q.append(node.left)
-            if node.right:
-                q.append(node.right)
-    return out
-`,
-      tests: [t.eq('level_sizes(build_tree([1, 2, 3, 4, None, 5, 6]))', '[1, 2, 3]'), t.hidden('level_sizes(None)', '[]')],
-      signature: 'bfs-levels:fill-sizes',
-    }),
-    code({
+    write({
       id: 'o7-t-flat',
       title: 'BFS values',
       skills: ['bfs', 'queue_deque', 'treenode'],
@@ -1336,9 +1209,57 @@ def bfs_values(root):
       ],
       hints: ['Guard the empty tree first, or deque([None]) will crash on node.val.'],
       signature: 'tree-bfs:flat',
+      minutes: 9,
+    }),
+    debug({
+      id: 'o7-t-dbg-none-child',
+      title: 'Debug: counting leaves',
+      skills: ['bfs', 'treenode'],
+      prompt: '`count_leaves(root)` should count the nodes with no children, using BFS. Empty tree → 0. Make the tests pass.',
+      brokenCode: `from collections import deque
+
+def count_leaves(root):
+    if root is None:
+        return 0
+    leaves = 0
+    q = deque([root])
+    while q:
+        node = q.popleft()
+        if node.left is None and node.right is None:
+            leaves += 1
+        q.append(node.left)
+        q.append(node.right)
+    return leaves
+`,
+      solution: `from collections import deque
+
+def count_leaves(root):
+    if root is None:
+        return 0
+    leaves = 0
+    q = deque([root])
+    while q:
+        node = q.popleft()
+        if node.left is None and node.right is None:
+            leaves += 1
+        if node.left:
+            q.append(node.left)
+        if node.right:
+            q.append(node.right)
+    return leaves
+`,
+      tests: [
+        t.eq('count_leaves(build_tree([1, 2, 3, 4]))', '2'),
+        t.eq('count_leaves(None)', '0'),
+        t.hidden('count_leaves(build_tree([1]))', '1'),
+        t.hidden('count_leaves(build_tree([1, 2, 3, 4, 5, 6, 7]))', '4'),
+      ],
+      hints: ['What is in the queue after you pop a leaf?'],
+      explanation: 'Only enqueue children that exist. Otherwise a None is popped next and None.left raises AttributeError.',
+      signature: 'debug:tree-bfs-none-child',
       minutes: 4,
     }),
-    code({
+    write({
       id: 'o7-t-depth',
       title: 'Depth by BFS',
       skills: ['bfs_levels', 'accumulator'],
@@ -1369,9 +1290,10 @@ def depth_bfs(root):
       ],
       hints: ['One outer-loop pass = one level. Increment a counter per pass.'],
       signature: 'tree-bfs:depth',
-      minutes: 4,
+      minutes: 10,
+      important: true,
     }),
-    code({
+    write({
       id: 'o7-t-sums',
       title: 'Level sums',
       skills: ['bfs_levels', 'accumulator'],
@@ -1403,9 +1325,70 @@ def level_sums(root):
       ],
       hints: ['Reset the total at the start of each outer pass; append it after the inner loop.'],
       signature: 'tree-bfs:level-sums',
-      minutes: 5,
+      minutes: 11,
     }),
-    code({
+    debug({
+      id: 'o7-t-dbg-snapshot',
+      title: 'Debug: levels run together',
+      skills: ['bfs_levels', 'queue_deque'],
+      prompt: '`level_mins(root)` should return the smallest value on each level, top to bottom. Make the tests pass.',
+      brokenCode: `from collections import deque
+
+def level_mins(root):
+    if root is None:
+        return []
+    out = []
+    q = deque([root])
+    while q:
+        smallest = q[0].val
+        done = 0
+        while done < len(q):
+            node = q.popleft()
+            done += 1
+            smallest = min(smallest, node.val)
+            if node.left:
+                q.append(node.left)
+            if node.right:
+                q.append(node.right)
+        out.append(smallest)
+    return out
+`,
+      solution: `from collections import deque
+
+def level_mins(root):
+    if root is None:
+        return []
+    out = []
+    q = deque([root])
+    while q:
+        smallest = q[0].val
+        for _ in range(len(q)):
+            node = q.popleft()
+            smallest = min(smallest, node.val)
+            if node.left:
+                q.append(node.left)
+            if node.right:
+                q.append(node.right)
+        out.append(smallest)
+    return out
+`,
+      tests: [
+        t.eq('level_mins(build_tree([5, 3, 8, 9, 1]))', '[5, 3, 1]'),
+        t.eq('level_mins(build_tree([2]))', '[2]'),
+        t.hidden('level_mins(None)', '[]'),
+        t.hidden('level_mins(build_tree([1, 7, 4, 6, 5, 3, 2]))', '[1, 4, 2]'),
+      ],
+      hints: [
+        'Print how many nodes each inner loop pops.',
+        'len(q) changes while children are appended. When should the level size be read?',
+        'Read the size once before the inner loop: for _ in range(len(q)).',
+      ],
+      explanation: 'The level size must be a snapshot taken before the inner loop starts. Re-reading len(q) each pass lets children of this level leak into it.',
+      signature: 'debug:level-snapshot',
+      minutes: 6,
+      important: true,
+    }),
+    write({
       id: 'o7-t-right-view',
       title: 'Right side view',
       skills: ['bfs_levels', 'treenode'],
@@ -1447,45 +1430,9 @@ def right_view(root):
       ],
       explanation: 'The rightmost visible node is not always a right child, as [1, 2, 3, 4] shows: 4 hangs on the left subtree. Level BFS gets that right for free.',
       signature: 'tree-bfs:right-view',
-      minutes: 7,
+      minutes: 12,
     }),
-    code({
-      id: 'o7-t-widest',
-      title: 'Most crowded level',
-      skills: ['bfs_levels', 'state_tracking'],
-      prompt: 'Write `widest_level(root)`: return the 0-based index of the level with the most nodes (earliest on ties). Empty tree → `-1`.',
-      starterCode: 'from collections import deque\n\ndef widest_level(root):\n    pass\n',
-      solution: `from collections import deque
-
-def widest_level(root):
-    if root is None:
-        return -1
-    best, best_level, level = 0, -1, 0
-    q = deque([root])
-    while q:
-        if len(q) > best:
-            best, best_level = len(q), level
-        for _ in range(len(q)):
-            node = q.popleft()
-            if node.left:
-                q.append(node.left)
-            if node.right:
-                q.append(node.right)
-        level += 1
-    return best_level
-`,
-      tests: [
-        t.eq('widest_level(build_tree([1, 2, 3, 4, 5, 6]))', '2'),
-        t.eq('widest_level(build_tree([1, 2, 3, 4, 5]))', '1'),
-        t.eq('widest_level(build_tree([1, 2, 3, 4]))', '1'),
-        t.hidden('widest_level(None)', '-1'),
-        t.hidden('widest_level(build_tree([7]))', '0'),
-      ],
-      hints: ['At the top of each outer pass, len(q) is the size of the current level.'],
-      signature: 'tree-bfs:widest',
-      minutes: 6,
-    }),
-    code({
+    write({
       id: 'o7-t-min-depth',
       title: 'Shallowest leaf',
       skills: ['bfs_levels', 'early_return'],
@@ -1522,80 +1469,7 @@ def min_depth(root):
       hints: ['A leaf has both children None. The first leaf BFS pops is on the shallowest level.'],
       explanation: 'BFS stops at the first leaf without exploring deeper levels; the recursive version must look at every path. Note [1, 2] has depth 2: the root is not a leaf.',
       signature: 'tree-bfs:min-depth',
-      minutes: 5,
-    }),
-    code({
-      id: 'o7-t-zigzag',
-      title: 'Zigzag levels',
-      skills: ['bfs_levels', 'slicing'],
-      stage: 'combine',
-      repType: 'combine',
-      difficulty: 3,
-      prompt: 'Write `zigzag(root)`: like grouping by level, but every second level (the 2nd, 4th, …) is listed right to left. Keep the BFS itself unchanged; flip the level list when needed.',
-      starterCode: 'from collections import deque\n\ndef zigzag(root):\n    pass\n',
-      solution: `from collections import deque
-
-def zigzag(root):
-    if root is None:
-        return []
-    out = []
-    q = deque([root])
-    left_to_right = True
-    while q:
-        level = []
-        for _ in range(len(q)):
-            node = q.popleft()
-            level.append(node.val)
-            if node.left:
-                q.append(node.left)
-            if node.right:
-                q.append(node.right)
-        out.append(level if left_to_right else level[::-1])
-        left_to_right = not left_to_right
-    return out
-`,
-      tests: [
-        t.eq('zigzag(build_tree([3, 9, 20, None, None, 15, 7]))', '[[3], [20, 9], [15, 7]]'),
-        t.eq('zigzag(build_tree([1, 2, 3, 4, 5, 6, 7]))', '[[1], [3, 2], [4, 5, 6, 7]]'),
-        t.hidden('zigzag(None)', '[]'),
-        t.hidden('zigzag(build_tree([1]))', '[[1]]'),
-        t.hidden('zigzag(build_tree([1, 2, 3, 4, None, None, 5, 6, 7]))', '[[1], [3, 2], [4, 5], [7, 6]]'),
-      ],
-      hints: [
-        'Do not change the order children are enqueued; that would break the next level.',
-        'Toggle a boolean each level and append level or level[::-1].',
-      ],
-      signature: 'tree-bfs:zigzag',
-      minutes: 7,
-    }),
-    reorder({
-      id: 'o7-t-reorder',
-      title: 'Rebuild level grouping',
-      skills: ['bfs_levels', 'queue_deque'],
-      prompt: 'Order the lines to return a list of levels, each a list of values.',
-      lines: [
-        'from collections import deque',
-        'def levels(root):',
-        '    if root is None:',
-        '        return []',
-        '    out = []',
-        '    q = deque([root])',
-        '    while q:',
-        '        level = []',
-        '        for _ in range(len(q)):',
-        '            node = q.popleft()',
-        '            level.append(node.val)',
-        '            if node.left:',
-        '                q.append(node.left)',
-        '            if node.right:',
-        '                q.append(node.right)',
-        '        out.append(level)',
-        '    return out',
-      ],
-      tests: [t.eq('levels(build_tree([1, 2, 3]))', '[[1], [2, 3]]'), t.hidden('levels(None)', '[]')],
-      signature: 'reorder:tree-levels',
-      minutes: 4,
-      important: true,
+      minutes: 11,
     }),
   ],
 }
@@ -1676,7 +1550,7 @@ def level_order(root: Optional[TreeNode]) -> List[List[int]]:
         'Edge cases: empty tree returns [], single node, skewed tree (one node per level)',
       ],
       signature: 'explain:level-order',
-      minutes: 6,
+      minutes: 5,
     }),
   ],
 }
@@ -1686,7 +1560,7 @@ const islands = {
   title: 'Number of Islands',
   summary: 'Count connected regions: scan every cell, start a traversal at each unvisited land cell.',
   exercises: [
-    code({
+    write({
       id: 'o7-i-sink-dfs',
       title: 'Sink an island (DFS)',
       skills: ['grid_neighbors', 'tree_dfs', 'recursion_base_case'],
@@ -1694,11 +1568,7 @@ const islands = {
       repType: 'pattern',
       difficulty: 3,
       prompt: 'Strings grid of `"1"`/`"0"`. Write recursive `sink(grid, r, c)`: if `(r, c)` is out of bounds or not `"1"`, return 0. Otherwise set it to `"0"`, recurse into the 4 neighbors, and return the number of cells you sank. Overwriting with `"0"` replaces the visited set.',
-      starterCode: `def sink(grid, r, c):
-    # base case: out of bounds or not land
-    # mark, then recurse in 4 directions
-    pass
-`,
+      starterCode: 'def sink(grid, r, c):\n    pass\n',
       solution: `def sink(grid, r, c):
     if r < 0 or r >= len(grid) or c < 0 or c >= len(grid[0]) or grid[r][c] != "1":
         return 0
@@ -1717,86 +1587,66 @@ const islands = {
       ],
       explanation: 'Grid DFS is tree DFS with four children per cell and a base case that rejects out-of-bounds and already-visited cells. Marking before recursing is what prevents infinite recursion.',
       signature: 'grid-dfs:sink',
-      minutes: 8,
+      minutes: 5,
       important: true,
     }),
-    code({
-      id: 'o7-i-size-bfs',
-      title: 'Region size without mutation',
-      skills: ['bfs', 'visited_set', 'grid_neighbors'],
+    write({
+      id: 'o7-i-sink-iter',
+      title: 'Translate: recursion to a stack',
+      skills: ['grid_neighbors', 'stack_push_pop'],
       stage: 'combine',
       repType: 'combine',
+      style: 'translate',
       difficulty: 3,
-      prompt: 'Grid of single letters. Write `region_size(grid, r, c)`: how many cells are 4-connected to `(r, c)` through cells with the same letter as `(r, c)`. Use BFS and a visited set; leave the grid unchanged.',
-      starterCode: 'from collections import deque\n\ndef region_size(grid, r, c):\n    pass\n',
-      solution: `from collections import deque
+      prompt: 'Rewrite the recursive `sink` below as `sink_iter(grid, r, c)`: same result (sink the island, return its size), but with an explicit stack and no recursion, so a huge island cannot hit Python\'s recursion limit.',
+      starterCode: `def sink(grid, r, c):
+    if r < 0 or r >= len(grid) or c < 0 or c >= len(grid[0]) or grid[r][c] != "1":
+        return 0
+    grid[r][c] = "0"
+    return 1 + sink(grid, r + 1, c) + sink(grid, r - 1, c) + sink(grid, r, c + 1) + sink(grid, r, c - 1)
 
-def region_size(grid, r, c):
+
+def sink_iter(grid, r, c):
+    pass
+`,
+      solution: `def sink(grid, r, c):
+    if r < 0 or r >= len(grid) or c < 0 or c >= len(grid[0]) or grid[r][c] != "1":
+        return 0
+    grid[r][c] = "0"
+    return 1 + sink(grid, r + 1, c) + sink(grid, r - 1, c) + sink(grid, r, c + 1) + sink(grid, r, c - 1)
+
+
+def sink_iter(grid, r, c):
+    if grid[r][c] != "1":
+        return 0
     rows, cols = len(grid), len(grid[0])
-    target = grid[r][c]
-    visited = {(r, c)}
-    q = deque([(r, c)])
-    while q:
-        cr, cc = q.popleft()
+    grid[r][c] = "0"
+    stack = [(r, c)]
+    size = 0
+    while stack:
+        cr, cc = stack.pop()
+        size += 1
         for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
             nr, nc = cr + dr, cc + dc
-            if 0 <= nr < rows and 0 <= nc < cols and grid[nr][nc] == target and (nr, nc) not in visited:
-                visited.add((nr, nc))
-                q.append((nr, nc))
-    return len(visited)
+            if 0 <= nr < rows and 0 <= nc < cols and grid[nr][nc] == "1":
+                grid[nr][nc] = "0"
+                stack.append((nr, nc))
+    return size
 `,
       tests: [
-        t.eq('region_size([["a", "a", "b"], ["b", "a", "b"], ["a", "b", "b"]], 0, 0)', '3'),
-        t.eq('region_size([["a", "a", "b"], ["b", "a", "b"], ["a", "b", "b"]], 0, 2)', '4'),
-        t.check('grid unchanged', 'g = [["x", "x"], ["y", "x"]]\nregion_size(g, 0, 0)\nassert g == [["x", "x"], ["y", "x"]]'),
-        t.hidden('region_size([["z"]], 0, 0)', '1'),
-        t.hidden('region_size([["a", "b", "a"]], 0, 0)', '1'),
+        t.eq('sink_iter([["1", "1"], ["0", "1"]], 0, 0)', '3'),
+        t.check('grid is cleared', 'g = [["1", "1", "0"], ["1", "0", "1"]]\nassert sink_iter(g, 0, 0) == 3\nassert g == [["0", "0", "0"], ["0", "0", "1"]]'),
+        t.hidden('sink_iter([["0"]], 0, 0)', '0'),
+        t.hidden('sink_iter([["1"] * 50 for _ in range(50)], 10, 10)', '2500'),
       ],
       hints: [
-        'Same BFS as reachable land, but "land" now means "same letter as the start".',
-        'Do not reuse r, c as loop variables if you still need the start; name the popped cell cr, cc.',
+        'The recursive base case becomes the condition for pushing a neighbor.',
+        'Sink a cell at the moment you push it, so it is never pushed twice.',
+        'Count one per pop.',
       ],
-      signature: 'grid-bfs:region-same-value',
-      minutes: 8,
-    }),
-    choice({
-      id: 'o7-i-why-count',
-      title: 'What gets counted?',
-      skills: ['visited_set', 'grid_nested'],
-      prompt: 'To count islands you scan every cell. When exactly do you add 1 to the count?',
-      options: [
-        'When the cell is land and not yet visited; then traverse its whole island so its other cells are marked',
-        'For every land cell',
-        'For every land cell with no land neighbors',
-        'Whenever a traversal ends at the grid border',
-      ],
-      answer: 0,
-      explanation: 'Each traversal marks an entire island, so later land cells of that island are already visited and do not start a new count. One count per traversal start.',
-      signature: 'islands:what-counts',
-    }),
-    reorder({
-      id: 'o7-i-reorder',
-      title: 'Outer scan',
-      skills: ['grid_nested', 'visited_set'],
-      prompt: 'Assume `sink(grid, r, c)` from earlier exists. Order the lines to count land regions.',
-      lines: [
-        'def count_regions(grid):',
-        '    count = 0',
-        '    for r in range(len(grid)):',
-        '        for c in range(len(grid[0])):',
-        '            if grid[r][c] == "1":',
-        '                sink(grid, r, c)',
-        '                count += 1',
-        '    return count',
-        'def sink(grid, r, c):',
-        '    if r < 0 or r >= len(grid) or c < 0 or c >= len(grid[0]) or grid[r][c] != "1":',
-        '        return 0',
-        '    grid[r][c] = "0"',
-        '    return 1 + sink(grid, r + 1, c) + sink(grid, r - 1, c) + sink(grid, r, c + 1) + sink(grid, r, c - 1)',
-      ],
-      tests: [t.eq('count_regions([["1", "0", "1"], ["1", "0", "0"], ["0", "0", "1"]])', '3'), t.hidden('count_regions([["0"]])', '0')],
-      signature: 'reorder:islands-scan',
-      minutes: 4,
+      explanation: 'Each recursive call becomes a push; the call stack becomes your list. Marking on push plays the role of marking before recursing.',
+      signature: 'grid-dfs:translate-recursive-to-stack',
+      minutes: 12,
     }),
     capstone({
       id: 'cap-number-of-islands',
@@ -1876,16 +1726,75 @@ def num_islands(grid: List[List[str]]) -> int:
         'Recursive DFS works too but can hit Python\'s recursion limit on a huge all-land grid; BFS avoids that',
       ],
       signature: 'explain:number-of-islands',
+      minutes: 5,
+    }),
+    debug({
+      id: 'o7-i-dbg-count-every',
+      title: 'Debug: too many islands',
+      skills: ['visited_set', 'grid_nested', 'bfs'],
+      prompt: 'A teammate\'s `count_lakes(grid)` should count 4-connected groups of `"W"` cells (other cells are `"."`). It reports far too many on any lake bigger than one cell. Make the tests pass.',
+      brokenCode: `from collections import deque
+
+def count_lakes(grid):
+    rows, cols = len(grid), len(grid[0])
+    visited = set()
+    count = 0
+    for r in range(rows):
+        for c in range(cols):
+            if grid[r][c] == "W":
+                count += 1
+                visited.add((r, c))
+                q = deque([(r, c)])
+                while q:
+                    cr, cc = q.popleft()
+                    for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+                        nr, nc = cr + dr, cc + dc
+                        if 0 <= nr < rows and 0 <= nc < cols and grid[nr][nc] == "W" and (nr, nc) not in visited:
+                            visited.add((nr, nc))
+                            q.append((nr, nc))
+    return count
+`,
+      solution: `from collections import deque
+
+def count_lakes(grid):
+    rows, cols = len(grid), len(grid[0])
+    visited = set()
+    count = 0
+    for r in range(rows):
+        for c in range(cols):
+            if grid[r][c] == "W" and (r, c) not in visited:
+                count += 1
+                visited.add((r, c))
+                q = deque([(r, c)])
+                while q:
+                    cr, cc = q.popleft()
+                    for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+                        nr, nc = cr + dr, cc + dc
+                        if 0 <= nr < rows and 0 <= nc < cols and grid[nr][nc] == "W" and (nr, nc) not in visited:
+                            visited.add((nr, nc))
+                            q.append((nr, nc))
+    return count
+`,
+      tests: [
+        t.eq('count_lakes([["W", "W"], [".", "W"]])', '1'),
+        t.eq('count_lakes([["W", ".", "W"]])', '2'),
+        t.hidden('count_lakes([["."]])', '0'),
+        t.hidden('count_lakes([["W", "W", "."], [".", ".", "."], [".", "W", "W"]])', '2'),
+      ],
+      hints: ['Which cells start a new count? Should a cell an earlier BFS already reached start one?'],
+      explanation: 'The outer scan must skip cells that an earlier traversal already marked; otherwise every cell of a lake starts its own count.',
+      signature: 'debug:components-outer-skip',
       minutes: 6,
     }),
-    code({
+    write({
       id: 'o7-i-max-area',
       title: 'Largest island area',
       skills: ['grid_nested', 'grid_neighbors', 'visited_set', 'bfs'],
       stage: 'pattern',
       repType: 'pattern',
       difficulty: 3,
-      prompt: 'Ints grid of `1` (land) and `0` (water). Write `max_area(grid)`: the size of the largest island, or 0 if there is no land. No starter this time.',
+      prompt: 'Ints grid of `1` (land) and `0` (water). Write `max_area(grid)`: the size of the largest island, or 0 if there is no land.',
+      starterCode: 'def max_area(grid):\n    pass\n',
       solution: `from collections import deque
 
 def max_area(grid):
@@ -1922,56 +1831,8 @@ def max_area(grid):
         'Count pops inside the BFS (or return a size from DFS), then keep the max.',
       ],
       signature: 'grid-bfs:max-area',
-      minutes: 10,
+      minutes: 14,
       important: true,
-    }),
-    code({
-      id: 'o7-i-enclosed',
-      title: 'Land that cannot reach the edge',
-      skills: ['grid_neighbors', 'visited_set', 'bfs', 'grid_nested'],
-      stage: 'pattern',
-      repType: 'pattern',
-      difficulty: 4,
-      prompt: 'Ints grid of `1` (land) and `0` (water). Write `enclosed_land(grid)`: how many land cells have no 4-directional land path to the border of the grid. Hint of the trick: start from the border, not from the inside.',
-      solution: `from collections import deque
-
-def enclosed_land(grid):
-    rows, cols = len(grid), len(grid[0])
-    visited = set()
-    q = deque()
-    for r in range(rows):
-        for c in range(cols):
-            on_border = r == 0 or c == 0 or r == rows - 1 or c == cols - 1
-            if on_border and grid[r][c] == 1:
-                visited.add((r, c))
-                q.append((r, c))
-    while q:
-        r, c = q.popleft()
-        for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
-            nr, nc = r + dr, c + dc
-            if 0 <= nr < rows and 0 <= nc < cols and grid[nr][nc] == 1 and (nr, nc) not in visited:
-                visited.add((nr, nc))
-                q.append((nr, nc))
-    total = sum(row.count(1) for row in grid)
-    return total - len(visited)
-`,
-      tests: [
-        t.eq('enclosed_land([[0, 0, 0, 0], [1, 0, 1, 0], [0, 1, 1, 0], [0, 0, 0, 0]])', '3'),
-        t.eq('enclosed_land([[0, 1, 1, 0], [0, 0, 1, 0], [0, 0, 1, 0], [0, 0, 0, 0]])', '0'),
-        t.hidden('enclosed_land([[1]])', '0'),
-        t.hidden('enclosed_land([[0, 0, 0], [0, 1, 0], [0, 0, 0]])', '1'),
-        t.hidden('enclosed_land([[1, 1, 1], [1, 1, 1], [1, 1, 1]])', '0'),
-        t.hidden('enclosed_land([[0, 0, 0, 0, 0], [0, 1, 1, 0, 1], [0, 1, 0, 0, 1], [0, 0, 0, 0, 0]])', '3'),
-      ],
-      hints: [
-        'Asking "can this cell escape?" for every cell is slow. Ask instead: what can the border reach?',
-        'Multi-source BFS seeded with every border land cell.',
-        'Everything the BFS marks can escape; the rest of the land cannot.',
-        'Seed border land, BFS through land, then answer = total land - len(visited).',
-      ],
-      explanation: 'Reversing the question (spread from the border inward) turns many searches into one O(rows * cols) multi-source traversal.',
-      signature: 'grid-bfs:border-reach',
-      minutes: 10,
     }),
   ],
 }
@@ -1979,27 +1840,16 @@ def enclosed_land(grid):
 const cold = {
   id: 'o7-cold',
   title: 'Cold reps',
-  summary: 'Today\'s primitives from a blank editor.',
+  summary: 'Today\'s primitives from a bare signature.',
   exercises: [
-    choice({
-      id: 'o7-c-pop0',
-      title: 'Queue cost recall',
-      skills: ['queue_deque'],
-      stage: 'retrieval',
-      repType: 'cold',
-      prompt: 'A BFS over n nodes uses `queue.pop(0)` on a list. Worst-case total cost of all the pops?',
-      options: ['O(n²)', 'O(n)', 'O(n log n)', 'O(1)'],
-      answer: 0,
-      explanation: 'Each pop(0) is O(n) because it shifts the list; n pops gives O(n²). deque.popleft keeps BFS O(n).',
-      signature: 'deque:why-not-pop0',
-    }),
-    code({
+    write({
       id: 'o7-c-neighbors',
       title: 'Neighbors from memory',
       skills: ['grid_neighbors', 'tuples'],
       stage: 'retrieval',
       repType: 'cold',
       prompt: 'Write `neighbors4(rows, cols, r, c)` returning valid neighbor tuples in the order up, down, left, right.',
+      starterCode: 'def neighbors4(rows, cols, r, c):\n    pass\n',
       solution: `def neighbors4(rows, cols, r, c):
     out = []
     for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
@@ -2014,15 +1864,16 @@ const cold = {
         t.hidden('neighbors4(1, 1, 0, 0)', '[]'),
       ],
       signature: 'neighbors:list',
-      minutes: 4,
+      minutes: 5,
     }),
-    code({
+    write({
       id: 'o7-c-last-level',
       title: 'Deepest level',
       skills: ['bfs_levels', 'queue_deque'],
       stage: 'retrieval',
       repType: 'cold',
       prompt: 'Write `deepest_values(root)`: the values on the bottom level, left to right. Empty tree → `[]`.',
+      starterCode: 'def deepest_values(root):\n    pass\n',
       solution: `from collections import deque
 
 def deepest_values(root):
@@ -2049,9 +1900,9 @@ def deepest_values(root):
       ],
       hints: ['Overwrite level on every outer pass; after the loop it holds the last one.'],
       signature: 'tree-bfs:deepest-level',
-      minutes: 5,
+      minutes: 12,
     }),
-    code({
+    write({
       id: 'o7-c-blobs',
       title: 'Count blobs in strings',
       skills: ['grid_nested', 'grid_neighbors', 'visited_set', 'bfs'],
@@ -2059,6 +1910,7 @@ def deepest_values(root):
       repType: 'cold',
       difficulty: 3,
       prompt: 'This grid is a list of strings, like `["#.#", "##."]`. `grid[r][c]` still works on strings, but you cannot assign to them. Write `count_blobs(grid)`: the number of 4-connected groups of `"#"`.',
+      starterCode: 'def count_blobs(grid):\n    pass\n',
       solution: `from collections import deque
 
 def count_blobs(grid):
@@ -2093,7 +1945,7 @@ def count_blobs(grid):
       ],
       hints: ['Strings are immutable, so you need a visited set rather than overwriting cells.'],
       signature: 'grid-bfs:count-components',
-      minutes: 10,
+      minutes: 14,
     }),
   ],
 }

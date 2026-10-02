@@ -19,17 +19,18 @@ export default function InterviewView() {
   const cold = DAY_BY_DATE['2026-10-11']?.sections.flatMap((s) => s.exercises).filter((e) => e.repType === 'cold' && e.problemId) ?? []
 
   return (
-    <main className="mx-auto w-full max-w-[880px] px-5 pb-28 pt-10">
-      <h1 className="text-[28px] font-semibold tracking-tight">Interview Reps</h1>
-      <p className="mt-1 text-[14px] text-muted">45-minute mock sessions. Timer, plain editor, your own tests, minimal assistance.</p>
+    <main className="flex-1 bg-canvas">
+      <div className="mx-auto w-full max-w-[960px] px-5 pb-28 pt-10 sm:px-8">
+      <h1 className="display">Interview Reps</h1>
+      <p className="mt-2 max-w-[600px] text-[14.5px] text-muted">45-minute mock sessions in a focused room: a timer, a plain editor, your own tests, and minimal assistance.</p>
 
       <ul className="mt-8 grid gap-4 sm:grid-cols-2">
         {MOCKS.map((m) => {
           const past = results.filter((r) => r.mockId === m.id && r.completedAt)
           return (
-            <li key={m.id} className="card flex flex-col gap-3 p-5">
+            <li key={m.id} className="panel flex flex-col gap-4 p-6">
               <div>
-                <h2 className="text-[16px] font-semibold tracking-tight">{m.title}</h2>
+                <h2 className="h2">{m.title}</h2>
                 <p className="mt-1 text-[13.5px] text-muted">{m.note}</p>
               </div>
               <p className="text-[12.5px] text-faint">
@@ -46,12 +47,12 @@ export default function InterviewView() {
 
       {cold.length > 0 && (
         <section className="mt-12">
-          <h2 className="text-[15px] font-semibold tracking-tight">Timed cold solves</h2>
+          <h2 className="h2">Timed cold solves</h2>
           <p className="mt-1 text-[13.5px] text-muted">Capstones from a blank editor, in Interview mode.</p>
           <ul className="mt-3 flex flex-wrap gap-2 text-[13.5px]">
             {cold.map((e) => (
               <li key={e.id}>
-                <Link href={`/rep/${e.id}?mode=interview`} className="rounded-md border border-line px-2.5 py-1 hover:border-line-strong">
+                <Link href={`/rep/${e.id}?mode=interview`} className="chip !h-8 !px-3">
                   {e.title.replace(' (cold)', '')}
                 </Link>
               </li>
@@ -62,10 +63,10 @@ export default function InterviewView() {
 
       {results.length > 0 && (
         <section className="mt-12">
-          <h2 className="text-[15px] font-semibold tracking-tight">History</h2>
-          <ul className="mt-2 divide-y divide-line border-y border-line text-[13.5px]">
+          <h2 className="h2">History</h2>
+          <ul className="card mt-3 divide-y divide-line px-4 text-[13.5px]">
             {results.map((r) => (
-              <li key={r.id} className="flex justify-between py-2">
+              <li key={r.id} className="flex justify-between gap-4 py-2.5">
                 <span>
                   {MOCKS.find((m) => m.id === r.mockId)?.title} · {shortDate(r.startedAt.slice(0, 10))}
                 </span>
@@ -77,6 +78,7 @@ export default function InterviewView() {
           </ul>
         </section>
       )}
+      </div>
     </main>
   )
 }
