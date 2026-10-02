@@ -32,7 +32,7 @@ export function TestResults({ result, mode, submitted, onBackToCode }: { result:
           {!allPass && (
             <span className="text-muted">
               {result.timedOut
-                ? 'Stopped: possible infinite loop.'
+                ? 'Stopped: it ran past 5 seconds.'
                 : result.error
                   ? 'Fix the error first; the tests did not run.'
                   : firstFail

@@ -622,7 +622,7 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
   const submitLabel = isDebug ? 'Submit fix' : 'Submit'
 
   return (
-    <main className="flex flex-1 flex-col bg-canvas lg:h-[calc(100vh-56px)] lg:overflow-hidden">
+    <main className="flex flex-1 flex-col bg-canvas lg:h-[calc(100dvh-56px)] lg:flex-none lg:overflow-hidden">
       {/* Rep bar: where am I, how far, which mode */}
       <div className="relative flex h-12 shrink-0 items-center gap-4 bg-bg px-4 sm:px-6" style={{ boxShadow: '0 1px 0 var(--hairline)' }}>
         <nav aria-label="Breadcrumb" className="flex min-w-0 items-center gap-1.5 text-[13px]">

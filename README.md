@@ -25,10 +25,11 @@ durable progress across devices. OpenAI adds the on-demand coach.
 |---|---|
 | `data/skills.ts` | The skill graph (granular skills + prerequisites) |
 | `data/problems.ts` | Canonical LeetCode targets (links only, no copied statements) |
-| `data/exercises/oct02.ts` … `oct11.ts` | The ten day modules, 658 reps |
+| `data/exercises/oct02.ts` … `oct11.ts` | The ten day modules, 635 reps, code-first |
 | `data/mocks.ts` | Two 45-minute mock interviews |
 | `data/curriculum.ts` | Indexes the days |
-| `docs/authoring.md` | How to write reps |
+| `docs/authoring.md` | How to write reps (read the Code-first section) |
+| `lib/curriculum-audit.ts` | Classifies reps as active/guided/passive, models time, enforces guardrails |
 | `public/python/harness.py` | The test harness, shared by the browser and the content verifier |
 | `public/python/worker.js` | Pyodide in a module Web Worker |
 | `lib/mastery.ts` | Deterministic mastery heuristic |
@@ -121,12 +122,24 @@ the post-mock Review.
 - In production the routes require the signed-in Reps owner. For local dev without
   Supabase, `REPS_ALLOW_UNAUTHENTICATED_AI=1` (ignored in production).
 
+## Code-first
+
+Reps is for writing Python, not answering questions about it. `npm run audit:curriculum`
+reports, per day, the mix of reps and the share of planned time spent actively coding
+(writing, debugging, capstones), checked against both authored minutes and an
+independent time model so estimates can't be padded. Tests enforce: ≥ 75% active time
+overall, ≥ 65% per day, no more than 3 passive reps in a row, ≥ 4 Debug Reps per day,
+and a from-scratch rep for every skill.
+
+Current mix: 635 reps, 91% of planned time active (93% modeled), 80% of reps active,
+127 Debug Reps, longest passive run 2.
+
 ## Mastery
 
 Per skill, deterministic:
 
 ```
-weight   = stage weight (recognize 0.5 … capstone 1.3) × retrieval (cold 1.5, run-it-back 0.6)
+weight   = stage weight (recognize 0.5, trace 0.6 … debug 1.15, cold write 1.25, capstone 1.3) × retrieval (cold 1.5, run-it-back 0.6)
 quality  = 0 if failed, else hint factor (−15% each, min 40%) × solution (30% if viewed) × retries (−10% each, min 50%)
 accuracy = recency-weighted mean quality, last 15 attempts
 evidence = 1 − e^(−Σ weight × quality / 4)
@@ -144,6 +157,8 @@ npm run lint
 npm run type-check
 npm test               # unit tests, including sync and the migration's RLS on real Postgres (PGlite)
 npm run verify:content # every rep's solution and predicted output run through python3
+npm run verify:pyodide # the same, in Pyodide (the browser's Python)
+npm run audit:curriculum # code-first report and guardrails
 npm run test:e2e       # Playwright: today → rep → submit → mastery → reload; Pyodide + infinite loop
 npm run verify         # all of the above except e2e, plus a production build
 ```

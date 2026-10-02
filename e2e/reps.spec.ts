@@ -36,7 +36,7 @@ test('today → first rep → correct answer → mastery updates → reload → 
   await page.reload()
   await expect(page.getByRole('link', { name: firstRep.title })).toBeVisible()
   await page.goto('/')
-  await expect(page.getByText(/1 of \d+ reps/)).toBeVisible()
+  await expect(page.getByText(/Rep 2 of \d+/)).toBeVisible()
   // The next rep is now the starting point.
   await page.getByTestId('start-today').click()
   await expect(page).not.toHaveURL(new RegExp(`/rep/${firstRep.id}$`))
@@ -56,4 +56,18 @@ test('a code rep runs real Python in the browser and an infinite loop is stopped
   await page.keyboard.insertText('def two_sum(nums, target):\n    seen = {}\n    for i, n in enumerate(nums):\n        if target - n in seen:\n            return [seen[target - n], i]\n        seen[n] = i\n')
   await page.getByTestId('submit').click()
   await expect(page.getByTestId('rep-complete')).toBeVisible({ timeout: 90_000 })
+})
+
+test('a debug rep loads broken code, shows failing tests, and accepts the fix', async ({ page }) => {
+  const rep = DAYS[0].sections.flatMap((s) => s.exercises).find((e) => e.style === 'debug')!
+  await page.goto(`/rep/${rep.id}`)
+  await expect(page.getByText('Debug Rep').first()).toBeVisible()
+  await expect(page.getByText(/tests? failing/i)).toBeVisible({ timeout: 90_000 })
+  await expect(page.getByRole('button', { name: /Submit fix/ })).toBeVisible()
+  await page.locator('.cm-content').click()
+  await page.keyboard.press('ControlOrMeta+a')
+  await page.keyboard.press('Backspace')
+  await page.keyboard.insertText(rep.solution!)
+  await page.getByTestId('submit').click()
+  await expect(page.getByTestId('rep-complete')).toBeVisible({ timeout: 60_000 })
 })

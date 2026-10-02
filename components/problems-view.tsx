@@ -46,7 +46,7 @@ export default function ProblemsView() {
                           <span className="num text-[11.5px] font-semibold">{ready}%</span>
                         </ProgressRing>
                         <div className="min-w-0 flex-1">
-                          <Link href={`/rep/cap-${p.id}`} className="h3 block truncate hover:underline">
+                          <Link href={`/rep/cap-${p.id}`} className="h3 line-clamp-2 block hover:underline">
                             {p.title}
                           </Link>
                           <p className="mt-0.5 text-[12.5px] text-muted">{p.pattern}</p>
