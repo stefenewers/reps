@@ -39,6 +39,59 @@ export const day: DayModule = {
 Section titles form the visible learning path on the dashboard, so keep them short:
 `Python recall`, `Dictionaries`, `.get()`, `Frequency maps`, `Two Sum`, `Cold reps`.
 
+## Code-first (read this first)
+
+Reps exists because courses don't give enough actual repetitions writing code. The
+main activity is writing, running, breaking, fixing and rewriting Python. Choice and
+trace reps are short on-ramps, never the bulk.
+
+`npm run audit:curriculum -- <date>` reports each day's mix. The guardrails (enforced
+by tests) are:
+
+- At least 75% of estimated time overall, and 65% per day (70% on Oct 11), is
+  **active** coding: write, debug, capstone. Measured on authored minutes *and* on a
+  modeled estimate, so inflating minutes doesn't help.
+- At most 3 passive reps (choice, trace, explain, tiny blank) in a row.
+- At least 4 Debug Reps per day.
+- Every skill has at least one from-scratch rep (bare signature or blank editor, 2+
+  lines to write).
+- Authored minutes must be justified by the work (see `inflated()`).
+
+Aim higher than the guardrails: 75–85% active time per day, 60%+ of reps active,
+passive runs of 2 or fewer, 8–12 debug reps per day.
+
+The rhythm for each construct:
+
+```
+1 trace (first exposure only)
+→ 1 tiny guided rep (optional)
+→ 2–4 write reps (different shapes)
+→ 1–2 debug reps
+→ combine with earlier constructs
+→ cold write from a signature
+```
+
+High-value formats (all are `code` reps run by tests; set `style`):
+
+- `write(...)` – from a signature: `def count_unique(nums):` and nothing else.
+- `debug(...)` – broken code preloaded: syntax slips (`for num of nums`), API misuse
+  (`counts.get(ch) + 1`), wrong dict direction (`seen[i] = num`), inverted condition,
+  off-by-one in binary search, pointer reassignment order, missing base case, marking
+  visited too late. The prompt states the intended behaviour, never where the bug is.
+  The broken code must fail at least one visible test.
+- `style: 'finish'` – a meaningful partial implementation (several lines missing, not
+  one blank).
+- `style: 'modify'` – "this returns the values; change it to return their indexes."
+- `style: 'optimize'` – working O(n²) code to rewrite with a set or dict.
+- `style: 'translate'` – "rewrite this index loop with enumerate()".
+- `style: 'write-test'` – encode the edge case that breaks a given function (e.g.
+  return an input from `breaking_input()` checked with `t.check`).
+
+Fill-in-the-blank is scaffolding: filling `counts.get(ch, ____)` does not prove you can
+write `counts[ch] = counts.get(ch, 0) + 1`. Every primitive must later be produced
+from memory. Cold reps are a signature and a blank body, never "which structure would
+you use?".
+
 ## The ladder
 
 Move each primitive through:
@@ -77,8 +130,9 @@ Rules:
 - `explanation`: shown after completion. 1–4 sentences. Why, not just what.
 - `signature`: a structural tag used for deduplication, like `freq-map:count-chars`,
   `index-map:first-seen`, `trace:enumerate-print`. Same structure → same prefix.
-- `difficulty` 1–5 and `minutes` (realistic: choice 0.5–1, output 1–2, fill 1–2,
-  small code 2–4, combine 4–8, capstone 15–30, explain 3–5).
+- `difficulty` 1–5 and `minutes`, realistic for a learner who is still slow on syntax:
+  choice 0.5–1, output 1–2, fill 1–2, write ≈ 1.5 + 0.8 × lines to write (×1.75 at
+  most), debug 2–6, capstone 15–30, explain 3–5. `inflated()` flags anything beyond.
 - `important: true` for reps whose skills must resurface as cold reps later
   (capstones are important by default).
 

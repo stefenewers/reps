@@ -11,7 +11,8 @@
     "test": "tsx --test \"lib/**/*.test.ts\" \"supabase/*.test.ts\"",
     "test:e2e": "playwright test",
     "verify:content": "tsx scripts/verify-content.ts",
-    "verify": "npm run lint && npm run type-check && npm test && npm run verify:content && npm run build"
+    "verify": "npm run lint && npm run type-check && npm test && npm run verify:content && npm run build",
+    "audit:curriculum": "tsx scripts/audit-curriculum.ts"
   },
   "dependencies": {
     "@codemirror/autocomplete": "^6.20.3",

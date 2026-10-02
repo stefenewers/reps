@@ -38,18 +38,20 @@ export interface SkillMastery {
   recognitionOnly: boolean
 }
 
+/** Producing code outweighs recognising it; debugging, cold writes and capstones weigh most. */
 export const STAGE_WEIGHT: Record<Stage, number> = {
   recognize: 0.5,
-  trace: 0.7,
+  trace: 0.6,
+  complete: 0.75,
   recall: 0.9,
-  complete: 0.8,
-  reconstruct: 1,
   microbuild: 1,
+  reconstruct: 1.1,
   combine: 1.1,
+  debug: 1.15,
   pattern: 1.2,
-  capstone: 1.3,
   interview: 1.2,
-  retrieval: 1.2,
+  retrieval: 1.25,
+  capstone: 1.3,
 }
 
 export const RETRIEVAL_WEIGHT: Record<RetrievalType, number> = {
@@ -172,7 +174,7 @@ export function explainMastery(m: SkillMastery): string {
   if (m.status === 'unseen') return 'No reps yet.'
   const parts = [
     `Score ${m.score} = accuracy ${Math.round(m.accuracy * 100)}% × evidence ${Math.round(m.evidence * 100)}%.`,
-    'Evidence grows with each clean rep; cold reps count 1.5×, capstones 1.3×, recognition reps 0.5–0.7×.',
+    'Evidence grows with each clean rep. Writing and debugging count most (debug 1.15×, cold 1.5×, capstones 1.3×); recognition reps count 0.5–0.6×.',
     'Hints reduce a rep’s credit by 15% each; a rep after viewing the solution earns 30%.',
   ]
   if (m.recognitionOnly) parts.push(`Only recognition evidence so far, so the score is capped at ${RECOGNITION_CAP} until you write it.`)

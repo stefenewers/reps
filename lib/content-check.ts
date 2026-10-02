@@ -102,6 +102,10 @@ export function verifyExercises(exercises: Exercise[]): string[] {
       if (r.error || r.tests.some((x) => !x.passed)) problems.push(`[${id}] solution fails: ${describe(r)}`)
     } else if (what === 'starter') {
       if (!r.error && r.tests.length && r.tests.every((x) => x.passed)) problems.push(`[${id}] starter code already passes every test`)
+      if (e.style === 'debug' && !r.error) {
+        const visible = r.tests.filter((_, i) => !e.tests?.[i]?.hidden)
+        if (visible.length && visible.every((x) => x.passed)) problems.push(`[${id}] debug rep: the broken code must fail at least one visible test (or raise)`)
+      }
     }
   }
   return problems

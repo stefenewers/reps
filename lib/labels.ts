@@ -9,6 +9,7 @@ export const STAGE_LABEL: Record<Stage, string> = {
   complete: 'Rep',
   reconstruct: 'Rep',
   microbuild: 'Rep',
+  debug: 'Debug Rep',
   combine: 'Combine',
   pattern: 'Apply',
   capstone: 'Apply',

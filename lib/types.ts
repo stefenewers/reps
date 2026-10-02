@@ -15,6 +15,7 @@ export type Stage =
   | 'complete'
   | 'reconstruct'
   | 'microbuild'
+  | 'debug'
   | 'combine'
   | 'pattern'
   | 'capstone'
@@ -33,6 +34,19 @@ export type RepType = 'foundation' | 'combine' | 'pattern' | 'capstone' | 'cold'
  * - explain: written explanation, self-checked against a rubric
  */
 export type ExerciseKind = 'choice' | 'output' | 'code' | 'reorder' | 'explain'
+
+/**
+ * How a code rep is presented. Execution is identical (editor + tests); the
+ * style changes the framing and the audit's view of it.
+ * - debug: broken code is preloaded; make the tests pass
+ * - modify: working code; change its behaviour as asked
+ * - optimize: working but slow code; rewrite it
+ * - translate: rewrite in a different construct (index loop → enumerate)
+ * - from-signature: just a def line
+ * - finish: a meaningful partial implementation
+ * - write-test: encode an edge case as an assertion
+ */
+export type RepStyle = 'debug' | 'modify' | 'optimize' | 'translate' | 'from-signature' | 'finish' | 'write-test'
 
 export type Compare = 'exact' | 'unordered' | 'sorted-inner' | 'float'
 
@@ -101,6 +115,7 @@ export interface Exercise {
   signature: string
   minutes: number
   review: ReviewMeta
+  style?: RepStyle
   /** Present on AI-generated reps. */
   generated?: { key: string; createdAt: string; used: boolean }
 }

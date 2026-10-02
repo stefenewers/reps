@@ -1,4 +1,4 @@
-import type { Example, Exercise, RepType, Stage, TestCase } from '@/lib/types'
+import type { Example, Exercise, RepStyle, RepType, Stage, TestCase } from '@/lib/types'
 import { SKILL_BY_ID } from '@/data/skills'
 
 /**
@@ -23,6 +23,7 @@ interface Base {
   important?: boolean
   examples?: Example[]
   complexity?: { time: string; space: string }
+  style?: RepStyle
 }
 
 function prereqsFor(skills: string[]): string[] {
@@ -50,6 +51,7 @@ function base(b: Base, defaults: { stage: Stage; repType: RepType; difficulty: 1
     review: { important: b.important ?? defaults.important ?? false },
     examples: b.examples,
     complexity: b.complexity,
+    ...(b.style ? { style: b.style } : {}),
   }
 }
 
@@ -72,6 +74,26 @@ export function code(b: Base & { starterCode?: string; solution: string; tests: 
     solution: b.solution,
     tests: b.tests,
   }
+}
+
+/**
+ * Write from a signature (or a blank editor). The default production rep.
+ * starterCode is usually just the def line plus `pass`.
+ */
+export function write(b: Base & { starterCode?: string; solution: string; tests: TestCase[] }): Exercise {
+  return code({ ...b, style: b.style ?? 'from-signature' })
+}
+
+/**
+ * Debug Rep: broken code is preloaded; make the tests pass. The prompt says what
+ * the code is supposed to do, never where the bug is. Use for syntax slips,
+ * wrong API usage (`.get` without a default), wrong dict direction, inverted
+ * conditions, off-by-one boundaries, pointer mix-ups, missing base cases,
+ * marking visited too late.
+ */
+export function debug(b: Base & { brokenCode: string; solution: string; tests: TestCase[] }): Exercise {
+  const { brokenCode, ...rest } = b
+  return code({ ...rest, starterCode: brokenCode, stage: b.stage ?? 'debug', style: 'debug', minutes: b.minutes ?? 3, difficulty: b.difficulty ?? 2 })
 }
 
 /** Fill in the blank: a code exercise whose starter has `____` gaps. */
