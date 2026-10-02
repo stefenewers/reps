@@ -2,8 +2,8 @@
 
 import Link from 'next/link'
 import { useReps } from '@/components/reps-provider'
-import ProgressRing from '@/components/progress-ring'
-import { IconCheck, IconExternal, IconSnow } from '@/components/icons'
+import { IconArrowRight, IconCheck, IconExternal, IconSnow } from '@/components/icons'
+import { ConceptGlyph } from '@/components/concept-icons'
 import { PROBLEMS } from '@/data/problems'
 import { skillName } from '@/data/skills'
 import { problemReadiness } from '@/lib/progress'
@@ -16,7 +16,7 @@ export default function ProblemsView() {
   return (
     <main className="flex-1 bg-canvas">
       <div className="mx-auto w-full max-w-[1120px] px-5 pb-28 pt-10 sm:px-8">
-        <h1 className="display">Problems</h1>
+        <h1 className="display-xl">Problems</h1>
         <p className="mt-2 max-w-[640px] text-[14.5px] text-muted">The canonical capstones. Readiness is the mastery of each problem’s skills; solve them in the editor, then come back cold.</p>
 
         <div className="mt-10 flex flex-col gap-10">
@@ -40,49 +40,64 @@ export default function ProblemsView() {
                     .sort((a, b) => a.score - b.score)
                     .slice(0, 2)
                   return (
-                    <li key={p.id} className="card interactive flex min-w-0 flex-col gap-4 p-5">
-                      <div className="flex items-start gap-4">
-                        <ProgressRing value={ready} size={46} stroke={4} tone={ready >= 80 ? 'pass' : 'ink'} label={`${ready}% ready`}>
-                          <span className="num text-[11.5px] font-semibold">{ready}%</span>
-                        </ProgressRing>
+                    <li key={p.id} className="card interactive relative flex min-w-0 flex-col overflow-hidden">
+                      <div className="flex items-start gap-3 px-5 pt-5">
+                        <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-ink text-white shadow-sm">
+                          <ConceptGlyph name={p.pattern} size={18} />
+                        </span>
                         <div className="min-w-0 flex-1">
-                          <Link href={`/rep/cap-${p.id}`} className="h3 line-clamp-2 block hover:underline">
+                          <p className="eyebrow text-faint">{p.pattern}</p>
+                          <Link href={`/rep/cap-${p.id}`} className="mt-0.5 line-clamp-2 block text-[16.5px] font-semibold leading-snug tracking-tight hover:underline">
                             {p.title}
                           </Link>
-                          <p className="mt-0.5 text-[12.5px] text-muted">{p.pattern}</p>
                         </div>
-                        <a href={p.leetcode} target="_blank" rel="noreferrer" className="icon-btn shrink-0" aria-label={`${p.title} on LeetCode`} title={`LeetCode ${p.number}`}>
+                        <a href={p.leetcode} target="_blank" rel="noreferrer" className="icon-btn -mr-1 shrink-0" aria-label={`${p.title} on LeetCode`} title={`LeetCode ${p.number}`}>
                           <IconExternal size={14} />
                         </a>
                       </div>
 
-                      <p className="text-[12.5px] text-muted">
+                      <div className="px-5 pt-4">
+                        <div className="flex items-baseline justify-between">
+                          <span className="num text-[22px] font-semibold tracking-tight">{ready}%</span>
+                          <span className="text-[12px] text-muted">ready</span>
+                        </div>
+                        <span className="bar mt-1.5 block" role="meter" aria-valuemin={0} aria-valuemax={100} aria-valuenow={ready} aria-label={`${ready}% ready`}>
+                          <span style={{ width: `${ready}%`, background: ready >= 80 ? 'var(--green)' : 'var(--accent)' }} />
+                        </span>
+                      </div>
+
+                      <div className="flex flex-wrap items-center gap-1.5 px-5 pt-3.5 text-[12px]">
                         {needs.length ? (
                           <>
-                            <span className="text-ink-2">Needs</span> {needs.map((x) => skillName(x.s)).join(', ')}
+                            <span className="text-muted">Needs</span>
+                            {needs.map((x) => (
+                              <Link key={x.s} href={`/skills/${x.s}`} className="rounded-full bg-amber-soft px-2 py-0.5 font-medium text-amber-ink hover:brightness-95">
+                                {skillName(x.s)}
+                              </Link>
+                            ))}
                           </>
                         ) : (
-                          <span className="text-pass">Skills in place</span>
+                          <span className="rounded-full bg-green-soft px-2 py-0.5 font-medium text-green-ink">Skills in place</span>
                         )}
-                      </p>
+                      </div>
 
-                      <div className="mt-auto flex items-center gap-2 text-[12px]">
+                      <div className="mt-auto flex items-center gap-2 px-5 pb-4 pt-5 text-[12px]">
                         {solved ? (
-                          <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-medium ${clean ? 'bg-pass-soft text-pass' : 'bg-surface-2 text-ink-2'}`}>
+                          <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-medium ${clean ? 'bg-green-soft text-green-ink' : 'bg-surface-2 text-ink-2'}`}>
                             <IconCheck size={11} strokeWidth={2.2} /> {clean ? 'Solved clean' : 'Solved with help'}
                           </span>
                         ) : (
-                          <span className="rounded-full bg-surface-2 px-2 py-0.5 text-muted">{counted.length ? 'Not solved yet' : 'Not started'}</span>
+                          <span className="text-muted">{counted.length ? `${counted.length} attempt${counted.length === 1 ? '' : 's'} · not solved yet` : 'Not started'}</span>
                         )}
                         {cold && (
-                          <span className="inline-flex items-center gap-1 rounded-full bg-accent-soft px-2 py-0.5 font-medium text-accent-ink">
+                          <span className="inline-flex items-center gap-1 rounded-full bg-violet-soft px-2 py-0.5 font-medium text-violet-ink">
                             <IconSnow size={11} /> Cold
                           </span>
                         )}
-                        <span className="ml-auto text-faint">
-                          {counted.length ? `${counted.length} attempt${counted.length === 1 ? '' : 's'}` : ''}
-                          {review ? `${counted.length ? ' · ' : ''}review ${relativeDue(review.dueAt).toLowerCase()}` : ''}
-                        </span>
+                        {review && <span className="text-faint">· review {relativeDue(review.dueAt).toLowerCase()}</span>}
+                        <Link href={`/rep/cap-${p.id}`} className="ml-auto inline-flex items-center gap-1 font-medium text-ink hover:text-accent">
+                          {solved ? 'Again' : 'Solve'} <IconArrowRight size={12} />
+                        </Link>
                       </div>
                     </li>
                   )

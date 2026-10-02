@@ -29,7 +29,7 @@ export default function DaySummary({ date }: { date: string }) {
       </p>
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2">
-        <Block title="Strong" items={s.strong.slice(0, 8).map(skillName)} empty="Nothing competent yet today." />
+        <Block title="Strong" items={s.strong.slice(0, 8).map(skillName)} empty="Nothing solid yet today. It shows up after a few clean reps." />
         <Block title="Needs more reps" items={s.needsReps.slice(0, 8).map(skillName)} empty="Nothing shaky today." />
       </div>
 

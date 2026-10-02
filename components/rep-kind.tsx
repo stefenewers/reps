@@ -13,6 +13,8 @@ export interface KindDisplay {
   badge: string
   badgeClass: string
   Icon: ComponentType<{ size?: number; className?: string }>
+  /** Colour identity: code blue, debug amber, cold violet, capstone/interview ink, learn grey. */
+  key: 'code' | 'debug' | 'cold' | 'capstone' | 'interview' | 'learn'
 }
 
 const SHORT: Record<Bucket, string> = {
@@ -41,23 +43,34 @@ export function kindOf(e: Exercise): KindDisplay {
   const bucket = bucketOf(e)
   const cold = e.repType === 'cold' || e.stage === 'retrieval'
   let badge = 'Rep'
-  let badgeClass = 'badge'
+  let badgeClass = 'badge badge-code'
+  let key: KindDisplay['key'] = 'code'
   if (bucket === 'debug') {
     badge = 'Debug Rep'
     badgeClass = 'badge badge-debug'
+    key = 'debug'
   } else if (bucket === 'capstone') {
     badge = 'Capstone'
     badgeClass = 'badge badge-capstone'
+    key = 'capstone'
   } else if (cold) {
     badge = 'Cold Rep'
     badgeClass = 'badge badge-cold'
-  } else if (e.repType === 'interview' || bucket === 'explain') badge = 'Interview Rep'
-  else if (bucket === 'output' || bucket === 'choice') badge = 'Learn'
+    key = 'cold'
+  } else if (e.repType === 'interview' || bucket === 'explain') {
+    badge = 'Interview Rep'
+    badgeClass = 'badge'
+    key = 'interview'
+  } else if (bucket === 'output' || bucket === 'choice') {
+    badge = 'Learn'
+    badgeClass = 'badge'
+    key = 'learn'
+  }
   else if (e.repType === 'pattern') badge = 'Pattern Rep'
   else if (e.repType === 'combine' || e.stage === 'combine') badge = 'Combination Rep'
   else if (bucket === 'fill' || bucket === 'reorder') badge = 'Guided Rep'
   else badge = 'Foundation Rep'
-  return { bucket, short: cold && bucket === 'write' ? 'Cold' : SHORT[bucket], badge, badgeClass, Icon: cold && bucket === 'write' ? IconSnow : ICON[bucket] }
+  return { bucket, short: cold && bucket === 'write' ? 'Cold' : SHORT[bucket], badge, badgeClass, key, Icon: cold && bucket === 'write' ? IconSnow : ICON[bucket] }
 }
 
 /** Composition of a block of reps: "8 code · 3 debug · 2 guided · 1 trace". */

@@ -23,7 +23,18 @@ export function TestResults({ result, mode, submitted, onBackToCode }: { result:
 
   return (
     <div className="flex flex-col gap-3 text-[13px]">
-      {(total > 0 || result.error) && (
+      {allPass && (
+        <div className="fade-in flex items-center gap-2.5 rounded-xl bg-green-soft px-3.5 py-2.5 shadow-[inset_0_0_0_1px_rgba(36,166,106,0.2)]">
+          <span className="pop-in grid size-6 place-items-center rounded-full bg-green text-white">
+            <IconCheck size={13} strokeWidth={2.4} />
+          </span>
+          <span className="eyebrow text-green-ink">All tests passed</span>
+          <span className="num ml-auto text-[12.5px] font-medium text-green-ink">
+            {passed}/{total}
+          </span>
+        </div>
+      )}
+      {(total > 0 || result.error) && !allPass && (
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
           <span className={`inline-flex items-center gap-1.5 text-[13.5px] font-semibold ${allPass ? 'text-pass' : 'text-ink'}`}>
             {allPass ? <IconCheck size={15} /> : <IconX size={15} className="text-fail" />}
@@ -62,7 +73,7 @@ export function TestResults({ result, mode, submitted, onBackToCode }: { result:
       {failing.length > 0 && (
         <ul className="flex flex-col gap-1.5">
           {failing.map((t, i) => (
-            <TestRow key={i} t={t} showDetail={showDetail} defaultOpen={!t.passed && t === firstFail} />
+            <TestRow key={i} t={t} index={i} showDetail={showDetail} defaultOpen={!t.passed && t === firstFail} />
           ))}
           {hidden.length > 0 && (
             <li className="flex items-center gap-2 rounded-lg px-3 py-2 text-muted" style={{ boxShadow: 'inset 0 0 0 1px var(--line)', borderStyle: 'dashed' }}>
@@ -87,11 +98,14 @@ function label(t: TestResult): string {
   return t.call ?? t.name
 }
 
-function TestRow({ t, showDetail, defaultOpen }: { t: TestResult; showDetail: boolean; defaultOpen: boolean }) {
+function TestRow({ t, index, showDetail, defaultOpen }: { t: TestResult; index: number; showDetail: boolean; defaultOpen: boolean }) {
   const [open, setOpen] = useState(defaultOpen)
   const canOpen = !t.passed && showDetail
   return (
-    <li className={`rise-in overflow-hidden rounded-lg ${t.passed ? '' : 'bg-fail-soft/50'}`} style={{ boxShadow: `inset 0 0 0 1px ${t.passed ? 'var(--line)' : 'rgba(180,35,24,0.18)'}` }}>
+    <li
+      className={`rise-in overflow-hidden rounded-lg ${t.passed ? 'bg-bg' : 'bg-fail-soft/50'}`}
+      style={{ boxShadow: `inset 0 0 0 1px ${t.passed ? 'rgba(36,166,106,0.18)' : 'rgba(180,35,24,0.18)'}`, animationDelay: `${Math.min(index, 8) * 40}ms` }}
+    >
       <button
         type="button"
         className="flex w-full items-center gap-2.5 px-3 py-2 text-left"
@@ -99,7 +113,15 @@ function TestRow({ t, showDetail, defaultOpen }: { t: TestResult; showDetail: bo
         aria-expanded={canOpen ? open : undefined}
         disabled={!canOpen}
       >
-        {t.passed ? <IconCheck size={14} className="shrink-0 text-pass" /> : <IconX size={14} className="shrink-0 text-fail" />}
+        {t.passed ? (
+          <span className="grid size-[18px] shrink-0 place-items-center rounded-full bg-green-soft text-green">
+            <IconCheck size={11} strokeWidth={2.4} />
+          </span>
+        ) : (
+          <span className="grid size-[18px] shrink-0 place-items-center rounded-full bg-fail-soft text-fail">
+            <IconX size={11} strokeWidth={2.4} />
+          </span>
+        )}
         <span className="sr-only">{t.passed ? 'Passed:' : 'Failed:'}</span>
         <code className="mono min-w-0 flex-1 truncate text-[12.5px] text-ink-2">{t.call ?? t.name}</code>
         {canOpen && <span className="text-[11.5px] text-muted">{open ? 'Hide' : 'Details'}</span>}

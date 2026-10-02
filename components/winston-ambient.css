@@ -14,6 +14,27 @@
   transition: left var(--walk-ms, 0ms) linear;
 }
 
+/* Winston standing in the page (components/winston-perch.tsx). */
+.wa-perch {
+  position: absolute;
+  left: 0;
+  bottom: 3px;
+  width: 64px;
+  height: 64px;
+  transition: transform var(--walk-ms, 0ms) linear;
+}
+.wa-perch::before {
+  content: '';
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 1px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.12);
+  filter: blur(2px);
+}
+
 /* A soft shadow under his feet. */
 .wa::before {
   content: '';
@@ -56,7 +77,8 @@
     animation: none !important;
     background-position: 0 0 !important;
   }
-  .wa {
+  .wa,
+  .wa-perch {
     transition: none !important;
   }
 }

@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { GlyphTerminal, GlyphTimer } from '@/components/concept-icons'
 import { useReps } from '@/components/reps-provider'
 import { MOCKS } from '@/data/mocks'
 import { DAY_BY_DATE, EXERCISE_BY_ID } from '@/data/curriculum'
@@ -19,9 +20,10 @@ export default function InterviewView() {
   const cold = DAY_BY_DATE['2026-10-11']?.sections.flatMap((s) => s.exercises).filter((e) => e.repType === 'cold' && e.problemId) ?? []
 
   return (
-    <main className="flex-1 bg-canvas">
+    <main data-mode="interview" className="flex-1 bg-canvas">
       <div className="mx-auto w-full max-w-[960px] px-5 pb-28 pt-10 sm:px-8">
-      <h1 className="display">Interview Reps</h1>
+      <p className="eyebrow text-faint">Simulation</p>
+      <h1 className="display-xl mt-1.5">Interview Reps</h1>
       <p className="mt-2 max-w-[600px] text-[14.5px] text-muted">45-minute mock sessions in a focused room: a timer, a plain editor, your own tests, and minimal assistance.</p>
 
       <ul className="mt-8 grid gap-4 sm:grid-cols-2">
@@ -29,6 +31,14 @@ export default function InterviewView() {
           const past = results.filter((r) => r.mockId === m.id && r.completedAt)
           return (
             <li key={m.id} className="panel flex flex-col gap-4 p-6">
+              <div className="flex items-center justify-between">
+                <span className="grid size-10 place-items-center rounded-xl bg-ink text-white">
+                  <GlyphTerminal size={18} />
+                </span>
+                <span className="mono inline-flex items-center gap-1.5 rounded-md bg-surface-2 px-2 py-1 text-[12px] text-ink-2">
+                  <GlyphTimer size={13} /> {m.minutes}:00
+                </span>
+              </div>
               <div>
                 <h2 className="h2">{m.title}</h2>
                 <p className="mt-1 text-[13.5px] text-muted">{m.note}</p>

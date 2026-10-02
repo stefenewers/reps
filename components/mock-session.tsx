@@ -279,7 +279,7 @@ function MockRunner({ mock }: { mock: (typeof MOCKS)[number] }) {
 
   // The running interview is a focused room: it covers the app chrome.
   return (
-    <main className="fixed inset-0 z-40 flex flex-col bg-canvas" aria-label={`Mock interview: ${mock.title}`}>
+    <main data-mode="interview" className="fixed inset-0 z-40 flex flex-col bg-canvas" aria-label={`Mock interview: ${mock.title}`}>
       <div className="flex h-14 shrink-0 items-center gap-4 bg-bg px-4 sm:px-6" style={{ boxShadow: '0 1px 0 var(--hairline)' }}>
         <div role="tablist" aria-label="Problems" className="seg">
           {problems.map((p, i) => (

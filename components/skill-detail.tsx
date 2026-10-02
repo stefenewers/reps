@@ -58,7 +58,7 @@ export default function SkillDetail({ id }: { id: string }) {
           <span className="num text-[40px] font-semibold leading-none tracking-tight">{m.status === 'unseen' ? '—' : m.score}</span>
           <div className="flex flex-col gap-2">
             <StatusLabel status={m.status} />
-            <ScoreBar score={m.score} className="!w-48" />
+            <ScoreBar score={m.score} status={m.status} className="!w-48" />
           </div>
           <p className="ml-auto text-[13px] text-muted">{evidenceText(evidenceFor(id, attempts))}</p>
         </div>

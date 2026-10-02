@@ -16,7 +16,8 @@ import { firstDifference, hasBlanks, outputMatches } from '@/lib/answers'
 import { localDate, shortDate } from '@/lib/dates'
 import { KIND_VERB } from '@/lib/labels'
 import { kindOf } from '@/components/rep-kind'
-import { IconArrowRight, IconBug, IconBulb, IconClock, IconDots, IconExternal, IconFile, IconPlay, IconRotate, IconSpark, IconX } from '@/components/icons'
+import { RepsBars } from '@/components/motif'
+import { IconArrowRight, IconBug, IconBulb, IconClock, IconDots, IconExternal, IconPlay, IconRotate, IconSpark, IconX } from '@/components/icons'
 import { followingExercise, missingPrerequisites, retrievalTypeFor } from '@/lib/progress'
 import { getRunner, type RunResult } from '@/lib/python/runner'
 import { buildRepairSet, createSession, findExercise, getSession, newId } from '@/lib/sessions'
@@ -622,7 +623,7 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
   const submitLabel = isDebug ? 'Submit fix' : 'Submit'
 
   return (
-    <main className="flex flex-1 flex-col bg-canvas lg:h-[calc(100dvh-56px)] lg:flex-none lg:overflow-hidden">
+    <main data-kind={kind.key} data-mode={mode} className="flex flex-1 flex-col bg-canvas lg:h-[calc(100dvh-56px)] lg:flex-none lg:overflow-hidden">
       {/* Rep bar: where am I, how far, which mode */}
       <div className="relative flex h-12 shrink-0 items-center gap-4 bg-bg px-4 sm:px-6" style={{ boxShadow: '0 1px 0 var(--hairline)' }}>
         <nav aria-label="Breadcrumb" className="flex min-w-0 items-center gap-1.5 text-[13px]">
@@ -639,12 +640,13 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
           <span className="truncate font-medium text-ink">{crumbTitle}</span>
         </nav>
         {total > 0 && index > 0 && (
-          <div className="hidden items-center gap-2.5 sm:flex">
-            <span className="num text-[12.5px] text-muted">
-              {index} / {total}
+          <div className="hidden items-center gap-3 sm:flex">
+            <span className="flex items-baseline gap-1.5">
+              <span className="eyebrow text-kind-ink">Rep {index}</span>
+              <span className="num text-[12px] text-faint">of {total}{session ? '' : ' today'}</span>
             </span>
-            <span className="bar bar-thin w-28" aria-hidden="true">
-              <span style={{ width: `${progressPct}%` }} />
+            <span className="bar bar-thin w-32" aria-hidden="true">
+              <span style={{ width: `${progressPct}%`, background: 'var(--kind)' }} />
             </span>
           </div>
         )}
@@ -679,7 +681,21 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
           className="flex min-w-0 shrink-0 flex-col overflow-y-auto bg-bg lg:basis-[var(--split)]"
           style={{ '--split': `${split}%` } as React.CSSProperties}
         >
-          <div className="flex flex-col gap-6 px-6 py-7 lg:px-8">
+          <span aria-hidden="true" className="h-[3px] shrink-0 bg-kind opacity-80" />
+          <div className="rep-in flex flex-col gap-6 px-6 py-7 lg:px-8">
+            {isDebug && !passed && (
+              <div className="flex items-center gap-3 rounded-2xl bg-amber-soft px-4 py-3 shadow-[inset_0_0_0_1px_rgba(232,150,42,0.25)]">
+                <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-bg text-amber shadow-sm">
+                  <IconBug size={18} />
+                </span>
+                <div className="min-w-0">
+                  <p className="eyebrow text-amber-ink">Bug found</p>
+                  <p className="text-[13.5px] text-ink-2">
+                    {debugFailing === null ? 'Checking the broken code…' : `${debugFailing} test${debugFailing === 1 ? '' : 's'} failing. Read it, run it, fix it.`}
+                  </p>
+                </div>
+              </div>
+            )}
             <div className="flex flex-col gap-3">
               <div className="flex flex-wrap items-center gap-2">
                 <span className={kind.badgeClass}>
@@ -846,26 +862,21 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
 
         {/* Workspace */}
         <section aria-label="Workspace" className="flex min-h-[520px] min-w-0 flex-1 flex-col p-3 lg:min-h-0 lg:p-4">
-          <div className="panel flex min-h-0 flex-1 flex-col overflow-hidden">
+          <div className="rep-in panel flex min-h-0 flex-1 flex-col overflow-hidden">
             {/* Editor chrome */}
             <div className="flex h-11 shrink-0 items-center gap-3 px-4" style={{ boxShadow: '0 1px 0 var(--line)' }}>
               {ex.kind === 'code' ? (
                 <>
-                  <span className="flex items-center gap-1.5 text-[13px] font-medium text-ink">
-                    <IconFile size={14} className="text-muted" /> main.py
+                  <span className="flex items-center gap-2 text-[13px] font-medium text-ink">
+                    <PyMark /> main.py
                   </span>
-                  <span className="text-[12px] text-faint">Python</span>
+                  <span className="rounded-md bg-surface-2 px-1.5 py-0.5 text-[11px] font-medium capitalize text-muted">{mode}</span>
                 </>
               ) : (
                 <span className="text-[13px] font-medium text-ink">{KIND_VERB[ex.kind]}</span>
               )}
               {runnable && <PyStatusDot status={phase === 'running' ? 'running' : pyStatus} />}
               <div className="ml-auto flex items-center gap-2">
-                {isDebug && debugFailing !== null && !passed && !result && (
-                  <span className="badge badge-debug normal-case tracking-normal">
-                    <IconBug size={12} /> {debugFailing} test{debugFailing === 1 ? '' : 's'} failing
-                  </span>
-                )}
                 {ex.kind === 'code' && !passed && (
                   <button type="button" className="icon-btn" onClick={() => setCode(blankStarter(ex))} aria-label="Reset code" title="Reset code">
                     <IconRotate size={14} />
@@ -943,7 +954,8 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
 
             {/* Actions */}
             {passed ? (
-              <div className="rise-in flex shrink-0 flex-wrap items-center gap-x-4 gap-y-3 bg-pass-soft/70 py-3 pl-4 pr-24" style={{ boxShadow: '0 -1px 0 rgba(21,128,61,0.15)' }} data-testid="rep-complete">
+              <div className="success-in relative flex shrink-0 flex-wrap items-center gap-x-4 gap-y-3 overflow-hidden bg-green-soft py-3.5 pl-4 pr-24" style={{ boxShadow: '0 -1px 0 rgba(36,166,106,0.2)' }} data-testid="rep-complete">
+                <span aria-hidden="true" className="success-wash pointer-events-none absolute inset-0" />
                 <div className="flex min-w-0 items-center gap-3">
                   <span className="pop-in grid size-8 shrink-0 place-items-center rounded-full bg-pass text-white shadow-sm">
                     <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
@@ -951,12 +963,18 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
                     </svg>
                   </span>
                   <div className="min-w-0">
-                    <p className="text-[14px] font-semibold text-ink">
+                    <p className="flex items-center gap-2 text-[14.5px] font-semibold text-ink">
                       Rep complete{runItBack ? ' · reconstructed' : ''}
+                      <span className="pop-in rounded-full bg-green px-2 py-px text-[11px] font-semibold text-white [animation-delay:160ms]">+1 rep</span>
                     </p>
-                    <p className="truncate text-[12.5px] text-muted">
-                      {runnable && testsTotal ? `All ${testsTotal} tests passed · ` : ''}+ evidence for {evidence.slice(0, 3).join(', ')}
-                      {evidence.length > 3 ? ` +${evidence.length - 3}` : ''}
+                    <p className="mt-1 flex flex-wrap items-center gap-1.5 text-[12px] text-green-ink">
+                      {runnable && testsTotal ? <span className="mr-1 font-medium">{testsTotal}/{testsTotal} tests</span> : null}
+                      {evidence.slice(0, 3).map((name, i) => (
+                        <span key={name} className="evidence-in rounded-full bg-bg/80 px-2 py-0.5 text-[11.5px] text-green-ink shadow-[inset_0_0_0_1px_rgba(36,166,106,0.2)]" style={{ animationDelay: `${220 + i * 70}ms` }}>
+                          + {name}
+                        </span>
+                      ))}
+                      {evidence.length > 3 && <span className="text-[11.5px]">+{evidence.length - 3}</span>}
                     </p>
                   </div>
                 </div>
@@ -976,13 +994,13 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
                       </button>
                     ))}
                   </div>
-                  <button type="button" className={`btn ${assisted && !runItBack ? 'btn-accent' : ''}`} onClick={doRunItBack}>
-                    <IconRotate size={14} /> Run it back
+                  <button type="button" className={`btn ${assisted && !runItBack ? 'btn-accent' : ''}`} onClick={doRunItBack} title="Reset the editor and write it again from memory">
+                    <RepsBars width={13} bar={2} gap={1.5} /> Run it back
                   </button>
                   <button type="button" className="btn" onClick={() => another('same')} disabled={coachBusy !== null}>
                     {coachBusy === 'same' ? 'Finding…' : 'Another rep'}
                   </button>
-                  <Link href={nextHref} className="btn btn-primary btn-lg" data-testid="next-rep" autoFocus>
+                  <Link href={nextHref} className="cta-in btn btn-accent btn-lg" data-testid="next-rep" autoFocus>
                     {nextHref.endsWith('/summary') ? 'Finish the day' : session && session.exerciseIds.indexOf(ex.id) === session.exerciseIds.length - 1 && session.returnTo ? 'Retry capstone' : 'Next rep'}
                     <IconArrowRight size={15} />
                   </Link>
@@ -1071,6 +1089,16 @@ const MODE_HINT: Record<Mode, string> = {
   learn: 'Reminders, hints and detailed test feedback',
   practice: 'Tests available · hints on request',
   interview: 'Timer · plain editor · no hints unless you ask',
+}
+
+/** A tiny two-tone Python mark for the editor tab. */
+function PyMark() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true">
+      <path d="M7.9 1.5c-3.3 0-3.1 1.4-3.1 1.4v1.5H8v.5H3.5S1.5 4.7 1.5 8s1.8 3.2 1.8 3.2h1.1V9.6s-.1-1.8 1.8-1.8h3.1s1.7 0 1.7-1.7V3.3s.3-1.8-3.1-1.8Zm-1.7 1a.6.6 0 1 1 0 1.1.6.6 0 0 1 0-1.1Z" fill="#3157d5" />
+      <path d="M8.1 14.5c3.3 0 3.1-1.4 3.1-1.4v-1.5H8v-.5h4.5s2 .2 2-3.1-1.8-3.2-1.8-3.2h-1.1v1.6s.1 1.8-1.8 1.8H6.7S5 8.2 5 9.9v2.8s-.3 1.8 3.1 1.8Zm1.7-1a.6.6 0 1 1 0-1.1.6.6 0 0 1 0 1.1Z" fill="#e8962a" />
+    </svg>
+  )
 }
 
 function FailLine({ children }: { children: React.ReactNode }) {

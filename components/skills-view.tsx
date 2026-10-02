@@ -5,6 +5,8 @@ import { useMemo } from 'react'
 import { useReps } from '@/components/reps-provider'
 import { ScoreBar, StatusLabel } from '@/components/mastery-bits'
 import { SKILLS, SKILL_GROUPS } from '@/data/skills'
+import { GROUP_GLYPH, GlyphBraces } from '@/components/concept-icons'
+import { createElement } from 'react'
 import type { Attempt } from '@/lib/types'
 
 /** Evidence behind a number: what was actually written, and what slipped cold. */
@@ -46,7 +48,7 @@ export default function SkillsView() {
   return (
     <main className="flex-1 bg-canvas">
       <div className="mx-auto w-full max-w-[1120px] px-5 pb-28 pt-10 sm:px-8">
-        <h1 className="display">Skills</h1>
+        <h1 className="display-xl">Skills</h1>
         <p className="mt-2 max-w-[640px] text-[14.5px] text-muted">Mastery comes from what you actually wrote, debugged and recalled cold. Recognising something is never enough to look fluent.</p>
         <dl className="mt-6 flex flex-wrap gap-x-10 gap-y-3">
           {[
@@ -66,8 +68,12 @@ export default function SkillsView() {
             const list = SKILLS.filter((s) => s.group === g)
             return (
               <section key={g} aria-labelledby={`g-${g}`}>
-                <h2 id={`g-${g}`} className="h2 mb-3">
+                <h2 id={`g-${g}`} className="h2 mb-3 flex items-center gap-2.5">
+                  <span className="grid size-7 place-items-center rounded-lg bg-bg text-ink-2 shadow-[0_0_0_1px_var(--hairline)]">{createElement(GROUP_GLYPH[g] ?? GlyphBraces, { size: 15 })}</span>
                   {g}
+                  <span className="num text-[12.5px] font-normal text-faint">
+                    {list.filter((x) => mastery[x.id].status !== 'unseen').length}/{list.length}
+                  </span>
                 </h2>
                 <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                   {list.map((s) => {
@@ -80,7 +86,7 @@ export default function SkillsView() {
                             <span className={`text-[14.5px] font-medium ${unseen ? 'text-muted' : 'text-ink'}`}>{s.name}</span>
                             <span className={`num text-[20px] font-semibold leading-none tracking-tight ${unseen ? 'text-faint' : ''}`}>{unseen ? '—' : m.score}</span>
                           </div>
-                          <ScoreBar score={m.score} className="!w-full" />
+                          <ScoreBar score={m.score} status={m.status} className="!w-full" />
                           <div className="flex items-center justify-between gap-2">
                             <StatusLabel status={m.status} compact />
                             <span className="truncate text-[12px] text-muted">{evidenceText(evidence[s.id])}</span>

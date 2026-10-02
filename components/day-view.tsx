@@ -5,6 +5,7 @@ import { useReps } from '@/components/reps-provider'
 import ProgressRing from '@/components/progress-ring'
 import { kindOf, compositionText } from '@/components/rep-kind'
 import { IconArrowRight, IconCheck, IconLock } from '@/components/icons'
+import { ConceptGlyph, sectionKind } from '@/components/concept-icons'
 import { DAY_BY_DATE, DAYS } from '@/data/curriculum'
 import { PROBLEM_BY_ID } from '@/data/problems'
 import { MOCKS } from '@/data/mocks'
@@ -36,12 +37,12 @@ export default function DayView({ date }: { date: string }) {
           {longDate(day.date)} · Day {dayNumber} of {DAYS.length}
           {day.date === today ? ' · Today' : ''}
         </p>
-        <h1 className="display mt-1.5">{day.date === '2026-10-11' ? 'Interview Reps' : day.short}</h1>
+        <h1 className="display-xl mt-1.5">{day.date === '2026-10-11' ? 'Interview Reps' : day.short}</h1>
         <p className="mt-1.5 text-[15.5px] text-ink-2">{day.title}</p>
         <p className="mt-2 max-w-[680px] text-[14px] leading-relaxed text-muted">{day.focus}</p>
 
-        <section className="panel mt-7 flex flex-col gap-5 p-6 sm:flex-row sm:items-center">
-          <ProgressRing value={stats.percent} size={64} stroke={5}>
+        <section className="accent-wash mt-7 flex flex-col gap-5 rounded-[20px] p-6 shadow-[0_0_0_1px_rgba(49,87,213,0.14),0_14px_36px_-14px_rgba(49,87,213,0.25)] sm:flex-row sm:items-center">
+          <ProgressRing value={stats.percent} size={64} stroke={5} tone="accent">
             <span className="num text-[15px] font-semibold">{stats.percent}%</span>
           </ProgressRing>
           <div className="min-w-0 flex-1">
@@ -74,7 +75,7 @@ export default function DayView({ date }: { date: string }) {
               </Link>
             )}
             {next ? (
-              <Link href={`/rep/${next.id}`} className="btn btn-primary btn-lg">
+              <Link href={`/rep/${next.id}`} className="btn btn-accent btn-lg">
                 {stats.completed ? 'Continue' : 'Start'} <IconArrowRight size={15} />
               </Link>
             ) : (
@@ -93,24 +94,39 @@ export default function DayView({ date }: { date: string }) {
             const isCurrent = si === currentSection
             const minutes = s.exercises.reduce((m, e) => m + e.minutes, 0)
             const sectionNext = s.exercises.find((e) => !passed.has(e.id))
+            const sk = sectionKind(s.title, s.exercises)
             const startN = offsets[si]
             return (
-              <li key={s.id} aria-labelledby={`sec-${s.id}`} className={`${isCurrent ? 'panel' : 'card'} overflow-hidden ${!isCurrent && !complete ? 'opacity-[0.92]' : ''}`}>
+              <li
+                key={s.id}
+                aria-labelledby={`sec-${s.id}`}
+                className={`overflow-hidden rounded-2xl ${
+                  isCurrent ? 'panel shadow-[0_0_0_1.5px_rgba(49,87,213,0.35),var(--shadow-md)]' : complete ? 'bg-green-soft/50 shadow-[0_0_0_1px_rgba(36,166,106,0.18)]' : 'card'
+                }`}
+              >
                 <div className="flex flex-wrap items-start gap-4 px-5 py-4 sm:px-6">
                   <span
                     aria-hidden="true"
-                    className={`mt-0.5 grid size-7 shrink-0 place-items-center rounded-full ${
-                      complete ? 'bg-pass text-white' : isCurrent ? 'bg-ink text-white' : 'bg-surface-2 text-faint'
+                    className={`mt-0.5 grid size-9 shrink-0 place-items-center rounded-xl ${
+                      complete
+                        ? 'bg-green text-white'
+                        : isCurrent
+                          ? 'bg-accent text-white shadow-[0_4px_12px_-4px_rgba(49,87,213,0.6)]'
+                          : sk === 'capstone'
+                            ? 'bg-ink text-white'
+                            : sk === 'cold'
+                              ? 'bg-violet-soft text-violet'
+                              : 'bg-surface-2 text-muted'
                     }`}
                   >
-                    {complete ? <IconCheck size={14} strokeWidth={2.2} /> : !unlocked ? <IconLock size={13} /> : <span className="num text-[12px] font-semibold">{si + 1}</span>}
+                    {complete ? <IconCheck size={16} strokeWidth={2.2} /> : !unlocked && sk === 'normal' ? <IconLock size={14} /> : <ConceptGlyph name={s.title} size={17} />}
                   </span>
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1">
                       <h2 id={`sec-${s.id}`} className="h2">
                         {s.title}
                       </h2>
-                      {complete && <span className="text-[12px] font-medium text-pass">Done</span>}
+                      {complete && <span className="text-[12px] font-medium text-green-ink">Done</span>}
                       {isCurrent && <span className="text-[12px] font-medium text-accent">In progress</span>}
                       {!unlocked && !complete && <span className="text-[12px] text-faint">Up next · open any rep anyway</span>}
                     </div>
@@ -149,12 +165,29 @@ export default function DayView({ date }: { date: string }) {
                             aria-label={`Rep ${num}: ${e.title}, ${k.short}. ${isDone ? 'Complete.' : isTried ? 'Attempted, not passed.' : isNext ? 'Next up.' : ''}`}
                           >
                             <span className="num text-right text-[11.5px] text-faint">{num}</span>
-                            <span aria-hidden="true" className={`grid size-[22px] place-items-center rounded-md ${isDone ? 'bg-pass-soft text-pass' : isTried ? 'bg-warn-soft text-warn' : 'bg-surface-2 text-muted'}`}>
+                            <span
+                              aria-hidden="true"
+                              className={`grid size-[22px] place-items-center rounded-md ${
+                                isDone
+                                  ? 'bg-green-soft text-green'
+                                  : isTried
+                                    ? 'bg-fail-soft text-fail'
+                                    : k.key === 'debug'
+                                      ? 'bg-amber-soft text-amber-ink'
+                                      : k.key === 'cold'
+                                        ? 'bg-violet-soft text-violet'
+                                        : k.key === 'capstone'
+                                          ? 'bg-ink text-white'
+                                          : k.key === 'code'
+                                            ? 'bg-accent-soft text-accent'
+                                            : 'bg-surface-2 text-muted'
+                              }`}
+                            >
                               {isDone ? <IconCheck size={12} strokeWidth={2.2} /> : <k.Icon size={12} />}
                             </span>
                             <span className={`truncate ${isNext ? 'font-medium text-ink' : ''}`}>{e.title}</span>
                             <span className="flex items-center gap-2 text-[11.5px] text-faint">
-                              <span className={k.bucket === 'debug' ? 'font-medium text-warn' : k.bucket === 'capstone' ? 'font-medium text-ink' : ''}>{k.short}</span>
+                              <span className={k.key === 'debug' ? 'font-medium text-amber-ink' : k.key === 'capstone' ? 'font-medium text-ink' : k.key === 'cold' ? 'font-medium text-violet-ink' : ''}>{k.short}</span>
                               <span className="num w-10 text-right">{Math.round(e.minutes)} min</span>
                             </span>
                           </Link>

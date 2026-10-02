@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState, type CSSProperties } from 'react'
+import { usePathname } from 'next/navigation'
 import './winston-ambient.css'
 
 /**
@@ -21,6 +22,20 @@ export default function WinstonAmbient() {
   const [walkMs, setWalkMs] = useState(0)
   const [facing, setFacing] = useState<1 | -1>(-1)
   const xRef = useRef(0)
+  const pathname = usePathname()
+  const [perched, setPerched] = useState(false)
+
+  // If the page gives Winston somewhere to stand, the corner Winston steps aside.
+  useEffect(() => {
+    const check = () => setPerched(Boolean(document.querySelector('[data-winston-perch]')))
+    const t = window.setTimeout(check, 50)
+    const obs = new MutationObserver(check)
+    obs.observe(document.body, { childList: true, subtree: true })
+    return () => {
+      window.clearTimeout(t)
+      obs.disconnect()
+    }
+  }, [pathname])
 
   useEffect(() => {
     const home = () => window.innerWidth - SIZE - EDGE
@@ -67,7 +82,7 @@ export default function WinstonAmbient() {
     }
   }, [])
 
-  if (x === null) return null
+  if (x === null || perched) return null
   return (
     <div className="wa" aria-hidden="true" style={{ left: x, '--walk-ms': `${walkMs}ms` } as CSSProperties}>
       <span className={`wa-sprite ${walking ? 'wa-sprite--walk' : 'wa-sprite--idle'}`} style={{ '--face': facing } as CSSProperties} />
