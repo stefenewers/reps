@@ -19,6 +19,12 @@ async function answer(page: Page, e: Exercise) {
 test('today → first rep → correct answer → mastery updates → reload → progress persists', async ({ page }) => {
   await page.goto('/')
   await expect(page.getByRole('heading', { name: "Today's Reps" })).toBeVisible()
+  // The header names the interview, not its date.
+  const chip = page.getByTestId('interview-target-chip')
+  await expect(chip).toContainText('Google SWE')
+  await expect(chip).not.toContainText(/Oct|October|days?\b/)
+  await expect(chip).toHaveAttribute('href', '/interview')
+  await expect(page.getByRole('heading', { name: 'Road to Ready' })).toBeVisible()
   const rail = page.getByRole('progressbar', { name: /Overall Reps curriculum progress/ })
   await expect(rail).toHaveAttribute('aria-valuenow', '0')
   await page.getByTestId('start-today').click()

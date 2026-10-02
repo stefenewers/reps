@@ -27,6 +27,7 @@ durable progress across devices. OpenAI adds the on-demand coach.
 | `data/problems.ts` | Canonical LeetCode targets (links only, no copied statements) |
 | `data/exercises/oct02.ts` … `oct11.ts` | The ten day modules, 635 reps, code-first |
 | `data/mocks.ts` | Two 45-minute mock interviews |
+| `data/program.ts` | The interview target, the finish line, and the ten Road to Ready stages (copy only; counts come from the curriculum) |
 | `data/curriculum.ts` | Indexes the days |
 | `docs/authoring.md` | How to write reps (read the Code-first section) |
 | `lib/curriculum-audit.ts` | Classifies reps as active/guided/passive, models time, enforces guardrails |

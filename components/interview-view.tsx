@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { GlyphTerminal, GlyphTimer } from '@/components/concept-icons'
+import { InterviewTargetFull } from '@/components/interview-target'
 import { useReps } from '@/components/reps-provider'
 import { MOCKS } from '@/data/mocks'
 import { DAY_BY_DATE, EXERCISE_BY_ID } from '@/data/curriculum'
@@ -24,9 +25,15 @@ export default function InterviewView() {
       <div className="mx-auto w-full max-w-[960px] px-5 pb-28 pt-10 sm:px-8">
       <p className="eyebrow text-faint">Simulation</p>
       <h1 className="display-xl mt-1.5">Interview Reps</h1>
-      <p className="mt-2 max-w-[600px] text-[14.5px] text-muted">45-minute mock sessions in a focused room: a timer, a plain editor, your own tests, and minimal assistance.</p>
+      <p className="mt-2 max-w-[600px] text-[14.5px] text-muted">Rehearsal for the real thing: 45-minute sessions in a focused room with a timer, a plain editor, your own tests, and minimal assistance.</p>
 
-      <ul className="mt-8 grid gap-4 sm:grid-cols-2">
+      <div className="mt-8">
+        <InterviewTargetFull />
+      </div>
+
+      <h2 className="h2 mt-12">Mock interviews</h2>
+
+      <ul className="mt-4 grid gap-4 sm:grid-cols-2">
         {MOCKS.map((m) => {
           const past = results.filter((r) => r.mockId === m.id && r.completedAt)
           return (

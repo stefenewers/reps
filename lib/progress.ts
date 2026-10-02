@@ -227,3 +227,90 @@ export function programProgress(days: DayModule[], attempts: Attempt[]): Program
   })
   return { completed, total, fraction: total ? completed / total : 0, days: out }
 }
+
+// ── road to ready: topic stages ──────────────────────────────────────────────
+
+export type StageStatus = 'complete' | 'current' | 'partial' | 'upcoming'
+
+/** The stage copy lives in data/program.ts; only what progress needs is typed here. */
+export interface StageDefinition {
+  dayDate: string
+  title: string
+  shortTitle: string
+  requiresMocks?: boolean
+}
+
+export interface StageProgress<S extends StageDefinition = StageDefinition> {
+  stage: S
+  index: number
+  day: DayModule
+  completed: number
+  total: number
+  fraction: number
+  status: StageStatus
+  /** First section with an unfinished rep, and the ones after it. */
+  currentSection?: string
+  nextSections: string[]
+  capstones: string[]
+  mocks?: { completed: number; total: number }
+}
+
+/** Mock interviews finished (a completed result per distinct mock), never just opened. */
+export function mockProgress(results: { mockId: string; completedAt?: string }[], mockIds: string[]): { completed: number; total: number } {
+  const done = new Set(results.filter((r) => r.completedAt && mockIds.includes(r.mockId)).map((r) => r.mockId))
+  return { completed: done.size, total: mockIds.length }
+}
+
+/**
+ * Where you actually are, from canonical completion, never from the calendar.
+ * The current stage is the earliest one that isn't complete; later stages you
+ * have touched show as partial but never count as finished out of order.
+ */
+export function programStageProgress<S extends StageDefinition>(
+  stages: S[],
+  days: DayModule[],
+  attempts: Attempt[],
+  mocks: { completed: number; total: number },
+): StageProgress<S>[] {
+  const passed = passedSet(attempts)
+  const byDate = new Map(days.map((d) => [d.date, d]))
+  let currentFound = false
+  return stages.map((stage, index) => {
+    const day = byDate.get(stage.dayDate)!
+    const list = day.sections.flatMap((s) => s.exercises)
+    const completed = list.filter((e) => passed.has(e.id)).length
+    const total = list.length
+    const repsDone = total > 0 && completed === total
+    const mocksDone = !stage.requiresMocks || mocks.completed >= mocks.total
+    let status: StageStatus
+    if (repsDone && mocksDone) status = 'complete'
+    else if (!currentFound) {
+      status = 'current'
+      currentFound = true
+    } else status = completed > 0 ? 'partial' : 'upcoming'
+    const firstOpen = day.sections.findIndex((s) => s.exercises.some((e) => !passed.has(e.id)))
+    return {
+      stage,
+      index,
+      day,
+      completed,
+      total,
+      fraction: total ? completed / total : 0,
+      status,
+      currentSection: firstOpen >= 0 ? day.sections[firstOpen].title : undefined,
+      nextSections: firstOpen >= 0 ? day.sections.slice(firstOpen + 1).map((s) => s.title) : [],
+      capstones: day.capstones,
+      mocks: stage.requiresMocks ? mocks : undefined,
+    }
+  })
+}
+
+/** The stage you are in, or undefined when the whole program is complete. */
+export function currentProgramStage<S extends StageDefinition>(list: StageProgress<S>[]): StageProgress<S> | undefined {
+  return list.find((s) => s.status === 'current')
+}
+
+/** Every stage not yet complete, in order (the current one first). */
+export function remainingProgramStages<S extends StageDefinition>(list: StageProgress<S>[]): StageProgress<S>[] {
+  return list.filter((s) => s.status !== 'complete')
+}

@@ -2,7 +2,10 @@
 
 import { createContext, useContext, useEffect, useMemo, useState, useSyncExternalStore, type ReactNode } from 'react'
 import { SKILLS } from '@/data/skills'
-import { DAY_BY_DATE, FIRST_DAY, LAST_DAY } from '@/data/curriculum'
+import { DAY_BY_DATE, DAYS, FIRST_DAY, LAST_DAY } from '@/data/curriculum'
+import { MOCKS } from '@/data/mocks'
+import { PROGRAM_STAGES, type ProgramStage } from '@/data/program'
+import { currentProgramStage, mockProgress, programStageProgress, remainingProgramStages, type StageProgress } from '@/lib/progress'
 import { computeAllMastery, type SkillMastery } from '@/lib/mastery'
 import { clampDate, localDate } from '@/lib/dates'
 import { createLocalStore } from '@/lib/storage/local'
@@ -11,7 +14,7 @@ import { SyncEngine } from '@/lib/storage/sync'
 import { RepsRepository } from '@/lib/storage/repository'
 import type { SyncStatus } from '@/lib/storage/types'
 import { getSupabase } from '@/lib/supabase'
-import type { Attempt, ReviewItem } from '@/lib/types'
+import type { Attempt, MockResult, ReviewItem } from '@/lib/types'
 
 /**
  * Boots persistence once per tab and exposes derived state.
@@ -31,6 +34,13 @@ interface RepsContextValue {
   mastery: Record<string, SkillMastery>
   today: string
   userEmail: string | null
+  /** Road to Ready, computed once from canonical progress and finished mocks. */
+  program: {
+    stages: StageProgress<ProgramStage>[]
+    current?: StageProgress<ProgramStage>
+    remaining: StageProgress<ProgramStage>[]
+    mocks: { completed: number; total: number }
+  }
 }
 
 const RepsContext = createContext<RepsContextValue | null>(null)
@@ -98,6 +108,13 @@ export function RepsProvider({ children }: { children: ReactNode }) {
   const reviews = repo.reviews()
   // Mastery is derived from the canonical attempt history, never stored opinion.
   const mastery = useMemo(() => computeAllMastery(SKILL_IDS, attempts), [attempts])
+  const studyState = repo.engine.all('study_state')
+  const program = useMemo(() => {
+    const results = studyState.filter((r) => r.id.startsWith('mock:')).map((r) => r.value as MockResult)
+    const mocks = mockProgress(results, MOCKS.map((m) => m.id))
+    const stages = programStageProgress(PROGRAM_STAGES, DAYS, attempts, mocks)
+    return { stages, current: currentProgramStage(stages), remaining: remainingProgramStages(stages), mocks }
+  }, [attempts, studyState])
 
   const value: RepsContextValue = {
     repo,
@@ -111,6 +128,7 @@ export function RepsProvider({ children }: { children: ReactNode }) {
     mastery,
     today,
     userEmail,
+    program,
   }
   return <RepsContext.Provider value={value}>{children}</RepsContext.Provider>
 }

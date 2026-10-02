@@ -3,9 +3,8 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useReps } from '@/components/reps-provider'
-import { INTERVIEW_DATE } from '@/data/curriculum'
-import { daysBetween, localDate } from '@/lib/dates'
 import { DAYS } from '@/data/curriculum'
+import { INTERVIEW_TARGET } from '@/data/program'
 import { programProgress } from '@/lib/progress'
 import ProgramProgress from '@/components/program-progress'
 import { useCallback, useMemo } from 'react'
@@ -59,7 +58,6 @@ function Mark() {
 
 export default function Header() {
   const pathname = usePathname() ?? '/'
-  const days = Math.max(0, daysBetween(localDate(), INTERVIEW_DATE))
   const { attempts, loaded, repo } = useReps()
   // The whole-program finish line: canonical curriculum reps only.
   const program = useMemo(() => programProgress(DAYS, attempts), [attempts])
@@ -96,10 +94,22 @@ export default function Header() {
           <span className={`num hidden px-1 text-[12px] font-medium transition-opacity sm:inline ${loaded ? 'text-muted' : 'text-transparent'}`} title={`${program.completed} of ${program.total} reps in the whole program`}>
             {pct}%<span className="sr-only"> of the whole program complete</span>
           </span>
-          <span className="inline-flex h-7 items-center gap-1.5 rounded-full bg-surface-2 px-2.5 text-[12px] text-ink-2" suppressHydrationWarning>
-            <span className="hidden text-muted lg:inline">Google · Oct 12 ·</span>
-            <span className="num font-medium">{days === 0 ? 'Today' : `${days} day${days === 1 ? '' : 's'}`}</span>
-          </span>
+          <Link
+            href="/interview"
+            data-testid="interview-target-chip"
+            title={`${INTERVIEW_TARGET.company} ${INTERVIEW_TARGET.role}: ${INTERVIEW_TARGET.rounds} technical interviews, ${INTERVIEW_TARGET.minutes} minutes each, in ${INTERVIEW_TARGET.language}`}
+            aria-label={`Interview target: ${INTERVIEW_TARGET.company} ${INTERVIEW_TARGET.role}, ${INTERVIEW_TARGET.rounds} × ${INTERVIEW_TARGET.minutes} minute technical interviews in ${INTERVIEW_TARGET.language}`}
+            className="inline-flex h-7 items-center gap-1.5 rounded-full bg-surface-2 px-2.5 text-[12px] text-ink-2 transition-colors hover:bg-surface-3"
+          >
+            <span className="hidden items-center gap-1.5 sm:inline-flex">
+              <span className="font-medium text-ink">{INTERVIEW_TARGET.chip.full[0]}</span>
+              <span aria-hidden="true" className="text-faint">·</span>
+              <span className="num">{INTERVIEW_TARGET.chip.full[1]}</span>
+              <span aria-hidden="true" className="hidden text-faint md:inline">·</span>
+              <span className="hidden md:inline">{INTERVIEW_TARGET.chip.full[2]}</span>
+            </span>
+            <span className="num font-medium sm:hidden">{INTERVIEW_TARGET.chip.compact}</span>
+          </Link>
         </div>
       </div>
       <ProgramProgress progress={program} loaded={loaded} lastLocalCompletionAt={lastLocal} />

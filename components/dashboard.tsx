@@ -4,19 +4,21 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useReps } from '@/components/reps-provider'
-import DateStrip from '@/components/date-strip'
+import RoadToReady from '@/components/road-to-ready'
+import { InterviewTargetCompact } from '@/components/interview-target'
 import LearningPath from '@/components/learning-path'
 import ChallengeMe from '@/components/challenge-me'
 import ProgressIO from '@/components/progress-io'
 import { ScoreBar, StatusLabel } from '@/components/mastery-bits'
 import { kindOf } from '@/components/rep-kind'
 import { BarsPattern, EmptyState, RepsBars } from '@/components/motif'
-import { ConceptGlyph, GlyphTimer } from '@/components/concept-icons'
+import { ConceptGlyph } from '@/components/concept-icons'
 import { IconArrowRight, IconClock, IconSnow, IconSpark } from '@/components/icons'
 import WinstonPerch from '@/components/winston-perch'
-import { ALL_EXERCISES, DAY_BY_DATE, DAY_OF_EXERCISE, DAYS, INTERVIEW_DATE } from '@/data/curriculum'
+import { ALL_EXERCISES, DAY_BY_DATE, DAY_OF_EXERCISE, DAYS } from '@/data/curriculum'
+import { PROGRAM_STAGES } from '@/data/program'
 import { skillName } from '@/data/skills'
-import { daysBetween, formatMinutes, localDate, parseLocal } from '@/lib/dates'
+import { formatMinutes, localDate, parseLocal } from '@/lib/dates'
 import { dayStats, nextExercise, passedSet, weakestSkills } from '@/lib/progress'
 import { buildReviewSession, dueReviews } from '@/lib/schedule'
 import { buildSkillSession, createSession } from '@/lib/sessions'
@@ -38,7 +40,7 @@ export default function Dashboard() {
   const sectionLeft = section ? section.exercises.filter((e) => !passed.has(e.id)).reduce((n, e) => n + e.minutes, 0) : 0
   const due = dueReviews(reviews)
   const weakest = weakestSkills(mastery, 5)
-  const daysLeft = Math.max(0, daysBetween(localDate(), INTERVIEW_DATE))
+  const todayStage = PROGRAM_STAGES.find((s) => s.dayDate === today)
   const started = stats.completed > 0
   const nextKind = next ? kindOf(next) : null
 
@@ -73,31 +75,15 @@ export default function Dashboard() {
       <div aria-hidden="true" className="dot-grid pointer-events-none absolute inset-x-0 top-0 h-[360px] [mask-image:linear-gradient(to_bottom,black,transparent)]" />
 
       <div className="relative mx-auto w-full max-w-[1120px] px-5 pb-10 pt-12 sm:px-8">
-        <header className="flex flex-wrap items-end justify-between gap-6">
+        <header className="flex flex-wrap items-end justify-between gap-x-10 gap-y-6">
           <div>
             <p className="eyebrow text-muted" suppressHydrationWarning>
-              {LONG_DAY.format(parseLocal(localDate()))}
+              {LONG_DAY.format(parseLocal(localDate()))} · Day {dayIndex} of {DAYS.length}
             </p>
             <h1 className="display-xl mt-2">Today&apos;s Reps</h1>
             <p className="mt-2 text-[16px] text-ink-2">{day.title}</p>
           </div>
-          <div className="flex items-end gap-5 pb-1">
-            <div className="text-right">
-              <p className="eyebrow text-faint">Day</p>
-              <p className="num text-[28px] font-semibold leading-none tracking-tight">
-                {dayIndex}
-                <span className="text-[16px] font-medium text-faint"> / {DAYS.length}</span>
-              </p>
-            </div>
-            <span aria-hidden="true" className="h-9 w-px bg-line-strong" />
-            <div className="text-right">
-              <p className="eyebrow text-faint">Google</p>
-              <p className="num text-[28px] font-semibold leading-none tracking-tight">
-                {daysLeft}
-                <span className="text-[16px] font-medium text-faint"> days</span>
-              </p>
-            </div>
-          </div>
+          <InterviewTargetCompact />
         </header>
 
         {/* The anchor: the one thing to do now. */}
@@ -107,7 +93,7 @@ export default function Dashboard() {
             <div className="flex items-center gap-2">
               <span aria-hidden="true" className="size-1.5 rounded-full bg-accent" />
               <span className="eyebrow text-ink-2">
-                Day {dayIndex} · {next ? (started ? 'Continue' : 'Start here') : 'Done for today'}
+                {todayStage?.title ?? `Day ${dayIndex}`} · {next ? (started ? 'Continue' : 'Start here') : 'Done for today'}
               </span>
             </div>
 
@@ -173,12 +159,15 @@ export default function Dashboard() {
           </div>
         </section>
 
-        <dl className="mt-4 grid grid-cols-2 gap-x-6 gap-y-3 px-2 sm:grid-cols-4">
+        <dl className="mt-4 grid grid-cols-2 gap-x-6 gap-y-3 px-2 sm:grid-cols-3">
           <MiniStat label="Done today" value={`${stats.completed}`} sub={`of ${stats.total} reps · ${stats.percent}%`} />
           <MiniStat label="Planned" value={formatMinutes(stats.minutesRemaining)} sub="left today" />
           <MiniStat label="Cold reps" value={String(due.length)} sub={due.length ? 'due now' : 'none due'} />
-          <MiniStat label="Interview" value={`${daysLeft} days`} sub="Google · Oct 12" />
         </dl>
+
+        <div className="mt-8">
+          <RoadToReady />
+        </div>
 
         <div className="mt-8 grid gap-6 lg:grid-cols-[1.35fr_1fr]">
           <section aria-labelledby="path" className="panel p-6">
@@ -263,15 +252,7 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <section className="mt-12" aria-labelledby="plan">
-          <div className="mb-3 flex items-baseline justify-between">
-            <h2 id="plan" className="h2 flex items-center gap-2">
-              <GlyphTimer size={16} className="text-muted" /> The plan
-            </h2>
-            <p className="text-[12.5px] text-muted">Ten days to October 12</p>
-          </div>
-          <DateStrip today={today} attempts={attempts} />
-        </section>
+
 
         <footer className="mt-12">
           <WinstonPerch className="mx-2" />
