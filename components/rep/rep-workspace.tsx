@@ -623,7 +623,7 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
   const submitLabel = isDebug ? 'Submit fix' : 'Submit'
 
   return (
-    <main data-kind={kind.key} data-mode={mode} className="flex flex-1 flex-col bg-canvas lg:h-[calc(100dvh-56px)] lg:flex-none lg:overflow-hidden">
+    <main data-mode={mode} className="flex flex-1 flex-col bg-canvas lg:h-[calc(100dvh-56px)] lg:flex-none lg:overflow-hidden">
       {/* Rep bar: where am I, how far, which mode */}
       <div className="relative flex h-12 shrink-0 items-center gap-4 bg-bg px-4 sm:px-6" style={{ boxShadow: '0 1px 0 var(--hairline)' }}>
         <nav aria-label="Breadcrumb" className="flex min-w-0 items-center gap-1.5 text-[13px]">
@@ -642,11 +642,11 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
         {total > 0 && index > 0 && (
           <div className="hidden items-center gap-3 sm:flex">
             <span className="flex items-baseline gap-1.5">
-              <span className="eyebrow text-kind-ink">Rep {index}</span>
+              <span className="eyebrow text-ink">Rep {index}</span>
               <span className="num text-[12px] text-faint">of {total}{session ? '' : ' today'}</span>
             </span>
             <span className="bar bar-thin w-32" aria-hidden="true">
-              <span style={{ width: `${progressPct}%`, background: 'var(--kind)' }} />
+              <span style={{ width: `${progressPct}%`, background: 'var(--accent)' }} />
             </span>
           </div>
         )}
@@ -681,16 +681,14 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
           className="flex min-w-0 shrink-0 flex-col overflow-y-auto bg-bg lg:basis-[var(--split)]"
           style={{ '--split': `${split}%` } as React.CSSProperties}
         >
-          <span aria-hidden="true" className="h-[3px] shrink-0 bg-kind opacity-80" />
+          {kind.key === 'capstone' && <span aria-hidden="true" className="h-[3px] shrink-0 bg-ink" />}
           <div className="rep-in flex flex-col gap-6 px-6 py-7 lg:px-8">
             {isDebug && !passed && (
-              <div className="flex items-center gap-3 rounded-2xl bg-amber-soft px-4 py-3 shadow-[inset_0_0_0_1px_rgba(232,150,42,0.25)]">
-                <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-bg text-amber shadow-sm">
-                  <IconBug size={18} />
-                </span>
+              <div className="flex items-center gap-3 rounded-xl px-4 py-3 shadow-[inset_0_0_0_1px_var(--line-strong)]">
+                <IconBug size={18} className="shrink-0 text-amber" />
                 <div className="min-w-0">
-                  <p className="eyebrow text-amber-ink">Bug found</p>
-                  <p className="text-[13.5px] text-ink-2">
+                  <p className="eyebrow text-ink">Bug found</p>
+                  <p className="text-[13.5px] text-muted">
                     {debugFailing === null ? 'Checking the broken code…' : `${debugFailing} test${debugFailing === 1 ? '' : 's'} failing. Read it, run it, fix it.`}
                   </p>
                 </div>
@@ -702,7 +700,7 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
                   <kind.Icon size={13} />
                   {runItBack ? 'Run it back' : kind.badge}
                 </span>
-                {retrievalType === 'cold' && !runItBack && kind.badge !== 'Cold Rep' && <span className="badge badge-cold">Cold</span>}
+                {retrievalType === 'cold' && !runItBack && kind.badge !== 'Cold Rep' && <span className="badge">Cold</span>}
                 {!interview && <span className="text-[12px] text-faint">~{Math.round(ex.minutes)} min</span>}
                 {prior.length > 0 && !passed && <span className="text-[12px] text-faint">· done {prior.length}× before</span>}
               </div>
@@ -739,8 +737,8 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
             )}
 
             {ex.note && !interview && (mode === 'learn' || showNote) && (
-              <div className="rise-in rounded-xl bg-accent-soft/70 px-4 py-3">
-                <p className="label mb-1 !text-accent">Reminder</p>
+              <div className="rise-in rounded-xl bg-surface px-4 py-3 shadow-[inset_2px_0_0_var(--ink)]">
+                <p className="label mb-1 !text-ink-2">Reminder</p>
                 <Markdown text={ex.note} className="!text-[13.5px]" />
               </div>
             )}
@@ -954,7 +952,7 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
 
             {/* Actions */}
             {passed ? (
-              <div className="success-in relative flex shrink-0 flex-wrap items-center gap-x-4 gap-y-3 overflow-hidden bg-green-soft py-3.5 pl-4 pr-24" style={{ boxShadow: '0 -1px 0 rgba(36,166,106,0.2)' }} data-testid="rep-complete">
+              <div className="success-in relative flex shrink-0 flex-wrap items-center gap-x-4 gap-y-3 overflow-hidden bg-surface py-3.5 pl-4 pr-24" style={{ boxShadow: '0 -1px 0 var(--line)' }} data-testid="rep-complete">
                 <span aria-hidden="true" className="success-wash pointer-events-none absolute inset-0" />
                 <div className="flex min-w-0 items-center gap-3">
                   <span className="pop-in grid size-8 shrink-0 place-items-center rounded-full bg-pass text-white shadow-sm">
@@ -965,12 +963,14 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
                   <div className="min-w-0">
                     <p className="flex items-center gap-2 text-[14.5px] font-semibold text-ink">
                       Rep complete{runItBack ? ' · reconstructed' : ''}
-                      <span className="pop-in rounded-full bg-green px-2 py-px text-[11px] font-semibold text-white [animation-delay:160ms]">+1 rep</span>
+                      <span className="pop-in inline-flex items-center gap-1 rounded-full bg-ink px-2 py-px text-[11px] font-semibold text-white [animation-delay:160ms]">
+                        <RepsBars width={9} bar={1.5} gap={1} color="#fff" /> +1 rep
+                      </span>
                     </p>
-                    <p className="mt-1 flex flex-wrap items-center gap-1.5 text-[12px] text-green-ink">
+                    <p className="mt-1 flex flex-wrap items-center gap-1.5 text-[12px] text-muted">
                       {runnable && testsTotal ? <span className="mr-1 font-medium">{testsTotal}/{testsTotal} tests</span> : null}
                       {evidence.slice(0, 3).map((name, i) => (
-                        <span key={name} className="evidence-in rounded-full bg-bg/80 px-2 py-0.5 text-[11.5px] text-green-ink shadow-[inset_0_0_0_1px_rgba(36,166,106,0.2)]" style={{ animationDelay: `${220 + i * 70}ms` }}>
+                        <span key={name} className="evidence-in rounded-full bg-bg px-2 py-0.5 text-[11.5px] text-ink-2 shadow-[inset_0_0_0_1px_var(--line-strong)]" style={{ animationDelay: `${220 + i * 70}ms` }}>
                           + {name}
                         </span>
                       ))}
@@ -1091,12 +1091,12 @@ const MODE_HINT: Record<Mode, string> = {
   interview: 'Timer · plain editor · no hints unless you ask',
 }
 
-/** A tiny two-tone Python mark for the editor tab. */
+/** A tiny monochrome Python mark for the editor tab. */
 function PyMark() {
   return (
-    <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true">
-      <path d="M7.9 1.5c-3.3 0-3.1 1.4-3.1 1.4v1.5H8v.5H3.5S1.5 4.7 1.5 8s1.8 3.2 1.8 3.2h1.1V9.6s-.1-1.8 1.8-1.8h3.1s1.7 0 1.7-1.7V3.3s.3-1.8-3.1-1.8Zm-1.7 1a.6.6 0 1 1 0 1.1.6.6 0 0 1 0-1.1Z" fill="#3157d5" />
-      <path d="M8.1 14.5c3.3 0 3.1-1.4 3.1-1.4v-1.5H8v-.5h4.5s2 .2 2-3.1-1.8-3.2-1.8-3.2h-1.1v1.6s.1 1.8-1.8 1.8H6.7S5 8.2 5 9.9v2.8s-.3 1.8 3.1 1.8Zm1.7-1a.6.6 0 1 1 0-1.1.6.6 0 0 1 0 1.1Z" fill="#e8962a" />
+    <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" className="text-ink-2">
+      <path d="M7.9 1.5c-3.3 0-3.1 1.4-3.1 1.4v1.5H8v.5H3.5S1.5 4.7 1.5 8s1.8 3.2 1.8 3.2h1.1V9.6s-.1-1.8 1.8-1.8h3.1s1.7 0 1.7-1.7V3.3s.3-1.8-3.1-1.8Zm-1.7 1a.6.6 0 1 1 0 1.1.6.6 0 0 1 0-1.1Z" fill="currentColor" />
+      <path d="M8.1 14.5c3.3 0 3.1-1.4 3.1-1.4v-1.5H8v-.5h4.5s2 .2 2-3.1-1.8-3.2-1.8-3.2h-1.1v1.6s.1 1.8-1.8 1.8H6.7S5 8.2 5 9.9v2.8s-.3 1.8 3.1 1.8Zm1.7-1a.6.6 0 1 1 0-1.1.6.6 0 0 1 0 1.1Z" fill="currentColor" opacity="0.45" />
     </svg>
   )
 }

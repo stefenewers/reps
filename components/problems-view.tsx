@@ -62,7 +62,7 @@ export default function ProblemsView() {
                           <span className="text-[12px] text-muted">ready</span>
                         </div>
                         <span className="bar mt-1.5 block" role="meter" aria-valuemin={0} aria-valuemax={100} aria-valuenow={ready} aria-label={`${ready}% ready`}>
-                          <span style={{ width: `${ready}%`, background: ready >= 80 ? 'var(--green)' : 'var(--accent)' }} />
+                          <span style={{ width: `${ready}%`, background: 'var(--accent)' }} />
                         </span>
                       </div>
 
@@ -71,26 +71,28 @@ export default function ProblemsView() {
                           <>
                             <span className="text-muted">Needs</span>
                             {needs.map((x) => (
-                              <Link key={x.s} href={`/skills/${x.s}`} className="rounded-full bg-amber-soft px-2 py-0.5 font-medium text-amber-ink hover:brightness-95">
+                              <Link key={x.s} href={`/skills/${x.s}`} className="rounded-full bg-surface-2 px-2 py-0.5 font-medium text-ink-2 transition-colors hover:bg-surface-3">
                                 {skillName(x.s)}
                               </Link>
                             ))}
                           </>
                         ) : (
-                          <span className="rounded-full bg-green-soft px-2 py-0.5 font-medium text-green-ink">Skills in place</span>
+                          <span className="inline-flex items-center gap-1 font-medium text-ink-2">
+                            <IconCheck size={11} strokeWidth={2.2} className="text-pass" /> Skills in place
+                          </span>
                         )}
                       </div>
 
                       <div className="mt-auto flex items-center gap-2 px-5 pb-4 pt-5 text-[12px]">
                         {solved ? (
-                          <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-medium ${clean ? 'bg-green-soft text-green-ink' : 'bg-surface-2 text-ink-2'}`}>
-                            <IconCheck size={11} strokeWidth={2.2} /> {clean ? 'Solved clean' : 'Solved with help'}
+                          <span className="inline-flex items-center gap-1 font-medium text-ink">
+                            <IconCheck size={12} strokeWidth={2.2} className="text-pass" /> {clean ? 'Solved clean' : 'Solved with help'}
                           </span>
                         ) : (
                           <span className="text-muted">{counted.length ? `${counted.length} attempt${counted.length === 1 ? '' : 's'} · not solved yet` : 'Not started'}</span>
                         )}
                         {cold && (
-                          <span className="inline-flex items-center gap-1 rounded-full bg-violet-soft px-2 py-0.5 font-medium text-violet-ink">
+                          <span className="inline-flex items-center gap-1 font-medium text-ink-2">
                             <IconSnow size={11} /> Cold
                           </span>
                         )}

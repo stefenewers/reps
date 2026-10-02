@@ -101,11 +101,12 @@ export default function Dashboard() {
         </header>
 
         {/* The anchor: the one thing to do now. */}
-        <section aria-labelledby="now" className="accent-wash relative mt-9 overflow-hidden rounded-[22px] shadow-[0_0_0_1px_rgba(49,87,213,0.14),0_2px_4px_rgba(28,24,12,0.04),0_18px_44px_-12px_rgba(49,87,213,0.22)]">
-          <BarsPattern className="-right-10 -top-16 text-accent [mask-image:linear-gradient(to_bottom,black,transparent)]" opacity={0.06} />
+        <section aria-labelledby="now" className="relative mt-9 overflow-hidden rounded-[20px] bg-bg shadow-[0_0_0_1px_var(--hairline),0_2px_4px_rgba(28,24,12,0.04),0_18px_40px_-16px_rgba(28,24,12,0.18)]">
+          <BarsPattern className="-right-10 -top-16 text-ink [mask-image:linear-gradient(to_bottom,black,transparent)]" opacity={0.045} />
           <div className="relative flex flex-col gap-6 p-6 sm:p-8">
             <div className="flex items-center gap-2">
-              <span className="eyebrow text-accent">
+              <span aria-hidden="true" className="size-1.5 rounded-full bg-accent" />
+              <span className="eyebrow text-ink-2">
                 Day {dayIndex} · {next ? (started ? 'Continue' : 'Start here') : 'Done for today'}
               </span>
             </div>
@@ -113,7 +114,7 @@ export default function Dashboard() {
             {next && section ? (
               <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
                 <div className="flex min-w-0 items-start gap-4">
-                  <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-bg text-accent shadow-[0_0_0_1px_rgba(49,87,213,0.16),0_4px_12px_-4px_rgba(49,87,213,0.35)]">
+                  <span className="grid size-12 shrink-0 place-items-center rounded-xl bg-ink text-white shadow-[0_6px_14px_-6px_rgba(13,13,14,0.5)]">
                     <ConceptGlyph name={section?.title ?? day.short} size={22} />
                   </span>
                   <div className="min-w-0">
@@ -127,7 +128,7 @@ export default function Dashboard() {
                       <span aria-hidden="true">·</span>
                       {nextKind && (
                         <span className="inline-flex items-center gap-1.5 text-ink-2">
-                          <nextKind.Icon size={13} className="text-accent" /> {next.title}
+                          <nextKind.Icon size={13} className="text-muted" /> {next.title}
                         </span>
                       )}
                     </p>
@@ -139,7 +140,7 @@ export default function Dashboard() {
               </div>
             ) : (
               <div className="flex flex-wrap items-center justify-between gap-4">
-                <EmptyState title="Reps complete" tone="green">
+                <EmptyState title="Reps complete">
                   Every rep for today is done. Cold reps are scheduled for tomorrow.
                 </EmptyState>
                 <Link href={`/day/${today}/summary`} className="btn btn-primary btn-lg">
@@ -175,7 +176,7 @@ export default function Dashboard() {
         <dl className="mt-4 grid grid-cols-2 gap-x-6 gap-y-3 px-2 sm:grid-cols-4">
           <MiniStat label="Done today" value={`${stats.completed}`} sub={`of ${stats.total} reps · ${stats.percent}%`} />
           <MiniStat label="Planned" value={formatMinutes(stats.minutesRemaining)} sub="left today" />
-          <MiniStat label="Cold reps" value={String(due.length)} sub={due.length ? 'due now' : 'none due'} tone={due.length ? 'violet' : undefined} />
+          <MiniStat label="Cold reps" value={String(due.length)} sub={due.length ? 'due now' : 'none due'} />
           <MiniStat label="Interview" value={`${daysLeft} days`} sub="Google · Oct 12" />
         </dl>
 
@@ -184,7 +185,7 @@ export default function Dashboard() {
             <div className="mb-5 flex items-start justify-between gap-4">
               <div>
                 <h2 id="path" className="h2 flex items-center gap-2">
-                  <RepsBars width={16} bar={2.5} gap={2} className="text-accent" /> Today&apos;s path
+                  <RepsBars width={16} bar={2.5} gap={2} className="text-ink" /> Today&apos;s path
                 </h2>
                 <p className="mt-1.5 max-w-[520px] text-[13.5px] leading-relaxed text-muted">{day.focus}</p>
               </div>
@@ -196,27 +197,28 @@ export default function Dashboard() {
           </section>
 
           <div className="flex flex-col gap-4">
-            <section aria-labelledby="reviews" className={`rounded-2xl p-5 ${due.length ? 'bg-violet-soft shadow-[0_0_0_1px_rgba(114,89,217,0.18)]' : 'card'}`}>
+            <section aria-labelledby="reviews" className="card p-5">
               <h2 id="reviews" className="sr-only">
                 Review Reps
               </h2>
               {due.length ? (
                 <div className="flex items-center gap-4">
-                  <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-bg text-violet shadow-sm">
-                    <IconSnow size={20} />
+                  <span className="relative grid size-11 shrink-0 place-items-center rounded-xl bg-ink text-white">
+                    <IconSnow size={19} />
+                    <span aria-hidden="true" className="absolute -right-0.5 -top-0.5 size-2.5 rounded-full bg-accent shadow-[0_0_0_2px_var(--bg)]" />
                   </span>
                   <div className="min-w-0 flex-1">
                     <p className="text-[14px] font-medium text-ink">
                       {due.length} cold rep{due.length === 1 ? '' : 's'} ready
                     </p>
-                    <p className="mt-0.5 text-[13px] text-violet-ink/80">Recall it before it fades.</p>
+                    <p className="mt-0.5 text-[13px] text-muted">Recall it before it fades.</p>
                   </div>
-                  <button type="button" className="btn btn-sm shrink-0" onClick={startReview} disabled={busy}>
+                  <button type="button" className="btn btn-primary btn-sm shrink-0" onClick={startReview} disabled={busy}>
                     Start
                   </button>
                 </div>
               ) : (
-                <EmptyState title="All clear." tone="violet" glyph={<IconSnow size={20} />}>
+                <EmptyState title="All clear." glyph={<IconSnow size={19} />}>
                   No cold reps due yet. They come back a day after you write something.
                 </EmptyState>
               )}
@@ -225,7 +227,7 @@ export default function Dashboard() {
             <section aria-labelledby="weakest" className="card p-5">
               <div className="flex items-baseline justify-between">
                 <h2 id="weakest" className="h3 flex items-center gap-2">
-                  <IconSpark size={14} className="text-amber" /> Weakest skills
+                  <IconSpark size={14} className="text-muted" /> Weakest skills
                 </h2>
                 {weakest.length > 0 && (
                   <button type="button" className="text-[13px] text-muted hover:text-ink" onClick={startWeakest} disabled={busy}>
@@ -285,11 +287,11 @@ export default function Dashboard() {
   )
 }
 
-function MiniStat({ label, value, sub, tone }: { label: string; value: string; sub: string; tone?: 'violet' }) {
+function MiniStat({ label, value, sub }: { label: string; value: string; sub: string }) {
   return (
     <div className="flex flex-col">
       <dt className="text-[12px] text-faint">{label}</dt>
-      <dd className={`num mt-0.5 text-[17px] font-semibold tracking-tight ${tone === 'violet' ? 'text-violet-ink' : ''}`}>
+      <dd className="num mt-0.5 text-[17px] font-semibold tracking-tight">
         {value} <span className="text-[12.5px] font-normal text-muted">{sub}</span>
       </dd>
     </div>

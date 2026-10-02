@@ -30,34 +30,28 @@
   --line-strong: #dadad5;
   --hairline: rgba(20, 18, 10, 0.075);
 
-  /* brand: Reps blue */
-  --accent: #3157d5;
-  --accent-ink: #2241b0;
-  --accent-soft: #eef2ff;
+  /*
+   * Colour is punctuation, not vocabulary.
+   *   Reps cobalt  active · progress · selected · the primary call to action
+   *   green        success only (a passing test, a finished thing)
+   *   red          error only
+   *   amber        debug / warning attention only, as a dot or a glyph
+   *   no purple, no pastel taxonomy. Everything else is ink, grey and white.
+   */
+  --accent: #2f52c9;
+  --accent-ink: #213ea6;
+  --accent-soft: #f0f2f9;
 
-  /* a small supporting palette, used in pockets */
-  --amber: #e8962a;
-  --amber-ink: #9a5b00;
-  --amber-soft: #fff4df;
-  --green: #24a66a;
-  --green-ink: #137a4a;
-  --green-soft: #eaf8f0;
-  --violet: #7259d9;
-  --violet-ink: #5340b0;
-  --violet-soft: #f1eefc;
+  --amber: #d98a1c;
+  --green: #1f9461;
+  --green-ink: #137347;
 
-  /* functional */
-  --pass: #17894f;
-  --pass-soft: #eaf8f0;
+  --pass: #1f9461;
+  --pass-soft: #eef6f1;
   --fail: #b42318;
-  --fail-soft: #fdf0ef;
-  --warn: var(--amber-ink);
-  --warn-soft: var(--amber-soft);
-
-  /* the rep kind currently on screen (set per workspace) */
-  --kind: var(--accent);
-  --kind-soft: var(--accent-soft);
-  --kind-ink: var(--accent-ink);
+  --fail-soft: #fbf1f0;
+  --warn: #8a5a12;
+  --warn-soft: var(--surface-2);
 
   /* radius */
   --r-xs: 6px;
@@ -80,49 +74,13 @@
   --dur-slow: 220ms;
 }
 
-/* Rep kinds: one accent per kind of work. */
-[data-kind='code'] {
-  --kind: var(--accent);
-  --kind-soft: var(--accent-soft);
-  --kind-ink: var(--accent-ink);
-}
-[data-kind='debug'] {
-  --kind: var(--amber);
-  --kind-soft: var(--amber-soft);
-  --kind-ink: var(--amber-ink);
-}
-[data-kind='cold'] {
-  --kind: var(--violet);
-  --kind-soft: var(--violet-soft);
-  --kind-ink: var(--violet-ink);
-}
-[data-kind='capstone'],
-[data-kind='interview'] {
-  --kind: var(--ink);
-  --kind-soft: var(--surface-2);
-  --kind-ink: var(--ink);
-}
-[data-kind='learn'] {
-  --kind: #8a8a86;
-  --kind-soft: var(--surface-2);
-  --kind-ink: var(--ink-2);
-}
-
 /* Interview mode: training ends, simulation starts. The colour drains out. */
 [data-mode='interview'] {
   --accent: var(--ink);
   --accent-ink: var(--ink);
   --accent-soft: var(--surface-2);
-  --kind: var(--ink);
-  --kind-soft: var(--surface-2);
-  --kind-ink: var(--ink);
-  --canvas: #f3f3f2;
   --amber: var(--ink-2);
-  --amber-ink: var(--ink-2);
-  --amber-soft: var(--surface-2);
-  --violet: var(--ink-2);
-  --violet-ink: var(--ink-2);
-  --violet-soft: var(--surface-2);
+  --canvas: #f3f3f2;
 }
 
 @theme inline {
@@ -142,17 +100,8 @@
   --color-accent-ink: var(--accent-ink);
   --color-accent-soft: var(--accent-soft);
   --color-amber: var(--amber);
-  --color-amber-ink: var(--amber-ink);
-  --color-amber-soft: var(--amber-soft);
   --color-green: var(--green);
   --color-green-ink: var(--green-ink);
-  --color-green-soft: var(--green-soft);
-  --color-violet: var(--violet);
-  --color-violet-ink: var(--violet-ink);
-  --color-violet-soft: var(--violet-soft);
-  --color-kind: var(--kind);
-  --color-kind-soft: var(--kind-soft);
-  --color-kind-ink: var(--kind-ink);
   --color-pass: var(--pass);
   --color-pass-soft: var(--pass-soft);
   --color-fail: var(--fail);
@@ -193,12 +142,7 @@ body {
   background-image: radial-gradient(rgba(20, 18, 10, 0.07) 1px, transparent 1px);
   background-size: 18px 18px;
 }
-.accent-wash {
-  background:
-    radial-gradient(120% 140% at 0% 0%, rgba(49, 87, 213, 0.1) 0%, rgba(49, 87, 213, 0) 55%),
-    radial-gradient(90% 120% at 100% 100%, rgba(114, 89, 217, 0.06) 0%, rgba(114, 89, 217, 0) 60%),
-    var(--bg);
-}
+
 
 :focus-visible {
   outline: 2px solid var(--accent);
@@ -516,17 +460,9 @@ a.chip:hover {
   color: var(--muted);
   background: var(--surface-2);
 }
-.badge-debug {
-  color: var(--amber-ink);
-  background: var(--amber-soft);
-}
-.badge-cold {
-  color: var(--violet-ink);
-  background: var(--violet-soft);
-}
-.badge-code {
-  color: var(--accent-ink);
-  background: var(--accent-soft);
+/* Kinds are told apart by glyph and label, not by colour. Debug keeps one warm glyph. */
+.badge-debug svg {
+  color: var(--amber);
 }
 .badge-capstone {
   color: #fff;
@@ -691,7 +627,7 @@ a.chip:hover {
   animation: success-in 220ms var(--ease-out) both;
 }
 .success-wash {
-  background: linear-gradient(90deg, rgba(36, 166, 106, 0.22), rgba(36, 166, 106, 0));
+  background: linear-gradient(90deg, rgba(31, 148, 97, 0.16), rgba(31, 148, 97, 0));
   animation: success-wash 600ms var(--ease-out) both;
 }
 .evidence-in {
@@ -765,7 +701,7 @@ a.chip:hover {
 .pp-fill {
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, #2448c4 0%, var(--accent) 70%, #4a72f0 100%);
+  background: linear-gradient(90deg, #2445b8 0%, var(--accent) 75%, #4566dd 100%);
   transform: translateX(-100%);
   transition: transform 560ms var(--ease-out);
   will-change: transform;

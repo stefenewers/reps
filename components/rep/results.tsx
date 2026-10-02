@@ -24,12 +24,12 @@ export function TestResults({ result, mode, submitted, onBackToCode }: { result:
   return (
     <div className="flex flex-col gap-3 text-[13px]">
       {allPass && (
-        <div className="fade-in flex items-center gap-2.5 rounded-xl bg-green-soft px-3.5 py-2.5 shadow-[inset_0_0_0_1px_rgba(36,166,106,0.2)]">
-          <span className="pop-in grid size-6 place-items-center rounded-full bg-green text-white">
+        <div className="fade-in flex items-center gap-2.5 rounded-xl bg-bg px-3.5 py-2.5 shadow-[inset_0_0_0_1px_var(--line-strong)]">
+          <span className="pop-in grid size-6 place-items-center rounded-full bg-pass text-white">
             <IconCheck size={13} strokeWidth={2.4} />
           </span>
-          <span className="eyebrow text-green-ink">All tests passed</span>
-          <span className="num ml-auto text-[12.5px] font-medium text-green-ink">
+          <span className="eyebrow text-ink">All tests passed</span>
+          <span className="num ml-auto text-[12.5px] font-medium text-ink-2">
             {passed}/{total}
           </span>
         </div>
@@ -104,7 +104,7 @@ function TestRow({ t, index, showDetail, defaultOpen }: { t: TestResult; index: 
   return (
     <li
       className={`rise-in overflow-hidden rounded-lg ${t.passed ? 'bg-bg' : 'bg-fail-soft/50'}`}
-      style={{ boxShadow: `inset 0 0 0 1px ${t.passed ? 'rgba(36,166,106,0.18)' : 'rgba(180,35,24,0.18)'}`, animationDelay: `${Math.min(index, 8) * 40}ms` }}
+      style={{ boxShadow: `inset 0 0 0 1px ${t.passed ? 'var(--line)' : 'rgba(180,35,24,0.2)'}`, animationDelay: `${Math.min(index, 8) * 40}ms` }}
     >
       <button
         type="button"
@@ -114,12 +114,12 @@ function TestRow({ t, index, showDetail, defaultOpen }: { t: TestResult; index: 
         disabled={!canOpen}
       >
         {t.passed ? (
-          <span className="grid size-[18px] shrink-0 place-items-center rounded-full bg-green-soft text-green">
-            <IconCheck size={11} strokeWidth={2.4} />
+          <span className="grid size-[18px] shrink-0 place-items-center text-pass">
+            <IconCheck size={13} strokeWidth={2.4} />
           </span>
         ) : (
-          <span className="grid size-[18px] shrink-0 place-items-center rounded-full bg-fail-soft text-fail">
-            <IconX size={11} strokeWidth={2.4} />
+          <span className="grid size-[18px] shrink-0 place-items-center text-fail">
+            <IconX size={13} strokeWidth={2.4} />
           </span>
         )}
         <span className="sr-only">{t.passed ? 'Passed:' : 'Failed:'}</span>

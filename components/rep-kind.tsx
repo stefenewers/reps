@@ -13,7 +13,7 @@ export interface KindDisplay {
   badge: string
   badgeClass: string
   Icon: ComponentType<{ size?: number; className?: string }>
-  /** Colour identity: code blue, debug amber, cold violet, capstone/interview ink, learn grey. */
+  /** What kind of work this is. Shown through glyph and label; colour is reserved for status. */
   key: 'code' | 'debug' | 'cold' | 'capstone' | 'interview' | 'learn'
 }
 
@@ -43,7 +43,7 @@ export function kindOf(e: Exercise): KindDisplay {
   const bucket = bucketOf(e)
   const cold = e.repType === 'cold' || e.stage === 'retrieval'
   let badge = 'Rep'
-  let badgeClass = 'badge badge-code'
+  let badgeClass = 'badge'
   let key: KindDisplay['key'] = 'code'
   if (bucket === 'debug') {
     badge = 'Debug Rep'
@@ -55,7 +55,7 @@ export function kindOf(e: Exercise): KindDisplay {
     key = 'capstone'
   } else if (cold) {
     badge = 'Cold Rep'
-    badgeClass = 'badge badge-cold'
+    badgeClass = 'badge'
     key = 'cold'
   } else if (e.repType === 'interview' || bucket === 'explain') {
     badge = 'Interview Rep'

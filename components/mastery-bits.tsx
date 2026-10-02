@@ -19,21 +19,22 @@ const LABEL: Record<MasteryStatus, string> = {
   weak: 'Needs reps',
 }
 
+/** Neutral by default; weight and shape separate the states. Only "needs reps" carries a warm mark. */
 const TONE: Record<MasteryStatus, string> = {
-  weak: 'bg-amber-soft text-amber-ink',
+  weak: 'bg-surface-2 text-ink [&>span]:text-amber',
   introduced: 'bg-surface-2 text-muted',
-  practicing: 'bg-accent-soft text-accent-ink',
-  competent: 'bg-green-soft text-green-ink',
-  fluent: 'bg-green text-white',
+  practicing: 'bg-surface-2 text-ink-2',
+  competent: 'bg-bg text-ink shadow-[inset_0_0_0_1px_var(--line-strong)]',
+  fluent: 'bg-ink text-white',
   unseen: 'text-faint',
 }
 
 export const STATUS_COLOR: Record<MasteryStatus, string> = {
   weak: 'var(--amber)',
-  introduced: '#a3a39e',
-  practicing: 'var(--accent)',
-  competent: 'var(--green)',
-  fluent: 'var(--green-ink)',
+  introduced: '#b9b8b3',
+  practicing: '#6f6e6a',
+  competent: 'var(--ink-2)',
+  fluent: 'var(--ink)',
   unseen: 'var(--surface-3)',
 }
 

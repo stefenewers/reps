@@ -32,14 +32,12 @@ export function BarsPattern({ className = '', opacity = 0.06 }: { className?: st
   )
 }
 
-/** Tiny bespoke empty-state illustration: the bars, a glyph, and a line of copy. */
-export function EmptyState({ title, children, tone = 'neutral', glyph }: { title: string; children?: ReactNode; tone?: 'neutral' | 'blue' | 'violet' | 'green'; glyph?: ReactNode }) {
-  const color = tone === 'blue' ? 'var(--accent)' : tone === 'violet' ? 'var(--violet)' : tone === 'green' ? 'var(--green)' : 'var(--faint)'
-  const wash = tone === 'blue' ? 'var(--accent-soft)' : tone === 'violet' ? 'var(--violet-soft)' : tone === 'green' ? 'var(--green-soft)' : 'var(--surface-2)'
+/** Tiny bespoke empty-state illustration: the bars (or a glyph) in a quiet outlined frame, and a line of copy. */
+export function EmptyState({ title, children, glyph }: { title: string; children?: ReactNode; glyph?: ReactNode }) {
   return (
     <div className="flex items-center gap-4">
-      <span className="relative grid size-12 shrink-0 place-items-center rounded-2xl" style={{ background: wash, color }}>
-        {glyph ?? <RepsBars width={22} bar={3.5} gap={3} />}
+      <span className="relative grid size-11 shrink-0 place-items-center rounded-xl bg-bg text-ink-2 shadow-[0_0_0_1px_var(--line-strong)]">
+        {glyph ?? <RepsBars width={20} bar={3} gap={2.5} />}
       </span>
       <div className="min-w-0">
         <p className="text-[14px] font-medium text-ink">{title}</p>
