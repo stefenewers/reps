@@ -1,0 +1,75 @@
+/* Winston, ambient. The sprite and animation timing come from the personal
+   site's companion (public/winston/winston-sprite.png: fifteen 192px frames,
+   0–4 an idle bob, 5–14 a walk cycle). Drawn at 64px so every source pixel is a
+   crisp 2×2 block. Nothing here is interactive. */
+
+.wa {
+  position: fixed;
+  bottom: 6px;
+  z-index: 5;
+  width: 64px;
+  height: 64px;
+  pointer-events: none;
+  user-select: none;
+  transition: left var(--walk-ms, 0ms) linear;
+}
+
+/* A soft shadow under his feet. */
+.wa::before {
+  content: '';
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 1px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.12);
+  filter: blur(2px);
+}
+
+.wa-sprite {
+  position: relative;
+  display: block;
+  width: 64px;
+  height: 64px;
+  background: url('/winston/winston-sprite.png') 0 0 / 960px 64px no-repeat;
+  image-rendering: pixelated;
+  transform: scaleX(var(--face, 1));
+}
+.wa-sprite--idle {
+  animation: wa-idle 1000ms steps(5) infinite;
+}
+.wa-sprite--walk {
+  animation: wa-walk 830ms steps(10) infinite;
+}
+@keyframes wa-idle {
+  from { background-position: 0 0; }
+  to { background-position: -320px 0; }
+}
+@keyframes wa-walk {
+  from { background-position: -320px 0; }
+  to { background-position: -960px 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wa-sprite {
+    animation: none !important;
+    background-position: 0 0 !important;
+  }
+  .wa {
+    transition: none !important;
+  }
+}
+
+/* On narrow screens there is no spare edge to stand on without covering content. */
+@media (max-width: 640px) {
+  .wa {
+    display: none;
+  }
+}
+
+@media print {
+  .wa {
+    display: none;
+  }
+}

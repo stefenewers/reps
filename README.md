@@ -1,36 +1,149 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Reps
 
-## Getting Started
+Build fluency through repetition.
 
-First, run the development server:
+A private, single-user practice system for the Google SWE internship interview on
+October 12, 2026. LeetCode problems are capstones of skill graphs, not the teaching
+material, so Reps trains the Python primitives and patterns underneath them until they
+come out automatically, then asks for the capstone.
+
+## Run it
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+cp .env.example .env.local   # fill in what you have; everything is optional locally
+npm run dev                  # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+With no keys at all, Reps works fully on one device: curriculum, Python execution,
+tests, mastery, scheduling and progress are all local and cost nothing. Supabase adds
+durable progress across devices. OpenAI adds the on-demand coach.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## What's where
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Path | What it is |
+|---|---|
+| `data/skills.ts` | The skill graph (granular skills + prerequisites) |
+| `data/problems.ts` | Canonical LeetCode targets (links only, no copied statements) |
+| `data/exercises/oct02.ts` … `oct11.ts` | The ten day modules, 658 reps |
+| `data/mocks.ts` | Two 45-minute mock interviews |
+| `data/curriculum.ts` | Indexes the days |
+| `docs/authoring.md` | How to write reps |
+| `public/python/harness.py` | The test harness, shared by the browser and the content verifier |
+| `public/python/worker.js` | Pyodide in a module Web Worker |
+| `lib/mastery.ts` | Deterministic mastery heuristic |
+| `lib/schedule.ts` | Spaced cold reps, compressed into Oct 2–11 |
+| `lib/progress.ts` | Progression, unlocking, readiness, end-of-day summary |
+| `lib/storage/` | Persistence: `types`, `local` (IndexedDB), `remote` (Supabase), `sync`, `repository` |
+| `lib/coach/` | Adaptive coach: schemas, verification, cache, dedupe, client |
+| `app/api/coach/*` | Server routes for the coach (keys stay server-side) |
+| `supabase/migrations/0005_reps.sql` | The Reps schema, additive to the stefenewers.com project |
+| `components/winston-ambient.tsx` | Winston. Visual only. |
 
-## Learn More
+## Persistence
 
-To learn more about Next.js, take a look at the following resources:
+```
+Reps UI ─ optimistic in-memory state
+  └─ IndexedDB: instant reload, offline, pending-write outbox
+      └─ Supabase (the existing stefenewers.com project, reps_* tables): durable source of truth
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Writes update the UI immediately, land in IndexedDB, and are pushed to Supabase after
+  a short debounce (attempts ~0.3 s, drafts and location ~15 s). Failed pushes stay
+  queued and retry with backoff; the header shows `Saved`, `Syncing` or
+  `Offline · saved locally`.
+- On load: cache first, then an incremental pull from Supabase (by server
+  `updated_at`), reconcile, write back to the cache. A row with a pending local write
+  wins; otherwise Supabase wins.
+- Attempts are idempotent by id, and the database refuses to turn a finished attempt
+  back into an unfinished one. Mastery and daily progress are recomputed from attempt
+  history and persisted only when they change.
+- Python never touches Supabase. Only meaningful events are stored: submissions,
+  completions, hints, solution views, reviews, generated reps, mock results, drafts
+  (debounced).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Supabase setup (once)
 
-## Deploy on Vercel
+Reps reuses the existing **stefenewers.com** Supabase project. Nothing existing is
+changed: every Reps object is prefixed `reps_`, and the migration is additive and safe
+to re-run.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. **Apply the schema.** Run `supabase/migrations/0005_reps.sql` in the project's SQL
+   editor, or copy it into the personal site's `supabase/migrations/` (it continues
+   that numbering) and apply it with the CLI from there, so there is one migration
+   history per project.
+2. **Create your user** if you don't have one in that project: Authentication → Users →
+   Add user (your email). Reps never creates accounts; sign-in uses
+   `shouldCreateUser: false`.
+3. **Make yourself the owner:**
+   ```sql
+   insert into public.reps_owners (user_id)
+   select id from auth.users where email = 'you@example.com'
+   on conflict do nothing;
+   ```
+   RLS on every `reps_*` table requires `user_id = auth.uid()` **and** membership in
+   `reps_owners`, so other users of the project (InnaWords contributors, for example)
+   can never read or write Reps data. `anon` has no grants.
+4. **Allow the redirect:** Authentication → URL Configuration → add
+   `http://localhost:3000` (and your deployed Reps URL) to Redirect URLs. This is
+   additive and does not affect the site.
+5. **Keys:** in `.env.local`, set `NEXT_PUBLIC_SUPABASE_URL` (same as the site) and
+   `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (Settings → API Keys → Publishable key).
+   Reps needs no secret or service-role key.
+6. Open `/sign-in`, request a magic link, and progress already on the device syncs up.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Export / import
+
+`Export progress` and `Import progress` (footer of Today) write and read a JSON
+bundle of attempts, mastery, daily progress, review queue, generated reps and study
+state. Import validates the schema with Zod and merges without duplicating (attempts by
+id, everything else newest-wins), then recomputes mastery.
+
+## The coach (optional)
+
+Set `OPENAI_API_KEY`, `OPENAI_DEFAULT_MODEL` (cheap/fast) and `OPENAI_REASONING_MODEL`
+(stronger). Nothing calls a model unless you press a button: Another rep, Harder,
+Easier, Hint (after the built-in hints run out), Explain mistake, Interview follow-up,
+Check explanation, Challenge me (only when the request can't be parsed locally), and
+the post-mock Review.
+
+- Requests carry compact context (skill ids, scores, a few recent mistakes and
+  signatures), never the history.
+- Routing: fast model for micro reps, hints, plans, simple diagnosis; reasoning model
+  for difficulty ≥ 4 or pattern generations, capstone/repeated-failure diagnosis, and
+  interview review.
+- Generated reps are validated with Zod, then **executed** in Pyodide: the canonical
+  solution must pass every test, starter code must not, trace output must match. One
+  regeneration is allowed; otherwise you're told it couldn't be generated.
+- Before generating: local pool, then the Supabase pool, then the model. Spare reps
+  are kept unused for next time. Structural signatures prevent "count fruits, then
+  count animals".
+- In production the routes require the signed-in Reps owner. For local dev without
+  Supabase, `REPS_ALLOW_UNAUTHENTICATED_AI=1` (ignored in production).
+
+## Mastery
+
+Per skill, deterministic:
+
+```
+weight   = stage weight (recognize 0.5 … capstone 1.3) × retrieval (cold 1.5, run-it-back 0.6)
+quality  = 0 if failed, else hint factor (−15% each, min 40%) × solution (30% if viewed) × retries (−10% each, min 50%)
+accuracy = recency-weighted mean quality, last 15 attempts
+evidence = 1 − e^(−Σ weight × quality / 4)
+score    = 100 × accuracy × evidence     (capped at 55 with recognition-only evidence)
+```
+
+Status: `weak` (low accuracy, two misses in a row, or a failed cold rep) · `fluent`
+(≥ 85, three clean reps in a row, and a clean cold rep) · `competent` ≥ 65 ·
+`practicing` ≥ 30 · `introduced`.
+
+## Checks
+
+```bash
+npm run lint
+npm run type-check
+npm test               # unit tests, including sync and the migration's RLS on real Postgres (PGlite)
+npm run verify:content # every rep's solution and predicted output run through python3
+npm run test:e2e       # Playwright: today → rep → submit → mastery → reload; Pyodide + infinite loop
+npm run verify         # all of the above except e2e, plus a production build
+```

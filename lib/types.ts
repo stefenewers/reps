@@ -1,0 +1,238 @@
+/**
+ * Core domain types for Reps.
+ *
+ * Curriculum (skills, exercises, days, problems) is static data under data/.
+ * Progress (attempts, reviews, generated reps) lives in IndexedDB, see lib/store.
+ */
+
+export type SkillId = string
+
+/** The pedagogical ladder. UI copy maps these to simpler labels, see lib/labels.ts. */
+export type Stage =
+  | 'recognize'
+  | 'trace'
+  | 'recall'
+  | 'complete'
+  | 'reconstruct'
+  | 'microbuild'
+  | 'combine'
+  | 'pattern'
+  | 'capstone'
+  | 'interview'
+  | 'retrieval'
+
+/** The kinds of reps, part of the product vocabulary. */
+export type RepType = 'foundation' | 'combine' | 'pattern' | 'capstone' | 'cold' | 'interview'
+
+/**
+ * How an exercise is answered.
+ * - choice: pick one option
+ * - output: predict exactly what the code prints
+ * - code: write/complete code in the editor, checked by tests
+ * - reorder: put shuffled lines in order, checked by tests (or by canonical order)
+ * - explain: written explanation, self-checked against a rubric
+ */
+export type ExerciseKind = 'choice' | 'output' | 'code' | 'reorder' | 'explain'
+
+export type Compare = 'exact' | 'unordered' | 'sorted-inner' | 'float'
+
+/**
+ * A deterministic test.
+ * - call: a Python expression evaluated after the user's code runs, e.g. "two_sum([2, 7], 9)"
+ * - expected: a Python expression for the expected value, e.g. "[0, 1]"
+ * - stdout: instead of call/expected, compare everything the user's code printed
+ * - check: a Python statement block that must not raise (asserts), for unusual cases
+ */
+export interface TestCase {
+  name?: string
+  call?: string
+  expected?: string
+  stdout?: string
+  check?: string
+  compare?: Compare
+  hidden?: boolean
+}
+
+export interface Example {
+  input: string
+  output: string
+  note?: string
+}
+
+export interface ReviewMeta {
+  /** Important concepts are resurfaced as cold reps (next day, ~3 days, before Oct 11). */
+  important: boolean
+}
+
+export interface Exercise {
+  id: string
+  title: string
+  kind: ExerciseKind
+  stage: Stage
+  repType: RepType
+  skills: SkillId[]
+  /** Skills that should be at least introduced before this exercise is sensible. */
+  prerequisites: SkillId[]
+  difficulty: 1 | 2 | 3 | 4 | 5
+  /** Markdown-lite: paragraphs, `inline code`, **bold**, and ``` fenced blocks. */
+  prompt: string
+  /** Code shown read-only with the prompt (choice/output/explain). */
+  code?: string
+  options?: string[]
+  answer?: number
+  expectedOutput?: string
+  starterCode?: string
+  /** Lines for a reorder exercise, in the correct order (shuffled for display). */
+  lines?: string[]
+  solution?: string
+  tests?: TestCase[]
+  examples?: Example[]
+  /** Progressive hints: conceptual nudge, structure, operation, outline. */
+  hints?: string[]
+  /** Short concept reminder shown in Learn mode. */
+  note?: string
+  /** Shown after completion. */
+  explanation?: string
+  rubric?: string[]
+  complexity?: { time: string; space: string }
+  /** Canonical problem this is the capstone for. */
+  problemId?: string
+  /** Structural signature for deduplication, e.g. "freq-map:count-chars". */
+  signature: string
+  minutes: number
+  review: ReviewMeta
+  /** Present on AI-generated reps. */
+  generated?: { key: string; createdAt: string; used: boolean }
+}
+
+export interface Section {
+  id: string
+  title: string
+  /** One line on what this block trains. */
+  summary: string
+  exercises: Exercise[]
+}
+
+export interface DayModule {
+  date: string // YYYY-MM-DD
+  short: string // e.g. "Foundation"
+  title: string // e.g. "Python fluency + hashing foundations"
+  focus: string
+  sections: Section[]
+  capstones: string[] // problem ids
+  /** Optional ids of interview mock sessions this day includes. */
+  mocks?: string[]
+}
+
+export interface Skill {
+  id: SkillId
+  name: string
+  group: SkillGroup
+  definition: string
+  prerequisites: SkillId[]
+}
+
+export type SkillGroup =
+  | 'Python foundations'
+  | 'Hashing'
+  | 'Strings & pointers'
+  | 'Windows & stacks'
+  | 'Search & linked lists'
+  | 'Recursion & trees'
+  | 'BFS & grids'
+  | 'Graphs'
+  | 'Heaps, sorting & intervals'
+  | 'Backtracking & DP'
+  | 'Interview craft'
+
+export interface Problem {
+  id: string
+  title: string
+  leetcode: string
+  number: number
+  pattern: string
+  skills: SkillId[]
+  day: string
+  /** Exercise id of the internal capstone that mirrors this problem. */
+  exerciseId?: string
+}
+
+export type Mode = 'learn' | 'practice' | 'interview'
+export type RetrievalType = 'first-exposure' | 'immediate-reconstruction' | 'cold'
+
+export interface Attempt {
+  id: string
+  exerciseId: string
+  date: string // YYYY-MM-DD local
+  skills: SkillId[]
+  stage: Stage
+  mode: Mode
+  code?: string
+  answer?: string
+  passed: boolean
+  /** Failed submissions before the passing one (or total failed if never passed). */
+  attemptsBeforePass: number
+  hintsUsed: number
+  solutionViewed: boolean
+  runtimeErrors: string[]
+  startedAt: string
+  completedAt?: string
+  durationSeconds?: number
+  confidence?: 1 | 2 | 3 | 4 | 5
+  mistakeType?: string
+  mistakeNote?: string
+  retrievalType: RetrievalType
+  /** Set for reps from a session (review, repair, challenge). */
+  sessionKind?: SessionKind
+  updatedAt: string
+}
+
+export type SessionKind = 'day' | 'review' | 'repair' | 'challenge' | 'another' | 'weakest'
+
+/**
+ * A scheduled resurfacing. One pending item per skill (`skill:<id>`) and per
+ * important exercise such as a capstone (`ex:<id>`).
+ */
+export interface ReviewItem {
+  id: string
+  reviewType: 'skill' | 'exercise'
+  skillId?: SkillId
+  exerciseId?: string
+  dueAt: string // ISO
+  /** Successful spaced (cold) reviews so far. */
+  step: number
+  reason: 'scheduled' | 'failed' | 'shaky'
+  status: 'pending' | 'done'
+  createdAt: string
+  completedAt?: string
+  updatedAt: string
+}
+
+export interface Session {
+  id: string
+  kind: SessionKind
+  title: string
+  exerciseIds: string[]
+  createdAt: string
+  /** Where "Retry capstone" points after a repair set. */
+  returnTo?: string
+}
+
+export interface MockResult {
+  id: string
+  mockId: string
+  startedAt: string
+  completedAt?: string
+  problems: { exerciseId: string; code: string; passed: boolean; testsPassed: number; testsTotal: number; complexity: string; explanation: string }[]
+  scratchpad: string
+  review?: string
+}
+
+export interface MistakeRecord {
+  id: string
+  exerciseId: string
+  skills: SkillId[]
+  category: string
+  note: string
+  date: string
+}
