@@ -48,6 +48,12 @@ function sameContent<T extends { updatedAt: string }>(a: T | undefined, b: T): b
 }
 
 export class RepsRepository {
+  /**
+   * When a rep was last completed in this tab. Lets the UI tell a genuine
+   * completion (animate) from hydration or remote sync (snap, no celebration).
+   */
+  lastLocalCompletionAt = 0
+
   constructor(
     readonly engine: SyncEngine,
     private config: RepositoryConfig,
@@ -92,6 +98,7 @@ export class RepsRepository {
     // Never turn a finished attempt back into an unfinished one.
     if (existing?.completedAt && !attempt.completedAt) return Promise.resolve()
     const row: Attempt = { ...attempt, updatedAt: iso }
+    if (row.passed && row.completedAt && !existing?.completedAt) this.lastLocalCompletionAt = Date.now()
     const writes: Promise<void>[] = [this.engine.save('attempts', [row])]
 
     if (row.completedAt && !existing?.completedAt) {

@@ -19,12 +19,17 @@ async function answer(page: Page, e: Exercise) {
 test('today → first rep → correct answer → mastery updates → reload → progress persists', async ({ page }) => {
   await page.goto('/')
   await expect(page.getByRole('heading', { name: "Today's Reps" })).toBeVisible()
+  const rail = page.getByRole('progressbar', { name: /Overall Reps curriculum progress/ })
+  await expect(rail).toHaveAttribute('aria-valuenow', '0')
   await page.getByTestId('start-today').click()
   await expect(page).toHaveURL(new RegExp(`/rep/${firstRep.id}`))
   await expect(page.getByRole('heading', { name: firstRep.title })).toBeVisible()
 
   await answer(page, firstRep)
   await expect(page.getByTestId('rep-complete')).toBeVisible({ timeout: 60_000 })
+  // The whole-program rail moves immediately and animates for a genuine completion.
+  await expect(rail).toHaveAttribute('aria-valuenow', '1')
+  await expect(page.locator('.pp')).toHaveAttribute('data-advancing', 'true')
 
   const skill = firstRep.skills[0]
   await page.goto(`/skills/${skill}`)
@@ -35,6 +40,8 @@ test('today → first rep → correct answer → mastery updates → reload → 
 
   await page.reload()
   await expect(page.getByRole('link', { name: firstRep.title })).toBeVisible()
+  await expect(rail).toHaveAttribute('aria-valuenow', '1')
+  await expect(page.locator('.pp')).toHaveAttribute('data-advancing', 'false')
   await page.goto('/')
   await expect(page.getByText(/Rep 2 of \d+/)).toBeVisible()
   // The next rep is now the starting point.

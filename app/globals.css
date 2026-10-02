@@ -593,7 +593,213 @@ a.chip:hover {
   background: var(--accent);
 }
 
+
+/* ── whole-program progress rail (components/program-progress.tsx) ───────── */
+
+.pp {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 3px;
+  z-index: 1;
+}
+.pp-track {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 15, 20, 0.06);
+  outline: none;
+}
+.pp-clip {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+.pp-fill {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, #2448c4 0%, var(--accent) 70%, #4a72f0 100%);
+  transform: translateX(-100%);
+  transition: transform 560ms var(--ease-out);
+  will-change: transform;
+}
+.pp[data-ready='false'] .pp-fill {
+  opacity: 0;
+}
+.pp[data-snap='true'] .pp-fill {
+  transition: none;
+}
+/* The comet: a short highlight riding the leading edge, only while advancing. */
+.pp-comet {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 120px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.75));
+  opacity: 0;
+}
+.pp-comet::after {
+  content: '';
+  position: absolute;
+  right: -2px;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  margin-top: -3px;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 0 6px 2px rgba(74, 114, 240, 0.75), 0 0 14px 4px rgba(74, 114, 240, 0.35);
+}
+.pp[data-advancing='true'] .pp-comet {
+  animation: pp-comet 900ms var(--ease-out) both;
+}
+@keyframes pp-comet {
+  0% { opacity: 0; }
+  12% { opacity: 1; }
+  62% { opacity: 1; }
+  100% { opacity: 0; }
+}
+/* Completion: one shimmer across the whole rail. */
+.pp[data-finale='true'] .pp-fill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.85) 50%, transparent 100%);
+  background-size: 30% 100%;
+  background-repeat: no-repeat;
+  animation: pp-shimmer 1400ms var(--ease-out) both;
+}
+@keyframes pp-shimmer {
+  from { background-position: -40% 0; }
+  to { background-position: 140% 0; }
+}
+
+/* Day milestones: tiny marks at the end of each day's share of the work. */
+.pp-mark {
+  position: absolute;
+  top: 50%;
+  width: 5px;
+  height: 5px;
+  margin: -2.5px 0 0 -2.5px;
+  border-radius: 999px;
+  background: var(--bg);
+  box-shadow: 0 0 0 1px rgba(15, 15, 20, 0.22);
+  pointer-events: none;
+  transition: background-color 220ms var(--ease-out), box-shadow 220ms var(--ease-out);
+}
+.pp-mark[data-done='true'] {
+  background: var(--accent);
+  box-shadow: 0 0 0 1.5px var(--bg);
+}
+.pp-mark-end {
+  width: 7px;
+  height: 7px;
+  margin: -3.5px 0 0 -8px;
+  background: var(--bg);
+  box-shadow: 0 0 0 1.5px var(--ink);
+}
+.pp-mark-end[data-done='true'] {
+  background: var(--ink);
+  box-shadow: 0 0 0 1.5px var(--bg), 0 0 0 2.5px var(--ink);
+}
+.pp-mark[data-pop='true'] {
+  animation: pp-pop 240ms var(--ease-out);
+}
+@keyframes pp-pop {
+  50% { transform: scale(1.8); }
+}
+
+/* Hover zones per day: tall enough to find, tips only after a deliberate pause. */
+.pp-seg {
+  position: absolute;
+  top: -6px;
+  height: 14px;
+}
+.pp-tip,
+.pp-focus-tip {
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  padding: 7px 10px;
+  border-radius: 9px;
+  font-size: 12px;
+  line-height: 1.35;
+  color: #fff;
+  background: var(--ink);
+  box-shadow: var(--shadow-lg);
+  display: none;
+  pointer-events: none;
+  z-index: 40;
+}
+@keyframes pp-tip-in {
+  from {
+    opacity: 0;
+    translate: 0 -2px;
+  }
+}
+.pp-tip b,
+.pp-focus-tip b {
+  font-weight: 600;
+}
+.pp-tip-sub {
+  display: block;
+  color: rgba(255, 255, 255, 0.6);
+}
+.pp-seg:hover .pp-tip {
+  display: block;
+  animation: pp-tip-in 140ms 450ms var(--ease-out) both;
+}
+.pp-seg-first .pp-tip {
+  left: 12px;
+  transform: none;
+}
+.pp-seg-last .pp-tip {
+  left: auto;
+  right: 12px;
+  transform: none;
+}
+.pp-focus-tip {
+  left: 24px;
+  transform: none;
+}
+.pp-track:focus-visible {
+  box-shadow: 0 0 0 2px var(--ring);
+}
+.pp-track:focus-visible .pp-focus-tip {
+  display: block;
+  animation: pp-tip-in 140ms var(--ease-out) both;
+}
+
+.pp-toast {
+  position: absolute;
+  top: 12px;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  padding: 5px 11px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--accent-ink);
+  background: var(--bg);
+  box-shadow: 0 0 0 1px var(--hairline), var(--shadow-md);
+  pointer-events: none;
+  animation: pp-toast 2600ms var(--ease-out) both;
+}
+@keyframes pp-toast {
+  0% { opacity: 0; transform: translate(-50%, -4px); }
+  10% { opacity: 1; transform: translate(-50%, 0); }
+  85% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .pp-comet,
+  .pp-fill::after {
+    display: none;
+  }
   *,
   *::before,
   *::after {

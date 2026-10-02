@@ -185,3 +185,45 @@ export function daySummary(
     total: stats.total,
   }
 }
+
+// ── whole-program progress ───────────────────────────────────────────────────
+
+export interface ProgramDay {
+  date: string
+  short: string
+  total: number
+  completed: number
+  /** Where this day's segment starts and ends on the rail, as fractions of the whole curriculum. */
+  start: number
+  end: number
+  complete: boolean
+}
+
+export interface ProgramProgress {
+  completed: number
+  total: number
+  fraction: number
+  days: ProgramDay[]
+}
+
+/**
+ * How far through the whole Oct 2 – Oct 11 curriculum. The denominator is the
+ * fixed set of canonical day exercises; generated reps, repeated attempts and
+ * session wrappers never change it. A canonical rep counts once, wherever it
+ * was completed (consistent with each day's own progress).
+ */
+export function programProgress(days: DayModule[], attempts: Attempt[]): ProgramProgress {
+  const passed = passedSet(attempts)
+  const total = days.reduce((n, d) => n + d.sections.reduce((m, s) => m + s.exercises.length, 0), 0)
+  let cursor = 0
+  let completed = 0
+  const out: ProgramDay[] = days.map((d) => {
+    const list = d.sections.flatMap((s) => s.exercises)
+    const done = list.filter((e) => passed.has(e.id)).length
+    completed += done
+    const start = total ? cursor / total : 0
+    cursor += list.length
+    return { date: d.date, short: d.short, total: list.length, completed: done, start, end: total ? cursor / total : 0, complete: list.length > 0 && done === list.length }
+  })
+  return { completed, total, fraction: total ? completed / total : 0, days: out }
+}
