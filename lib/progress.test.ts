@@ -118,3 +118,17 @@ test('mastery check: only a pass without the solution counts, and what follows s
   // Outside a check, viewing the solution still counts as a (reduced-credit) pass.
   assert.ok(passedSet([attempt({ exerciseId: 'o2-dbg-keyerror', solutionViewed: true })]).has('o2-dbg-keyerror'))
 })
+
+test('mastery check at the end of a day locks the next day until it is cleared', () => {
+  const oct3 = DAYS.find((d) => d.date === '2026-10-03')!
+  const oct4 = DAYS.find((d) => d.date === '2026-10-04')!
+  const firstOct4 = oct4.sections.find((s) => !s.optional)!.exercises[0]
+  const everythingOct3 = oct3.sections.filter((s) => !s.optional).flatMap((s) => s.exercises)
+  const allButLast = everythingOct3.slice(0, -1).map((e) => attempt({ exerciseId: e.id }))
+  assert.equal(lockedByGate(oct4, firstOct4.id, allButLast)?.id, 'o2-dict-mastery')
+  const done = everythingOct3.map((e) => attempt({ exerciseId: e.id }))
+  assert.equal(lockedByGate(oct4, firstOct4.id, done), undefined)
+  // Extras are never locked.
+  const extra = oct4.sections.find((s) => s.optional)?.exercises[0]
+  if (extra) assert.equal(lockedByGate(oct4, extra.id, allButLast), undefined)
+})

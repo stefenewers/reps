@@ -237,6 +237,44 @@ export const BRIEFS: Record<string, Brief> = {
     catch: 'You cannot know a character is unique until you have seen the whole string. And you return a position, not the character.',
   },
 
+  // ── Dictionaries from scratch (end-of-day check) ──────────────────────────
+  'o2-dmas-trace': {
+    task: PREDICT,
+    catch: 'Keep a table of `plays` after every loop step. Does `.get` with a default ever add a key?',
+  },
+  'o2-dmas-count-plays': {
+    inputs: [{ name: 'plays', is: 'a list of song names, one entry each time a song was played' }],
+    returns: 'a **dict**: song name → how many times it was played.',
+    catch: 'The first time you meet a song it has no count yet.',
+  },
+  'o2-dmas-dbg-minutes': {
+    task: 'It crashes on some playlists. Make it add up the minutes.',
+    inputs: [
+      { name: 'lengths', is: 'a dict: song name → length in minutes' },
+      { name: 'playlist', is: 'a list of song names. Some may not be in `lengths`.' },
+    ],
+    returns: 'one number: the total minutes, where unknown songs count as 0.',
+    catch: 'Run it with a song that is not in `lengths`, and read the error.',
+  },
+  'o2-dmas-merge': {
+    inputs: [
+      { name: 'a', is: 'a dict: song name → number of plays' },
+      { name: 'b', is: 'another dict like `a`, from a different phone' },
+    ],
+    returns: 'a **new** dict with every song from either one, its plays added together.',
+    catch: 'A song might be in `a` only, `b` only, or both. And leave `a` and `b` untouched.',
+  },
+  'o2-dmas-by-artist': {
+    inputs: [{ name: 'artist_of', is: 'a dict: song name → artist name' }],
+    returns: 'a **dict**: artist name → a sorted list of that artist’s song names.',
+    catch: 'The new dict goes the other way. What will you look up by, and what do you get back?',
+  },
+  'o2-dmas-top-song': {
+    inputs: [{ name: 'plays', is: 'a non-empty list of song names, one per play. Exactly one song is played the most.' }],
+    returns: 'the **name** of the most played song, not how many plays it had.',
+    catch: 'You cannot know the winner until every play has been counted.',
+  },
+
   // ── Index maps ─────────────────────────────────────────────────────────────
   'o2-imap-trace': {
     task: PREDICT,

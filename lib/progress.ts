@@ -1,6 +1,6 @@
 import type { Attempt, DayModule, Exercise, Problem, RetrievalType, ReviewItem, Section, SkillId } from '@/lib/types'
 import type { SkillMastery } from '@/lib/mastery'
-import { EXERCISE_BY_ID } from '@/data/curriculum'
+import { DAYS, EXERCISE_BY_ID } from '@/data/curriculum'
 
 /** Extras (`optional` sections) never count toward a day, a stage or the program. */
 function req(day: DayModule) {
@@ -90,10 +90,16 @@ export function sectionUnlocked(day: DayModule, index: number, attempts: Attempt
   return ratio >= SECTION_UNLOCK_RATIO && gatesCleared(day, index, attempts) && sectionUnlocked(day, index - 1, attempts)
 }
 
-/** The first uncleared mastery check before section `index` in this day, if any. */
+/**
+ * The first uncleared mastery check before section `index` of this day: in an
+ * earlier day first (a check at the end of a day locks the days after it), then
+ * earlier in this one.
+ */
 export function blockingGate(day: DayModule, index: number, attempts: Attempt[]): Section | undefined {
   const passed = passedSet(attempts)
-  return day.sections.slice(0, Math.max(0, index)).find((s) => s.gate && !s.optional && !s.exercises.every((e) => passed.has(e.id)))
+  const open = (s: Section) => s.gate && !s.optional && !s.exercises.every((e) => passed.has(e.id))
+  const earlier = DAYS.filter((d) => d.date < day.date).flatMap((d) => d.sections)
+  return earlier.find(open) ?? day.sections.slice(0, Math.max(0, index)).find(open)
 }
 
 function gatesCleared(day: DayModule, index: number, attempts: Attempt[]) {

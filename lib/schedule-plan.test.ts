@@ -28,16 +28,28 @@ test('required work keeps the original order across the calendar', () => {
   assert.deepEqual(calendar, modules)
 })
 
-test('Oct 3 – Oct 10 are aggressive but realistic: about 4.75 to 5.75 planned hours each', () => {
-  for (const d of DAYS.slice(1, 9)) {
+const DICT_DAY = ['o2-dictionaries', 'o2-dict-revision', 'o2-get', 'o2-iter-dicts', 'o2-frequency', 'o2-dict-mastery']
+
+test('Oct 3 ends as a dictionaries-only day, closed by the end-of-day mastery check', () => {
+  const ids = DAYS[1].sections.filter((s) => !s.optional).map((s) => s.id)
+  const from = ids.indexOf('o2-dictionaries')
+  assert.deepEqual(ids.slice(from), DICT_DAY)
+  for (const id of ['o2-dict-revision', 'o2-dict-mastery']) assert.ok(DAYS[1].sections.find((s) => s.id === id)?.gate, `${id} is a mastery check`)
+})
+
+test('everything else planned for Oct 3 moved to the front of Oct 4, in order', () => {
+  const ids = DAYS[2].sections.filter((s) => !s.optional).map((s) => s.id)
+  assert.deepEqual(ids.slice(0, 7), ['o2-valid-anagram', 'o2-index-maps', 'o2-complements', 'o2-two-sum', 'd3-strings', 'd3-slicing', 'd3-methods'])
+})
+
+test('Oct 4 – Oct 10 absorb it evenly: about 5.25 to 6 planned hours each', () => {
+  for (const d of DAYS.slice(2, 9)) {
     const m = minutes(d)
-    // Oct 3 also carries the mandatory Dictionary check (~25 min), added after the re-plan.
-    const max = d.date === '2026-10-03' ? 345 + checkMinutes : 345
-    assert.ok(m >= 285 && m <= max, `${d.date}: ${Math.round(m)} min`)
+    assert.ok(m >= 300 && m <= 365, `${d.date}: ${Math.round(m)} min`)
   }
 })
 
-const checkMinutes = MODULES[0].sections.filter((s) => s.gate).reduce((n, s) => n + s.exercises.reduce((m, e) => m + e.minutes, 0), 0)
+const checkMinutes = MODULES[0].sections.filter((s) => s.id === 'o2-dict-revision').reduce((n, s) => n + s.exercises.reduce((m, e) => m + e.minutes, 0), 0)
 
 test('the Dictionary check sits between Dictionaries and .get(), on Oct 3, and is required', () => {
   const ids = DAYS[1].sections.filter((s) => !s.optional).map((s) => s.id)

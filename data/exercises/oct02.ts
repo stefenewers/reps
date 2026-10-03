@@ -1657,6 +1657,168 @@ def same_items(a, b):
 ])
 
 // ---------------------------------------------------------------------------
+// 9b. Dictionaries from scratch: the end-of-day mastery check
+// ---------------------------------------------------------------------------
+
+const dictMastery = gate('o2-dict-mastery', 'Dictionaries from scratch', 'Everything from today, mixed, in a new scenario, from a bare signature. Pass every rep without the solution before tomorrow unlocks.', [
+  output({
+    id: 'o2-dmas-trace',
+    title: 'Trace: counts and .get',
+    skills: ['dict_get', 'dict_items', 'frequency_map'],
+    prompt: 'Predict the output. Keep a table of `plays` as it changes.',
+    code: `plays = {}
+for song in ['echo', 'drift', 'echo']:
+    plays[song] = plays.get(song, 0) + 1
+print(plays)
+print(plays.get('drift', 0), plays.get('storm', 0))
+for song, n in plays.items():
+    if n > 1:
+        print(song)`,
+    expectedOutput: `{'echo': 2, 'drift': 1}
+1 0
+echo`,
+    note: 'Table: `{echo: 1}` → `{echo: 1, drift: 1}` → `{echo: 2, drift: 1}`. `.get` with a default never crashes and never adds a key.',
+    explanation: "Each song's count is its old count (0 if new) plus one. 'storm' was never played, so `.get` hands back the default 0.",
+    signature: 'trace:dict-mastery',
+    minutes: 2.5,
+    important: true,
+  }),
+  write({
+    id: 'o2-dmas-count-plays',
+    title: 'From scratch: count plays',
+    skills: ['frequency_map', 'dict_get', 'for_loop'],
+    prompt: '`plays` is a list of song names (strings), one entry per time a song was played.\n\nWrite `count_plays(plays)` that returns a **dict**: song name → how many times it was played.\n\n`count_plays([\'echo\', \'drift\', \'echo\'])` → `{\'echo\': 2, \'drift\': 1}`',
+    starterCode: `def count_plays(plays):
+    pass`,
+    solution: `def count_plays(plays):
+    counts = {}
+    for song in plays:
+        counts[song] = counts.get(song, 0) + 1
+    return counts`,
+    tests: [
+      t.eq("count_plays(['echo', 'drift', 'echo'])", "{'echo': 2, 'drift': 1}"),
+      t.eq('count_plays([])', '{}'),
+      t.hidden("count_plays(['a', 'a', 'a'])", "{'a': 3}"),
+    ],
+    hints: ['Start empty, loop, store, return.', 'The new count is the old count (0 if the song is new) plus one.'],
+    explanation: 'The frequency map: `counts.get(song, 0) + 1` reads the old count safely and stores it back one higher.',
+    signature: 'dict:mastery-frequency',
+    minutes: 3,
+    important: true,
+  }),
+  debug({
+    id: 'o2-dmas-dbg-minutes',
+    title: 'Debug: playlist length',
+    skills: ['dict_get', 'accumulator', 'for_loop'],
+    prompt: '`lengths` is a dict: song name → length in minutes (ints). `playlist` is a list of song names. `total_minutes(lengths, playlist)` should return the total length of the playlist, counting songs it has no length for as 0. It crashes. Fix it.',
+    brokenCode: `def total_minutes(lengths, playlist):
+    total = 0
+    for song in playlist:
+        total += lengths.get(song)
+    return total`,
+    solution: `def total_minutes(lengths, playlist):
+    total = 0
+    for song in playlist:
+        total += lengths.get(song, 0)
+    return total`,
+    tests: [
+      t.eq("total_minutes({'echo': 3, 'drift': 5}, ['echo', 'drift', 'echo'])", '11'),
+      t.eq("total_minutes({'echo': 3}, ['echo', 'storm'])", '3'),
+      t.hidden("total_minutes({}, [])", '0'),
+    ],
+    hints: ["Run it with a song that isn't in `lengths`. What does `.get` hand back?", 'Give `.get` something to return instead.'],
+    explanation: 'Without a default, `.get` returns None for a missing key, and `total += None` is a TypeError. The default 0 makes unknown songs add nothing.',
+    signature: 'debug:get-missing-default-sum',
+    minutes: 3,
+  }),
+  write({
+    id: 'o2-dmas-merge',
+    title: 'From scratch: merge two play counts',
+    skills: ['dict_items', 'dict_get', 'dict_assign', 'dict_create'],
+    stage: 'combine',
+    repType: 'combine',
+    prompt: '`a` and `b` are dicts: song name → number of plays (from two different phones).\n\nWrite `merge_counts(a, b)` that returns a **new** dict with every song from either one, and its plays **added together**. Do not modify `a` or `b`.\n\n`merge_counts({\'echo\': 2}, {\'echo\': 1, \'drift\': 4})` → `{\'echo\': 3, \'drift\': 4}`',
+    starterCode: `def merge_counts(a, b):
+    pass`,
+    solution: `def merge_counts(a, b):
+    out = {}
+    for song, n in a.items():
+        out[song] = out.get(song, 0) + n
+    for song, n in b.items():
+        out[song] = out.get(song, 0) + n
+    return out`,
+    tests: [
+      t.eq("merge_counts({'echo': 2}, {'echo': 1, 'drift': 4})", "{'echo': 3, 'drift': 4}"),
+      t.eq('merge_counts({}, {})', '{}'),
+      t.check('a and b are not modified', "x = {'echo': 2}\ny = {'echo': 1}\nmerge_counts(x, y)\nassert x == {'echo': 2} and y == {'echo': 1}, 'merge_counts changed an input'"),
+      t.hidden("merge_counts({'a': 1}, {'b': 2})", "{'a': 1, 'b': 2}"),
+    ],
+    hints: ['Start with a new empty dict.', 'Go through each input with `.items()` and add its plays onto whatever the new dict already has (0 if nothing).'],
+    explanation: 'Same move as counting, but adding `n` instead of 1: `out.get(song, 0) + n`. Building a new dict leaves both inputs untouched.',
+    signature: 'dict:merge-sum',
+    minutes: 4,
+    important: true,
+  }),
+  write({
+    id: 'o2-dmas-by-artist',
+    title: 'From scratch: songs by artist',
+    skills: ['dict_items', 'dict_membership', 'list_append', 'dict_assign'],
+    stage: 'combine',
+    repType: 'combine',
+    prompt: '`artist_of` is a dict: song name → artist name.\n\nWrite `songs_by_artist(artist_of)` that returns a dict: artist name → a **sorted list** of that artist\'s song names.\n\n`songs_by_artist({\'echo\': \'mo\', \'drift\': \'zee\', \'arc\': \'mo\'})` → `{\'mo\': [\'arc\', \'echo\'], \'zee\': [\'drift\']}`',
+    starterCode: `def songs_by_artist(artist_of):
+    pass`,
+    solution: `def songs_by_artist(artist_of):
+    out = {}
+    for song, artist in artist_of.items():
+        if artist not in out:
+            out[artist] = []
+        out[artist].append(song)
+    for artist in out:
+        out[artist] = sorted(out[artist])
+    return out`,
+    tests: [
+      t.eq("songs_by_artist({'echo': 'mo', 'drift': 'zee', 'arc': 'mo'})", "{'mo': ['arc', 'echo'], 'zee': ['drift']}"),
+      t.eq('songs_by_artist({})', '{}'),
+      t.hidden("songs_by_artist({'b': 'x', 'a': 'x'})", "{'x': ['a', 'b']}"),
+    ],
+    hints: ['In the result, what do you look up by? What do you get back?', 'The first song for an artist needs a new empty list; later songs are appended to it.'],
+    explanation: 'Grouping: the key is the artist, the value is a list that grows. Create the list the first time you see an artist, append every time, sort at the end.',
+    signature: 'dict:group-lists',
+    minutes: 5,
+  }),
+  write({
+    id: 'o2-dmas-top-song',
+    title: 'From scratch: most played song',
+    skills: ['frequency_map', 'dict_get', 'dict_items'],
+    stage: 'combine',
+    repType: 'combine',
+    prompt: '`plays` is a non-empty list of song names, one entry per play. Exactly one song has the most plays.\n\nWrite `top_song(plays)` that returns the **name** of the most played song.\n\n`top_song([\'echo\', \'drift\', \'echo\'])` → `\'echo\'`',
+    starterCode: `def top_song(plays):
+    pass`,
+    solution: `def top_song(plays):
+    counts = {}
+    for song in plays:
+        counts[song] = counts.get(song, 0) + 1
+    best = None
+    for song, n in counts.items():
+        if best is None or n > counts[best]:
+            best = song
+    return best`,
+    tests: [
+      t.eq("top_song(['echo', 'drift', 'echo'])", "'echo'"),
+      t.eq("top_song(['solo'])", "'solo'"),
+      t.hidden("top_song(['a', 'b', 'b', 'c', 'b', 'a'])", "'b'"),
+    ],
+    hints: ['Two steps: count every song first, then look through the counts.', 'Keep the best song so far, and compare counts, not names.'],
+    explanation: 'Count with a frequency map, then one pass over `.items()` keeping the song whose count is highest. You return the key, not the count.',
+    signature: 'dict:mastery-argmax',
+    minutes: 4.5,
+    important: true,
+  }),
+])
+
+// ---------------------------------------------------------------------------
 // 10. Valid Anagram
 // ---------------------------------------------------------------------------
 
@@ -2544,6 +2706,7 @@ export const day: DayModule = {
     getSection,
     iterDicts,
     frequency,
+    dictMastery,
     validAnagram,
     indexMaps,
     complements,
