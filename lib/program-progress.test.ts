@@ -11,7 +11,8 @@ const second = dayExercises(DAYS[0])[1]
 test('the denominator is the fixed canonical curriculum, derived from data', () => {
   const p = programProgress(DAYS, [])
   assert.equal(p.total, TOTAL)
-  assert.ok(TOTAL > 500)
+  assert.ok(TOTAL > 300, 'required reps across the calendar')
+  assert.equal(TOTAL, DAYS.reduce((n, d) => n + d.sections.filter((s) => !s.optional).reduce((m, s) => m + s.exercises.length, 0), 0), 'extras never count')
 })
 
 test('0 completed → 0%', () => {

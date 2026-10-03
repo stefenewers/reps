@@ -1,6 +1,11 @@
 import type { Attempt, DayModule, Exercise, Problem, RetrievalType, ReviewItem, SkillId } from '@/lib/types'
 import type { SkillMastery } from '@/lib/mastery'
 
+/** Extras (`optional` sections) never count toward a day, a stage or the program. */
+function req(day: DayModule) {
+  return day.sections.filter((s) => !s.optional)
+}
+
 /**
  * Progression: what is done, what is next, what is unlocked, what is ready.
  * All deterministic, all zero tokens.
@@ -28,9 +33,9 @@ export interface DayStats {
 
 export function dayStats(day: DayModule, attempts: Attempt[]): DayStats {
   const passed = passedSet(attempts)
-  const all = day.sections.flatMap((s) => s.exercises)
+  const all = req(day).flatMap((s) => s.exercises)
   const done = all.filter((e) => passed.has(e.id))
-  const sectionsCompleted = day.sections.filter((s) => s.exercises.length && s.exercises.every((e) => passed.has(e.id))).map((s) => s.id)
+  const sectionsCompleted = req(day).filter((s) => s.exercises.length && s.exercises.every((e) => passed.has(e.id))).map((s) => s.id)
   const minutesTotal = all.reduce((n, e) => n + e.minutes, 0)
   const minutesRemaining = all.filter((e) => !passed.has(e.id)).reduce((n, e) => n + e.minutes, 0)
   const timeSpentSeconds = attempts.filter((a) => a.date === day.date).reduce((n, a) => n + (a.durationSeconds ?? 0), 0)
@@ -51,14 +56,18 @@ export function dayStats(day: DayModule, attempts: Attempt[]): DayStats {
 /** The first rep of the day that has not been passed, in order. */
 export function nextExercise(day: DayModule, attempts: Attempt[]): Exercise | undefined {
   const passed = passedSet(attempts)
-  return day.sections.flatMap((s) => s.exercises).find((e) => !passed.has(e.id))
+  return req(day).flatMap((s) => s.exercises).find((e) => !passed.has(e.id))
 }
 
-/** The rep after `id` in the day's sequence. */
+/** The rep after `id` in the day's sequence: required reps lead to required reps, extras to extras. */
 export function followingExercise(day: DayModule, id: string): Exercise | undefined {
-  const all = day.sections.flatMap((s) => s.exercises)
-  const i = all.findIndex((e) => e.id === id)
-  return i >= 0 ? all[i + 1] : undefined
+  const required = req(day).flatMap((s) => s.exercises)
+  const extras = day.sections.filter((s) => s.optional).flatMap((s) => s.exercises)
+  for (const list of [required, extras]) {
+    const i = list.findIndex((e) => e.id === id)
+    if (i >= 0) return list[i + 1]
+  }
+  return undefined
 }
 
 export const SECTION_UNLOCK_RATIO = 0.6
@@ -69,17 +78,17 @@ export const SECTION_UNLOCK_RATIO = 0.6
  * advisory: the UI lets you open a locked rep anyway.
  */
 export function sectionUnlocked(day: DayModule, index: number, attempts: Attempt[]): boolean {
-  if (index <= 0) return true
+  if (index <= 0 || day.sections[index]?.optional) return true
   const tried = attemptedSet(attempts)
   const prev = day.sections[index - 1]
-  if (!prev.exercises.length) return sectionUnlocked(day, index - 1, attempts)
+  if (!prev.exercises.length || prev.optional) return sectionUnlocked(day, index - 1, attempts)
   const ratio = prev.exercises.filter((e) => tried.has(e.id)).length / prev.exercises.length
   return ratio >= SECTION_UNLOCK_RATIO && sectionUnlocked(day, index - 1, attempts)
 }
 
 export function exerciseUnlocked(day: DayModule, exerciseId: string, attempts: Attempt[]): boolean {
   const si = day.sections.findIndex((s) => s.exercises.some((e) => e.id === exerciseId))
-  if (si < 0) return true
+  if (si < 0 || day.sections[si].optional) return true
   if (!sectionUnlocked(day, si, attempts)) return false
   const tried = attemptedSet(attempts)
   const list = day.sections[si].exercises
@@ -161,7 +170,7 @@ export function daySummary(
   const needsReps = ranked.filter((m) => !(m.status === 'competent' || m.status === 'fluent')).sort((a, b) => a.score - b.score).map((m) => m.skillId)
 
   const capstones: CapstoneLine[] = day.capstones.map((pid) => {
-    const ex = day.sections.flatMap((s) => s.exercises).find((e) => e.problemId === pid && e.repType === 'capstone')
+    const ex = req(day).flatMap((s) => s.exercises).find((e) => e.problemId === pid && e.repType === 'capstone')
     const exId = ex?.id ?? `cap-${pid}`
     const passes = attempts.filter((a) => a.exerciseId === exId && a.passed && a.completedAt)
     const best = passes.sort((a, b) => a.hintsUsed + (a.solutionViewed ? 10 : 0) - (b.hintsUsed + (b.solutionViewed ? 10 : 0)))[0]
@@ -214,11 +223,11 @@ export interface ProgramProgress {
  */
 export function programProgress(days: DayModule[], attempts: Attempt[]): ProgramProgress {
   const passed = passedSet(attempts)
-  const total = days.reduce((n, d) => n + d.sections.reduce((m, s) => m + s.exercises.length, 0), 0)
+  const total = days.reduce((n, d) => n + req(d).reduce((m, s) => m + s.exercises.length, 0), 0)
   let cursor = 0
   let completed = 0
   const out: ProgramDay[] = days.map((d) => {
-    const list = d.sections.flatMap((s) => s.exercises)
+    const list = req(d).flatMap((s) => s.exercises)
     const done = list.filter((e) => passed.has(e.id)).length
     completed += done
     const start = total ? cursor / total : 0
@@ -277,7 +286,7 @@ export function programStageProgress<S extends StageDefinition>(
   let currentFound = false
   return stages.map((stage, index) => {
     const day = byDate.get(stage.dayDate)!
-    const list = day.sections.flatMap((s) => s.exercises)
+    const list = req(day).flatMap((s) => s.exercises)
     const completed = list.filter((e) => passed.has(e.id)).length
     const total = list.length
     const repsDone = total > 0 && completed === total
@@ -288,7 +297,8 @@ export function programStageProgress<S extends StageDefinition>(
       status = 'current'
       currentFound = true
     } else status = completed > 0 ? 'partial' : 'upcoming'
-    const firstOpen = day.sections.findIndex((s) => s.exercises.some((e) => !passed.has(e.id)))
+    const sections = req(day)
+    const firstOpen = sections.findIndex((s) => s.exercises.some((e) => !passed.has(e.id)))
     return {
       stage,
       index,
@@ -297,8 +307,8 @@ export function programStageProgress<S extends StageDefinition>(
       total,
       fraction: total ? completed / total : 0,
       status,
-      currentSection: firstOpen >= 0 ? day.sections[firstOpen].title : undefined,
-      nextSections: firstOpen >= 0 ? day.sections.slice(firstOpen + 1).map((s) => s.title) : [],
+      currentSection: firstOpen >= 0 ? sections[firstOpen].title : undefined,
+      nextSections: firstOpen >= 0 ? sections.slice(firstOpen + 1).map((s) => s.title) : [],
       capstones: day.capstones,
       mocks: stage.requiresMocks ? mocks : undefined,
     }

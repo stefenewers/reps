@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useMemo, useState, useSyncExternalStore, type ReactNode } from 'react'
 import { SKILLS } from '@/data/skills'
-import { DAY_BY_DATE, DAYS, FIRST_DAY, LAST_DAY } from '@/data/curriculum'
+import { DAY_BY_DATE, FIRST_DAY, LAST_DAY, REQUIRED_MODULES } from '@/data/curriculum'
 import { MOCKS } from '@/data/mocks'
 import { PROGRAM_STAGES, type ProgramStage } from '@/data/program'
 import { currentProgramStage, mockProgress, programStageProgress, remainingProgramStages, type StageProgress } from '@/lib/progress'
@@ -112,7 +112,8 @@ export function RepsProvider({ children }: { children: ReactNode }) {
   const program = useMemo(() => {
     const results = studyState.filter((r) => r.id.startsWith('mock:')).map((r) => r.value as MockResult)
     const mocks = mockProgress(results, MOCKS.map((m) => m.id))
-    const stages = programStageProgress(PROGRAM_STAGES, DAYS, attempts, mocks)
+    // Topics are measured on the authored modules (required reps), independent of the calendar.
+    const stages = programStageProgress(PROGRAM_STAGES, REQUIRED_MODULES, attempts, mocks)
     return { stages, current: currentProgramStage(stages), remaining: remainingProgramStages(stages), mocks }
   }, [attempts, studyState])
 

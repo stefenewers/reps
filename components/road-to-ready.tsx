@@ -7,6 +7,8 @@ import { DAY_GLYPH, GlyphBraces } from '@/components/concept-icons'
 import { IconCheck } from '@/components/icons'
 import { RepsBars } from '@/components/motif'
 import { FINISH_LINE, PROGRAM_STAGES } from '@/data/program'
+import { DAY_OF_EXERCISE } from '@/data/curriculum'
+import { passedSet } from '@/lib/progress'
 import { PROBLEM_BY_ID } from '@/data/problems'
 import { createElement } from 'react'
 
@@ -16,7 +18,14 @@ import { createElement } from 'react'
  * Finished stages keep their check; the current one is the only cobalt stop.
  */
 export default function RoadToReady() {
-  const { program, loaded } = useReps()
+  const { program, loaded, attempts } = useReps()
+  const passed = passedSet(attempts)
+  // Each topic links to the calendar day holding its next unfinished rep.
+  const hrefFor = (s: (typeof program.stages)[number]) => {
+    const list = s.day.sections.flatMap((x) => x.exercises)
+    const target = list.find((e) => !passed.has(e.id)) ?? list[0]
+    return `/day/${(target && DAY_OF_EXERCISE[target.id]) ?? s.stage.dayDate}`
+  }
   const { stages, current, mocks } = program
   const track = useRef<HTMLOListElement>(null)
   const done = stages.filter((s) => s.status === 'complete').length
@@ -91,7 +100,7 @@ export default function RoadToReady() {
               {i < stages.length - 1 && <span aria-hidden="true" className={`absolute left-1/2 right-0 top-[19px] h-[2px] ${complete ? 'bg-ink' : 'bg-line'}`} />}
 
               <Link
-                href={`/day/${s.stage.dayDate}`}
+                href={hrefFor(s)}
                 className={`relative flex h-full flex-col items-center rounded-xl px-2 pb-3 pt-2 text-center outline-none transition-colors focus-visible:bg-surface ${isCurrent ? '' : 'hover:bg-surface'}`}
                 aria-label={`${s.stage.title}: ${complete ? 'complete' : isCurrent ? 'current' : partial ? `${s.completed} of ${s.total} reps done` : 'upcoming'}`}
               >

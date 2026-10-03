@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { DAYS } from '@/data/curriculum'
+import { MODULES as DAYS } from '@/data/curriculum'
 import { auditDays, bucketOf, engagementOf, GUARDRAILS, guardrailViolations, inflated, isFromScratch, productionLines } from '@/lib/curriculum-audit'
 import { choice, code, debug, fill, output, write, t } from '@/data/exercises/build'
 
@@ -17,7 +17,7 @@ test('overall and per-day active coding time clear the thresholds', () => {
   for (const d of days) assert.ok(d.activeTimeShare >= GUARDRAILS.dayActiveTime, d.date)
 })
 
-test('every day keeps roughly 5.5–6.5 hours of planned work', () => {
+test('every authored topic module carries roughly 5.5–6.5 hours of content', () => {
   for (const d of auditDays(DAYS).days) assert.ok(d.minutes >= 330 && d.minutes <= 400, `${d.date}: ${d.minutes} min`)
 })
 

@@ -126,6 +126,8 @@ export interface Section {
   /** One line on what this block trains. */
   summary: string
   exercises: Exercise[]
+  /** Extra reps: available, but not part of the day's required plan or any progress total. */
+  optional?: boolean
 }
 
 export interface DayModule {
@@ -137,6 +139,8 @@ export interface DayModule {
   capstones: string[] // problem ids
   /** Optional ids of interview mock sessions this day includes. */
   mocks?: string[]
+  /** Topic modules (by their authored date) this calendar day draws from. */
+  modules?: string[]
 }
 
 export interface Skill {

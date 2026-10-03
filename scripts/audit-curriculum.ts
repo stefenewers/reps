@@ -3,7 +3,7 @@
  *   npm run audit:curriculum            # report + guardrails
  *   npm run audit:curriculum -- --json  # machine-readable
  */
-import { DAYS } from '@/data/curriculum'
+import { DAYS as CALENDAR, MODULES as DAYS, dayExercises } from '@/data/curriculum'
 import { auditDays, BUCKET_LABEL, BUCKETS, guardrailViolations, pct, type DayAudit } from '@/lib/curriculum-audit'
 
 const { days, overall } = auditDays(DAYS)
@@ -47,7 +47,7 @@ const header = [
   pad('Run', 5),
 ].join(' ')
 
-console.log('\nReps curriculum audit\n')
+console.log('\nReps curriculum audit (authored topic modules)\n')
 console.log(header)
 console.log('─'.repeat(header.length))
 for (const r of days) console.log(line(r))
@@ -61,6 +61,14 @@ using modeled minutes (a cross-check against inflated estimates) · Run = longes
 stretch of consecutive passive reps.
 
 Active coding time overall: ${pct(overall.activeTimeShare)} (${Math.round(overall.byEngagement.active.minutes)} of ${Math.round(overall.minutes)} min)`)
+
+console.log('\nCalendar plan (required reps; extras listed separately)\n')
+for (const d of CALENDAR) {
+  const req = dayExercises(d)
+  const extras = d.sections.filter((x) => x.optional).flatMap((x) => x.exercises)
+  const min = req.reduce((n, e) => n + e.minutes, 0)
+  console.log(`  ${d.date.slice(5)}  ${String(req.length).padStart(3)} reps  ${String(Math.round(min)).padStart(4)} min   +${extras.length} extra   ${d.short}`)
+}
 
 const only = process.argv.find((a) => /^\d{4}-\d{2}-\d{2}$/.test(a))
 const dayIds = only ? new Set(DAYS.find((d) => d.date === only)?.sections.flatMap((s) => s.exercises.map((e) => e.id)) ?? []) : null

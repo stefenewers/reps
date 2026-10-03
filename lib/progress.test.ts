@@ -4,7 +4,7 @@ import { dayStats, exerciseUnlocked, followingExercise, missingPrerequisites, ne
 import { computeAllMastery } from '@/lib/mastery'
 import { attempt, exercise } from '@/lib/test-helpers'
 import type { DayModule } from '@/lib/types'
-import { DAYS, EXERCISE_BY_ID, ALL_EXERCISES } from '@/data/curriculum'
+import { DAYS, MODULES, EXERCISE_BY_ID, ALL_EXERCISES } from '@/data/curriculum'
 import { PROBLEMS } from '@/data/problems'
 import { SKILLS, SKILL_BY_ID } from '@/data/skills'
 import { buildRepairSet, skillDepth } from '@/lib/sessions'
@@ -73,7 +73,7 @@ test('curriculum integrity: every day, skill and capstone is wired', () => {
   assert.equal(DAYS.length, 10)
   for (const e of ALL_EXERCISES) for (const s of [...e.skills, ...e.prerequisites]) assert.ok(SKILL_BY_ID[s], `${e.id}: ${s}`)
   for (const p of PROBLEMS) assert.ok(EXERCISE_BY_ID[`cap-${p.id}`], `capstone for ${p.id}`)
-  assert.ok(DAYS[0].sections.flatMap((s) => s.exercises).length >= 100, 'Oct 2 is the thorough day')
+  assert.ok(MODULES[0].sections.flatMap((s) => s.exercises).length >= 100, 'the foundation module is the thorough one')
 })
 
 test('skill graph is acyclic and primitives sit at depth 0', () => {
@@ -83,7 +83,7 @@ test('skill graph is acyclic and primitives sit at depth 0', () => {
 })
 
 test('repair set: primitives first, never a capstone, bounded', () => {
-  const ids = buildRepairSet(['index_map', 'dict_assign', 'dict_membership'], computeAllMastery(SKILLS.map((s) => s.id), []), [], '2026-10-02')
+  const ids = buildRepairSet(['index_map', 'dict_assign', 'dict_membership'], computeAllMastery(SKILLS.map((s) => s.id), []), [], '2026-10-03')
   assert.ok(ids.length > 0 && ids.length <= 5)
   for (const id of ids) assert.notEqual(EXERCISE_BY_ID[id].repType, 'capstone')
   // dict_assign (depth 1) precedes index_map (depth 2+)

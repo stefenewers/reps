@@ -147,7 +147,10 @@ test('device A → device B: durable progress is available on a fresh device', a
   assert.equal(b.repo.attempts().length, 1)
   assert.equal(b.repo.draft('cap-valid-anagram'), 'def is_anagram(s, t):\n    ...')
   assert.equal(b.repo.masteryRows().length, a.repo.masteryRows().length)
-  assert.equal(b.repo.dailyRows()[0].completedReps, 1)
+  assert.deepEqual(
+    b.repo.dailyRows().map((r) => [r.studyDate, r.completedReps]),
+    a.repo.dailyRows().map((r) => [r.studyDate, r.completedReps]),
+  )
 })
 
 test('reconciliation on reload: remote wins unless a local write is still pending', async () => {

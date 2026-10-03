@@ -1,7 +1,7 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { currentProgramStage, mockProgress, programStageProgress, remainingProgramStages } from '@/lib/progress'
-import { DAYS, dayExercises } from '@/data/curriculum'
+import { REQUIRED_MODULES as DAYS, dayExercises } from '@/data/curriculum'
 import { FINISH_LINE, INTERVIEW_TARGET, PROGRAM_STAGES } from '@/data/program'
 import { MOCKS } from '@/data/mocks'
 import { attempt } from '@/lib/test-helpers'
@@ -11,7 +11,7 @@ const none = { completed: 0, total: MOCK_IDS.length }
 const both = { completed: MOCK_IDS.length, total: MOCK_IDS.length }
 const done = (dates: string[]) => DAYS.filter((d) => dates.includes(d.date)).flatMap((d) => dayExercises(d).map((e) => attempt({ exerciseId: e.id })))
 
-test('stage config lines up one-to-one with the curriculum days', () => {
+test('stage config lines up one-to-one with the topic modules', () => {
   assert.equal(PROGRAM_STAGES.length, DAYS.length)
   PROGRAM_STAGES.forEach((s, i) => assert.equal(s.dayDate, DAYS[i].date))
   const stages = programStageProgress(PROGRAM_STAGES, DAYS, [], none)

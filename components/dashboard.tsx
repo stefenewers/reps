@@ -15,7 +15,7 @@ import { BarsPattern, EmptyState, RepsBars } from '@/components/motif'
 import { ConceptGlyph } from '@/components/concept-icons'
 import { IconArrowRight, IconClock, IconSnow, IconSpark } from '@/components/icons'
 import WinstonPerch from '@/components/winston-perch'
-import { ALL_EXERCISES, DAY_BY_DATE, DAY_OF_EXERCISE, DAYS } from '@/data/curriculum'
+import { ALL_EXERCISES, DAY_BY_DATE, DAY_OF_EXERCISE, DAYS, MODULE_OF_EXERCISE, dayExercises } from '@/data/curriculum'
 import { PROGRAM_STAGES } from '@/data/program'
 import { skillName } from '@/data/skills'
 import { formatMinutes, localDate, parseLocal } from '@/lib/dates'
@@ -33,16 +33,23 @@ export default function Dashboard() {
   const dayIndex = DAYS.findIndex((d) => d.date === today) + 1
   const stats = dayStats(day, attempts)
   const next = nextExercise(day, attempts)
-  const all = day.sections.flatMap((s) => s.exercises)
+  const all = dayExercises(day)
   const nextIndex = next ? all.findIndex((e) => e.id === next.id) + 1 : all.length
-  const section = next ? day.sections.find((s) => s.exercises.some((e) => e.id === next.id)) : undefined
+  const section = next ? day.sections.find((s) => !s.optional && s.exercises.some((e) => e.id === next.id)) : undefined
   const passed = passedSet(attempts)
   const sectionLeft = section ? section.exercises.filter((e) => !passed.has(e.id)).reduce((n, e) => n + e.minutes, 0) : 0
   const due = dueReviews(reviews)
   const weakest = weakestSkills(mastery, 5)
-  const todayStage = PROGRAM_STAGES.find((s) => s.dayDate === today)
+  // The topic the next rep belongs to (a calendar day can span two topics).
+  const todayStage = PROGRAM_STAGES.find((s) => s.dayDate === (next ? MODULE_OF_EXERCISE[next.id] : day.modules?.[day.modules.length - 1]))
   const started = stats.completed > 0
   const nextKind = next ? kindOf(next) : null
+  // Done early? The next scheduled rep on a later day, to get ahead.
+  const ahead = next
+    ? undefined
+    : DAYS.filter((d) => d.date > today)
+        .map((d) => nextExercise(d, attempts))
+        .find(Boolean)
 
   const startReview = async () => {
     setBusy(true)
@@ -127,11 +134,18 @@ export default function Dashboard() {
             ) : (
               <div className="flex flex-wrap items-center justify-between gap-4">
                 <EmptyState title="Reps complete">
-                  Every rep for today is done. Cold reps are scheduled for tomorrow.
+                  Every required rep for today is done. Cold reps are scheduled for tomorrow.
                 </EmptyState>
-                <Link href={`/day/${today}/summary`} className="btn btn-primary btn-lg">
-                  Review the day <IconArrowRight size={15} />
-                </Link>
+                <div className="flex flex-wrap items-center gap-2">
+                  <Link href={`/day/${today}/summary`} className="btn btn-lg">
+                    Review the day
+                  </Link>
+                  {ahead && (
+                    <Link href={`/rep/${ahead.id}`} className="btn btn-primary btn-lg">
+                      Get ahead: {ahead.title.replace(/^[A-Za-z]+: /, '')} <IconArrowRight size={15} />
+                    </Link>
+                  )}
+                </div>
               </div>
             )}
 

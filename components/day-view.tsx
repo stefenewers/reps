@@ -6,7 +6,7 @@ import ProgressRing from '@/components/progress-ring'
 import { kindOf, compositionText } from '@/components/rep-kind'
 import { IconArrowRight, IconCheck, IconLock } from '@/components/icons'
 import { ConceptGlyph, sectionKind } from '@/components/concept-icons'
-import { DAY_BY_DATE, DAYS } from '@/data/curriculum'
+import { DAY_BY_DATE, DAYS, dayExercises } from '@/data/curriculum'
 import { PROBLEM_BY_ID } from '@/data/problems'
 import { MOCKS } from '@/data/mocks'
 import { formatMinutes, longDate } from '@/lib/dates'
@@ -27,7 +27,9 @@ export default function DayView({ date }: { date: string }) {
   const tried = attemptedSet(attempts)
   const next = nextExercise(day, attempts)
   const dayNumber = DAYS.findIndex((d) => d.date === day.date) + 1
-  const currentSection = day.sections.findIndex((s) => s.exercises.some((e) => !passed.has(e.id)))
+  const currentSection = day.sections.findIndex((s) => !s.optional && s.exercises.some((e) => !passed.has(e.id)))
+  const firstExtra = day.sections.findIndex((s) => s.optional)
+  const extraCount = day.sections.filter((s) => s.optional).reduce((n, s) => n + s.exercises.length, 0)
   const offsets = day.sections.map((_, i) => day.sections.slice(0, i).reduce((c, x) => c + x.exercises.length, 0))
 
   return (
@@ -50,7 +52,8 @@ export default function DayView({ date }: { date: string }) {
               {stats.completed} of {stats.total} reps
             </p>
             <p className="mt-0.5 text-[13.5px] text-muted">
-              {formatMinutes(stats.minutesRemaining)} left · {compositionText(day.sections.flatMap((s) => s.exercises))}
+              {formatMinutes(stats.minutesRemaining)} left · {compositionText(dayExercises(day))}
+              {extraCount > 0 && ` · ${extraCount} extra`}
             </p>
             {(day.capstones.length > 0 || (day.mocks?.length ?? 0) > 0) && (
               <p className="mt-1.5 text-[13px] text-muted">
@@ -96,7 +99,17 @@ export default function DayView({ date }: { date: string }) {
             const sectionNext = s.exercises.find((e) => !passed.has(e.id))
             const sk = sectionKind(s.title, s.exercises)
             const startN = offsets[si]
-            return (
+            const extraHeader =
+              si === firstExtra ? (
+                <li key="extra-head" id="extra" className="mt-6 scroll-mt-24 px-1">
+                  <h2 className="h2">Extra reps</h2>
+                  <p className="mt-1 max-w-[620px] text-[13.5px] leading-relaxed text-muted">
+                    Not part of today’s required plan and not counted in progress: warm-ups, end-of-topic cold reps, capstone explanations and variants. Take them if you finish early.
+                  </p>
+                </li>
+              ) : null
+            return [
+              extraHeader,
               <li
                 key={s.id}
                 aria-labelledby={`sec-${s.id}`}
@@ -182,8 +195,8 @@ export default function DayView({ date }: { date: string }) {
                     })}
                   </ol>
                 )}
-              </li>
-            )
+              </li>,
+            ]
           })}
         </ol>
       </div>

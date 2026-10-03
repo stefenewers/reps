@@ -9,7 +9,7 @@
 import { readFileSync } from 'node:fs'
 import path from 'node:path'
 import { loadPyodide } from 'pyodide'
-import { ALL_EXERCISES, DAYS, dayExercises } from '@/data/curriculum'
+import { ALL_EXERCISES, MODULES as DAYS, allDayExercises as dayExercises } from '@/data/curriculum'
 import { MOCK_EXERCISES } from '@/data/mocks'
 import { hasBlanks, outputMatches } from '@/lib/answers'
 import type { Exercise, TestCase } from '@/lib/types'

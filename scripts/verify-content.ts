@@ -3,7 +3,7 @@
  *   npm run verify:content              # everything
  *   npm run verify:content -- 2026-10-03  # one day (or "mocks")
  */
-import { DAYS, ALL_EXERCISES, dayExercises } from '@/data/curriculum'
+import { MODULES as DAYS, ALL_EXERCISES, allDayExercises as dayExercises } from '@/data/curriculum'
 import { MOCK_EXERCISES, MOCKS } from '@/data/mocks'
 import { verifyDays, verifyExercises } from '@/lib/content-check'
 

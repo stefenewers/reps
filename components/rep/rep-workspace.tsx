@@ -109,9 +109,10 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
   const { repo, attempts, mastery, today } = ctx
   const dayDate = DAY_OF_EXERCISE[fromId ?? ex.id] ?? today
   const day = DAY_BY_DATE[dayDate]
-  const dayList = useMemo(() => day?.sections.flatMap((s) => s.exercises.map((e) => ({ e, s }))) ?? [], [day])
+  const dayList = useMemo(() => day?.sections.filter((s) => !s.optional).flatMap((s) => s.exercises.map((e) => ({ e, s }))) ?? [], [day])
   const position = dayList.findIndex((x) => x.e.id === ex.id)
-  const section = position >= 0 ? dayList[position].s : undefined
+  const section = position >= 0 ? dayList[position].s : day?.sections.find((s) => s.exercises.some((e) => e.id === ex.id))
+  const isExtra = position < 0 && Boolean(section?.optional)
   const problem = ex.problemId ? PROBLEM_BY_ID[ex.problemId] : undefined
 
   const [mode, setMode] = useState<Mode>(() => initialMode ?? defaultMode(ex))
@@ -639,6 +640,7 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
           )}
           <span className="truncate font-medium text-ink">{crumbTitle}</span>
         </nav>
+        {isExtra && !session && <span className="eyebrow text-faint">Extra rep</span>}
         {total > 0 && index > 0 && (
           <div className="hidden items-center gap-3 sm:flex">
             <span className="flex items-baseline gap-1.5">
