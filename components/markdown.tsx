@@ -25,7 +25,9 @@ function inline(text: string, keyBase: string): ReactNode[] {
   return out
 }
 
-export default function Markdown({ text, className = '' }: { text: string; className?: string }) {
+export default function Markdown({ text, className = '', inline: asInline = false }: { text: string; className?: string; inline?: boolean }) {
+  // Inline: one run of text inside a sentence, no paragraphs.
+  if (asInline) return <span className={`prose-reps ${className}`}>{inline(text.replace(/\s*\n\s*/g, ' '), 'i')}</span>
   const blocks: ReactNode[] = []
   const lines = text.replace(/\r\n/g, '\n').split('\n')
   let para: string[] = []

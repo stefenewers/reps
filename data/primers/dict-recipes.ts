@@ -6,7 +6,7 @@ import type { Recipe } from '@/data/primers/types'
  * None of these solve a rep: no inverting, no searching values, no counting.
  */
 
-const make: Recipe = {
+export const make: Recipe = {
   when: 'make one',
   code: `def empty_gradebook():
     # empty: no names yet
@@ -25,7 +25,7 @@ print(starter_gradebook())`,
   note: 'Inside a function you nearly always start with `{}` and fill it as you go. Each entry is a **key** (what you look things up by) and a **value** (what you get back).',
 }
 
-const add: Recipe = {
+export const add: Recipe = {
   when: 'add or change an entry',
   code: `def record(scores, name, score):
     # new name → added
@@ -41,7 +41,7 @@ print(scores)`,
   note: 'Adding and changing are the **same line**: `d[key] = value`. Python checks whether the key is already there and either adds it or overwrites it. A key can never appear twice.',
 }
 
-const read: Recipe = {
+export const read: Recipe = {
   when: 'read a value you know is there',
   code: `def score_of(scores, name):
     # look up by KEY, get the VALUE
@@ -53,7 +53,7 @@ print(score_of(scores, 'ben'))`,
   note: 'Square brackets with a key gives you its value. If the key is missing this **crashes** (`KeyError`), so only use it when you are sure the key exists.',
 }
 
-const exists: Recipe = {
+export const exists: Recipe = {
   when: 'check if something is in it',
   code: `def is_enrolled(scores, name):
     # True/False: is it one of the KEYS?
@@ -70,7 +70,7 @@ False`,
   note: '`x in d` only ever looks at the **keys**. It gives `True`/`False`, so it fits straight into an `if` or a `return`.',
 }
 
-const guarded: Recipe = {
+export const guarded: Recipe = {
   when: 'read something that might be missing',
   code: `def report(scores, names):
     for name in names:
@@ -90,7 +90,7 @@ zed absent`,
   note: 'This is the combination you will use most: `in` to ask, `d[key]` to read, `else` for the missing case. The check is what stops the `KeyError`.',
 }
 
-const get: Recipe = {
+export const get: Recipe = {
   when: 'read with a fallback in one step',
   code: `def bonus_for(bonuses, name):
     # missing → 0, no crash
@@ -104,7 +104,7 @@ print(bonus_for(bonuses, 'ben'))`,
   note: '`d.get(key, fallback)` is the check-then-read from above squeezed into one call. It only **reads**: it never adds `ben` to the dict.',
 }
 
-const loop: Recipe = {
+export const loop: Recipe = {
   when: 'go through every entry',
   code: `def show(scores):
     # key AND value, every time
@@ -132,7 +132,7 @@ ben`,
   note: 'Pick the loop by what you need: `for k in d` gives keys, `d.values()` gives values, `d.items()` gives both as a pair you unpack into two names.',
 }
 
-const build: Recipe = {
+export const build: Recipe = {
   when: 'build one up from a list',
   code: `def name_lengths(names):
     # 1. start empty

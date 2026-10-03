@@ -1,25 +1,27 @@
 'use client'
 
 import dynamic from 'next/dynamic'
-import { useEffect, useRef, useState } from 'react'
+import { Fragment, useEffect, useRef, useState } from 'react'
 import Markdown from '@/components/markdown'
 import CodeView from '@/components/code-view'
 import { IconPlay, IconRotate, IconX } from '@/components/icons'
 import { RepsBars } from '@/components/motif'
 import { getRunner } from '@/lib/python/runner'
 import type { Primer, Recipe } from '@/data/primers/types'
+import type { Move } from '@/data/primers/moves'
+import type { Brief } from '@/data/briefs'
 
 const CodeEditor = dynamic(() => import('@/components/code-editor'), { ssr: false, loading: () => <div className="h-[150px] bg-editor" /> })
 
 /**
- * The basics behind a rep, on request: what the concept is, how to think about
- * it, the lines you'll type, a runnable example to poke at, and the classic
- * mistakes. Teaches the concept, never the answer.
+ * The basics behind a rep, on request, focused on the rep in front of you:
+ * the question in plain English, then only the moves it is built from. The
+ * full concept guide stays one tap away. Teaches the concept, never the answer.
  */
-export default function BasicsPanel({ primers, onClose }: { primers: Primer[]; onClose: () => void }) {
-  const [active, setActive] = useState(0)
+export default function BasicsPanel({ brief, moves, primers, onClose }: { brief?: Brief; moves: Move[]; primers: Primer[]; onClose: () => void }) {
+  const focused = Boolean(brief) || moves.length > 0
+  const [guideOpen, setGuideOpen] = useState(!focused)
   const host = useRef<HTMLElement>(null)
-  const p = primers[Math.min(active, primers.length - 1)]
 
   useEffect(() => {
     host.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
@@ -31,22 +33,114 @@ export default function BasicsPanel({ primers, onClose }: { primers: Primer[]; o
         <span className="flex items-center gap-2 text-[13px] font-semibold text-ink">
           <RepsBars width={14} bar={2} gap={1.5} /> Basics
         </span>
-        {primers.length > 1 && (
-          <div role="tablist" aria-label="Concepts" className="seg ml-1 !p-[2px]">
-            {primers.map((x, i) => (
-              <button key={x.id} type="button" role="tab" aria-selected={i === active} onClick={() => setActive(i)} className="!h-6 !px-2 !text-[12px]">
-                {x.title}
-              </button>
-            ))}
-          </div>
-        )}
         <button type="button" className="icon-btn ml-auto !size-7" onClick={onClose} aria-label="Close basics">
           <IconX size={13} />
         </button>
       </div>
 
-      <PrimerBody key={p.id} p={p} showTitle={primers.length === 1} />
+      {focused && (
+        <div className="flex flex-col gap-5 px-4 pb-4 pt-3">
+          {brief && <BriefView brief={brief} />}
+          {moves.length > 0 && <MovesView moves={moves} />}
+        </div>
+      )}
+
+      {primers.length > 0 && focused && (
+        <button
+          type="button"
+          aria-expanded={guideOpen}
+          onClick={() => setGuideOpen((o) => !o)}
+          className="flex w-full items-center gap-2 px-4 py-2.5 text-left text-[13px] text-muted transition-colors hover:bg-surface hover:text-ink"
+          style={{ boxShadow: '0 -1px 0 var(--hairline)' }}
+        >
+          <span aria-hidden="true" className={`inline-block transition-transform ${guideOpen ? 'rotate-90' : ''}`}>›</span>
+          Full guide
+          <span className="truncate text-faint">· {primers[0].title}{primers.length > 1 ? ` +${primers.length - 1}` : ''}</span>
+        </button>
+      )}
+      {guideOpen && primers.length > 0 && <Guide primers={primers} />}
     </section>
+  )
+}
+
+/** The question, decoded: what each input is, what you hand back, what to watch. */
+function BriefView({ brief }: { brief: Brief }) {
+  return (
+    <div>
+      <p className="label mb-2">This question, in plain English</p>
+      <div className="flex flex-col gap-2.5 rounded-xl bg-surface px-3.5 py-3">
+        {brief.task && <Markdown text={brief.task} className="!text-[14px] !leading-relaxed" />}
+        {brief.inputs?.length ? (
+          <dl className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-3 gap-y-1.5 text-[13.5px] leading-relaxed">
+            {brief.inputs.map((i) => (
+              <Fragment key={i.name}>
+                <dt>
+                  <code className="mono rounded bg-bg px-1.5 py-0.5 text-[12.5px] text-ink shadow-[inset_0_0_0_1px_var(--line)]">{i.name}</code>
+                </dt>
+                <dd className="min-w-0 text-ink-2">
+                  <Markdown text={i.is} className="!text-[13.5px]" />
+                </dd>
+              </Fragment>
+            ))}
+          </dl>
+        ) : null}
+        {brief.returns && (
+          <p className="text-[13.5px] leading-relaxed text-ink-2">
+            <span className="font-medium text-ink">You return </span>
+            <Markdown text={brief.returns} inline className="!text-[13.5px]" />
+          </p>
+        )}
+        {brief.catch && (
+          <p className="flex gap-2 text-[13.5px] leading-relaxed text-ink-2">
+            <span aria-hidden="true" className="mt-[8px] size-1.5 shrink-0 rounded-full bg-amber" />
+            <span>
+              <span className="font-medium text-ink">Watch for: </span>
+              <Markdown text={brief.catch} inline className="!text-[13.5px]" />
+            </span>
+          </p>
+        )}
+      </div>
+    </div>
+  )
+}
+
+/** Only the moves this rep is built from, closed until you ask. */
+function MovesView({ moves }: { moves: Move[] }) {
+  const [tryIt, setTryIt] = useState<{ code: string; n: number } | null>(null)
+  const tryRef = useRef<HTMLDivElement>(null)
+  const load = (code: string) => {
+    setTryIt((t) => ({ code, n: (t?.n ?? 0) + 1 }))
+    requestAnimationFrame(() => tryRef.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' }))
+  }
+  return (
+    <div className="flex flex-col gap-3">
+      <Recipes recipes={moves} onTry={load} label="The moves you’ll need" initialOpen={-1} />
+      {tryIt && (
+        <div ref={tryRef}>
+          <TryIt key={tryIt.n} initial={tryIt.code} />
+        </div>
+      )}
+    </div>
+  )
+}
+
+/** The whole concept primer(s), for browsing. */
+function Guide({ primers }: { primers: Primer[] }) {
+  const [active, setActive] = useState(0)
+  const p = primers[Math.min(active, primers.length - 1)]
+  return (
+    <div style={{ boxShadow: '0 -1px 0 var(--hairline)' }}>
+      {primers.length > 1 && (
+        <div role="tablist" aria-label="Concepts" className="seg mx-4 mt-3 !p-[2px]">
+          {primers.map((x, i) => (
+            <button key={x.id} type="button" role="tab" aria-selected={i === active} onClick={() => setActive(i)} className="!h-6 !px-2 !text-[12px]">
+              {x.title}
+            </button>
+          ))}
+        </div>
+      )}
+      <PrimerBody key={p.id} p={p} showTitle={primers.length === 1} />
+    </div>
   )
 }
 
@@ -115,11 +209,11 @@ function PrimerBody({ p, showTitle }: { p: Primer; showTitle: boolean }) {
 }
 
 /** Task first: pick what you're trying to do, see it inside a real function. */
-function Recipes({ recipes, onTry }: { recipes: Recipe[]; onTry: (code: string) => void }) {
-  const [open, setOpen] = useState(0)
+function Recipes({ recipes, onTry, label = 'When you want to…', initialOpen = 0 }: { recipes: Recipe[]; onTry: (code: string) => void; label?: string; initialOpen?: number }) {
+  const [open, setOpen] = useState(initialOpen)
   return (
     <div>
-      <p className="label mb-2">When you want to…</p>
+      <p className="label mb-2">{label}</p>
       <ul className="flex flex-col divide-y divide-line overflow-hidden rounded-xl shadow-[0_0_0_1px_var(--line)]">
         {recipes.map((r, i) => {
           const on = i === open
@@ -137,7 +231,7 @@ function Recipes({ recipes, onTry }: { recipes: Recipe[]; onTry: (code: string) 
               </button>
               {on && (
                 <div className="fade-in flex flex-col gap-2 bg-surface px-3 pb-3">
-                  <CodeView code={r.code} className="!text-[12.5px]" label={`Example: ${r.when}`} />
+                  <CodeView code={r.code} className="!text-[12.5px] max-sm:!text-[11.5px]" label={`Example: ${r.when}`} />
                   <div className="flex items-start gap-2">
                     <span className="label mt-[5px] shrink-0">Prints</span>
                     <pre className="code-view min-w-0 flex-1 !py-1.5 !text-[12px]">{r.output}</pre>

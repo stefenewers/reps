@@ -19,6 +19,8 @@ import { kindOf } from '@/components/rep-kind'
 import { RepsBars } from '@/components/motif'
 import BasicsPanel from '@/components/rep/basics-panel'
 import { primersFor } from '@/data/primers'
+import { movesFor } from '@/data/primers/moves'
+import { BRIEFS } from '@/data/briefs'
 import { IconArrowRight, IconBug, IconBulb, IconClock, IconDots, IconExternal, IconPlay, IconRotate, IconSpark, IconX } from '@/components/icons'
 import { followingExercise, lockedByGate, missingPrerequisites, passedSet, retrievalTypeFor } from '@/lib/progress'
 import { getRunner, type RunResult } from '@/lib/python/runner'
@@ -256,6 +258,7 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
 
   const isCode = ex.kind === 'code'
   const primers = useMemo(() => primersFor(ex.skills), [ex.skills])
+  const moves = useMemo(() => movesFor(ex.skills), [ex.skills])
   const hints = ex.hints ?? []
   const allHints = [...hints.slice(0, hintsShown), ...aiHints]
 
@@ -803,7 +806,7 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
               </div>
             )}
 
-            {showBasics && primers.length > 0 && <BasicsPanel primers={primers} onClose={() => setShowBasics(false)} />}
+            {showBasics && <BasicsPanel brief={BRIEFS[ex.id]} moves={moves} primers={primers} onClose={() => setShowBasics(false)} />}
 
             {ex.note && !interview && (mode === 'learn' || showNote) && (
               <div className="rise-in rounded-xl bg-surface px-4 py-3 shadow-[inset_2px_0_0_var(--ink)]">

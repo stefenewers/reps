@@ -3,6 +3,7 @@ import type { SkillId } from '@/lib/types'
 import { HASHING_PRIMERS } from '@/data/primers/hashing'
 import { PYTHON_PRIMERS } from '@/data/primers/python'
 import { PATTERN_PRIMERS } from '@/data/primers/patterns'
+import { MOVES } from '@/data/primers/moves'
 
 /** Every primer, and the primer that covers each skill. */
 export const PRIMERS: Primer[] = [...PYTHON_PRIMERS, ...HASHING_PRIMERS, ...PATTERN_PRIMERS]
@@ -19,7 +20,10 @@ export function primersFor(skills: SkillId[]): Primer[] {
   return out
 }
 
-/** Every runnable program in the primers: each example, and each recipe (id `primer#n`). Verified against real Python. */
+/** Every runnable program in the primers and moves: each example, recipe (`primer#n`) and move (`move:id`). Verified against real Python. */
 export function primerPrograms(primers: Primer[]): { id: string; code: string; output: string }[] {
-  return primers.flatMap((p) => [{ id: p.id, code: p.example.code, output: p.example.output }, ...(p.recipes ?? []).map((r, i) => ({ id: `${p.id}#${i + 1}`, code: r.code, output: r.output }))])
+  return [
+    ...primers.flatMap((p) => [{ id: p.id, code: p.example.code, output: p.example.output }, ...(p.recipes ?? []).map((r, i) => ({ id: `${p.id}#${i + 1}`, code: r.code, output: r.output }))]),
+    ...MOVES.map((m) => ({ id: `move:${m.id}`, code: m.code, output: m.output })),
+  ]
 }
