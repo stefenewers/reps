@@ -18,3 +18,8 @@ export function primersFor(skills: SkillId[]): Primer[] {
   }
   return out
 }
+
+/** Every runnable program in the primers: each example, and each recipe (id `primer#n`). Verified against real Python. */
+export function primerPrograms(primers: Primer[]): { id: string; code: string; output: string }[] {
+  return primers.flatMap((p) => [{ id: p.id, code: p.example.code, output: p.example.output }, ...(p.recipes ?? []).map((r, i) => ({ id: `${p.id}#${i + 1}`, code: r.code, output: r.output }))])
+}

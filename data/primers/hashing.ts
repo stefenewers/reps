@@ -1,4 +1,5 @@
 import type { Primer } from '@/data/primers/types'
+import { DICT_GET_ITEMS_RECIPES, DICT_RECIPES } from '@/data/primers/dict-recipes'
 
 /** Sets, dictionaries and the hashing patterns built on them. */
 export const HASHING_PRIMERS: Primer[] = [
@@ -42,7 +43,7 @@ False
     title: 'Dictionaries',
     skills: ['dict_create', 'dict_assign', 'dict_lookup', 'dict_membership'],
     what: 'A **dict** maps *keys* to *values*: give it a key, get its value back instantly. Keys are unique; assigning to an existing key overwrites its value.',
-    model: 'A labelled set of boxes: the key is the label, the value is what is inside.',
+    model: 'A coat check: hand over a ticket (the key), get back that coat (the value). No ticket, no coat.',
     syntax: [
       { code: 'ages = {}', note: 'Empty dict.' },
       { code: "ages = {'ana': 31, 'ben': 27}", note: 'Literal: `key: value` pairs.' },
@@ -71,6 +72,7 @@ False
       'Assigning to an existing key replaces the old value, it does not add a second one.',
       'Lists can\'t be keys (they change); strings, numbers and tuples can.',
     ],
+    recipes: DICT_RECIPES,
   },
   {
     id: 'dict-get-items',
@@ -105,6 +107,7 @@ cake 4`,
       '`.get()` only reads. It never stores anything in the dict.',
       'Looping `for x in d` gives keys only. Use `.items()` when you need both.',
     ],
+    recipes: DICT_GET_ITEMS_RECIPES,
   },
   {
     id: 'frequency-maps',

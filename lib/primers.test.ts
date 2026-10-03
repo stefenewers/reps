@@ -33,3 +33,16 @@ test('primers are short and complete', () => {
     assert.ok(p.example.code.trim() && p.example.output.trim(), `${p.id} example`)
   }
 })
+
+test('dictionaries are taught task first, inside real functions', () => {
+  const dicts = PRIMER_BY_SKILL.dict_create
+  const whens = (dicts.recipes ?? []).map((r) => r.when)
+  for (const w of ['make one', 'add or change an entry', 'check if something is in it', 'go through every entry', 'build one up from a list']) assert.ok(whens.includes(w), w)
+  for (const p of PRIMERS)
+    for (const r of p.recipes ?? []) {
+      assert.match(r.code, /^def /m, `${p.id}: "${r.when}" is shown inside a function`)
+      assert.ok(r.output.trim() && r.note.length > 20, `${p.id}: "${r.when}" complete`)
+      for (const line of r.code.split('\n')) assert.ok(line.length <= 40, `${p.id}: "${r.when}" line fits the panel: ${line}`)
+    }
+  assert.ok(PRIMER_BY_SKILL.dict_get.recipes?.length, '.get() / looping has recipes too')
+})
