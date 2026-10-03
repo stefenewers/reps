@@ -14,6 +14,11 @@ function section(id: string, title: string, summary: string, exercises: Exercise
   return { id, title, summary, exercises }
 }
 
+/** A mastery check: every rep passed without the solution before the next section opens. */
+function gate(id: string, title: string, summary: string, exercises: Exercise[]): Section {
+  return { id, title, summary, gate: true, exercises: exercises.map((e) => ({ ...e, cleanPass: true })) }
+}
+
 // ---------------------------------------------------------------------------
 // 1. Python recall: lists, indexing, len, append, return
 // ---------------------------------------------------------------------------
@@ -1010,6 +1015,202 @@ True`,
     explanation: 'Building a new dict from `.items()` is the template for every "re-key this data" transformation.',
     signature: 'dict:invert',
     minutes: 3.5,
+  }),
+])
+
+// ---------------------------------------------------------------------------
+// 6b. Dictionary check: the same moves again, new scenario, no solution
+// ---------------------------------------------------------------------------
+
+const dictRevision = gate('o2-dict-revision', 'Dictionary check', 'Create, assign, look up, check and loop again, in a new scenario. Pass every rep without opening the solution to unlock .get().', [
+  output({
+    id: 'o2-drev-trace',
+    title: 'Trace: keep the table',
+    skills: ['dict_create', 'dict_assign', 'dict_lookup', 'dict_membership', 'len'],
+    prompt: 'Predict the output. Before you answer, write down what `menu` holds after **every** line.',
+    code: `menu = {}
+menu['tea'] = 3
+menu['cake'] = 5
+menu['tea'] = 4
+print(menu)
+print(len(menu))
+print('cake' in menu)
+print(5 in menu)
+print(menu['tea'] + menu['cake'])`,
+    expectedOutput: `{'tea': 4, 'cake': 5}
+2
+True
+False
+9`,
+    note: 'Keep a running table: `{}` → `{tea: 3}` → `{tea: 3, cake: 5}` → `{tea: 4, cake: 5}`. Then answer each print from the table.',
+    explanation: "Assigning 'tea' again replaces 3 with 4, so there are still 2 keys. `5 in menu` is False because 5 is a value, and `in` only checks keys.",
+    signature: 'trace:dict-table',
+    minutes: 2,
+    important: true,
+  }),
+  choice({
+    id: 'o2-drev-crash',
+    title: 'Which line crashes?',
+    skills: ['dict_lookup', 'dict_membership', 'dict_assign'],
+    prompt: '`menu` is the dict below. Which **one** of these lines raises an error?',
+    code: `menu = {'tea': 4, 'cake': 5}`,
+    options: ["menu['cake']", "'pie' in menu", "menu['pie']", "menu['pie'] = 6"],
+    answer: 2,
+    note: 'Reading a missing key with `[]` crashes. Asking with `in` never crashes. Assigning a missing key just adds it.',
+    explanation: "`menu['pie']` raises KeyError because 'pie' is not a key. `'pie' in menu` safely answers False, and `menu['pie'] = 6` adds a new entry.",
+    signature: 'recognize:dict-keyerror-line',
+    minutes: 1,
+  }),
+  write({
+    id: 'o2-drev-make-menu',
+    title: 'Write: menu from two lists',
+    skills: ['dict_create', 'dict_assign', 'enumerate'],
+    prompt: '`items` is a list of item names (strings). `prices` is a list of whole-number prices, the same length: `prices[i]` is the price of `items[i]`.\n\nWrite `make_menu(items, prices)` that returns a **dict** mapping each item name to its price.\n\n`make_menu([\'tea\', \'cake\'], [4, 5])` → `{\'tea\': 4, \'cake\': 5}`',
+    starterCode: `def make_menu(items, prices):
+    pass`,
+    solution: `def make_menu(items, prices):
+    menu = {}
+    for i, item in enumerate(items):
+        menu[item] = prices[i]
+    return menu`,
+    tests: [
+      t.eq("make_menu(['tea', 'cake'], [4, 5])", "{'tea': 4, 'cake': 5}"),
+      t.eq('make_menu([], [])', '{}'),
+      t.hidden("make_menu(['tea', 'tea'], [3, 4])", "{'tea': 4}"),
+    ],
+    hints: ['Start empty, loop, store, return.', 'You need the position `i` to find the matching price: `enumerate`.'],
+    explanation: 'Key = the item name, value = the price at the same position. If an item appears twice, the later price overwrites the earlier one.',
+    signature: 'dict:build-from-parallel-lists',
+    minutes: 3.5,
+    important: true,
+  }),
+  write({
+    id: 'o2-drev-bill',
+    title: 'Write: total a bill',
+    skills: ['dict_membership', 'dict_lookup', 'accumulator', 'for_loop'],
+    prompt: '`menu` is a dict mapping item names (strings) to prices (ints). `order` is a list of item names, possibly with repeats.\n\nWrite `bill(menu, order)` that returns the total price of the order. Items that are **not** on the menu are skipped: they add nothing.\n\n`bill({\'tea\': 4, \'cake\': 5}, [\'tea\', \'pie\', \'tea\'])` → `8`',
+    starterCode: `def bill(menu, order):
+    pass`,
+    solution: `def bill(menu, order):
+    total = 0
+    for item in order:
+        if item in menu:
+            total += menu[item]
+    return total`,
+    tests: [
+      t.eq("bill({'tea': 4, 'cake': 5}, ['tea', 'cake', 'tea'])", '13'),
+      t.eq("bill({'tea': 4, 'cake': 5}, ['tea', 'pie', 'tea'])", '8'),
+      t.hidden("bill({'tea': 4}, [])", '0'),
+      t.hidden("bill({}, ['tea'])", '0'),
+    ],
+    hints: ['Loop over the order, not the menu.', 'Check each item is a key before reading its price.'],
+    explanation: 'Accumulator over the order, with `in` guarding every `menu[item]` so unknown items never raise KeyError.',
+    signature: 'dict:guarded-sum',
+    minutes: 3.5,
+    important: true,
+  }),
+  debug({
+    id: 'o2-drev-dbg-cheapest',
+    title: 'Debug: cheapest item',
+    skills: ['dict_lookup', 'for_loop', 'conditionals'],
+    prompt: '`menu` is a dict mapping item names (strings) to prices (ints), with at least one item. `cheapest(menu)` should return the **name** of the cheapest item. It crashes. Fix it.',
+    brokenCode: `def cheapest(menu):
+    best = None
+    for item in menu:
+        if best is None or item < menu[best]:
+            best = item
+    return best`,
+    solution: `def cheapest(menu):
+    best = None
+    for item in menu:
+        if best is None or menu[item] < menu[best]:
+            best = item
+    return best`,
+    tests: [
+      t.eq("cheapest({'tea': 4, 'cake': 5, 'bun': 2})", "'bun'"),
+      t.eq("cheapest({'tea': 4})", "'tea'"),
+      t.hidden("cheapest({'a': 9, 'b': 1, 'c': 3})", "'b'"),
+    ],
+    hints: ['Looping over a dict gives you keys. Is `item` a name or a price?', 'Compare a price with a price.'],
+    explanation: '`item` is a key (a name), so `item < menu[best]` compares a string with a number. The price of `item` is `menu[item]`.',
+    signature: 'debug:dict-key-vs-value',
+    minutes: 3,
+  }),
+  write({
+    id: 'o2-drev-under',
+    title: 'Write: items under a budget',
+    skills: ['dict_items', 'conditionals', 'list_append'],
+    prompt: '`menu` is a dict mapping item names (strings) to prices (ints). `limit` is an int.\n\nWrite `affordable(menu, limit)` that returns a **sorted list** of the names of items that cost `limit` or less.\n\n`affordable({\'tea\': 4, \'cake\': 5, \'bun\': 2}, 4)` → `[\'bun\', \'tea\']`',
+    starterCode: `def affordable(menu, limit):
+    pass`,
+    solution: `def affordable(menu, limit):
+    out = []
+    for item, price in menu.items():
+        if price <= limit:
+            out.append(item)
+    return sorted(out)`,
+    tests: [
+      t.eq("affordable({'tea': 4, 'cake': 5, 'bun': 2}, 4)", "['bun', 'tea']"),
+      t.eq("affordable({'tea': 4}, 1)", '[]'),
+      t.hidden("affordable({'b': 1, 'a': 1}, 1)", "['a', 'b']"),
+    ],
+    hints: ['You need the name **and** the price each time.', '`for item, price in menu.items():`'],
+    explanation: '`.items()` hands you each key with its value, so you can test the value and keep the key.',
+    signature: 'dict:filter-items',
+    minutes: 3.5,
+  }),
+  write({
+    id: 'o2-drev-seat-chart',
+    title: 'Write: who sits where',
+    skills: ['dict_items', 'dict_assign', 'dict_create'],
+    stage: 'combine',
+    repType: 'combine',
+    prompt: '`seats` is a dict mapping guest names (strings) to seat numbers (ints). No two guests share a seat.\n\nWrite `by_seat(seats)` that returns a **new** dict going the other way: seat number → guest name.\n\n`by_seat({\'ana\': 3, \'ben\': 7})` → `{3: \'ana\', 7: \'ben\'}`',
+    starterCode: `def by_seat(seats):
+    pass`,
+    solution: `def by_seat(seats):
+    out = {}
+    for name, seat in seats.items():
+        out[seat] = name
+    return out`,
+    tests: [
+      t.eq("by_seat({'ana': 3, 'ben': 7})", "{3: 'ana', 7: 'ben'}"),
+      t.eq('by_seat({})', '{}'),
+      t.hidden("by_seat({'cy': 1})", "{1: 'cy'}"),
+    ],
+    hints: ['In the new dict, what do you look up by? That is the key.', 'Loop with `.items()` and store with the roles swapped.'],
+    explanation: 'Ask the two questions: look up by seat (key), get back the name (value). Then build it: start empty, loop `.items()`, store, return.',
+    signature: 'dict:reverse-lookup',
+    minutes: 3.5,
+    important: true,
+  }),
+  write({
+    id: 'o2-drev-reprice',
+    title: 'Write: apply price changes',
+    skills: ['dict_items', 'dict_membership', 'dict_assign', 'dict_create'],
+    stage: 'combine',
+    repType: 'combine',
+    prompt: '`menu` is a dict mapping item names to prices. `changes` is a dict mapping item names to **new** prices.\n\nWrite `reprice(menu, changes)` that returns a **new** dict: the menu with each change applied. Ignore changes for items that are not on the menu. Do not modify `menu` itself.\n\n`reprice({\'tea\': 4, \'cake\': 5}, {\'tea\': 3, \'pie\': 6})` → `{\'tea\': 3, \'cake\': 5}`',
+    starterCode: `def reprice(menu, changes):
+    pass`,
+    solution: `def reprice(menu, changes):
+    out = {}
+    for item, price in menu.items():
+        out[item] = price
+    for item, price in changes.items():
+        if item in out:
+            out[item] = price
+    return out`,
+    tests: [
+      t.eq("reprice({'tea': 4, 'cake': 5}, {'tea': 3, 'pie': 6})", "{'tea': 3, 'cake': 5}"),
+      t.eq("reprice({'tea': 4}, {})", "{'tea': 4}"),
+      t.check('menu is not modified', "m = {'tea': 4}\nreprice(m, {'tea': 1})\nassert m == {'tea': 4}, 'reprice changed the original menu'"),
+      t.hidden("reprice({}, {'tea': 1})", '{}'),
+    ],
+    hints: ['First copy the menu into a new dict, entry by entry.', 'Then go through the changes and only assign the ones whose item is already a key.'],
+    explanation: 'Two loops: copy (assign every entry), then update (assign only where `in` says the key exists). Assigning an existing key overwrites it.',
+    signature: 'dict:copy-and-update',
+    minutes: 4.5,
   }),
 ])
 
@@ -2339,6 +2540,7 @@ export const day: DayModule = {
     sets,
     containsDuplicate,
     dictionaries,
+    dictRevision,
     getSection,
     iterDicts,
     frequency,

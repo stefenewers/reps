@@ -20,7 +20,7 @@ import { RepsBars } from '@/components/motif'
 import BasicsPanel from '@/components/rep/basics-panel'
 import { primersFor } from '@/data/primers'
 import { IconArrowRight, IconBug, IconBulb, IconClock, IconDots, IconExternal, IconPlay, IconRotate, IconSpark, IconX } from '@/components/icons'
-import { followingExercise, missingPrerequisites, retrievalTypeFor } from '@/lib/progress'
+import { followingExercise, lockedByGate, missingPrerequisites, passedSet, retrievalTypeFor } from '@/lib/progress'
 import { getRunner, type RunResult } from '@/lib/python/runner'
 import { buildRepairSet, createSession, findExercise, getSession, newId } from '@/lib/sessions'
 import {
@@ -34,7 +34,7 @@ import {
   requestHint,
 } from '@/lib/coach/client'
 import { MISTAKE_LABEL, type Diagnosis } from '@/lib/coach/schemas'
-import type { Attempt, Exercise, Mode } from '@/lib/types'
+import type { Attempt, Exercise, Mode, Section } from '@/lib/types'
 
 const SPLIT_DEFAULT = 38
 const SPLIT_MIN = 26
@@ -95,7 +95,40 @@ export default function RepWorkspace({ exerciseId, sessionId, fromId, initialMod
       </main>
     )
   }
+  const lockDay = DAY_BY_DATE[DAY_OF_EXERCISE[exercise.id]]
+  const gate = !session && lockDay ? lockedByGate(lockDay, exercise.id, attempts) : undefined
+  if (gate) return <GateLock gate={gate} attempts={attempts} />
   return <Workspace key={exercise.id} exercise={exercise} session={session} fromId={fromId} initialMode={initialMode} router={router} ctx={{ repo, attempts, mastery, today }} />
+}
+
+/** Behind an uncleared mastery check: no way round it, only through it. */
+function GateLock({ gate, attempts }: { gate: Section; attempts: Attempt[] }) {
+  const passed = passedSet(attempts)
+  const left = gate.exercises.filter((e) => !passed.has(e.id))
+  return (
+    <main className="mx-auto w-full max-w-[620px] px-5 py-16">
+      <p className="eyebrow text-faint">Locked</p>
+      <h1 className="h1 mt-2">Pass the {gate.title} first</h1>
+      <p className="mt-3 text-[14.5px] leading-relaxed text-ink-2">
+        Everything after it builds on dictionaries. Each rep in the check has to be passed <span className="font-medium text-ink">without opening the solution</span>. Hints and Basics are fine.
+      </p>
+      <p className="mt-6 label">Still to clear · {left.length} of {gate.exercises.length}</p>
+      <ul className="mt-2 flex flex-col gap-1">
+        {left.map((e) => (
+          <li key={e.id}>
+            <Link href={`/rep/${e.id}`} className="block rounded-lg px-3 py-2 text-[14px] text-ink-2 hover:bg-surface">
+              {e.title}
+            </Link>
+          </li>
+        ))}
+      </ul>
+      {left[0] && (
+        <Link href={`/rep/${left[0].id}`} className="btn btn-accent btn-lg mt-6">
+          Continue the check <IconArrowRight size={15} />
+        </Link>
+      )}
+    </main>
+  )
 }
 
 interface WorkspaceProps {
@@ -619,6 +652,8 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
   // ── render ─────────────────────────────────────────────────────────────────
 
   const passed = phase === 'passed'
+  /** A check rep passed with the solution open: it does not count until it is run back clean. */
+  const checkUncleared = passed && Boolean(ex.cleanPass) && !session && solutionShown
   const assisted = hintsShown + aiHints.length > 0 || solutionShown
   const locked = passed
   const mm = String(Math.floor(elapsed / 60)).padStart(2, '0')
@@ -657,6 +692,7 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
           <span className="truncate font-medium text-ink">{crumbTitle}</span>
         </nav>
         {isExtra && !session && <span className="eyebrow text-faint">Extra rep</span>}
+        {ex.cleanPass && !session && section?.gate && <span className="eyebrow text-accent-ink">Mastery check</span>}
         {total > 0 && index > 0 && (
           <div className="hidden items-center gap-3 sm:flex">
             <span className="flex items-baseline gap-1.5">
@@ -850,7 +886,11 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
                 {ex.solution && ex.kind !== 'choice' && ex.kind !== 'output' && <CodeView code={ex.solution} />}
                 {ex.kind === 'output' && <pre className="code-view">{ex.expectedOutput}</pre>}
                 {ex.kind === 'choice' && ex.options && ex.answer !== undefined && <p className="text-[14px] font-medium">{ex.options[ex.answer]}</p>}
-                <p className="text-[12.5px] text-muted">Read it, close it, then write it yourself. This rep now earns reduced credit.</p>
+                <p className="text-[12.5px] text-muted">
+                  {ex.cleanPass && !session
+                    ? 'Read it, close it, then write it yourself. This is a check rep: a pass with the solution open does not count. Run it back clean to clear it.'
+                    : 'Read it, close it, then write it yourself. This rep now earns reduced credit.'}
+                </p>
               </section>
             )}
 
@@ -1027,18 +1067,22 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
                       </button>
                     ))}
                   </div>
-                  <button type="button" className={`btn ${assisted && !runItBack ? 'btn-accent' : ''}`} onClick={doRunItBack} title="Reset the editor and write it again from memory">
+                  <button type="button" className={`btn ${(assisted && !runItBack) || checkUncleared ? 'btn-accent' : ''}`} onClick={doRunItBack} title="Reset the editor and write it again from memory">
                     <RepsBars width={13} bar={2} gap={1.5} /> Run it back
                   </button>
                   <button type="button" className="btn" onClick={() => another('same')} disabled={coachBusy !== null}>
                     {coachBusy === 'same' ? 'Finding…' : 'Another rep'}
                   </button>
-                  <Link href={nextHref} className="cta-in btn btn-accent btn-lg" data-testid="next-rep" autoFocus>
+                  <Link href={nextHref} className={`cta-in btn btn-lg ${checkUncleared ? '' : 'btn-accent'}`} data-testid="next-rep" autoFocus={!checkUncleared}>
                     {nextHref.endsWith('/summary') ? 'Finish the day' : session && session.exerciseIds.indexOf(ex.id) === session.exerciseIds.length - 1 && session.returnTo ? 'Retry capstone' : 'Next rep'}
                     <IconArrowRight size={15} />
                   </Link>
                 </div>
-                {assisted && !runItBack && <p className="w-full text-[12.5px] text-accent-ink">You used help. Close the explanation and run it back from memory.</p>}
+                {checkUncleared ? (
+                  <p className="w-full text-[12.5px] text-accent-ink">Not cleared yet: the solution was open. Run it back from memory to clear this check rep.</p>
+                ) : (
+                  assisted && !runItBack && <p className="w-full text-[12.5px] text-accent-ink">You used help. Close the explanation and run it back from memory.</p>
+                )}
               </div>
             ) : (
               <div className="flex shrink-0 flex-wrap items-center gap-2 bg-bg py-3 pl-3 pr-24" style={{ boxShadow: '0 -1px 0 var(--line)' }}>
@@ -1088,7 +1132,7 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
                       )}
                       {ex.complexity && <MenuItem onClick={() => (setShowComplexity(true), setMoreOpen(false))}>Complexity</MenuItem>}
                       <div className="my-1 h-px bg-line" />
-                      {!solutionShown && <MenuItem onClick={viewSolution}>Show solution</MenuItem>}
+                      {!solutionShown && <MenuItem onClick={viewSolution}>{ex.cleanPass && !session ? 'Show solution (won’t count)' : 'Show solution'}</MenuItem>}
                       <MenuItem onClick={() => (setMoreOpen(false), router.push(nextHref))}>Skip for now</MenuItem>
                     </div>
                   )}

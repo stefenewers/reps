@@ -1,5 +1,6 @@
-import type { Attempt, DayModule, Exercise, Problem, RetrievalType, ReviewItem, SkillId } from '@/lib/types'
+import type { Attempt, DayModule, Exercise, Problem, RetrievalType, ReviewItem, Section, SkillId } from '@/lib/types'
 import type { SkillMastery } from '@/lib/mastery'
+import { EXERCISE_BY_ID } from '@/data/curriculum'
 
 /** Extras (`optional` sections) never count toward a day, a stage or the program. */
 function req(day: DayModule) {
@@ -11,8 +12,9 @@ function req(day: DayModule) {
  * All deterministic, all zero tokens.
  */
 
+/** Reps that count as done. In a mastery check (`cleanPass`), a pass with the solution open does not count. */
 export function passedSet(attempts: Attempt[]): Set<string> {
-  return new Set(attempts.filter((a) => a.passed && a.completedAt).map((a) => a.exerciseId))
+  return new Set(attempts.filter((a) => a.passed && a.completedAt && !(a.solutionViewed && EXERCISE_BY_ID[a.exerciseId]?.cleanPass)).map((a) => a.exerciseId))
 }
 
 export function attemptedSet(attempts: Attempt[]): Set<string> {
@@ -74,8 +76,10 @@ export const SECTION_UNLOCK_RATIO = 0.6
 
 /**
  * A section unlocks when the previous one is at least 60% attempted. Inside a
- * section, a rep unlocks when every earlier rep has been attempted. Locks are
- * advisory: the UI lets you open a locked rep anyway.
+ * section, a rep unlocks when every earlier rep has been attempted. Those locks
+ * are advisory: the UI lets you open a locked rep anyway. A mastery check
+ * (`gate`) is not: everything after it stays locked until each of its reps is
+ * passed without the solution.
  */
 export function sectionUnlocked(day: DayModule, index: number, attempts: Attempt[]): boolean {
   if (index <= 0 || day.sections[index]?.optional) return true
@@ -83,7 +87,24 @@ export function sectionUnlocked(day: DayModule, index: number, attempts: Attempt
   const prev = day.sections[index - 1]
   if (!prev.exercises.length || prev.optional) return sectionUnlocked(day, index - 1, attempts)
   const ratio = prev.exercises.filter((e) => tried.has(e.id)).length / prev.exercises.length
-  return ratio >= SECTION_UNLOCK_RATIO && sectionUnlocked(day, index - 1, attempts)
+  return ratio >= SECTION_UNLOCK_RATIO && gatesCleared(day, index, attempts) && sectionUnlocked(day, index - 1, attempts)
+}
+
+/** The first uncleared mastery check before section `index` in this day, if any. */
+export function blockingGate(day: DayModule, index: number, attempts: Attempt[]): Section | undefined {
+  const passed = passedSet(attempts)
+  return day.sections.slice(0, Math.max(0, index)).find((s) => s.gate && !s.optional && !s.exercises.every((e) => passed.has(e.id)))
+}
+
+function gatesCleared(day: DayModule, index: number, attempts: Attempt[]) {
+  return !blockingGate(day, index, attempts)
+}
+
+/** Hard lock: a rep that sits behind an uncleared mastery check. */
+export function lockedByGate(day: DayModule, exerciseId: string, attempts: Attempt[]): Section | undefined {
+  const si = day.sections.findIndex((s) => s.exercises.some((e) => e.id === exerciseId))
+  if (si < 0 || day.sections[si].optional) return undefined
+  return blockingGate(day, si, attempts)
 }
 
 export function exerciseUnlocked(day: DayModule, exerciseId: string, attempts: Attempt[]): boolean {

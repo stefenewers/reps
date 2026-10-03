@@ -10,7 +10,7 @@ import { DAY_BY_DATE, DAYS, dayExercises } from '@/data/curriculum'
 import { PROBLEM_BY_ID } from '@/data/problems'
 import { MOCKS } from '@/data/mocks'
 import { formatMinutes, longDate } from '@/lib/dates'
-import { attemptedSet, dayStats, exerciseUnlocked, nextExercise, passedSet, sectionUnlocked } from '@/lib/progress'
+import { attemptedSet, blockingGate, dayStats, exerciseUnlocked, nextExercise, passedSet, sectionUnlocked } from '@/lib/progress'
 
 export default function DayView({ date }: { date: string }) {
   const { attempts, today } = useReps()
@@ -92,6 +92,7 @@ export default function DayView({ date }: { date: string }) {
         <ol className="mt-8 flex flex-col gap-4">
           {day.sections.map((s, si) => {
             const unlocked = sectionUnlocked(day, si, attempts)
+            const gated = s.optional ? undefined : blockingGate(day, si, attempts)
             const done = s.exercises.filter((e) => passed.has(e.id)).length
             const complete = done === s.exercises.length && s.exercises.length > 0
             const isCurrent = si === currentSection
@@ -126,7 +127,7 @@ export default function DayView({ date }: { date: string }) {
                           : 'bg-bg text-muted shadow-[0_0_0_1px_var(--line-strong)]'
                     }`}
                   >
-                    {complete ? <IconCheck size={16} strokeWidth={2.2} /> : !unlocked && sk === 'normal' ? <IconLock size={14} /> : <ConceptGlyph name={s.title} size={17} />}
+                    {complete ? <IconCheck size={16} strokeWidth={2.2} /> : gated || (!unlocked && sk === 'normal') ? <IconLock size={14} /> : <ConceptGlyph name={s.title} size={17} />}
                   </span>
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1">
@@ -139,7 +140,12 @@ export default function DayView({ date }: { date: string }) {
                           <span aria-hidden="true" className="size-1.5 rounded-full bg-accent" /> In progress
                         </span>
                       )}
-                      {!unlocked && !complete && <span className="text-[12px] text-faint">Up next · open any rep anyway</span>}
+                      {s.gate && !complete && <span className="text-[12px] font-medium text-accent-ink">Mastery check · no solutions</span>}
+                      {gated ? (
+                        <span className="text-[12px] text-faint">Locked · clear the {gated.title} first</span>
+                      ) : (
+                        !unlocked && !complete && <span className="text-[12px] text-faint">Up next · open any rep anyway</span>
+                      )}
                     </div>
                     <p className="mt-1 text-[13.5px] leading-relaxed text-muted">{s.summary}</p>
                     <p className="mt-1.5 text-[12.5px] text-faint">
@@ -167,9 +173,11 @@ export default function DayView({ date }: { date: string }) {
                       const isNext = next?.id === e.id
                       const k = kindOf(e)
                       return (
-                        <li key={e.id}>
+                        <li key={e.id} className={gated ? 'pointer-events-none select-none opacity-60' : undefined}>
                           <Link
                             href={`/rep/${e.id}`}
+                            tabIndex={gated ? -1 : undefined}
+                            aria-disabled={gated ? true : undefined}
                             className={`group relative grid grid-cols-[30px_22px_1fr_auto] items-center gap-3 rounded-lg px-3 py-2 text-[14px] transition-colors hover:bg-surface ${isNext ? 'bg-surface-2 hover:bg-surface-2 before:absolute before:inset-y-2 before:left-0 before:w-[2px] before:rounded-full before:bg-accent' : ''} ${
                               !open && !isDone ? 'text-muted' : ''
                             }`}

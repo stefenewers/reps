@@ -82,6 +82,8 @@ export interface Exercise {
   id: string
   title: string
   kind: ExerciseKind
+  /** Part of a mastery check: only a pass without the solution open counts. */
+  cleanPass?: boolean
   stage: Stage
   repType: RepType
   skills: SkillId[]
@@ -128,6 +130,8 @@ export interface Section {
   exercises: Exercise[]
   /** Extra reps: available, but not part of the day's required plan or any progress total. */
   optional?: boolean
+  /** A mastery check: every rep must be passed without opening the solution before anything after it unlocks. */
+  gate?: boolean
 }
 
 export interface DayModule {

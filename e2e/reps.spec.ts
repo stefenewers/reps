@@ -58,19 +58,27 @@ test('today → first rep → correct answer → mastery updates → reload → 
 })
 
 test('a code rep runs real Python in the browser and an infinite loop is stopped', async ({ page }) => {
-  await page.goto('/rep/cap-two-sum')
+  await page.goto('/rep/cap-contains-duplicate')
   await page.locator('.cm-content').click()
   await page.keyboard.press('ControlOrMeta+a')
   await page.keyboard.press('Backspace')
-  await page.keyboard.insertText('def two_sum(nums, target):\n    while True:\n        pass\n')
+  await page.keyboard.insertText('def contains_duplicate(nums):\n    while True:\n        pass\n')
   await page.getByRole('button', { name: /^Run/ }).click()
   await expect(page.getByText('Possible infinite loop')).toBeVisible({ timeout: 90_000 })
   await page.locator('.cm-content').click()
   await page.keyboard.press('ControlOrMeta+a')
   await page.keyboard.press('Backspace')
-  await page.keyboard.insertText('def two_sum(nums, target):\n    seen = {}\n    for i, n in enumerate(nums):\n        if target - n in seen:\n            return [seen[target - n], i]\n        seen[n] = i\n')
+  await page.keyboard.insertText('def contains_duplicate(nums):\n    seen = set()\n    for n in nums:\n        if n in seen:\n            return True\n        seen.add(n)\n    return False\n')
   await page.getByTestId('submit').click()
   await expect(page.getByTestId('rep-complete')).toBeVisible({ timeout: 90_000 })
+})
+
+test('reps behind the Dictionary check are locked until it is cleared', async ({ page }) => {
+  await page.goto('/rep/cap-two-sum')
+  await expect(page.getByRole('heading', { name: 'Pass the Dictionary check first' })).toBeVisible()
+  await expect(page.locator('.cm-content')).toHaveCount(0)
+  await page.getByRole('link', { name: /Continue the check/ }).click()
+  await expect(page).toHaveURL(/\/rep\/o2-drev-trace$/)
 })
 
 test('a debug rep loads broken code, shows failing tests, and accepts the fix', async ({ page }) => {

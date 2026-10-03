@@ -31,8 +31,19 @@ test('required work keeps the original order across the calendar', () => {
 test('Oct 3 – Oct 10 are aggressive but realistic: about 4.75 to 5.75 planned hours each', () => {
   for (const d of DAYS.slice(1, 9)) {
     const m = minutes(d)
-    assert.ok(m >= 285 && m <= 345, `${d.date}: ${Math.round(m)} min`)
+    // Oct 3 also carries the mandatory Dictionary check (~25 min), added after the re-plan.
+    const max = d.date === '2026-10-03' ? 345 + checkMinutes : 345
+    assert.ok(m >= 285 && m <= max, `${d.date}: ${Math.round(m)} min`)
   }
+})
+
+const checkMinutes = MODULES[0].sections.filter((s) => s.gate).reduce((n, s) => n + s.exercises.reduce((m, e) => m + e.minutes, 0), 0)
+
+test('the Dictionary check sits between Dictionaries and .get(), on Oct 3, and is required', () => {
+  const ids = DAYS[1].sections.filter((s) => !s.optional).map((s) => s.id)
+  assert.equal(ids.indexOf('o2-dict-revision'), ids.indexOf('o2-dictionaries') + 1)
+  assert.equal(ids.indexOf('o2-get'), ids.indexOf('o2-dict-revision') + 1)
+  assert.ok(checkMinutes > 15 && checkMinutes <= 30, `${checkMinutes} min`)
 })
 
 test('Oct 11 stays interview execution, lighter, with both mocks', () => {

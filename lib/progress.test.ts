@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { dayStats, exerciseUnlocked, followingExercise, missingPrerequisites, nextExercise, problemReadiness, retrievalTypeFor, sectionUnlocked } from '@/lib/progress'
+import { blockingGate, dayStats, exerciseUnlocked, followingExercise, lockedByGate, missingPrerequisites, nextExercise, passedSet, problemReadiness, retrievalTypeFor, sectionUnlocked } from '@/lib/progress'
 import { computeAllMastery } from '@/lib/mastery'
 import { attempt, exercise } from '@/lib/test-helpers'
 import type { DayModule } from '@/lib/types'
@@ -89,4 +89,32 @@ test('repair set: primitives first, never a capstone, bounded', () => {
   // dict_assign (depth 1) precedes index_map (depth 2+)
   const first = EXERCISE_BY_ID[ids[0]]
   assert.ok(first.skills.includes('dict_assign') || first.skills.includes('dict_membership'), first.id)
+})
+
+test('mastery check: only a pass without the solution counts, and what follows stays locked until then', () => {
+  assert.ok(EXERCISE_BY_ID['o2-drev-trace'].cleanPass && EXERCISE_BY_ID['o2-drev-reprice'].cleanPass, 'check reps are flagged')
+  const day3 = DAYS.find((d) => d.sections.some((s) => s.id === 'o2-dict-revision'))!
+  const si = day3.sections.findIndex((s) => s.id === 'o2-get')
+  const check = day3.sections.find((s) => s.id === 'o2-dict-revision')!
+  const all = check.exercises.map((e) => attempt({ exerciseId: e.id }))
+  const before = day3.sections.slice(0, si - 1).flatMap((s) => s.exercises.map((e) => attempt({ exerciseId: e.id })))
+
+  // Nothing cleared: .get is hard-locked behind the check.
+  assert.equal(blockingGate(day3, si, before)?.id, 'o2-dict-revision')
+  assert.equal(lockedByGate(day3, day3.sections[si].exercises[0].id, before)?.id, 'o2-dict-revision')
+  assert.equal(sectionUnlocked(day3, si, before), false)
+
+  // One rep passed with the solution open: still locked, and it is still "next".
+  const peeked = [...before, ...all.slice(1), attempt({ exerciseId: check.exercises[0].id, solutionViewed: true })]
+  assert.ok(!passedSet(peeked).has(check.exercises[0].id))
+  assert.equal(nextExercise(day3, peeked)?.id, check.exercises[0].id)
+  assert.ok(lockedByGate(day3, day3.sections[si].exercises[0].id, peeked))
+
+  // Run it back clean: unlocked.
+  const clean = [...peeked, attempt({ exerciseId: check.exercises[0].id })]
+  assert.equal(lockedByGate(day3, day3.sections[si].exercises[0].id, clean), undefined)
+  assert.equal(sectionUnlocked(day3, si, clean), true)
+
+  // Outside a check, viewing the solution still counts as a (reduced-credit) pass.
+  assert.ok(passedSet([attempt({ exerciseId: 'o2-dbg-keyerror', solutionViewed: true })]).has('o2-dbg-keyerror'))
 })
