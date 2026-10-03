@@ -29,7 +29,7 @@ export const SCHEDULE: { date: string; sections: string[] }[] = [
   { date: '2026-10-02', sections: ['o2-python-recall', 'o2-loops'] },
   {
     date: '2026-10-03',
-    sections: ['o2-enumerate', 'o2-sets', 'o2-contains-duplicate', 'o2-dictionaries', 'o2-dict-revision', 'o2-get', 'o2-iter-dicts', 'o2-frequency', 'o2-dict-mastery'],
+    sections: ['o2-enumerate', 'o2-sets', 'o2-contains-duplicate', 'o2-dictionaries', 'o2-dict-revision', 'o2-get', 'o2-iter-dicts', 'o2-frequency', 'o2-dict-mastery', 'o2-dict-ladder'],
   },
   {
     date: '2026-10-04',

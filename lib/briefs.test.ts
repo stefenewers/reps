@@ -27,9 +27,9 @@ test('a brief explains the question, never the answer', () => {
 })
 
 test('the dictionary stretch has a brief on every rep', () => {
-  const day = DAYS.find((d) => d.date === '2026-10-03')!
-  const want = ['o2-dictionaries', 'o2-dict-revision', 'o2-get', 'o2-iter-dicts', 'o2-frequency', 'o2-index-maps', 'o2-complements']
-  const missing = day.sections.filter((s) => want.includes(s.id)).flatMap((s) => s.exercises).filter((e) => !BRIEFS[e.id]).map((e) => e.id)
+  const reps = DAYS.flatMap((d) => d.sections)
+  const want = ['o2-dictionaries', 'o2-dict-revision', 'o2-get', 'o2-iter-dicts', 'o2-frequency', 'o2-dict-mastery', 'o2-dict-ladder', 'o2-index-maps', 'o2-complements']
+  const missing = reps.filter((s) => want.includes(s.id)).flatMap((s) => s.exercises).filter((e) => !BRIEFS[e.id]).map((e) => e.id)
   assert.deepEqual(missing, [])
 })
 

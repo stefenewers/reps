@@ -275,6 +275,163 @@ export const BRIEFS: Record<string, Brief> = {
     catch: 'You cannot know the winner until every play has been counted.',
   },
 
+  // ── Dictionary ladder ──────────────────────────────────────────────────────
+  'o2-dl-empty': { task: 'Pick the line that makes an empty dictionary.', catch: 'One of these looks right but makes a different kind of collection.' },
+  'o2-dl-trace-basic': { task: PREDICT, catch: 'Keep a table of `ages` after every line. Does assigning `ana` again add a key or replace one?' },
+  'o2-dl-add-line': {
+    task: "Write one line that adds the entry `'grass'` → `'green'` to `colors`.",
+    inputs: [{ name: 'colors', is: 'a dict: thing → its color' }],
+    catch: 'Adding a new key uses the same shape as changing one.',
+  },
+  'o2-dl-in-trace': { task: PREDICT, catch: 'For each line ask: is this a key, or a value? `in` on its own only looks at keys.' },
+  'o2-dl-crash': { task: 'Pick the one line that makes Python stop with an error.', catch: 'Reading, asking and adding behave differently when the key is missing.' },
+  'o2-dl-price-or': {
+    inputs: [
+      { name: 'menu', is: 'a dict: item name → price' },
+      { name: 'item', is: 'an item name. It may not be on the menu.' },
+    ],
+    returns: "the price, or the string `'not on menu'`.",
+    catch: 'Ask before you read.',
+  },
+  'o2-dl-get-trace': { task: PREDICT, catch: 'What does `.get` give back for a missing key with no default? And does it ever add a key?' },
+  'o2-dl-sell': {
+    inputs: [
+      { name: 'stock', is: 'a dict: item name → how many are left. You change this dict itself.' },
+      { name: 'item', is: 'the item someone wants to buy' },
+    ],
+    returns: '`True` if one was sold (and `stock` now has one fewer), otherwise `False` with `stock` unchanged.',
+    catch: 'Two things must be true to sell: the item is listed, and there is at least one left.',
+  },
+  'o2-dl-loop-trace': { task: PREDICT, catch: 'Three loops: what does each one hand you, keys, values or both?' },
+  'o2-dl-sum-values': {
+    inputs: [{ name: 'stock', is: 'a dict: item name → how many are left' }],
+    returns: 'one number: all the counts added together.',
+    catch: 'The names do not matter here, only the numbers.',
+  },
+  'o2-dl-keys-for': {
+    inputs: [
+      { name: 'scores', is: 'a dict: student name → score' },
+      { name: 'target', is: 'a score to match' },
+    ],
+    returns: 'a **sorted list of names** whose score equals `target`.',
+    catch: 'You test the value and keep the key.',
+  },
+  'o2-dl-dbg-values': {
+    task: 'It crashes. Make it count.',
+    inputs: [
+      { name: 'menu', is: 'a dict: item name → price' },
+      { name: 'limit', is: 'a number' },
+    ],
+    returns: 'how many items cost more than `limit`.',
+    catch: 'The loop variable is called `price`. Is it really a price?',
+  },
+  'o2-dl-max-key': {
+    inputs: [{ name: 'scores', is: 'a non-empty dict: student name → score. One student has the top score.' }],
+    returns: 'the **name** of the top student, not the score.',
+    catch: 'Keep track of the best one so far as you go through.',
+  },
+  'o2-dl-flip': {
+    inputs: [{ name: 'codes', is: 'a dict: country → dialing code. Every code is different.' }],
+    returns: 'a **new** dict: dialing code → country.',
+    catch: 'In the new dict, what will you look up by?',
+  },
+  'o2-dl-initials': {
+    inputs: [{ name: 'names', is: 'a list of non-empty names' }],
+    returns: 'a **dict**: each name → its first letter.',
+    catch: 'Ask: what do I look up by, and what do I want back?',
+  },
+  'o2-dl-pair-up': {
+    inputs: [
+      { name: 'keys', is: 'a list' },
+      { name: 'values', is: 'a list the same length. The item at each position goes with the key at that position.' },
+    ],
+    returns: 'a **dict** pairing them up.',
+    catch: 'You need the position as you walk, to find the matching value.',
+  },
+  'o2-dl-letter-count': {
+    inputs: [{ name: 'word', is: 'a string (can be empty)' }],
+    returns: 'a **dict**: each letter → how many times it appears.',
+    catch: 'The first time you meet a letter it has no count yet.',
+  },
+  'o2-dl-dbg-reset': {
+    task: 'It runs, but every count comes out as 1.',
+    inputs: [{ name: 'votes', is: 'a list of names, one per vote' }],
+    returns: 'a **dict**: name → number of votes.',
+    catch: 'Look at what happens to a name that has already been counted.',
+  },
+  'o2-dl-group-len': {
+    inputs: [{ name: 'words', is: 'a list of words' }],
+    returns: 'a **dict**: word length → the list of words with that length, in their original order.',
+    catch: 'The value is a list that grows. It has to exist before you can add to it.',
+  },
+  'o2-dl-enum-trace': { task: PREDICT, catch: 'Keep a table of `i`, `w` and `where` per step. What happens when `up` comes round again?' },
+  'o2-dl-first-index': {
+    inputs: [{ name: 'nums', is: 'a list of numbers. Numbers can repeat.' }],
+    returns: 'a **dict**: each number → the position where it **first** appears.',
+    catch: 'Storing on every visit keeps the last position, not the first.',
+  },
+  'o2-dl-lookup-positions': {
+    inputs: [
+      { name: 'words', is: 'a list of words, no repeats' },
+      { name: 'queries', is: 'a list of words to find' },
+    ],
+    returns: 'a **list**: the position of each query in `words`, or `-1` if it is not there.',
+    catch: 'Build the lookup dict once, before you answer any query.',
+  },
+  'o2-dl-dbg-direction': {
+    task: 'It runs, but the dict is the wrong way round.',
+    inputs: [{ name: 'letters', is: 'a list of letters' }],
+    returns: 'a **dict** where looking up a letter gives its position.',
+    catch: "What should `position_map(['x', 'y'])['y']` give? What does it give now?",
+  },
+  'o2-dl-lc-two-sum': {
+    inputs: [
+      { name: 'nums', is: 'a list of numbers' },
+      { name: 'target', is: 'a number. Exactly one pair of different positions adds up to it.' },
+    ],
+    returns: 'a **list of two positions** `[i, j]` with `i < j`.',
+    catch: 'A number must not pair with itself: think about when you store it.',
+  },
+  'o2-dl-lc-anagram': {
+    inputs: [
+      { name: 'a', is: 'a string' },
+      { name: 'b', is: 'another string' },
+    ],
+    returns: '`True` if both use exactly the same letters the same number of times, otherwise `False`.',
+    catch: 'Order does not matter, counts do.',
+  },
+  'o2-dl-lc-first-unique': {
+    inputs: [{ name: 'words', is: 'a list of words' }],
+    returns: 'the first word (in list order) that appears exactly once, or `None`.',
+    catch: 'You cannot tell a word is unique until you have seen the whole list.',
+  },
+  'o2-dl-lc-ransom': {
+    inputs: [
+      { name: 'note', is: 'the string you want to write' },
+      { name: 'letters', is: 'a string of the letters you have. Each one can be used once.' },
+    ],
+    returns: '`True` if the note can be written, otherwise `False`.',
+    catch: 'Think of the letters as a budget that gets spent.',
+  },
+  'o2-dl-lc-majority': {
+    inputs: [{ name: 'nums', is: 'a non-empty list. One value appears more than half the time.' }],
+    returns: 'that value.',
+    catch: '“More than half” of a list of length 5 means at least 3.',
+  },
+  'o2-dl-lc-close-dup': {
+    inputs: [
+      { name: 'nums', is: 'a list of numbers' },
+      { name: 'k', is: 'a whole number: the biggest allowed distance' },
+    ],
+    returns: '`True` if the same value appears at two positions at most `k` apart, otherwise `False`.',
+    catch: 'Which earlier position of a value gives the smallest distance: the first or the latest?',
+  },
+  'o2-dl-lc-group-anagrams': {
+    inputs: [{ name: 'words', is: 'a list of lowercase words' }],
+    returns: 'a **list of groups** (lists of words that are anagrams of each other), each in original order, groups ordered by first appearance.',
+    catch: 'Anagrams share something you can compute. That shared thing is the key.',
+  },
+
   // ── Index maps ─────────────────────────────────────────────────────────────
   'o2-imap-trace': {
     task: PREDICT,

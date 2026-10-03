@@ -125,7 +125,7 @@ test('mastery check at the end of a day locks the next day until it is cleared',
   const firstOct4 = oct4.sections.find((s) => !s.optional)!.exercises[0]
   const everythingOct3 = oct3.sections.filter((s) => !s.optional).flatMap((s) => s.exercises)
   const allButLast = everythingOct3.slice(0, -1).map((e) => attempt({ exerciseId: e.id }))
-  assert.equal(lockedByGate(oct4, firstOct4.id, allButLast)?.id, 'o2-dict-mastery')
+  assert.equal(lockedByGate(oct4, firstOct4.id, allButLast)?.id, 'o2-dict-ladder')
   const done = everythingOct3.map((e) => attempt({ exerciseId: e.id }))
   assert.equal(lockedByGate(oct4, firstOct4.id, done), undefined)
   // Extras are never locked.

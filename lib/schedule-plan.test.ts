@@ -28,13 +28,13 @@ test('required work keeps the original order across the calendar', () => {
   assert.deepEqual(calendar, modules)
 })
 
-const DICT_DAY = ['o2-dictionaries', 'o2-dict-revision', 'o2-get', 'o2-iter-dicts', 'o2-frequency', 'o2-dict-mastery']
+const DICT_DAY = ['o2-dictionaries', 'o2-dict-revision', 'o2-get', 'o2-iter-dicts', 'o2-frequency', 'o2-dict-mastery', 'o2-dict-ladder']
 
 test('Oct 3 ends as a dictionaries-only day, closed by the end-of-day mastery check', () => {
   const ids = DAYS[1].sections.filter((s) => !s.optional).map((s) => s.id)
   const from = ids.indexOf('o2-dictionaries')
   assert.deepEqual(ids.slice(from), DICT_DAY)
-  for (const id of ['o2-dict-revision', 'o2-dict-mastery']) assert.ok(DAYS[1].sections.find((s) => s.id === id)?.gate, `${id} is a mastery check`)
+  for (const id of ['o2-dict-revision', 'o2-dict-mastery', 'o2-dict-ladder']) assert.ok(DAYS[1].sections.find((s) => s.id === id)?.gate, `${id} is a mastery check`)
 })
 
 test('everything else planned for Oct 3 moved to the front of Oct 4, in order', () => {
@@ -77,4 +77,11 @@ test('capstones are always required, never extra', () => {
     for (const s of d.sections.filter((x) => x.optional)) for (const e of s.exercises) assert.notEqual(e.repType, 'capstone', `${e.id} on ${d.date}`)
   const required = new Set(DAYS.flatMap((d) => dayExercises(d).map((e) => e.id)))
   for (const m of MODULES) for (const e of allDayExercises(m)) if (e.repType === 'capstone') assert.ok(required.has(e.id), e.id)
+})
+
+test('the Dictionary ladder closes Oct 3: 30 reps, ground up to LeetCode', () => {
+  const ladder = DAYS[1].sections.find((s) => s.id === 'o2-dict-ladder')!
+  assert.equal(ladder.exercises.length, 30)
+  assert.equal(DAYS[1].sections.filter((s) => !s.optional).at(-1)?.id, 'o2-dict-ladder')
+  assert.ok(ladder.exercises.filter((e) => e.title.includes('LeetCode')).length >= 6)
 })

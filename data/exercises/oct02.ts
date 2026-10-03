@@ -1819,6 +1819,647 @@ echo`,
 ])
 
 // ---------------------------------------------------------------------------
+// 9c. Dictionary ladder: ground up to LeetCode, the end-of-day comprehension check
+// ---------------------------------------------------------------------------
+
+const dictLadder = gate('o2-dict-ladder', 'Dictionary ladder', '30 reps from the ground up: foundations, looping, building, positions, then real LeetCode problems. Pass every rep without the solution before tomorrow unlocks.', [
+  // ── Rung 1: foundations ────────────────────────────────────────────────────
+  choice({
+    id: 'o2-dl-empty',
+    title: 'Rung 1 · Make an empty dict',
+    skills: ['dict_create'],
+    prompt: 'Which line makes an **empty dictionary**?',
+    options: ['d = {}', 'd = set()', 'd = []', 'd = ()'],
+    answer: 0,
+    note: '`{}` is an empty dict. An empty set has to be written `set()`.',
+    explanation: '`set()` is an empty set, `[]` an empty list, `()` an empty tuple. Only `{}` is a dict.',
+    signature: 'recognize:empty-dict',
+    minutes: 0.5,
+  }),
+  output({
+    id: 'o2-dl-trace-basic',
+    title: 'Rung 1 · Trace: add and overwrite',
+    skills: ['dict_create', 'dict_assign', 'dict_lookup', 'len'],
+    prompt: 'Predict the output. Keep a table of `ages` after every line.',
+    code: `ages = {'ana': 30}
+ages['ben'] = 25
+ages['ana'] = 31
+print(ages['ana'])
+print(len(ages))
+print(ages)`,
+    expectedOutput: `31
+2
+{'ana': 31, 'ben': 25}`,
+    note: 'Table: `{ana: 30}` → `{ana: 30, ben: 25}` → `{ana: 31, ben: 25}`.',
+    explanation: "Assigning 'ana' again replaces 30 with 31. Still two keys.",
+    signature: 'trace:dict-add-overwrite-2',
+    minutes: 2,
+  }),
+  code({
+    id: 'o2-dl-add-line',
+    title: 'Rung 1 · Add one entry',
+    skills: ['dict_assign'],
+    prompt: "`colors` is a dict: thing → its color. On the marked line, add the entry `'grass'` → `'green'`. One line.",
+    starterCode: `colors = {'sky': 'blue'}
+# add grass → green on the next line
+`,
+    solution: `colors = {'sky': 'blue'}
+# add grass → green on the next line
+colors['grass'] = 'green'`,
+    tests: [t.check('grass is green', "assert colors == {'sky': 'blue', 'grass': 'green'}, f'colors is {colors}'")],
+    hints: ['Square brackets with the new key, then `=` and the value.'],
+    explanation: '`d[key] = value` adds a key that is not there yet.',
+    signature: 'dict:assign-one-line',
+    minutes: 1,
+  }),
+  output({
+    id: 'o2-dl-in-trace',
+    title: 'Rung 1 · Trace: in looks at keys',
+    skills: ['dict_membership'],
+    prompt: 'Predict the output.',
+    code: `codes = {'us': 1, 'fr': 33}
+print('fr' in codes)
+print(33 in codes)
+print(33 in codes.values())
+print('de' not in codes)`,
+    expectedOutput: `True
+False
+True
+True`,
+    note: '`in d` checks keys. `in d.values()` checks values.',
+    explanation: "33 is a value, so `33 in codes` is False. 'de' is not a key, so `not in` is True.",
+    signature: 'trace:in-keys-values-2',
+    minutes: 1.5,
+  }),
+  choice({
+    id: 'o2-dl-crash',
+    title: 'Rung 1 · Which line crashes?',
+    skills: ['dict_lookup', 'dict_get', 'dict_membership'],
+    prompt: '`stock` is the dict below. Which **one** of these lines raises an error?',
+    code: `stock = {'pen': 3}`,
+    options: ["stock.get('ink')", "stock['ink']", "stock['ink'] = 0", "'ink' in stock"],
+    answer: 1,
+    note: 'Only reading a missing key with square brackets crashes.',
+    explanation: "`stock['ink']` raises KeyError. `.get` returns None, assigning adds the key, and `in` answers False.",
+    signature: 'recognize:dict-crash-2',
+    minutes: 1,
+  }),
+  write({
+    id: 'o2-dl-price-or',
+    title: 'Rung 1 · Price or a message',
+    skills: ['dict_membership', 'dict_lookup', 'conditionals'],
+    prompt: "`menu` is a dict: item name → price. `item` is an item name that may not be on the menu.\n\nWrite `price_of(menu, item)` that returns the item's price, or the string `'not on menu'` if it is not there. Use `in`.",
+    starterCode: `def price_of(menu, item):
+    pass`,
+    solution: `def price_of(menu, item):
+    if item in menu:
+        return menu[item]
+    return 'not on menu'`,
+    tests: [
+      t.eq("price_of({'tea': 3}, 'tea')", '3'),
+      t.eq("price_of({'tea': 3}, 'pie')", "'not on menu'"),
+      t.hidden("price_of({}, 'x')", "'not on menu'"),
+    ],
+    hints: ['Ask first, then read.'],
+    explanation: 'The guarded read: `in` to ask, `[]` to read, a fallback otherwise.',
+    signature: 'dict:guarded-read-message',
+    minutes: 2.5,
+  }),
+  output({
+    id: 'o2-dl-get-trace',
+    title: 'Rung 1 · Trace: .get',
+    skills: ['dict_get'],
+    prompt: 'Predict the output.',
+    code: `seats = {'ana': 4}
+print(seats.get('ana'))
+print(seats.get('ben'))
+print(seats.get('ben', 0))
+print(seats)`,
+    expectedOutput: `4
+None
+0
+{'ana': 4}`,
+    note: '`.get(key)` gives None when the key is missing; `.get(key, default)` gives the default. Neither adds anything.',
+    explanation: "'ben' is never added: `.get` only reads.",
+    signature: 'trace:get-2',
+    minutes: 1.5,
+  }),
+  write({
+    id: 'o2-dl-sell',
+    title: 'Rung 1 · Sell one',
+    skills: ['dict_membership', 'dict_lookup', 'dict_assign', 'conditionals'],
+    prompt: "`stock` is a dict: item name → how many are left. `item` is an item name.\n\nWrite `sell(stock, item)`: if `item` is in `stock` with at least 1 left, take one away (change `stock` itself) and return `True`. Otherwise change nothing and return `False`.",
+    starterCode: `def sell(stock, item):
+    pass`,
+    solution: `def sell(stock, item):
+    if item in stock and stock[item] > 0:
+        stock[item] -= 1
+        return True
+    return False`,
+    tests: [
+      t.check('sells one', "s = {'pen': 2}\nassert sell(s, 'pen') == True\nassert s == {'pen': 1}, f'stock is {s}'"),
+      t.check('sold out', "s = {'pen': 0}\nassert sell(s, 'pen') == False\nassert s == {'pen': 0}, f'stock is {s}'"),
+      t.check('not stocked', "s = {}\nassert sell(s, 'ink') == False\nassert s == {}, f'stock is {s}'", true),
+    ],
+    hints: ['Two conditions: the item is a key, and its count is above 0.', 'Changing a value: read it, subtract, store it back (or `-= 1`).'],
+    explanation: 'Guard with `in` before reading, then update the value in place with `stock[item] -= 1`.',
+    signature: 'dict:update-in-place',
+    minutes: 3,
+  }),
+
+  // ── Rung 2: looping ────────────────────────────────────────────────────────
+  output({
+    id: 'o2-dl-loop-trace',
+    title: 'Rung 2 · Trace: three ways to loop',
+    skills: ['dict_items'],
+    prompt: 'Predict the output.',
+    code: `pets = {'rex': 'dog', 'tom': 'cat'}
+for k in pets:
+    print(k)
+for v in pets.values():
+    print(v)
+for k, v in pets.items():
+    print(k, 'is a', v)`,
+    expectedOutput: `rex
+tom
+dog
+cat
+rex is a dog
+tom is a cat`,
+    note: 'Plain loop → keys. `.values()` → values. `.items()` → both.',
+    explanation: 'Dicts loop in the order keys were added.',
+    signature: 'trace:dict-loops',
+    minutes: 2,
+  }),
+  write({
+    id: 'o2-dl-sum-values',
+    title: 'Rung 2 · Add up the values',
+    skills: ['dict_items', 'accumulator'],
+    prompt: '`stock` is a dict: item name → how many are left.\n\nWrite `total_stock(stock)` that returns the total number of items across all entries.\n\n`total_stock({\'pen\': 2, \'ink\': 5})` → `7`',
+    starterCode: `def total_stock(stock):
+    pass`,
+    solution: `def total_stock(stock):
+    total = 0
+    for n in stock.values():
+        total += n
+    return total`,
+    tests: [t.eq("total_stock({'pen': 2, 'ink': 5})", '7'), t.eq('total_stock({})', '0'), t.hidden("total_stock({'a': 1})", '1')],
+    hints: ['You only need the values.'],
+    explanation: 'Accumulator over `.values()`.',
+    signature: 'dict:sum-values',
+    minutes: 2.5,
+  }),
+  write({
+    id: 'o2-dl-keys-for',
+    title: 'Rung 2 · Who got this score?',
+    skills: ['dict_items', 'conditionals', 'list_append'],
+    prompt: '`scores` is a dict: student name → score. `target` is a score.\n\nWrite `who_scored(scores, target)` that returns a **sorted list** of the names whose score equals `target`.\n\n`who_scored({\'ana\': 9, \'ben\': 7, \'cy\': 9}, 9)` → `[\'ana\', \'cy\']`',
+    starterCode: `def who_scored(scores, target):
+    pass`,
+    solution: `def who_scored(scores, target):
+    out = []
+    for name, score in scores.items():
+        if score == target:
+            out.append(name)
+    return sorted(out)`,
+    tests: [
+      t.eq("who_scored({'ana': 9, 'ben': 7, 'cy': 9}, 9)", "['ana', 'cy']"),
+      t.eq("who_scored({'ana': 9}, 1)", '[]'),
+      t.hidden("who_scored({'b': 2, 'a': 2}, 2)", "['a', 'b']"),
+    ],
+    hints: ['Test the value, keep the key.'],
+    explanation: 'Reverse lookup by scanning `.items()`: values are not indexed, so you check each one.',
+    signature: 'dict:keys-for-value',
+    minutes: 3,
+  }),
+  debug({
+    id: 'o2-dl-dbg-values',
+    title: 'Rung 2 · Debug: count the expensive ones',
+    skills: ['dict_items', 'accumulator', 'conditionals'],
+    prompt: '`menu` is a dict: item name → price. `limit` is a number. `count_expensive(menu, limit)` should return how many items cost more than `limit`. It crashes. Fix it.',
+    brokenCode: `def count_expensive(menu, limit):
+    n = 0
+    for price in menu:
+        if price > limit:
+            n += 1
+    return n`,
+    solution: `def count_expensive(menu, limit):
+    n = 0
+    for price in menu.values():
+        if price > limit:
+            n += 1
+    return n`,
+    tests: [t.eq("count_expensive({'tea': 3, 'cake': 6}, 4)", '1'), t.eq('count_expensive({}, 4)', '0'), t.hidden("count_expensive({'a': 9, 'b': 9}, 1)", '2')],
+    hints: ['A plain loop over a dict gives you keys. Are those prices?'],
+    explanation: 'Naming the loop variable `price` does not make it a price: looping a dict yields keys. Loop `.values()`.',
+    signature: 'debug:loop-keys-not-values',
+    minutes: 2.5,
+  }),
+  write({
+    id: 'o2-dl-max-key',
+    title: 'Rung 2 · Top student',
+    skills: ['dict_items', 'conditionals'],
+    prompt: '`scores` is a non-empty dict: student name → score. Exactly one student has the top score.\n\nWrite `best_student(scores)` that returns the **name** of that student.',
+    starterCode: `def best_student(scores):
+    pass`,
+    solution: `def best_student(scores):
+    best = None
+    for name, score in scores.items():
+        if best is None or score > scores[best]:
+            best = name
+    return best`,
+    tests: [t.eq("best_student({'ana': 7, 'ben': 9, 'cy': 4})", "'ben'"), t.eq("best_student({'solo': 1})", "'solo'"), t.hidden("best_student({'a': 1, 'b': 2, 'c': 3})", "'c'")],
+    hints: ['Keep the best name so far.', 'Compare scores, return a name.'],
+    explanation: 'Track the key of the best entry and compare by value: the "argmax" of a dict.',
+    signature: 'dict:argmax-2',
+    minutes: 3.5,
+  }),
+  write({
+    id: 'o2-dl-flip',
+    title: 'Rung 2 · Flip a phone code table',
+    skills: ['dict_items', 'dict_assign', 'dict_create'],
+    prompt: '`codes` is a dict: country → dialing code (an int). Every code is different.\n\nWrite `country_by_code(codes)` that returns a **new** dict: dialing code → country.\n\n`country_by_code({\'fr\': 33, \'us\': 1})` → `{33: \'fr\', 1: \'us\'}`',
+    starterCode: `def country_by_code(codes):
+    pass`,
+    solution: `def country_by_code(codes):
+    out = {}
+    for country, code in codes.items():
+        out[code] = country
+    return out`,
+    tests: [t.eq("country_by_code({'fr': 33, 'us': 1})", "{33: 'fr', 1: 'us'}"), t.eq('country_by_code({})', '{}'), t.hidden("country_by_code({'de': 49})", "{49: 'de'}")],
+    hints: ['In the new dict you look up by code.'],
+    explanation: 'Loop `.items()` and store with the roles swapped.',
+    signature: 'dict:invert-3',
+    minutes: 3,
+  }),
+
+  // ── Rung 3: building ───────────────────────────────────────────────────────
+  write({
+    id: 'o2-dl-initials',
+    title: 'Rung 3 · Build: name → first letter',
+    skills: ['dict_create', 'dict_assign', 'for_loop', 'string_index'],
+    prompt: '`names` is a list of non-empty names.\n\nWrite `first_letters(names)` that returns a dict: each name → its first letter.\n\n`first_letters([\'ana\', \'ben\'])` → `{\'ana\': \'a\', \'ben\': \'b\'}`',
+    starterCode: `def first_letters(names):
+    pass`,
+    solution: `def first_letters(names):
+    out = {}
+    for name in names:
+        out[name] = name[0]
+    return out`,
+    tests: [t.eq("first_letters(['ana', 'ben'])", "{'ana': 'a', 'ben': 'b'}"), t.eq('first_letters([])', '{}')],
+    hints: ['Start empty, loop, store, return.'],
+    explanation: 'Key = the name, value = something computed from it.',
+    signature: 'dict:build-computed',
+    minutes: 2.5,
+  }),
+  write({
+    id: 'o2-dl-pair-up',
+    title: 'Rung 3 · Build from two lists',
+    skills: ['dict_create', 'dict_assign', 'enumerate'],
+    prompt: '`keys` and `values` are lists of the same length.\n\nWrite `pair_up(keys, values)` that returns a dict where `keys[i]` maps to `values[i]` for every position `i`.\n\n`pair_up([\'a\', \'b\'], [1, 2])` → `{\'a\': 1, \'b\': 2}`',
+    starterCode: `def pair_up(keys, values):
+    pass`,
+    solution: `def pair_up(keys, values):
+    out = {}
+    for i, k in enumerate(keys):
+        out[k] = values[i]
+    return out`,
+    tests: [t.eq("pair_up(['a', 'b'], [1, 2])", "{'a': 1, 'b': 2}"), t.eq('pair_up([], [])', '{}'), t.hidden("pair_up(['x', 'x'], [1, 2])", "{'x': 2}")],
+    hints: ['You need the position to find the matching value.'],
+    explanation: 'Walk one list with `enumerate` and use the position to read the other.',
+    signature: 'dict:pair-lists',
+    minutes: 3,
+  }),
+  write({
+    id: 'o2-dl-letter-count',
+    title: 'Rung 3 · Count letters',
+    skills: ['frequency_map', 'dict_get', 'string_iterate'],
+    prompt: '`word` is a string.\n\nWrite `letter_count(word)` that returns a dict: each letter → how many times it appears.\n\n`letter_count(\'noon\')` → `{\'n\': 2, \'o\': 2}`',
+    starterCode: `def letter_count(word):
+    pass`,
+    solution: `def letter_count(word):
+    counts = {}
+    for ch in word:
+        counts[ch] = counts.get(ch, 0) + 1
+    return counts`,
+    tests: [t.eq("letter_count('noon')", "{'n': 2, 'o': 2}"), t.eq("letter_count('')", '{}'), t.hidden("letter_count('abca')", "{'a': 2, 'b': 1, 'c': 1}")],
+    hints: ['Old count (0 if new) plus one.'],
+    explanation: 'The frequency map, from memory.',
+    signature: 'dict:freq-letters',
+    minutes: 2.5,
+    important: true,
+  }),
+  debug({
+    id: 'o2-dl-dbg-reset',
+    title: 'Rung 3 · Debug: the votes never go up',
+    skills: ['frequency_map', 'dict_membership', 'dict_assign'],
+    prompt: '`votes` is a list of names. `vote_count(votes)` should return a dict: name → number of votes. Every count comes out as 1. Fix it.',
+    brokenCode: `def vote_count(votes):
+    counts = {}
+    for v in votes:
+        if v in counts:
+            counts[v] = 1
+        else:
+            counts[v] = 1
+    return counts`,
+    solution: `def vote_count(votes):
+    counts = {}
+    for v in votes:
+        if v in counts:
+            counts[v] += 1
+        else:
+            counts[v] = 1
+    return counts`,
+    tests: [t.eq("vote_count(['ana', 'ben', 'ana'])", "{'ana': 2, 'ben': 1}"), t.eq('vote_count([])', '{}'), t.hidden("vote_count(['x', 'x', 'x'])", "{'x': 3}")],
+    hints: ['Which branch runs for a name seen before? What should it do there?'],
+    explanation: 'For a name already counted, the count must go up, not reset to 1.',
+    signature: 'debug:freq-reset-branch',
+    minutes: 2.5,
+  }),
+  write({
+    id: 'o2-dl-group-len',
+    title: 'Rung 3 · Group words by length',
+    skills: ['dict_membership', 'dict_assign', 'list_append', 'len'],
+    stage: 'combine',
+    repType: 'combine',
+    prompt: '`words` is a list of words.\n\nWrite `group_by_length(words)` that returns a dict: word length → the list of words with that length, in their original order.\n\n`group_by_length([\'hi\', \'cat\', \'yo\'])` → `{2: [\'hi\', \'yo\'], 3: [\'cat\']}`',
+    starterCode: `def group_by_length(words):
+    pass`,
+    solution: `def group_by_length(words):
+    groups = {}
+    for w in words:
+        n = len(w)
+        if n not in groups:
+            groups[n] = []
+        groups[n].append(w)
+    return groups`,
+    tests: [t.eq("group_by_length(['hi', 'cat', 'yo'])", "{2: ['hi', 'yo'], 3: ['cat']}"), t.eq('group_by_length([])', '{}'), t.hidden("group_by_length(['a'])", "{1: ['a']}")],
+    hints: ['The key is the length. The value is a list that grows.', 'Make the empty list the first time you see a length.'],
+    explanation: 'Grouping: create the list on first sight, append every time.',
+    signature: 'dict:group-by-key',
+    minutes: 4,
+    important: true,
+  }),
+
+  // ── Rung 4: positions ──────────────────────────────────────────────────────
+  output({
+    id: 'o2-dl-enum-trace',
+    title: 'Rung 4 · Trace: positions into a dict',
+    skills: ['index_map', 'enumerate'],
+    prompt: 'Predict the output. Keep a table of `i`, `w` and `where` for each step.',
+    code: `where = {}
+for i, w in enumerate(['up', 'go', 'up']):
+    where[w] = i
+print(where)
+print(where['up'])`,
+    expectedOutput: `{'up': 2, 'go': 1}
+2`,
+    note: 'Step 1: `up → 0`. Step 2: `go → 1`. Step 3: `up` again, so its 0 is overwritten with 2.',
+    explanation: 'Storing on every step keeps the **last** position of each word.',
+    signature: 'trace:index-map-last',
+    minutes: 2,
+    important: true,
+  }),
+  write({
+    id: 'o2-dl-first-index',
+    title: 'Rung 4 · First position of each value',
+    skills: ['index_map', 'enumerate', 'dict_membership'],
+    prompt: '`nums` is a list of numbers.\n\nWrite `first_index(nums)` that returns a dict: each number → the position where it **first** appears.\n\n`first_index([5, 3, 5])` → `{5: 0, 3: 1}`',
+    starterCode: `def first_index(nums):
+    pass`,
+    solution: `def first_index(nums):
+    where = {}
+    for i, x in enumerate(nums):
+        if x not in where:
+            where[x] = i
+    return where`,
+    tests: [t.eq('first_index([5, 3, 5])', '{5: 0, 3: 1}'), t.eq('first_index([])', '{}'), t.hidden('first_index([1, 1, 1])', '{1: 0}')],
+    hints: ['Only store a number the first time you meet it.'],
+    explanation: 'Guard the store with `not in` so later repeats do not overwrite the first position.',
+    signature: 'dict:index-first',
+    minutes: 3,
+  }),
+  write({
+    id: 'o2-dl-lookup-positions',
+    title: 'Rung 4 · Answer position queries',
+    skills: ['index_map', 'enumerate', 'dict_get', 'list_append'],
+    stage: 'combine',
+    repType: 'combine',
+    prompt: '`words` is a list of words (no repeats). `queries` is a list of words to look for.\n\nWrite `positions(words, queries)` that returns a list with the position of each query in `words`, or `-1` if it is not there. Build a dict first so each query is answered in one step.\n\n`positions([\'a\', \'b\', \'c\'], [\'c\', \'z\'])` → `[2, -1]`',
+    starterCode: `def positions(words, queries):
+    pass`,
+    solution: `def positions(words, queries):
+    where = {}
+    for i, w in enumerate(words):
+        where[w] = i
+    out = []
+    for q in queries:
+        out.append(where.get(q, -1))
+    return out`,
+    tests: [t.eq("positions(['a', 'b', 'c'], ['c', 'z'])", '[2, -1]'), t.eq("positions([], ['a'])", '[-1]'), t.hidden("positions(['x'], [])", '[]')],
+    hints: ['Step 1: word → position. Step 2: look each query up, with -1 as the fallback.'],
+    explanation: 'Build the index once (O(n)), then each query is O(1) instead of scanning the list.',
+    signature: 'dict:index-then-query',
+    minutes: 4,
+  }),
+  debug({
+    id: 'o2-dl-dbg-direction',
+    title: 'Rung 4 · Debug: backwards map',
+    skills: ['index_map', 'enumerate', 'dict_assign'],
+    prompt: '`letters` is a list of letters. `position_map(letters)` should return a dict so that `position_map(letters)[ch]` is the position of `ch` (last one wins). Fix it.',
+    brokenCode: `def position_map(letters):
+    pos = {}
+    for i, ch in enumerate(letters):
+        pos[i] = ch
+    return pos`,
+    solution: `def position_map(letters):
+    pos = {}
+    for i, ch in enumerate(letters):
+        pos[ch] = i
+    return pos`,
+    tests: [t.eq("position_map(['x', 'y'])", "{'x': 0, 'y': 1}"), t.eq("position_map(['x', 'y'])['y']", '1'), t.hidden("position_map(['a', 'a'])", "{'a': 1}")],
+    hints: ['What do you look up by: the letter or the position?'],
+    explanation: 'The key is what you look up by (the letter). The value is what you want back (the position).',
+    signature: 'debug:index-map-direction-2',
+    minutes: 2.5,
+  }),
+
+  // ── Rung 5: LeetCode ───────────────────────────────────────────────────────
+  write({
+    id: 'o2-dl-lc-two-sum',
+    title: 'Rung 5 · LeetCode 1: Two Sum',
+    skills: ['index_map', 'complement', 'enumerate', 'dict_membership'],
+    stage: 'combine',
+    repType: 'combine',
+    difficulty: 3,
+    prompt: '`nums` is a list of numbers and `target` is a number. Exactly one pair of **different positions** `i < j` has `nums[i] + nums[j] == target`.\n\nWrite `pair_positions(nums, target)` that returns `[i, j]`. One pass: for each number, the partner it needs is `target - nums[j]`. Have you already seen it, and where?\n\n`pair_positions([2, 7, 11, 15], 9)` → `[0, 1]`',
+    starterCode: `def pair_positions(nums, target):
+    pass`,
+    solution: `def pair_positions(nums, target):
+    seen = {}
+    for j, x in enumerate(nums):
+        need = target - x
+        if need in seen:
+            return [seen[need], j]
+        seen[x] = j
+    return []`,
+    tests: [t.eq('pair_positions([2, 7, 11, 15], 9)', '[0, 1]'), t.eq('pair_positions([3, 2, 4], 6)', '[1, 2]'), t.hidden('pair_positions([3, 3], 6)', '[0, 1]')],
+    hints: ['Dict: number → the position you saw it at.', 'Check for the partner **before** storing the current number, so a number cannot pair with itself.'],
+    explanation: 'Index map + complement: one pass, O(n). Checking before storing handles `[3, 3]` correctly.',
+    signature: 'lc:two-sum-ladder',
+    minutes: 6,
+    important: true,
+  }),
+  write({
+    id: 'o2-dl-lc-anagram',
+    title: 'Rung 5 · LeetCode 242: Valid Anagram',
+    skills: ['frequency_map', 'dict_get', 'string_iterate'],
+    stage: 'combine',
+    repType: 'combine',
+    prompt: '`a` and `b` are strings.\n\nWrite `same_letters(a, b)` that returns `True` if `b` uses exactly the same letters as `a`, the same number of times each (in any order). Otherwise `False`.\n\n`same_letters(\'listen\', \'silent\')` → `True`',
+    starterCode: `def same_letters(a, b):
+    pass`,
+    solution: `def same_letters(a, b):
+    ca = {}
+    for ch in a:
+        ca[ch] = ca.get(ch, 0) + 1
+    cb = {}
+    for ch in b:
+        cb[ch] = cb.get(ch, 0) + 1
+    return ca == cb`,
+    tests: [t.eq("same_letters('listen', 'silent')", 'True'), t.eq("same_letters('aab', 'abb')", 'False'), t.hidden("same_letters('', '')", 'True'), t.hidden("same_letters('a', 'ab')", 'False')],
+    hints: ['Count the letters of each string.', 'Two dicts are `==` when they hold the same keys with the same values.'],
+    explanation: 'Two frequency maps compared with `==`: O(n) time.',
+    signature: 'lc:valid-anagram-ladder',
+    minutes: 4.5,
+    important: true,
+  }),
+  write({
+    id: 'o2-dl-lc-first-unique',
+    title: 'Rung 5 · LeetCode 387: First unique (words)',
+    skills: ['frequency_map', 'dict_get', 'early_return'],
+    stage: 'combine',
+    repType: 'combine',
+    prompt: '`words` is a list of words.\n\nWrite `first_unique_word(words)` that returns the first word (in list order) that appears **exactly once**, or `None` if every word repeats.\n\n`first_unique_word([\'a\', \'b\', \'a\', \'c\'])` → `\'b\'`',
+    starterCode: `def first_unique_word(words):
+    pass`,
+    solution: `def first_unique_word(words):
+    counts = {}
+    for w in words:
+        counts[w] = counts.get(w, 0) + 1
+    for w in words:
+        if counts[w] == 1:
+            return w
+    return None`,
+    tests: [t.eq("first_unique_word(['a', 'b', 'a', 'c'])", "'b'"), t.eq("first_unique_word(['a', 'a'])", 'None'), t.hidden('first_unique_word([])', 'None')],
+    hints: ['Count everything first.', 'Then walk the list again, in order, and stop at the first count of 1.'],
+    explanation: 'Two passes: a frequency map, then the original order to find the first count of 1.',
+    signature: 'lc:first-unique-ladder',
+    minutes: 4.5,
+  }),
+  write({
+    id: 'o2-dl-lc-ransom',
+    title: 'Rung 5 · LeetCode 383: Ransom Note',
+    skills: ['frequency_map', 'dict_get', 'early_return'],
+    stage: 'combine',
+    repType: 'combine',
+    prompt: '`note` is the string you want to write. `letters` is a string of the letters you have; each one can be used **once**.\n\nWrite `can_write(note, letters)` that returns `True` if the note can be written from those letters.\n\n`can_write(\'aa\', \'aab\')` → `True`, `can_write(\'aa\', \'ab\')` → `False`',
+    starterCode: `def can_write(note, letters):
+    pass`,
+    solution: `def can_write(note, letters):
+    have = {}
+    for ch in letters:
+        have[ch] = have.get(ch, 0) + 1
+    for ch in note:
+        if have.get(ch, 0) == 0:
+            return False
+        have[ch] -= 1
+    return True`,
+    tests: [t.eq("can_write('aa', 'aab')", 'True'), t.eq("can_write('aa', 'ab')", 'False'), t.hidden("can_write('', 'x')", 'True'), t.hidden("can_write('z', '')", 'False')],
+    hints: ['Count what you have.', 'Spend one letter for each letter in the note; if one runs out, you cannot.'],
+    explanation: 'A frequency map used as a budget: decrement as you spend, fail as soon as a count would go below zero.',
+    signature: 'lc:ransom-note',
+    minutes: 5,
+    important: true,
+  }),
+  write({
+    id: 'o2-dl-lc-majority',
+    title: 'Rung 5 · LeetCode 169: Majority Element',
+    skills: ['frequency_map', 'dict_get', 'len', 'early_return'],
+    stage: 'combine',
+    repType: 'combine',
+    prompt: '`nums` is a non-empty list of numbers. One value appears **more than half** the time.\n\nWrite `majority(nums)` that returns that value.\n\n`majority([2, 2, 1, 1, 2])` → `2`',
+    starterCode: `def majority(nums):
+    pass`,
+    solution: `def majority(nums):
+    counts = {}
+    for x in nums:
+        counts[x] = counts.get(x, 0) + 1
+        if counts[x] > len(nums) // 2:
+            return x
+    return None`,
+    tests: [t.eq('majority([2, 2, 1, 1, 2])', '2'), t.eq('majority([7])', '7'), t.hidden('majority([1, 3, 3])', '3')],
+    hints: ['Count as you go.', '"More than half" means a count greater than `len(nums) // 2`.'],
+    explanation: 'Frequency map with an early return the moment a count passes half the length.',
+    signature: 'lc:majority',
+    minutes: 4,
+  }),
+  write({
+    id: 'o2-dl-lc-close-dup',
+    title: 'Rung 5 · LeetCode 219: Contains Duplicate II',
+    skills: ['index_map', 'enumerate', 'dict_membership', 'early_return'],
+    stage: 'combine',
+    repType: 'combine',
+    difficulty: 3,
+    prompt: '`nums` is a list of numbers and `k` is a whole number.\n\nWrite `close_repeat(nums, k)` that returns `True` if some value appears at two positions `i < j` with `j - i <= k`. Otherwise `False`.\n\n`close_repeat([1, 2, 3, 1], 3)` → `True`, `close_repeat([1, 2, 3, 1], 2)` → `False`',
+    starterCode: `def close_repeat(nums, k):
+    pass`,
+    solution: `def close_repeat(nums, k):
+    last = {}
+    for j, x in enumerate(nums):
+        if x in last and j - last[x] <= k:
+            return True
+        last[x] = j
+    return False`,
+    tests: [t.eq('close_repeat([1, 2, 3, 1], 3)', 'True'), t.eq('close_repeat([1, 2, 3, 1], 2)', 'False'), t.hidden('close_repeat([1, 0, 1, 1], 1)', 'True'), t.hidden('close_repeat([], 0)', 'False')],
+    hints: ['Remember where you last saw each value.', 'Update the position every time: the most recent one gives the smallest gap.'],
+    explanation: 'Index map of the latest position: each new sighting is compared with the closest earlier one.',
+    signature: 'lc:contains-duplicate-ii',
+    minutes: 5,
+    important: true,
+  }),
+  write({
+    id: 'o2-dl-lc-group-anagrams',
+    title: 'Rung 5 · LeetCode 49: Group Anagrams',
+    skills: ['dict_membership', 'dict_assign', 'list_append', 'sorting'],
+    stage: 'combine',
+    repType: 'combine',
+    difficulty: 3,
+    prompt: "`words` is a list of lowercase words.\n\nWrite `group_anagrams(words)` that returns a list of groups. Each group is a list of words that are anagrams of each other, in their original order. Groups are ordered by where their first word appears.\n\nUseful: `''.join(sorted(w))` gives the letters of `w` in order, so `'tea'` → `'aet'` and `'eat'` → `'aet'`.\n\n`group_anagrams(['eat', 'tea', 'tan', 'ate', 'nat'])` → `[['eat', 'tea', 'ate'], ['tan', 'nat']]`",
+    starterCode: `def group_anagrams(words):
+    pass`,
+    solution: `def group_anagrams(words):
+    groups = {}
+    for w in words:
+        key = ''.join(sorted(w))
+        if key not in groups:
+            groups[key] = []
+        groups[key].append(w)
+    return list(groups.values())`,
+    tests: [
+      t.eq("group_anagrams(['eat', 'tea', 'tan', 'ate', 'nat'])", "[['eat', 'tea', 'ate'], ['tan', 'nat']]"),
+      t.eq('group_anagrams([])', '[]'),
+      t.hidden("group_anagrams(['ab', 'c', 'ba'])", "[['ab', 'ba'], ['c']]"),
+    ],
+    hints: ['Words that are anagrams share the same sorted letters. Use that as the key.', 'Group like before: new list on first sight, append every time. Then hand back the dict’s values as a list.'],
+    explanation: 'The dict key is something you compute (the sorted letters), so all anagrams land in the same bucket. O(n · m log m).',
+    signature: 'lc:group-anagrams',
+    minutes: 6,
+    important: true,
+  }),
+])
+
+// ---------------------------------------------------------------------------
 // 10. Valid Anagram
 // ---------------------------------------------------------------------------
 
@@ -2707,6 +3348,7 @@ export const day: DayModule = {
     iterDicts,
     frequency,
     dictMastery,
+    dictLadder,
     validAnagram,
     indexMaps,
     complements,
