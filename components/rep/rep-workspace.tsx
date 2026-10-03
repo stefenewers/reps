@@ -17,6 +17,8 @@ import { localDate, shortDate } from '@/lib/dates'
 import { KIND_VERB } from '@/lib/labels'
 import { kindOf } from '@/components/rep-kind'
 import { RepsBars } from '@/components/motif'
+import BasicsPanel from '@/components/rep/basics-panel'
+import { primersFor } from '@/data/primers'
 import { IconArrowRight, IconBug, IconBulb, IconClock, IconDots, IconExternal, IconPlay, IconRotate, IconSpark, IconX } from '@/components/icons'
 import { followingExercise, missingPrerequisites, retrievalTypeFor } from '@/lib/progress'
 import { getRunner, type RunResult } from '@/lib/python/runner'
@@ -138,6 +140,8 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
   const [aiHints, setAiHints] = useState<string[]>([])
   const [solutionShown, setSolutionShown] = useState(false)
   const [showNote, setShowNote] = useState(false)
+  const [showBasics, setShowBasics] = useState(false)
+  const basicsCounted = useRef(false)
   const [confidence, setConfidence] = useState<number | null>(null)
 
   // Coach
@@ -218,6 +222,7 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
   const missing = ex.repType === 'capstone' ? missingPrerequisites(ex, mastery) : []
 
   const isCode = ex.kind === 'code'
+  const primers = useMemo(() => primersFor(ex.skills), [ex.skills])
   const hints = ex.hints ?? []
   const allHints = [...hints.slice(0, hintsShown), ...aiHints]
 
@@ -451,6 +456,15 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
     }
   }
 
+  // Basics: free on first exposure; on a cold rep, opening it counts once as help.
+  const openBasics = () => {
+    setShowBasics((v) => !v)
+    if (!showBasics && retrievalType === 'cold' && !basicsCounted.current) {
+      basicsCounted.current = true
+      countHint()
+    }
+  }
+
   const viewSolution = () => {
     setSolutionShown(true)
     setMoreOpen(false)
@@ -479,6 +493,8 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
     setRubricChecked((ex.rubric ?? []).map(() => false))
     setCode(blankStarter(ex))
     setConfidence(null)
+    setShowBasics(false)
+    basicsCounted.current = false
     setAnnounce('Explanation closed. Run it back from memory.')
   }
 
@@ -705,6 +721,19 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
                 {retrievalType === 'cold' && !runItBack && kind.badge !== 'Cold Rep' && <span className="badge">Cold</span>}
                 {!interview && <span className="text-[12px] text-faint">~{Math.round(ex.minutes)} min</span>}
                 {prior.length > 0 && !passed && <span className="text-[12px] text-faint">· done {prior.length}× before</span>}
+                {!interview && primers.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={openBasics}
+                    aria-expanded={showBasics}
+                    className={`ml-auto inline-flex h-7 items-center gap-1.5 rounded-full px-2.5 text-[12px] font-medium transition-colors ${
+                      showBasics ? 'bg-ink text-white' : 'bg-surface-2 text-ink-2 hover:bg-surface-3'
+                    }`}
+                    title={`The basics behind this rep: ${primers.map((x) => x.title).join(', ')}. Concepts only, never the answer.`}
+                  >
+                    <RepsBars width={11} bar={1.6} gap={1.2} /> Basics
+                  </button>
+                )}
               </div>
               <h1 id="rep-title" className="h1">
                 {ex.title}
@@ -737,6 +766,8 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
                 </div>
               </div>
             )}
+
+            {showBasics && primers.length > 0 && <BasicsPanel primers={primers} onClose={() => setShowBasics(false)} />}
 
             {ex.note && !interview && (mode === 'learn' || showNote) && (
               <div className="rise-in rounded-xl bg-surface px-4 py-3 shadow-[inset_2px_0_0_var(--ink)]">

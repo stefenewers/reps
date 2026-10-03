@@ -1,0 +1,25 @@
+import type { SkillId } from '@/lib/types'
+
+/**
+ * A concept primer: the basics behind a rep, never its answer. Opened only on
+ * request (the Basics button in a rep). Short enough to read in ~90 seconds.
+ *
+ * - what: what it is and why it exists (markdown-lite, 1–3 sentences)
+ * - model: the mental model in one sentence
+ * - syntax: the handful of lines you will actually type, each with a note
+ * - example: a small runnable program and exactly what it prints (verified
+ *   against real Python by `npm run verify:content`)
+ * - gotchas: the 2–4 mistakes that actually happen
+ *
+ * Examples use their own little scenarios and must not solve any rep.
+ */
+export interface Primer {
+  id: string
+  title: string
+  skills: SkillId[]
+  what: string
+  model: string
+  syntax: { code: string; note: string }[]
+  example: { code: string; output: string }
+  gotchas: string[]
+}

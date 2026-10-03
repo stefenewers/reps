@@ -1,8 +1,10 @@
 import { test, expect, type Page } from '@playwright/test'
-import { DAYS } from '@/data/curriculum'
+import { DAYS, DAY_BY_DATE, FIRST_DAY, LAST_DAY, dayExercises } from '@/data/curriculum'
+import { clampDate, localDate } from '@/lib/dates'
 import type { Exercise } from '@/lib/types'
 
-const firstRep: Exercise = DAYS[0].sections[0].exercises[0]
+// "Start today's reps" opens the first required rep of the real current study day.
+const firstRep: Exercise = dayExercises(DAY_BY_DATE[clampDate(localDate(), FIRST_DAY, LAST_DAY)])[0]
 
 async function answer(page: Page, e: Exercise) {
   if (e.kind === 'choice') await page.getByRole('group', { name: 'Choose one answer' }).getByRole('radio').nth(e.answer!).check({ force: true })

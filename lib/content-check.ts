@@ -124,3 +124,24 @@ export function verifyDays(days: DayModule[]): string[] {
   }
   return problems
 }
+
+/** Primers: real skills, one primer per skill, and examples that print exactly what they claim. */
+export function verifyPrimers(primers: { id: string; skills: string[]; example: { code: string; output: string } }[]): string[] {
+  const problems: string[] = []
+  const owner = new Map<string, string>()
+  for (const p of primers) {
+    for (const s of p.skills) {
+      if (!SKILL_BY_ID[s]) problems.push(`[primer ${p.id}] unknown skill ${s}`)
+      if (owner.has(s)) problems.push(`[primer ${p.id}] skill ${s} already covered by ${owner.get(s)}`)
+      owner.set(s, p.id)
+    }
+  }
+  const results = runPythonBatch(primers.map((p) => ({ id: p.id, code: p.example.code, tests: [] })))
+  for (const p of primers) {
+    const r = results.get(p.id)
+    if (!r) problems.push(`[primer ${p.id}] no result`)
+    else if (r.error) problems.push(`[primer ${p.id}] example raised: ${r.error}`)
+    else if (!outputMatches(r.stdout, p.example.output)) problems.push(`[primer ${p.id}] example output mismatch. Python printed:\n${r.stdout}\n--- but expected:\n${p.example.output}`)
+  }
+  return problems
+}
