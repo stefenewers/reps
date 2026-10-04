@@ -125,9 +125,15 @@ test('mastery check at the end of a day locks the next day until it is cleared',
   const firstOct4 = oct4.sections.find((s) => !s.optional)!.exercises[0]
   const everythingOct3 = oct3.sections.filter((s) => !s.optional).flatMap((s) => s.exercises)
   const allButLast = everythingOct3.slice(0, -1).map((e) => attempt({ exerciseId: e.id }))
-  assert.equal(lockedByGate(oct4, firstOct4.id, allButLast)?.id, 'o2-dict-ladder')
+  assert.equal(lockedByGate(oct4, firstOct4.id, allButLast)?.id, 'o2-dict-mastery')
   const done = everythingOct3.map((e) => attempt({ exerciseId: e.id }))
   assert.equal(lockedByGate(oct4, firstOct4.id, done), undefined)
+  // The ladder opens Oct 4 and holds the rest of Oct 4 until it is cleared.
+  const ladderAt = oct4.sections.findIndex((s) => s.id === 'o2-dict-ladder')
+  const afterLadder = oct4.sections[ladderAt + 1].exercises[0]
+  assert.equal(lockedByGate(oct4, afterLadder.id, done)?.id, 'o2-dict-ladder')
+  const ladderDone = [...done, ...oct4.sections[ladderAt].exercises.map((e) => attempt({ exerciseId: e.id }))]
+  assert.equal(lockedByGate(oct4, afterLadder.id, ladderDone), undefined)
   // Extras are never locked.
   const extra = oct4.sections.find((s) => s.optional)?.exercises[0]
   if (extra) assert.equal(lockedByGate(oct4, extra.id, allButLast), undefined)

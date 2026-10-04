@@ -28,24 +28,24 @@ test('required work keeps the original order across the calendar', () => {
   assert.deepEqual(calendar, modules)
 })
 
-const DICT_DAY = ['o2-dictionaries', 'o2-dict-revision', 'o2-get', 'o2-iter-dicts', 'o2-frequency', 'o2-dict-mastery', 'o2-dict-ladder']
+const DICT_DAY = ['o2-dictionaries', 'o2-dict-revision', 'o2-get', 'o2-iter-dicts', 'o2-frequency', 'o2-dict-mastery']
 
-test('Oct 3 ends as a dictionaries-only day, closed by the end-of-day mastery check', () => {
+test('Oct 3 is closed as completed: a dictionaries day ending with the from-scratch check', () => {
   const ids = DAYS[1].sections.filter((s) => !s.optional).map((s) => s.id)
-  const from = ids.indexOf('o2-dictionaries')
-  assert.deepEqual(ids.slice(from), DICT_DAY)
-  for (const id of ['o2-dict-revision', 'o2-dict-mastery', 'o2-dict-ladder']) assert.ok(DAYS[1].sections.find((s) => s.id === id)?.gate, `${id} is a mastery check`)
+  assert.deepEqual(ids.slice(ids.indexOf('o2-dictionaries')), DICT_DAY)
+  for (const id of ['o2-dict-revision', 'o2-dict-mastery']) assert.ok(DAYS[1].sections.find((s) => s.id === id)?.gate, `${id} is a mastery check`)
 })
 
-test('everything else planned for Oct 3 moved to the front of Oct 4, in order', () => {
+test('Oct 4 opens with the Dictionary ladder, then what was planned for Oct 3, in order', () => {
   const ids = DAYS[2].sections.filter((s) => !s.optional).map((s) => s.id)
-  assert.deepEqual(ids.slice(0, 7), ['o2-valid-anagram', 'o2-index-maps', 'o2-complements', 'o2-two-sum', 'd3-strings', 'd3-slicing', 'd3-methods'])
+  assert.deepEqual(ids.slice(0, 8), ['o2-dict-ladder', 'o2-valid-anagram', 'o2-index-maps', 'o2-complements', 'o2-two-sum', 'd3-strings', 'd3-slicing', 'd3-methods'])
+  assert.ok(DAYS[2].sections.find((s) => s.id === 'o2-dict-ladder')?.gate)
 })
 
-test('Oct 4 – Oct 10 absorb it evenly: about 5.25 to 6 planned hours each', () => {
+test('Oct 4 – Oct 10 are split evenly, in order', () => {
   for (const d of DAYS.slice(2, 9)) {
     const m = minutes(d)
-    assert.ok(m >= 300 && m <= 365, `${d.date}: ${Math.round(m)} min`)
+    assert.ok(m >= 300 && m <= 370, `${d.date}: ${Math.round(m)} min`)
   }
 })
 
@@ -79,9 +79,8 @@ test('capstones are always required, never extra', () => {
   for (const m of MODULES) for (const e of allDayExercises(m)) if (e.repType === 'capstone') assert.ok(required.has(e.id), e.id)
 })
 
-test('the Dictionary ladder closes Oct 3: 30 reps, ground up to LeetCode', () => {
-  const ladder = DAYS[1].sections.find((s) => s.id === 'o2-dict-ladder')!
+test('the Dictionary ladder: 30 reps, ground up to LeetCode', () => {
+  const ladder = DAYS[2].sections.find((s) => s.id === 'o2-dict-ladder')!
   assert.equal(ladder.exercises.length, 30)
-  assert.equal(DAYS[1].sections.filter((s) => !s.optional).at(-1)?.id, 'o2-dict-ladder')
   assert.ok(ladder.exercises.filter((e) => e.title.includes('LeetCode')).length >= 6)
 })
