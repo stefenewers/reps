@@ -2,9 +2,12 @@ import { test, expect, type Page } from '@playwright/test'
 import { DAYS, DAY_BY_DATE, FIRST_DAY, LAST_DAY, dayExercises } from '@/data/curriculum'
 import { clampDate, localDate } from '@/lib/dates'
 import type { Exercise } from '@/lib/types'
+import { blockingGate } from '@/lib/progress'
 
-// "Start today's reps" opens the first required rep of the real current study day.
-const firstRep: Exercise = dayExercises(DAY_BY_DATE[clampDate(localDate(), FIRST_DAY, LAST_DAY)])[0]
+// "Start" opens the first rep of the earliest uncleared mastery check if one holds today (a fresh
+// browser has cleared none), otherwise the first required rep of the real current study day.
+const today = DAY_BY_DATE[clampDate(localDate(), FIRST_DAY, LAST_DAY)]
+const firstRep: Exercise = blockingGate(today, 0, [])?.exercises[0] ?? dayExercises(today)[0]
 
 async function answer(page: Page, e: Exercise) {
   if (e.kind === 'choice') await page.getByRole('group', { name: 'Choose one answer' }).getByRole('radio').nth(e.answer!).check({ force: true })
@@ -51,7 +54,7 @@ test('today → first rep → correct answer → mastery updates → reload → 
   await expect(rail).toHaveAttribute('aria-valuenow', '1')
   await expect(page.locator('.pp')).toHaveAttribute('data-advancing', 'false')
   await page.goto('/')
-  await expect(page.getByText(/Rep 2 of \d+/)).toBeVisible()
+  await expect(page.getByText(blockingGate(today, 0, []) ? /Carried over · \d+ left to clear/ : /Rep 2 of \d+/)).toBeVisible()
   // The next rep is now the starting point.
   await page.getByTestId('start-today').click()
   await expect(page).not.toHaveURL(new RegExp(`/rep/${firstRep.id}$`))
