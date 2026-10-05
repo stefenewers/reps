@@ -18,7 +18,6 @@ export default function LearningPath({ day, attempts, reviews = [] }: { day: Day
   const passed = passedSet(attempts)
   const now = new Date().toISOString()
   const dueSkills = new Set(reviews.filter((r) => r.status === 'pending' && r.dueAt <= now && r.skillId).map((r) => r.skillId!))
-  const extras = day.sections.filter((s) => s.optional).reduce((n, s) => n + s.exercises.length, 0)
   const rows = day.sections.filter((s) => !s.optional).map((s) => {
     const done = s.exercises.filter((e) => passed.has(e.id)).length
     const minutes = s.exercises.reduce((n, e) => n + e.minutes, 0)
@@ -107,11 +106,6 @@ export default function LearningPath({ day, attempts, reviews = [] }: { day: Day
         )
       })}
     </ol>
-    {extras > 0 && (
-      <Link href={`/day/${day.date}#extra`} className="mt-1 flex items-center gap-2 pl-[42px] text-[12.5px] text-muted hover:text-ink">
-        + {extras} extra reps if you finish early →
-      </Link>
-    )}
     </>
   )
 }

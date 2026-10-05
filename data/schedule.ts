@@ -29,9 +29,15 @@
  *
  * Oct 5, 12:30am: Oct 4 went to the Dictionary ladder (26/30 cleared; the
  * rest carry over on Today until cleared). Oct 5 finishes hashing: Valid
- * Anagram, Index maps, Complements, Two Sum. Oct 6–10 hold everything else in
- * order, but at ~410–465 planned minutes a day they are a placeholder: they
- * need a priority cut (moving lower-yield reps to Extras) before Oct 6.
+ * Anagram, Index maps, Complements, Two Sum.
+ *
+ * Priority cut for Oct 6–10 (measured pace ~2.5–4× planned): from TRIM_FROM
+ * on, each section keeps only its core reps (see `isCoreRep` in
+ * data/curriculum.ts): the first rep, the reps marked important, the first
+ * write rep, and every capstone. Lower-yield topics are off the calendar
+ * entirely: two-pointer variants, binary-search variants, components /
+ * provinces (Islands teaches it), directed cycles / Course Schedule, the
+ * separate max-heap drill, backtracking path state. ~190–210 planned min/day.
  *
  * Frozen on purpose: editing a module later must not silently reshuffle days.
  */
@@ -46,23 +52,26 @@ export const SCHEDULE: { date: string; sections: string[] }[] = [
   { date: '2026-10-05', sections: ['o2-valid-anagram', 'o2-index-maps', 'o2-complements', 'o2-two-sum'] },
   {
     date: '2026-10-06',
-    sections: ['d3-strings', 'd3-slicing', 'd3-methods', 'd3-two-pointers', 'd3-pointer-updates', 'd3-pointer-patterns', 'd3-running-state', 'd3-valid-palindrome', 'd3-stock', 'd3-two-sum-ii', 'd4-windows', 'd4-window-state', 'd4-longest-substring', 'd4-stacks'],
+    sections: ['d3-strings', 'd3-slicing', 'd3-methods', 'd3-two-pointers', 'd3-pointer-updates', 'd3-running-state', 'd3-valid-palindrome', 'd3-stock', 'd3-two-sum-ii', 'd4-windows', 'd4-window-state', 'd4-longest-substring'],
   },
   {
     date: '2026-10-07',
-    sections: ['d4-matching', 'd4-valid-parentheses', 'd05-while', 'd05-bs', 'd05-variants', 'd05-cap-search', 'd05-listnode', 'd05-rewire', 'd05-cap-reverse', 'd05-dummy', 'd05-cap-merge', 'd06-functions', 'd06-recursion'],
+    sections: ['d4-stacks', 'd4-matching', 'd4-valid-parentheses', 'd05-while', 'd05-bs', 'd05-cap-search', 'd05-listnode', 'd05-rewire', 'd05-cap-reverse', 'd05-dummy', 'd05-cap-merge', 'd06-functions', 'd06-recursion'],
   },
   {
     date: '2026-10-08',
-    sections: ['d06-treenode', 'd06-dfs', 'd06-cap-depth', 'd06-pairs', 'd06-cap-same', 'd06-mutate', 'd06-cap-invert', 'o7-deque', 'o7-grids', 'o7-neighbors', 'o7-grid-bfs', 'o7-tree-bfs', 'o7-cap-level-order'],
+    sections: ['d06-treenode', 'd06-dfs', 'd06-cap-depth', 'd06-pairs', 'd06-cap-same', 'd06-mutate', 'd06-cap-invert', 'o7-deque', 'o7-grids', 'o7-neighbors', 'o7-grid-bfs'],
   },
   {
     date: '2026-10-09',
-    sections: ['o7-islands', 'o8-adjacency', 'o8-dfs', 'o8-bfs', 'o8-cap-path-exists', 'o8-components', 'o8-cap-provinces', 'o8-cycles', 'o8-cap-course-schedule', 'd9-sorting', 'd9-keys', 'd9-freq-sort', 'd9-heapq', 'd9-max-heap'],
+    sections: ['o7-tree-bfs', 'o7-cap-level-order', 'o7-islands', 'o8-adjacency', 'o8-dfs', 'o8-bfs', 'o8-cap-path-exists', 'd9-sorting', 'd9-keys', 'd9-freq-sort', 'd9-heapq'],
   },
-  { date: '2026-10-10', sections: ['d9-top-k', 'd9-intervals', 'd10-decisions', 'd10-path', 'd10-subsets', 'd10-recurrence', 'd10-memo', 'd10-bottom-up', 'd10-rolling'] },
+  { date: '2026-10-10', sections: ['d9-top-k', 'd9-intervals', 'd10-decisions', 'd10-subsets', 'd10-recurrence', 'd10-memo', 'd10-bottom-up', 'd10-rolling'] },
   { date: '2026-10-11', sections: ['o11-speed', 'o11-debug', 'o11-edges', 'o11-cold', 'o11-mixed'] },
 ]
+
+/** From this date on, sections keep only their core reps (the priority cut). */
+export const TRIM_FROM = '2026-10-06'
 
 /** Interview day: these cold capstones are required; the rest of that section are extras. */
 export const REQUIRED_COLD_CAPSTONES = ['cold-two-sum', 'cold-longest-substring', 'cold-valid-parentheses', 'cold-reverse-linked-list', 'cold-number-of-islands', 'cold-merge-intervals']

@@ -28,8 +28,6 @@ export default function DayView({ date }: { date: string }) {
   const next = nextExercise(day, attempts)
   const dayNumber = DAYS.findIndex((d) => d.date === day.date) + 1
   const currentSection = day.sections.findIndex((s) => !s.optional && s.exercises.some((e) => !passed.has(e.id)))
-  const firstExtra = day.sections.findIndex((s) => s.optional)
-  const extraCount = day.sections.filter((s) => s.optional).reduce((n, s) => n + s.exercises.length, 0)
   const offsets = day.sections.map((_, i) => day.sections.slice(0, i).reduce((c, x) => c + x.exercises.length, 0))
 
   return (
@@ -53,7 +51,6 @@ export default function DayView({ date }: { date: string }) {
             </p>
             <p className="mt-0.5 text-[13.5px] text-muted">
               {formatMinutes(stats.minutesRemaining)} left · {compositionText(dayExercises(day))}
-              {extraCount > 0 && ` · ${extraCount} extra`}
             </p>
             {(day.capstones.length > 0 || (day.mocks?.length ?? 0) > 0) && (
               <p className="mt-1.5 text-[13px] text-muted">
@@ -90,7 +87,8 @@ export default function DayView({ date }: { date: string }) {
         </section>
 
         <ol className="mt-8 flex flex-col gap-4">
-          {day.sections.map((s, si) => {
+          {/* Only the required plan is shown. Extras (required sections come first, so indexes still line up) stay off the page. */}
+          {day.sections.filter((s) => !s.optional).map((s, si) => {
             const unlocked = sectionUnlocked(day, si, attempts)
             const gated = s.optional ? undefined : blockingGate(day, si, attempts)
             const done = s.exercises.filter((e) => passed.has(e.id)).length
@@ -100,17 +98,7 @@ export default function DayView({ date }: { date: string }) {
             const sectionNext = s.exercises.find((e) => !passed.has(e.id))
             const sk = sectionKind(s.title, s.exercises)
             const startN = offsets[si]
-            const extraHeader =
-              si === firstExtra ? (
-                <li key="extra-head" id="extra" className="mt-6 scroll-mt-24 px-1">
-                  <h2 className="h2">Extra reps</h2>
-                  <p className="mt-1 max-w-[620px] text-[13.5px] leading-relaxed text-muted">
-                    Not part of today’s required plan and not counted in progress: warm-ups, end-of-topic cold reps, capstone explanations and variants. Take them if you finish early.
-                  </p>
-                </li>
-              ) : null
             return [
-              extraHeader,
               <li
                 key={s.id}
                 aria-labelledby={`sec-${s.id}`}

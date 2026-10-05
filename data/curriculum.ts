@@ -10,7 +10,7 @@ import { day as oct09 } from '@/data/exercises/oct09'
 import { day as oct10 } from '@/data/exercises/oct10'
 import { day as oct11 } from '@/data/exercises/oct11'
 import { MOCK_EXERCISES } from '@/data/mocks'
-import { OPTIONAL_SECTIONS, REQUIRED_COLD_CAPSTONES, SCHEDULE } from '@/data/schedule'
+import { OPTIONAL_SECTIONS, REQUIRED_COLD_CAPSTONES, SCHEDULE, TRIM_FROM } from '@/data/schedule'
 import { PROGRAM_STAGES } from '@/data/program'
 
 /**
@@ -39,20 +39,32 @@ function sectionIsOptional(moduleDate: string, s: Section): boolean {
   return moduleDate !== INTERVIEW_MODULE && /(^|-)warmup$|(^|-)cold$/.test(s.id)
 }
 
-/** Within a required section: capstone explain reps and variants after the last capstone are extra. */
-function exerciseIsOptional(moduleDate: string, s: Section, index: number): boolean {
+/**
+ * The priority cut: the reps a section cannot do without. The first rep (it
+ * introduces the idea), reps the author marked important, the first write rep
+ * (so every section has you produce code), and every capstone.
+ */
+export function isCoreRep(s: Section, index: number): boolean {
+  const e = s.exercises[index]
+  if (e.repType === 'capstone' || e.review.important || index === 0) return true
+  return index === s.exercises.findIndex((x) => x.kind === 'code' && x.repType !== 'capstone')
+}
+
+/** Within a required section: capstone explain reps and variants after the last capstone are extra, and past TRIM_FROM anything outside the core. */
+function exerciseIsOptional(moduleDate: string, s: Section, index: number, trim: boolean): boolean {
   const e = s.exercises[index]
   if (moduleDate === INTERVIEW_MODULE) return s.id === 'o11-cold' && !REQUIRED_COLD_CAPSTONES.includes(e.id)
   if (e.repType === 'capstone') return false
+  if (trim && !isCoreRep(s, index)) return true
   const lastCap = s.exercises.reduce((at, x, i) => (x.repType === 'capstone' ? i : at), -1)
   if (lastCap < 0) return false
   return e.kind === 'explain' || index > lastCap
 }
 
-function splitSection(moduleDate: string, s: Section): { required: Section | null; extra: Section | null } {
+function splitSection(moduleDate: string, s: Section, trim = false): { required: Section | null; extra: Section | null } {
   if (sectionIsOptional(moduleDate, s)) return { required: null, extra: { ...s, optional: true } }
-  const req = s.exercises.filter((_, i) => !exerciseIsOptional(moduleDate, s, i))
-  const opt = s.exercises.filter((_, i) => exerciseIsOptional(moduleDate, s, i))
+  const req = s.exercises.filter((_, i) => !exerciseIsOptional(moduleDate, s, i, trim))
+  const opt = s.exercises.filter((_, i) => exerciseIsOptional(moduleDate, s, i, trim))
   return {
     required: req.length ? { ...s, exercises: req } : null,
     extra: opt.length ? { ...s, id: `${s.id}-extra`, title: `${s.title} · more`, exercises: opt, optional: true } : null,
@@ -80,7 +92,7 @@ function buildDays(): DayModule[] {
       const home = SECTION_HOME.get(id)
       if (!home) throw new Error(`schedule: unknown section ${id}`)
       if (!modules.includes(home.module.date)) modules.push(home.module.date)
-      const { required: r, extra: x } = splitSection(home.module.date, home.section)
+      const { required: r, extra: x } = splitSection(home.module.date, home.section, date >= TRIM_FROM)
       if (r) required.push(r)
       if (x) extra.push(x)
     }
@@ -144,12 +156,13 @@ export function allDayExercises(day: DayModule): Exercise[] {
   return day.sections.flatMap((s) => s.exercises)
 }
 
-/** Modules reduced to their required reps: what Road to Ready measures. */
+/** Modules reduced to the reps the calendar requires (after the priority cut): what Road to Ready measures. */
+const CALENDAR_REQUIRED = new Set(DAYS.flatMap((d) => dayExercises(d).map((e) => e.id)))
 export const REQUIRED_MODULES: DayModule[] = MODULES.map((m) => ({
   ...m,
   sections: m.sections.flatMap((s) => {
-    const r = splitSection(m.date, s).required
-    return r ? [r] : []
+    const exercises = s.exercises.filter((e) => CALENDAR_REQUIRED.has(e.id))
+    return exercises.length ? [{ ...s, exercises }] : []
   }),
 }))
 

@@ -73,11 +73,23 @@ test('nothing is lost: every authored rep is on the calendar exactly once', () =
   assert.deepEqual([...calendar].sort(), [...authored].sort())
 })
 
-test('capstones are always required, never extra', () => {
-  for (const d of DAYS)
-    for (const s of d.sections.filter((x) => x.optional)) for (const e of s.exercises) assert.notEqual(e.repType, 'capstone', `${e.id} on ${d.date}`)
+/** Capstones of the topics the priority cut took off the calendar. */
+const CUT_CAPSTONES = ['cap-number-of-provinces', 'cap-course-schedule']
+
+test('capstones are always required, except on topics the priority cut removed', () => {
   const required = new Set(DAYS.flatMap((d) => dayExercises(d).map((e) => e.id)))
-  for (const m of MODULES) for (const e of allDayExercises(m)) if (e.repType === 'capstone') assert.ok(required.has(e.id), e.id)
+  for (const m of MODULES)
+    for (const e of allDayExercises(m))
+      if (e.repType === 'capstone') assert.equal(required.has(e.id), !CUT_CAPSTONES.includes(e.id), e.id)
+})
+
+test('priority cut: Oct 6 – Oct 10 are sized to the measured pace, and keep only core reps', () => {
+  for (const d of DAYS.slice(4, 9)) {
+    const m = minutes(d)
+    assert.ok(m >= 170 && m <= 230, `${d.date}: ${Math.round(m)} min`)
+  }
+  for (const d of DAYS.slice(4, 9))
+    for (const s of d.sections.filter((x) => !x.optional)) assert.ok(s.exercises.some((e) => e.kind === 'code'), `${s.id} still has you write code`)
 })
 
 test('the Dictionary ladder: 30 reps, ground up to LeetCode', () => {
