@@ -19,7 +19,7 @@ import { ALL_EXERCISES, DAY_BY_DATE, DAY_OF_EXERCISE, DAYS, MODULE_OF_EXERCISE, 
 import { PROGRAM_STAGES } from '@/data/program'
 import { skillName } from '@/data/skills'
 import { formatMinutes, localDate, parseLocal } from '@/lib/dates'
-import { dayStats, nextExercise, passedSet, weakestSkills } from '@/lib/progress'
+import { blockingGate, dayStats, nextExercise, passedSet, weakestSkills } from '@/lib/progress'
 import { buildReviewSession, dueReviews } from '@/lib/schedule'
 import { buildSkillSession, createSession } from '@/lib/sessions'
 
@@ -32,11 +32,13 @@ export default function Dashboard() {
   const day = DAY_BY_DATE[today]
   const dayIndex = DAYS.findIndex((d) => d.date === today) + 1
   const stats = dayStats(day, attempts)
-  const next = nextExercise(day, attempts)
+  const passed = passedSet(attempts)
+  // An uncleared mastery check from an earlier day comes first: it is what holds today's reps.
+  const carry = blockingGate(day, 0, attempts)
+  const next = carry ? carry.exercises.find((e) => !passed.has(e.id)) : nextExercise(day, attempts)
   const all = dayExercises(day)
   const nextIndex = next ? all.findIndex((e) => e.id === next.id) + 1 : all.length
-  const section = next ? day.sections.find((s) => !s.optional && s.exercises.some((e) => e.id === next.id)) : undefined
-  const passed = passedSet(attempts)
+  const section = carry ?? (next ? day.sections.find((s) => !s.optional && s.exercises.some((e) => e.id === next.id)) : undefined)
   const sectionLeft = section ? section.exercises.filter((e) => !passed.has(e.id)).reduce((n, e) => n + e.minutes, 0) : 0
   const due = dueReviews(reviews)
   const weakest = weakestSkills(mastery, 5)
@@ -100,7 +102,7 @@ export default function Dashboard() {
             <div className="flex items-center gap-2">
               <span aria-hidden="true" className="size-1.5 rounded-full bg-accent" />
               <span className="eyebrow text-ink-2">
-                {todayStage?.title ?? `Day ${dayIndex}`} · {next ? (started ? 'Continue' : 'Start here') : 'Done for today'}
+                {carry ? `Finish first · ${carry.title}` : `${todayStage?.title ?? `Day ${dayIndex}`} · ${next ? (started ? 'Continue' : 'Start here') : 'Done for today'}`}
               </span>
             </div>
 
@@ -116,7 +118,7 @@ export default function Dashboard() {
                     </h2>
                     <p className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[14px] text-muted">
                       <span className="num font-medium text-ink-2">
-                        Rep {nextIndex} of {all.length}
+                        {carry ? `Carried over · ${carry.exercises.filter((e) => !passed.has(e.id)).length} left to clear` : `Rep ${nextIndex} of ${all.length}`}
                       </span>
                       <span aria-hidden="true">·</span>
                       {nextKind && (
@@ -128,7 +130,7 @@ export default function Dashboard() {
                   </div>
                 </div>
                 <Link href={`/rep/${next.id}`} className="btn btn-accent btn-lg shrink-0 self-start lg:self-auto" data-testid="start-today">
-                  {started ? 'Continue' : 'Start today’s reps'} <IconArrowRight size={15} />
+                  {carry ? 'Continue' : started ? 'Continue' : 'Start today’s reps'} <IconArrowRight size={15} />
                 </Link>
               </div>
             ) : (

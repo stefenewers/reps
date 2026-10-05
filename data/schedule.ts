@@ -27,6 +27,12 @@
  * so the rest of Oct 4 waits for it), and Oct 4–10 were re-split in order to
  * minimise the heaviest day (~325–363 planned minutes).
  *
+ * Oct 5, 12:30am: Oct 4 went to the Dictionary ladder (26/30 cleared; the
+ * rest carry over on Today until cleared). Oct 5 finishes hashing: Valid
+ * Anagram, Index maps, Complements, Two Sum. Oct 6–10 hold everything else in
+ * order, but at ~410–465 planned minutes a day they are a placeholder: they
+ * need a priority cut (moving lower-yield reps to Extras) before Oct 6.
+ *
  * Frozen on purpose: editing a module later must not silently reshuffle days.
  */
 
@@ -36,16 +42,25 @@ export const SCHEDULE: { date: string; sections: string[] }[] = [
     date: '2026-10-03',
     sections: ['o2-enumerate', 'o2-sets', 'o2-contains-duplicate', 'o2-dictionaries', 'o2-dict-revision', 'o2-get', 'o2-iter-dicts', 'o2-frequency', 'o2-dict-mastery'],
   },
+  { date: '2026-10-04', sections: ['o2-dict-ladder'] },
+  { date: '2026-10-05', sections: ['o2-valid-anagram', 'o2-index-maps', 'o2-complements', 'o2-two-sum'] },
   {
-    date: '2026-10-04',
-    sections: ['o2-dict-ladder', 'o2-valid-anagram', 'o2-index-maps', 'o2-complements', 'o2-two-sum', 'd3-strings', 'd3-slicing', 'd3-methods', 'd3-two-pointers', 'd3-pointer-updates', 'd3-pointer-patterns'],
+    date: '2026-10-06',
+    sections: ['d3-strings', 'd3-slicing', 'd3-methods', 'd3-two-pointers', 'd3-pointer-updates', 'd3-pointer-patterns', 'd3-running-state', 'd3-valid-palindrome', 'd3-stock', 'd3-two-sum-ii', 'd4-windows', 'd4-window-state', 'd4-longest-substring', 'd4-stacks'],
   },
-  { date: '2026-10-05', sections: ['d3-running-state', 'd3-valid-palindrome', 'd3-stock', 'd3-two-sum-ii', 'd4-windows', 'd4-window-state', 'd4-longest-substring', 'd4-stacks', 'd4-matching'] },
-  { date: '2026-10-06', sections: ['d4-valid-parentheses', 'd05-while', 'd05-bs', 'd05-variants', 'd05-cap-search', 'd05-listnode', 'd05-rewire', 'd05-cap-reverse', 'd05-dummy', 'd05-cap-merge', 'd06-functions'] },
-  { date: '2026-10-07', sections: ['d06-recursion', 'd06-treenode', 'd06-dfs', 'd06-cap-depth', 'd06-pairs', 'd06-cap-same', 'd06-mutate', 'd06-cap-invert', 'o7-deque', 'o7-grids', 'o7-neighbors'] },
-  { date: '2026-10-08', sections: ['o7-grid-bfs', 'o7-tree-bfs', 'o7-cap-level-order', 'o7-islands', 'o8-adjacency', 'o8-dfs', 'o8-bfs', 'o8-cap-path-exists'] },
-  { date: '2026-10-09', sections: ['o8-components', 'o8-cap-provinces', 'o8-cycles', 'o8-cap-course-schedule', 'd9-sorting', 'd9-keys', 'd9-freq-sort', 'd9-heapq', 'd9-max-heap', 'd9-top-k'] },
-  { date: '2026-10-10', sections: ['d9-intervals', 'd10-decisions', 'd10-path', 'd10-subsets', 'd10-recurrence', 'd10-memo', 'd10-bottom-up', 'd10-rolling'] },
+  {
+    date: '2026-10-07',
+    sections: ['d4-matching', 'd4-valid-parentheses', 'd05-while', 'd05-bs', 'd05-variants', 'd05-cap-search', 'd05-listnode', 'd05-rewire', 'd05-cap-reverse', 'd05-dummy', 'd05-cap-merge', 'd06-functions', 'd06-recursion'],
+  },
+  {
+    date: '2026-10-08',
+    sections: ['d06-treenode', 'd06-dfs', 'd06-cap-depth', 'd06-pairs', 'd06-cap-same', 'd06-mutate', 'd06-cap-invert', 'o7-deque', 'o7-grids', 'o7-neighbors', 'o7-grid-bfs', 'o7-tree-bfs', 'o7-cap-level-order'],
+  },
+  {
+    date: '2026-10-09',
+    sections: ['o7-islands', 'o8-adjacency', 'o8-dfs', 'o8-bfs', 'o8-cap-path-exists', 'o8-components', 'o8-cap-provinces', 'o8-cycles', 'o8-cap-course-schedule', 'd9-sorting', 'd9-keys', 'd9-freq-sort', 'd9-heapq', 'd9-max-heap'],
+  },
+  { date: '2026-10-10', sections: ['d9-top-k', 'd9-intervals', 'd10-decisions', 'd10-path', 'd10-subsets', 'd10-recurrence', 'd10-memo', 'd10-bottom-up', 'd10-rolling'] },
   { date: '2026-10-11', sections: ['o11-speed', 'o11-debug', 'o11-edges', 'o11-cold', 'o11-mixed'] },
 ]
 

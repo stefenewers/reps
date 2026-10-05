@@ -128,12 +128,12 @@ test('mastery check at the end of a day locks the next day until it is cleared',
   assert.equal(lockedByGate(oct4, firstOct4.id, allButLast)?.id, 'o2-dict-mastery')
   const done = everythingOct3.map((e) => attempt({ exerciseId: e.id }))
   assert.equal(lockedByGate(oct4, firstOct4.id, done), undefined)
-  // The ladder opens Oct 4 and holds the rest of Oct 4 until it is cleared.
-  const ladderAt = oct4.sections.findIndex((s) => s.id === 'o2-dict-ladder')
-  const afterLadder = oct4.sections[ladderAt + 1].exercises[0]
-  assert.equal(lockedByGate(oct4, afterLadder.id, done)?.id, 'o2-dict-ladder')
-  const ladderDone = [...done, ...oct4.sections[ladderAt].exercises.map((e) => attempt({ exerciseId: e.id }))]
-  assert.equal(lockedByGate(oct4, afterLadder.id, ladderDone), undefined)
+  // The ladder (Oct 4) holds Oct 5 until it is cleared.
+  const oct5 = DAYS.find((d) => d.date === '2026-10-05')!
+  const firstOct5 = oct5.sections.find((s) => !s.optional)!.exercises[0]
+  assert.equal(lockedByGate(oct5, firstOct5.id, done)?.id, 'o2-dict-ladder')
+  const ladderDone = [...done, ...oct4.sections.find((s) => s.id === 'o2-dict-ladder')!.exercises.map((e) => attempt({ exerciseId: e.id }))]
+  assert.equal(lockedByGate(oct5, firstOct5.id, ladderDone), undefined)
   // Extras are never locked.
   const extra = oct4.sections.find((s) => s.optional)?.exercises[0]
   if (extra) assert.equal(lockedByGate(oct4, extra.id, allButLast), undefined)

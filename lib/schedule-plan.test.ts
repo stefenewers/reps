@@ -36,17 +36,18 @@ test('Oct 3 is closed as completed: a dictionaries day ending with the from-scra
   for (const id of ['o2-dict-revision', 'o2-dict-mastery']) assert.ok(DAYS[1].sections.find((s) => s.id === id)?.gate, `${id} is a mastery check`)
 })
 
-test('Oct 4 opens with the Dictionary ladder, then what was planned for Oct 3, in order', () => {
-  const ids = DAYS[2].sections.filter((s) => !s.optional).map((s) => s.id)
-  assert.deepEqual(ids.slice(0, 8), ['o2-dict-ladder', 'o2-valid-anagram', 'o2-index-maps', 'o2-complements', 'o2-two-sum', 'd3-strings', 'd3-slicing', 'd3-methods'])
+test('Oct 4 was the Dictionary ladder; Oct 5 finishes hashing with its two capstones', () => {
+  assert.deepEqual(DAYS[2].sections.filter((s) => !s.optional).map((s) => s.id), ['o2-dict-ladder'])
   assert.ok(DAYS[2].sections.find((s) => s.id === 'o2-dict-ladder')?.gate)
+  assert.deepEqual(DAYS[3].sections.filter((s) => !s.optional).map((s) => s.id), ['o2-valid-anagram', 'o2-index-maps', 'o2-complements', 'o2-two-sum'])
+  const m = minutes(DAYS[3])
+  assert.ok(m >= 90 && m <= 140, `Oct 5: ${Math.round(m)} min, sized to the measured pace`)
 })
 
-test('Oct 4 – Oct 10 are split evenly, in order', () => {
-  for (const d of DAYS.slice(2, 9)) {
-    const m = minutes(d)
-    assert.ok(m >= 300 && m <= 370, `${d.date}: ${Math.round(m)} min`)
-  }
+test('Oct 6 – Oct 10 keep the remaining sections in their original order', () => {
+  const ids = DAYS.slice(4, 9).flatMap((d) => d.sections.filter((s) => !s.optional).map((s) => s.id))
+  assert.equal(ids[0], 'd3-strings')
+  assert.equal(ids.at(-1), 'd10-rolling')
 })
 
 const checkMinutes = MODULES[0].sections.filter((s) => s.id === 'o2-dict-revision').reduce((n, s) => n + s.exercises.reduce((m, e) => m + e.minutes, 0), 0)
