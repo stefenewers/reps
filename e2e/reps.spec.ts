@@ -77,7 +77,7 @@ test('a code rep runs real Python in the browser and an infinite loop is stopped
 })
 
 test('reps behind the Dictionary check are locked until it is cleared', async ({ page }) => {
-  await page.goto('/rep/cap-two-sum')
+  await page.goto('/rep/o2-get-trace')
   await expect(page.getByRole('heading', { name: 'Pass the Dictionary check first' })).toBeVisible()
   await expect(page.locator('.cm-content')).toHaveCount(0)
   await page.getByRole('link', { name: /Continue the check/ }).click()
