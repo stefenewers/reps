@@ -31,6 +31,12 @@
  * rest carry over on Today until cleared). Oct 5 finishes hashing: Valid
  * Anagram, Index maps, Complements, Two Sum.
  *
+ * Oct 5, 8:20pm: the dictionary chapter is closed. The ladder is no longer a
+ * lock (26/30 cleared; the rest stay open on Oct 4). Valid Anagram, Index
+ * maps, Complements and Two Sum come off the calendar: the ladder's LeetCode
+ * rungs covered them, and Two Sum returns as a required cold capstone on
+ * Oct 11. Oct 5 evening is the string block, Slicing first, untrimmed.
+ *
  * Priority cut for Oct 6–10 (measured pace ~2.5–4× planned): from TRIM_FROM
  * on, each section keeps only its core reps (see `isCoreRep` in
  * data/curriculum.ts): the first rep, the reps marked important, the first
@@ -49,10 +55,10 @@ export const SCHEDULE: { date: string; sections: string[] }[] = [
     sections: ['o2-enumerate', 'o2-sets', 'o2-contains-duplicate', 'o2-dictionaries', 'o2-dict-revision', 'o2-get', 'o2-iter-dicts', 'o2-frequency', 'o2-dict-mastery'],
   },
   { date: '2026-10-04', sections: ['o2-dict-ladder'] },
-  { date: '2026-10-05', sections: ['o2-valid-anagram', 'o2-index-maps', 'o2-complements', 'o2-two-sum'] },
+  { date: '2026-10-05', sections: ['d3-slicing', 'd3-strings', 'd3-methods'] },
   {
     date: '2026-10-06',
-    sections: ['d3-strings', 'd3-slicing', 'd3-methods', 'd3-two-pointers', 'd3-pointer-updates', 'd3-running-state', 'd3-valid-palindrome', 'd3-stock', 'd3-two-sum-ii', 'd4-windows', 'd4-window-state', 'd4-longest-substring'],
+    sections: ['d3-two-pointers', 'd3-pointer-updates', 'd3-running-state', 'd3-valid-palindrome', 'd3-stock', 'd3-two-sum-ii', 'd4-windows', 'd4-window-state', 'd4-longest-substring'],
   },
   {
     date: '2026-10-07',

@@ -1819,10 +1819,10 @@ echo`,
 ])
 
 // ---------------------------------------------------------------------------
-// 9c. Dictionary ladder: ground up to LeetCode, the end-of-day comprehension check
+// 9c. Dictionary ladder: ground up to LeetCode (closed Oct 5 without a lock)
 // ---------------------------------------------------------------------------
 
-const dictLadder = gate('o2-dict-ladder', 'Dictionary ladder', '30 reps from the ground up: foundations, looping, building, positions, then real LeetCode problems. Pass every rep without the solution before tomorrow unlocks.', [
+const dictLadder = section('o2-dict-ladder', 'Dictionary ladder', '30 reps from the ground up: foundations, looping, building, positions, then real LeetCode problems.', [
   // ── Rung 1: foundations ────────────────────────────────────────────────────
   choice({
     id: 'o2-dl-empty',

@@ -18,8 +18,9 @@ test('overall and per-day active coding time clear the thresholds', () => {
 })
 
 test('every authored topic module carries roughly 5.5–6.5 hours of content', () => {
-  // The foundation module also carries the Dictionary check: a mastery gate, not extra breadth.
-  const gate = (date: string) => DAYS.find((d) => d.date === date)!.sections.filter((s) => s.gate).reduce((n, s) => n + s.exercises.reduce((m, e) => m + e.minutes, 0), 0)
+  // The foundation module also carries the dictionary reinforcement added Oct 3: the two checks and the ladder.
+  const REINFORCEMENT = ['o2-dict-revision', 'o2-dict-mastery', 'o2-dict-ladder']
+  const gate = (date: string) => DAYS.find((d) => d.date === date)!.sections.filter((s) => REINFORCEMENT.includes(s.id)).reduce((n, s) => n + s.exercises.reduce((m, e) => m + e.minutes, 0), 0)
   for (const d of auditDays(DAYS).days) assert.ok(d.minutes >= 330 && d.minutes <= 400 + gate(d.date), `${d.date}: ${d.minutes} min`)
 })
 

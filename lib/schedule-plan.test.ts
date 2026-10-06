@@ -22,10 +22,14 @@ test('practice resumes Oct 3 at enumerate', () => {
   assert.equal(dayExercises(DAYS[1])[0].id, MODULES[0].sections.find((s) => s.id === 'o2-enumerate')!.exercises[0].id)
 })
 
-test('required work keeps the original order across the calendar', () => {
+test('required work keeps the original order across the calendar (one deliberate swap: Slicing before Strings)', () => {
   const calendar = DAYS.flatMap((d) => dayExercises(d).map((e) => e.id))
-  const modules = REQUIRED_MODULES.flatMap((m) => dayExercises(m).map((e) => e.id))
-  assert.deepEqual(calendar, modules)
+  const modules = REQUIRED_MODULES.flatMap((m) => m.sections.flatMap((s) => s.exercises.map((e) => ({ id: e.id, section: s.id }))))
+  const slicing = modules.filter((x) => x.section === 'd3-slicing')
+  const rest = modules.filter((x) => x.section !== 'd3-slicing')
+  const at = rest.findIndex((x) => x.section === 'd3-strings')
+  const expected = [...rest.slice(0, at), ...slicing, ...rest.slice(at)].map((x) => x.id)
+  assert.deepEqual(calendar, expected)
 })
 
 const DICT_DAY = ['o2-dictionaries', 'o2-dict-revision', 'o2-get', 'o2-iter-dicts', 'o2-frequency', 'o2-dict-mastery']
@@ -36,17 +40,21 @@ test('Oct 3 is closed as completed: a dictionaries day ending with the from-scra
   for (const id of ['o2-dict-revision', 'o2-dict-mastery']) assert.ok(DAYS[1].sections.find((s) => s.id === id)?.gate, `${id} is a mastery check`)
 })
 
-test('Oct 4 was the Dictionary ladder; Oct 5 finishes hashing with its two capstones', () => {
+test('Oct 4 was the Dictionary ladder; the dictionary chapter is closed without a lock', () => {
   assert.deepEqual(DAYS[2].sections.filter((s) => !s.optional).map((s) => s.id), ['o2-dict-ladder'])
-  assert.ok(DAYS[2].sections.find((s) => s.id === 'o2-dict-ladder')?.gate)
-  assert.deepEqual(DAYS[3].sections.filter((s) => !s.optional).map((s) => s.id), ['o2-valid-anagram', 'o2-index-maps', 'o2-complements', 'o2-two-sum'])
-  const m = minutes(DAYS[3])
-  assert.ok(m >= 90 && m <= 140, `Oct 5: ${Math.round(m)} min, sized to the measured pace`)
+  assert.ok(!DAYS[2].sections.find((s) => s.id === 'o2-dict-ladder')?.gate)
+  const onCalendar = new Set(DAYS.flatMap((d) => d.sections.filter((s) => !s.optional).map((s) => s.id)))
+  for (const id of ['o2-valid-anagram', 'o2-index-maps', 'o2-complements', 'o2-two-sum']) assert.ok(!onCalendar.has(id), `${id} is off the calendar`)
+  assert.ok(dayExercises(DAYS[9]).some((e) => e.id === 'cold-two-sum'), 'Two Sum returns cold on interview day')
+})
+
+test('Oct 5 evening is the string block, Slicing first', () => {
+  assert.deepEqual(DAYS[3].sections.filter((s) => !s.optional).map((s) => s.id), ['d3-slicing', 'd3-strings', 'd3-methods'])
 })
 
 test('Oct 6 – Oct 10 keep the remaining sections in their original order', () => {
   const ids = DAYS.slice(4, 9).flatMap((d) => d.sections.filter((s) => !s.optional).map((s) => s.id))
-  assert.equal(ids[0], 'd3-strings')
+  assert.equal(ids[0], 'd3-two-pointers')
   assert.equal(ids.at(-1), 'd10-rolling')
 })
 
@@ -74,7 +82,7 @@ test('nothing is lost: every authored rep is on the calendar exactly once', () =
 })
 
 /** Capstones of the topics the priority cut took off the calendar. */
-const CUT_CAPSTONES = ['cap-number-of-provinces', 'cap-course-schedule']
+const CUT_CAPSTONES = ['cap-number-of-provinces', 'cap-course-schedule', 'cap-valid-anagram', 'cap-two-sum']
 
 test('capstones are always required, except on topics the priority cut removed', () => {
   const required = new Set(DAYS.flatMap((d) => dayExercises(d).map((e) => e.id)))
@@ -86,7 +94,7 @@ test('capstones are always required, except on topics the priority cut removed',
 test('priority cut: Oct 6 – Oct 10 are sized to the measured pace, and keep only core reps', () => {
   for (const d of DAYS.slice(4, 9)) {
     const m = minutes(d)
-    assert.ok(m >= 170 && m <= 230, `${d.date}: ${Math.round(m)} min`)
+    assert.ok(m >= 150 && m <= 230, `${d.date}: ${Math.round(m)} min`)
   }
   for (const d of DAYS.slice(4, 9))
     for (const s of d.sections.filter((x) => !x.optional)) assert.ok(s.exercises.some((e) => e.kind === 'code'), `${s.id} still has you write code`)
