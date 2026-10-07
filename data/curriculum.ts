@@ -40,13 +40,13 @@ function sectionIsOptional(moduleDate: string, s: Section): boolean {
 }
 
 /**
- * The priority cut: the reps a section cannot do without. The first rep (it
- * introduces the idea), reps the author marked important, the first write rep
- * (so every section has you produce code), and every capstone.
+ * The priority cut (tightened Oct 7): the reps a section cannot do without.
+ * The first rep (it introduces the idea), the first write rep (so every
+ * section has you produce code), and every capstone.
  */
 export function isCoreRep(s: Section, index: number): boolean {
   const e = s.exercises[index]
-  if (e.repType === 'capstone' || e.review.important || index === 0) return true
+  if (e.repType === 'capstone' || index === 0) return true
   return index === s.exercises.findIndex((x) => x.kind === 'code' && x.repType !== 'capstone')
 }
 
@@ -85,6 +85,8 @@ function buildDays(): DayModule[] {
   for (const d of SCHEDULE) for (const id of d.sections) lastDayOfModule.set(SECTION_HOME.get(id)!.module.date, d.date)
 
   return SCHEDULE.map(({ date, sections: ids }) => {
+    // A day with nothing scheduled is an off day.
+    if (!ids.length) return { date, short: 'Off day', title: 'Off day', focus: 'No reps planned.', sections: [], capstones: [], modules: [] }
     const required: Section[] = []
     const extra: Section[] = []
     const modules: string[] = []

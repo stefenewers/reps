@@ -51,7 +51,8 @@ export function dayStats(day: DayModule, attempts: Attempt[]): DayStats {
     minutesRemaining,
     minutesTotal,
     timeSpentSeconds,
-    complete: all.length > 0 && done.length === all.length,
+    // An off day has nothing to do, so it is complete.
+    complete: done.length === all.length,
   }
 }
 
@@ -259,7 +260,7 @@ export function programProgress(days: DayModule[], attempts: Attempt[]): Program
     completed += done
     const start = total ? cursor / total : 0
     cursor += list.length
-    return { date: d.date, short: d.short, total: list.length, completed: done, start, end: total ? cursor / total : 0, complete: list.length > 0 && done === list.length }
+    return { date: d.date, short: d.short, total: list.length, completed: done, start, end: total ? cursor / total : 0, complete: done === list.length }
   })
   return { completed, total, fraction: total ? completed / total : 0, days: out }
 }

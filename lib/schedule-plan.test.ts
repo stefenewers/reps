@@ -22,14 +22,13 @@ test('practice resumes Oct 3 at enumerate', () => {
   assert.equal(dayExercises(DAYS[1])[0].id, MODULES[0].sections.find((s) => s.id === 'o2-enumerate')!.exercises[0].id)
 })
 
-test('required work keeps the original order across the calendar (one deliberate swap: Slicing before Strings)', () => {
-  const calendar = DAYS.flatMap((d) => dayExercises(d).map((e) => e.id))
-  const modules = REQUIRED_MODULES.flatMap((m) => m.sections.flatMap((s) => s.exercises.map((e) => ({ id: e.id, section: s.id }))))
-  const slicing = modules.filter((x) => x.section === 'd3-slicing')
-  const rest = modules.filter((x) => x.section !== 'd3-slicing')
-  const at = rest.findIndex((x) => x.section === 'd3-strings')
-  const expected = [...rest.slice(0, at), ...slicing, ...rest.slice(at)].map((x) => x.id)
-  assert.deepEqual(calendar, expected)
+test('within every section, required reps keep their authored order', () => {
+  const order = new Map(MODULES.flatMap((m) => m.sections.flatMap((s) => s.exercises.map((e, i) => [e.id, i] as const))))
+  for (const d of DAYS)
+    for (const s of d.sections.filter((x) => !x.optional)) {
+      const idx = s.exercises.map((e) => order.get(e.id)!)
+      assert.deepEqual(idx, [...idx].sort((a, b) => a - b), s.id)
+    }
 })
 
 const DICT_DAY = ['o2-dictionaries', 'o2-dict-revision', 'o2-get', 'o2-iter-dicts', 'o2-frequency', 'o2-dict-mastery']
@@ -48,15 +47,22 @@ test('Oct 4 was the Dictionary ladder; the dictionary chapter is closed without 
   assert.ok(dayExercises(DAYS[9]).some((e) => e.id === 'cold-two-sum'), 'Two Sum returns cold on interview day')
 })
 
-test('Oct 5 evening is the string block, Slicing first', () => {
-  assert.deepEqual(DAYS[3].sections.filter((s) => !s.optional).map((s) => s.id), ['d3-slicing', 'd3-strings', 'd3-methods'])
+test('Oct 5 closed with the Slicing done; Oct 6 was an off day', () => {
+  assert.deepEqual(DAYS[3].sections.filter((s) => !s.optional).map((s) => s.id), ['d3-slicing'])
+  assert.equal(DAYS[4].sections.length, 0)
 })
 
-test('Oct 6 – Oct 10 keep the remaining sections in their original order', () => {
-  const ids = DAYS.slice(4, 9).flatMap((d) => d.sections.filter((s) => !s.optional).map((s) => s.id))
-  assert.equal(ids[0], 'd3-two-pointers')
-  assert.equal(ids.at(-1), 'd10-rolling')
+test('Oct 7 – Oct 11 are ordered by interview priority', () => {
+  const caps = (i: number) => DAYS[i].capstones
+  assert.deepEqual(caps(5), ['valid-palindrome', 'longest-substring', 'valid-parentheses'])
+  assert.deepEqual(caps(6), ['reverse-linked-list', 'max-depth', 'invert-tree'])
+  assert.deepEqual(caps(7), ['level-order', 'number-of-islands', 'path-exists'])
+  assert.deepEqual(caps(8), ['binary-search', 'merge-intervals', 'climbing-stairs', 'house-robber'])
+  const cold = dayExercises(DAYS[9]).map((e) => e.id).sort()
+  assert.deepEqual(cold, ['cold-longest-substring', 'cold-merge-intervals', 'cold-number-of-islands', 'cold-reverse-linked-list', 'cold-two-sum', 'cold-valid-parentheses'])
+  assert.deepEqual(DAYS[9].mocks, ['mock-1', 'mock-2'])
 })
+
 
 const checkMinutes = MODULES[0].sections.filter((s) => s.id === 'o2-dict-revision').reduce((n, s) => n + s.exercises.reduce((m, e) => m + e.minutes, 0), 0)
 
@@ -81,23 +87,18 @@ test('nothing is lost: every authored rep is on the calendar exactly once', () =
   assert.deepEqual([...calendar].sort(), [...authored].sort())
 })
 
-/** Capstones of the topics the priority cut took off the calendar. */
-const CUT_CAPSTONES = ['cap-number-of-provinces', 'cap-course-schedule', 'cap-valid-anagram', 'cap-two-sum']
-
-test('capstones are always required, except on topics the priority cut removed', () => {
+test('every capstone still required has a cold version or is practiced before Oct 11', () => {
   const required = new Set(DAYS.flatMap((d) => dayExercises(d).map((e) => e.id)))
-  for (const m of MODULES)
-    for (const e of allDayExercises(m))
-      if (e.repType === 'capstone') assert.equal(required.has(e.id), !CUT_CAPSTONES.includes(e.id), e.id)
+  for (const id of ['cap-valid-palindrome', 'cap-longest-substring', 'cap-valid-parentheses', 'cap-reverse-linked-list', 'cap-max-depth', 'cap-invert-tree', 'cap-level-order', 'cap-number-of-islands', 'cap-path-exists', 'cap-binary-search', 'cap-merge-intervals', 'cap-climbing-stairs', 'cap-house-robber'])
+    assert.ok(required.has(id), id)
 })
 
-test('priority cut: Oct 6 – Oct 10 are sized to the measured pace, and keep only core reps', () => {
-  for (const d of DAYS.slice(4, 9)) {
+test('priority cut: Oct 7 – Oct 10 are sized to ~5–6 real hours, and every section has you write code', () => {
+  for (const d of DAYS.slice(5, 9)) {
     const m = minutes(d)
-    assert.ok(m >= 150 && m <= 230, `${d.date}: ${Math.round(m)} min`)
-  }
-  for (const d of DAYS.slice(4, 9))
+    assert.ok(m >= 90 && m <= 150, `${d.date}: ${Math.round(m)} min`)
     for (const s of d.sections.filter((x) => !x.optional)) assert.ok(s.exercises.some((e) => e.kind === 'code'), `${s.id} still has you write code`)
+  }
 })
 
 test('the Dictionary ladder: 30 reps, ground up to LeetCode', () => {
