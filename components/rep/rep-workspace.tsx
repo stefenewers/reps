@@ -21,6 +21,7 @@ import BasicsPanel from '@/components/rep/basics-panel'
 import { primersFor } from '@/data/primers'
 import { movesFor } from '@/data/primers/moves'
 import { BRIEFS } from '@/data/briefs'
+import { walkthroughFor } from '@/data/walkthroughs'
 import { IconArrowRight, IconBug, IconBulb, IconClock, IconDots, IconExternal, IconPlay, IconRotate, IconSpark, IconX } from '@/components/icons'
 import { followingExercise, lockedByGate, missingPrerequisites, passedSet, retrievalTypeFor } from '@/lib/progress'
 import { getRunner, type RunResult } from '@/lib/python/runner'
@@ -259,6 +260,7 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
   const isCode = ex.kind === 'code'
   const primers = useMemo(() => primersFor(ex.skills), [ex.skills])
   const moves = useMemo(() => movesFor(ex.skills), [ex.skills])
+  const walk = walkthroughFor(ex, section?.id)
   const hints = ex.hints ?? []
   const allHints = [...hints.slice(0, hintsShown), ...aiHints]
 
@@ -804,6 +806,29 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
                   ))}
                 </div>
               </div>
+            )}
+
+            {walk && !interview && (
+              <a
+                href={walk.url}
+                target="_blank"
+                rel="noreferrer"
+                data-testid="walkthrough"
+                className="group flex items-start gap-3 rounded-xl bg-surface px-4 py-3 shadow-[inset_0_0_0_1px_var(--line)] transition-colors hover:bg-surface-2"
+              >
+                <span aria-hidden="true" className="mt-0.5 grid size-8 shrink-0 place-items-center rounded-lg bg-ink text-white">
+                  <IconPlay size={11} />
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="flex flex-wrap items-center gap-x-1.5 text-[13.5px] font-medium text-ink">
+                    {ex.repType === 'capstone' ? 'New to this? Watch the walkthrough' : 'Building toward'} · {walk.label}
+                    <IconExternal size={12} className="text-muted" />
+                  </span>
+                  <span className="mt-0.5 block text-[12.5px] leading-relaxed text-muted">
+                    {walk.channel} on YouTube. Watch the explanation, pause when the code starts, write it yourself here, then finish the video to compare.
+                  </span>
+                </span>
+              </a>
             )}
 
             {showBasics && <BasicsPanel brief={BRIEFS[ex.id]} moves={moves} primers={primers} onClose={() => setShowBasics(false)} />}
