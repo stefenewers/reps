@@ -10,7 +10,7 @@ import { day as oct09 } from '@/data/exercises/oct09'
 import { day as oct10 } from '@/data/exercises/oct10'
 import { day as oct11 } from '@/data/exercises/oct11'
 import { MOCK_EXERCISES } from '@/data/mocks'
-import { OPTIONAL_SECTIONS, REQUIRED_COLD_CAPSTONES, SCHEDULE, TRIM_FROM } from '@/data/schedule'
+import { OPTIONAL_SECTIONS, PICKS, REQUIRED_COLD_CAPSTONES, SCHEDULE, TRIM_FROM } from '@/data/schedule'
 import { PROGRAM_STAGES } from '@/data/program'
 
 /**
@@ -62,6 +62,16 @@ function exerciseIsOptional(moduleDate: string, s: Section, index: number, trim:
 }
 
 function splitSection(moduleDate: string, s: Section, trim = false): { required: Section | null; extra: Section | null } {
+  // A pick list names exactly which reps of a section the calendar requires, overriding every other rule.
+  const picks = trim ? PICKS[s.id] : undefined
+  if (picks) {
+    const req = s.exercises.filter((e) => picks.includes(e.id))
+    const opt = s.exercises.filter((e) => !picks.includes(e.id))
+    return {
+      required: req.length ? { ...s, exercises: req } : null,
+      extra: opt.length ? { ...s, id: `${s.id}-extra`, title: `${s.title} · more`, exercises: opt, optional: true } : null,
+    }
+  }
   if (sectionIsOptional(moduleDate, s)) return { required: null, extra: { ...s, optional: true } }
   const req = s.exercises.filter((_, i) => !exerciseIsOptional(moduleDate, s, i, trim))
   const opt = s.exercises.filter((_, i) => exerciseIsOptional(moduleDate, s, i, trim))
@@ -84,7 +94,7 @@ function buildDays(): DayModule[] {
   const lastDayOfModule = new Map<string, string>()
   for (const d of SCHEDULE) for (const id of d.sections) lastDayOfModule.set(SECTION_HOME.get(id)!.module.date, d.date)
 
-  return SCHEDULE.map(({ date, sections: ids }) => {
+  return SCHEDULE.map(({ date, sections: ids, short: shortName, title: titleName }) => {
     // A day with nothing scheduled is an off day.
     if (!ids.length) return { date, short: 'Off day', title: 'Off day', focus: 'No reps planned.', sections: [], capstones: [], modules: [] }
     const required: Section[] = []
@@ -113,8 +123,8 @@ function buildDays(): DayModule[] {
     const capstones = required.flatMap((s) => s.exercises.filter((e) => e.repType === 'capstone' && e.problemId).map((e) => e.problemId!))
     return {
       date,
-      short: date === INTERVIEW_MODULE ? module0.short : stages.map((s) => s.shortTitle).join(' → '),
-      title: date === INTERVIEW_MODULE ? module0.title : stages.map((s) => s.title).join(' → '),
+      short: shortName ?? (date === INTERVIEW_MODULE ? module0.short : stages.map((s) => s.shortTitle).join(' → ')),
+      title: titleName ?? (date === INTERVIEW_MODULE ? module0.title : stages.map((s) => s.title).join(' → ')),
       focus: date === INTERVIEW_MODULE ? module0.focus : `${spans.filter(Boolean).join('. Then ')}.`,
       sections: [...required, ...extra],
       capstones,

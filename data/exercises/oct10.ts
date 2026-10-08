@@ -1436,6 +1436,35 @@ print(dp[n])`,
     ],
     signature: 'explain:climbing-stairs',
   }),
+  write({
+    id: 'd10-fu-broken-steps',
+    title: 'Follow-up: broken steps',
+    style: 'modify',
+    skills: ['dp_table', 'recurrence', 'set_membership'],
+    prompt: '**Interviewer follow-up.** Same staircase, 1 or 2 steps per move, but some steps are **broken** and you can never land on them. `broken` is a set of step numbers from 1 to `n`. Return how many ways reach step `n` exactly (0 if the top itself is broken). Adapt it as `climb_avoiding(n, broken)`.',
+    starterCode: `def climb_avoiding(n, broken):
+    dp = [0] * (n + 1)
+    dp[0] = 1
+    dp[1] = 1
+    for i in range(2, n + 1):
+        dp[i] = dp[i - 1] + dp[i - 2]
+    return dp[n]
+`,
+    solution: `def climb_avoiding(n, broken):
+    dp = [0] * (n + 1)
+    dp[0] = 1
+    for i in range(1, n + 1):
+        if i in broken:
+            continue
+        dp[i] = dp[i - 1] + (dp[i - 2] if i >= 2 else 0)
+    return dp[n]
+`,
+    tests: [t.eq('climb_avoiding(4, {2})', '1'), t.eq('climb_avoiding(5, set())', '8'), t.hidden('climb_avoiding(3, {3})', '0'), t.hidden('climb_avoiding(1, set())', '1'), t.hidden('climb_avoiding(1, {1})', '0'), t.hidden('climb_avoiding(6, {3})', '4')],
+    hints: ['A broken step can be reached in 0 ways, and that 0 flows forward on its own.', 'Step 1 needs care now: it might be broken, so build it inside the loop instead of hard-coding it.'],
+    explanation: 'The recurrence is unchanged; a broken step just has 0 ways, and the table propagates that. Still O(n) time, and could be O(1) space with two variables.',
+    signature: 'followup:stairs-broken-steps',
+    minutes: 5,
+  }),
 ]
 
 const rolling = [

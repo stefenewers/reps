@@ -1552,6 +1552,58 @@ def level_order(root: Optional[TreeNode]) -> List[List[int]]:
       signature: 'explain:level-order',
       minutes: 5,
     }),
+    write({
+      id: 'o7-fu-zigzag',
+      title: 'Follow-up: zigzag levels',
+      style: 'modify',
+      skills: ['bfs_levels', 'queue_deque', 'treenode'],
+      prompt: '**Interviewer follow-up.** Your `level_order` reads every level left to right. Now alternate: the first level left to right, the next right to left, and so on. Adapt it as `zigzag(root)`.',
+      starterCode: `from collections import deque
+
+def zigzag(root):
+    if root is None:
+        return []
+    out = []
+    q = deque([root])
+    while q:
+        level = []
+        for _ in range(len(q)):
+            node = q.popleft()
+            level.append(node.val)
+            if node.left:
+                q.append(node.left)
+            if node.right:
+                q.append(node.right)
+        out.append(level)
+    return out
+`,
+      solution: `from collections import deque
+
+def zigzag(root):
+    if root is None:
+        return []
+    out = []
+    q = deque([root])
+    while q:
+        level = []
+        for _ in range(len(q)):
+            node = q.popleft()
+            level.append(node.val)
+            if node.left:
+                q.append(node.left)
+            if node.right:
+                q.append(node.right)
+        if len(out) % 2 == 1:
+            level.reverse()
+        out.append(level)
+    return out
+`,
+      tests: [t.eq('zigzag(build_tree([3, 9, 20, None, None, 15, 7]))', '[[3], [20, 9], [15, 7]]'), t.eq('zigzag(build_tree([1, 2, 3, 4, 5, 6, 7]))', '[[1], [3, 2], [4, 5, 6, 7]]'), t.hidden('zigzag(None)', '[]'), t.hidden('zigzag(build_tree([1]))', '[[1]]')],
+      hints: ['Keep the BFS exactly as it is. Only what you do with each finished level changes.', 'Reverse every other level before appending it.'],
+      explanation: 'The traversal order does not change, only the presentation of alternate levels. Reversing a level is O(width), so the total stays O(n).',
+      signature: 'followup:level-order-zigzag',
+      minutes: 5,
+    }),
   ],
 }
 

@@ -1,7 +1,7 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { WALKTHROUGHS, walkthroughFor } from '@/data/walkthroughs'
-import { DAYS, EXERCISE_BY_ID, MODULES, dayExercises } from '@/data/curriculum'
+import { DAYS, EXERCISE_BY_ID, MODULES } from '@/data/curriculum'
 import { PROBLEM_BY_ID } from '@/data/problems'
 
 test('every capstone left on the calendar before Oct 11 has a walkthrough', () => {
@@ -20,7 +20,6 @@ test('walkthroughs point at real problems and real sections, as YouTube links', 
 
 test('lead-in reps get the video; cold reps never do', () => {
   assert.equal(walkthroughFor(EXERCISE_BY_ID['cap-longest-substring'])?.problemId, 'longest-substring')
-  const windowRep = dayExercises(DAYS.find((d) => d.date === '2026-10-07')!).find((e) => e.id.startsWith('d4-'))!
-  assert.equal(walkthroughFor(windowRep, 'd4-windows')?.problemId, 'longest-substring')
+  assert.equal(walkthroughFor(EXERCISE_BY_ID['d4-win-trace-slices'], 'd4-windows')?.problemId, 'longest-substring')
   assert.equal(walkthroughFor(EXERCISE_BY_ID['cold-longest-substring']), undefined)
 })

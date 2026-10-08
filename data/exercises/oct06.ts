@@ -965,6 +965,32 @@ pre(build_tree([1, 2, 3, 4, 5]))`,
           minutes: 5,
           signature: 'explain:max-depth',
         }),
+        write({
+          id: 'd06-fu-min-depth',
+          title: 'Follow-up: shallowest leaf',
+          style: 'modify',
+          skills: ['tree_dfs', 'recursion_base_case', 'recursion_return'],
+          prompt: '**Interviewer follow-up.** Your `max_depth` works. Now return the depth of the **shallowest leaf**: the fewest nodes on any path from the root down to a leaf. A node with only one child is not a leaf. An empty tree has depth 0. Adapt it as `min_depth(root)`, then test the one-child case.',
+          starterCode: `def min_depth(root):
+    if root is None:
+        return 0
+    return 1 + max(min_depth(root.left), min_depth(root.right))
+`,
+          solution: `def min_depth(root):
+    if root is None:
+        return 0
+    if root.left is None:
+        return 1 + min_depth(root.right)
+    if root.right is None:
+        return 1 + min_depth(root.left)
+    return 1 + min(min_depth(root.left), min_depth(root.right))
+`,
+          tests: [t.eq('min_depth(build_tree([3, 9, 20, None, None, 15, 7]))', '2'), t.eq('min_depth(build_tree([2, None, 3, None, 4]))', '3'), t.hidden('min_depth(None)', '0'), t.hidden('min_depth(build_tree([1]))', '1'), t.hidden('min_depth(build_tree([1, 2]))', '2')],
+          hints: ['Swapping `max` for `min` is close. Now try a root with only one child.', 'A missing child is not a leaf: if one side is None, the answer has to come from the other side.'],
+          explanation: 'Plain `min` treats an empty side as a depth-0 leaf. Handling the one-child case first fixes it; time stays O(n).',
+          signature: 'followup:max-depth-to-min-depth',
+          minutes: 5,
+        }),
       ],
     },
 

@@ -1620,6 +1620,36 @@ for start, end in intervals[1:]:
     ],
     signature: 'explain:merge-intervals',
   }),
+  write({
+    id: 'd9-fu-touching-apart',
+    title: 'Follow-up: touching stays apart',
+    style: 'modify',
+    skills: ['interval_overlap', 'sort_key'],
+    prompt: '**Interviewer follow-up.** Your `merge` combines ranges that only touch (`[1, 4]` and `[4, 6]` become `[1, 6]`). The rule changes: touching ranges now stay **separate**, and only ranges that truly overlap combine. Adapt it as `merge_strict(intervals)`.',
+    starterCode: `def merge_strict(intervals):
+    merged = []
+    for start, end in sorted(intervals, key=lambda iv: iv[0]):
+        if merged and start <= merged[-1][1]:
+            merged[-1][1] = max(merged[-1][1], end)
+        else:
+            merged.append([start, end])
+    return merged
+`,
+    solution: `def merge_strict(intervals):
+    merged = []
+    for start, end in sorted(intervals, key=lambda iv: iv[0]):
+        if merged and start < merged[-1][1]:
+            merged[-1][1] = max(merged[-1][1], end)
+        else:
+            merged.append([start, end])
+    return merged
+`,
+    tests: [t.eq('merge_strict([[1, 4], [4, 6]])', '[[1, 4], [4, 6]]'), t.eq('merge_strict([[1, 3], [2, 6], [8, 10]])', '[[1, 6], [8, 10]]'), t.hidden('merge_strict([])', '[]'), t.hidden('merge_strict([[5, 7], [1, 5], [2, 3]])', '[[1, 5], [5, 7]]'), t.hidden('merge_strict([[1, 10], [2, 3], [10, 12]])', '[[1, 10], [10, 12]]')],
+    hints: ['Only the overlap test changes. Which comparison decides "touching"?'],
+    explanation: 'The whole rule lives in one comparison: `<=` merges touching ranges, `<` keeps them apart. Saying this out loud is exactly the clarifying question to ask up front.',
+    signature: 'followup:merge-touching-apart',
+    minutes: 3,
+  }),
 ]
 
 const cold = [

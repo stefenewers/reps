@@ -751,6 +751,42 @@ else:
           minutes: 5,
           signature: 'explain:binary-search',
         }),
+        write({
+          id: 'd05-fu-insert-position',
+          title: 'Follow-up: where would it go?',
+          style: 'modify',
+          skills: ['binary_search', 'search_invariant', 'mid_calc'],
+          prompt: '**Interviewer follow-up.** `search` returns -1 when the target is missing. Now return the index where the target **would be inserted** to keep the list sorted (its index if it is already there). Still O(log n). Adapt it as `insert_at(nums, target)`.',
+          starterCode: `def insert_at(nums, target):
+    lo, hi = 0, len(nums) - 1
+    while lo <= hi:
+        mid = (lo + hi) // 2
+        if nums[mid] == target:
+            return mid
+        elif nums[mid] < target:
+            lo = mid + 1
+        else:
+            hi = mid - 1
+    return -1
+`,
+          solution: `def insert_at(nums, target):
+    lo, hi = 0, len(nums) - 1
+    while lo <= hi:
+        mid = (lo + hi) // 2
+        if nums[mid] == target:
+            return mid
+        elif nums[mid] < target:
+            lo = mid + 1
+        else:
+            hi = mid - 1
+    return lo
+`,
+          tests: [t.eq('insert_at([1, 3, 5, 6], 5)', '2'), t.eq('insert_at([1, 3, 5, 6], 2)', '1'), t.hidden('insert_at([1, 3, 5, 6], 7)', '4'), t.hidden('insert_at([1, 3, 5, 6], 0)', '0'), t.hidden('insert_at([], 4)', '0')],
+          hints: ['Trace a missing target to the end of the loop. Where do `lo` and `hi` stop?', 'When the loop ends, `lo` is the first index whose value is bigger than the target.'],
+          explanation: 'When the loop exits, `hi + 1 == lo` and every value left of `lo` is smaller than the target, so `lo` is exactly the insertion point. One changed line.',
+          signature: 'followup:search-to-insert-position',
+          minutes: 4,
+        }),
       ],
     },
 

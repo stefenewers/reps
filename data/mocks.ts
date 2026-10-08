@@ -129,6 +129,7 @@ def minutes_to_fail(grid):
     title: 'Cancel adjacent twins',
     skills: ['stack_push_pop', 'string_iterate', 'string_methods', 'edge_cases'],
     ...M,
+    minutes: 10,
     difficulty: 3,
     prompt:
       'Given a string `s` of lowercase letters, repeatedly delete any two **adjacent equal** letters until no such pair is left, and return what remains. For example `"abbaca"`: removing `"bb"` gives `"aaca"`, then removing `"aa"` gives `"ca"`.',
@@ -170,51 +171,100 @@ def minutes_to_fail(grid):
     signature: 'mock:stack-cancel-pairs',
   }),
   code({
-    id: 'mock-2-b',
-    title: 'Rooms for the day',
-    skills: ['sort_key', 'heap_push_pop', 'interval_overlap', 'edge_cases'],
+    id: 'mock-2-route',
+    title: 'Budgeted route',
+    skills: ['tree_dfs', 'recursion_base_case', 'recursion_return', 'edge_cases'],
     ...M,
-    difficulty: 4,
+    minutes: 15,
+    difficulty: 3,
     prompt:
-      'Each meeting is `[start, end]` with `start < end`. A room is free again at the moment its meeting ends, so `[1, 5]` and `[5, 8]` can share a room. Return the minimum number of rooms needed to hold every meeting. The list may be empty and is not sorted.',
-    starterCode: `def min_rooms(meetings):
+      'A tree of road segments: each node holds the toll for that segment (tolls can be negative, they are rebates). A route goes from the root down to a **leaf** (a node with no children). Given the root and a `budget`, return `True` if some route costs exactly `budget`. An empty tree has no routes.',
+    starterCode: `def has_route(root, budget):
     pass
 `,
-    solution: `import heapq
-
-def min_rooms(meetings):
-    meetings = sorted(meetings, key=lambda m: m[0])
-    ends = []
-    for start, end in meetings:
-        if ends and ends[0] <= start:
-            heapq.heappop(ends)
-        heapq.heappush(ends, end)
-    return len(ends)
+    solution: `def has_route(root, budget):
+    if root is None:
+        return False
+    if root.left is None and root.right is None:
+        return root.val == budget
+    rest = budget - root.val
+    return has_route(root.left, rest) or has_route(root.right, rest)
 `,
     tests: [
-      t.eq('min_rooms([[0, 30], [5, 10], [15, 20]])', '2'),
-      t.eq('min_rooms([[7, 10], [2, 4]])', '1'),
-      t.hidden('min_rooms([])', '0'),
-      t.hidden('min_rooms([[1, 5]])', '1'),
-      t.hidden('min_rooms([[1, 5], [5, 10]])', '1'),
-      t.hidden('min_rooms([[1, 10], [2, 9], [3, 8]])', '3'),
-      t.hidden('min_rooms([[1, 3], [2, 4], [3, 5], [4, 6]])', '2'),
-      t.hidden('min_rooms([[5, 8], [1, 3], [2, 6], [6, 9], [8, 10]])', '2'),
+      t.eq('has_route(build_tree([5, 4, 8, 11, None, 13, 4, 7, 2, None, None, None, 1]), 22)', 'True'),
+      t.eq('has_route(build_tree([1, 2, 3]), 5)', 'False'),
+      t.hidden('has_route(None, 0)', 'False'),
+      t.hidden('has_route(build_tree([1]), 1)', 'True'),
+      t.hidden('has_route(build_tree([1, 2]), 1)', 'False'),
+      t.hidden('has_route(build_tree([-2, None, -3]), -5)', 'True'),
+      t.hidden('has_route(build_tree([1, 2, 3]), 4)', 'True'),
     ],
     examples: [
-      { input: 'meetings = [[0, 30], [5, 10], [15, 20]]', output: '2' },
-      { input: 'meetings = [[7, 10], [2, 4]]', output: '1' },
+      { input: 'root = [5, 4, 8, 11, None, 13, 4, 7, 2, None, None, None, 1], budget = 22', output: 'True', note: '5 → 4 → 11 → 2' },
+      { input: 'root = [1, 2, 3], budget = 5', output: 'False', note: 'The routes cost 3 and 4.' },
     ],
     hints: [
-      'Process meetings in the order they start.',
-      'When a meeting starts, you only care about the room that frees up soonest.',
-      'Keep a min-heap of end times for rooms in use; if the smallest end is <= this start, reuse that room.',
-      'Sort by start; for each: pop if ends[0] <= start; push end; answer is len(ends).',
+      'Clarify: must a route end at a leaf? Can tolls be negative? What does an empty tree return?',
+      'At each node, what is left of the budget for the rest of the route?',
+      'Recurse into both children with `budget - root.val`; a leaf checks whether its own value is exactly what remains.',
+      'Base cases: None → False; leaf → val == remaining. Otherwise left or right.',
     ],
     explanation:
-      'Sorting by start and keeping a min-heap of end times means the heap holds the rooms in use. Each meeting either reuses the earliest-freed room (pop then push) or opens a new one (push), so the heap size only grows when a new room is truly needed. Using `<=` encodes the "free at the moment it ends" rule.',
-    complexity: { time: 'O(n log n)', space: 'O(n)' },
-    signature: 'mock:intervals-min-heap',
+      'Passing the remaining budget down turns a path question into a local check at each leaf. Negative tolls mean you cannot stop early when the running total passes the budget. O(n) time, O(h) stack.',
+    complexity: { time: 'O(n)', space: 'O(h) for tree height h' },
+    signature: 'mock:tree-path-sum',
+  }),
+  code({
+    id: 'mock-2-routes',
+    title: 'Every budgeted route',
+    skills: ['tree_dfs', 'backtracking_state', 'list_append', 'edge_cases'],
+    ...M,
+    minutes: 20,
+    difficulty: 4,
+    prompt:
+      '**Interviewer follow-up.** Same tree and budget, but now return **every** route (root to leaf) that costs exactly `budget`, each as the list of tolls along it, in left-to-right order of their leaves. Reuse the idea from your last answer; think about what extra state the recursion must carry.',
+    starterCode: `def all_routes(root, budget):
+    pass
+`,
+    solution: `def all_routes(root, budget):
+    out = []
+    path = []
+
+    def dfs(node, remaining):
+        if node is None:
+            return
+        path.append(node.val)
+        if node.left is None and node.right is None and node.val == remaining:
+            out.append(list(path))
+        dfs(node.left, remaining - node.val)
+        dfs(node.right, remaining - node.val)
+        path.pop()
+
+    dfs(root, budget)
+    return out
+`,
+    tests: [
+      t.eq('all_routes(build_tree([5, 4, 8, 11, None, 13, 4, 7, 2, None, None, 5, 1]), 22)', '[[5, 4, 11, 2], [5, 8, 4, 5]]'),
+      t.eq('all_routes(build_tree([1, 2, 3]), 5)', '[]'),
+      t.hidden('all_routes(None, 0)', '[]'),
+      t.hidden('all_routes(build_tree([1]), 1)', '[[1]]'),
+      t.hidden('all_routes(build_tree([1, 2, 2]), 3)', '[[1, 2], [1, 2]]'),
+      t.hidden('all_routes(build_tree([-2, None, -3]), -5)', '[[-2, -3]]'),
+    ],
+    examples: [
+      { input: 'root = [5, 4, 8, 11, None, 13, 4, 7, 2, None, None, 5, 1], budget = 22', output: '[[5, 4, 11, 2], [5, 8, 4, 5]]' },
+      { input: 'root = [1, 2, 3], budget = 5', output: '[]' },
+    ],
+    hints: [
+      'A yes/no answer no longer works: you need to remember the route you took to get here.',
+      'Carry one list of the current route through the recursion.',
+      'Append the node before exploring its children, and pop it after: choose, explore, undo.',
+      'At a matching leaf, save a **copy** of the path (`list(path)`), or every saved route will change later.',
+    ],
+    explanation:
+      'The follow-up turns a search into an enumeration: the recursion must carry the path. Appending before recursing and popping after (choose / explore / undo) keeps one list valid at every step; copying at the leaf avoids every result aliasing the same list. O(n·h) to build the outputs.',
+    complexity: { time: 'O(n · h)', space: 'O(h) plus the output' },
+    signature: 'mock:tree-all-path-sums',
   }),
 ]
 
@@ -230,7 +280,7 @@ export const MOCKS: MockInterview[] = [
     id: 'mock-2',
     title: 'Mock interview 2',
     minutes: 45,
-    exerciseIds: ['mock-2-a', 'mock-2-b'],
-    note: 'A string clean-up warm-up, then a scheduling problem over unsorted time ranges.',
+    exerciseIds: ['mock-2-a', 'mock-2-route', 'mock-2-routes'],
+    note: 'A string clean-up warm-up, then a tree problem and the interviewer’s follow-up: from “is there a route?” to “return every route”.',
   },
 ]

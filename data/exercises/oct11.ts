@@ -2029,6 +2029,153 @@ export const day: DayModule = {
         'o11-say-stuck',
       ]),
     },
+    {
+      id: 'o11-name-it',
+      title: 'Name the pattern',
+      summary: 'No labels: read the problem, find the expensive repeated work, and pick the pattern that makes it cheap.',
+      exercises: [
+        write({
+          id: 'o11-ni-shared',
+          title: 'Both playlists',
+          skills: ['set_create', 'set_membership', 'list_append', 'hash_reasoning'],
+          difficulty: 2,
+          prompt: '`a` and `b` are lists of song ids (ints), possibly with repeats. Return the songs that appear in **both**, in the order they first appear in `a`, each listed once. Lists can hold tens of thousands of songs.',
+          starterCode: `def in_both(a, b):
+    pass
+`,
+          solution: `def in_both(a, b):
+    other = set(b)
+    seen = set()
+    out = []
+    for x in a:
+        if x in other and x not in seen:
+            seen.add(x)
+            out.append(x)
+    return out
+`,
+          tests: [
+            t.eq('in_both([3, 1, 3, 2], [2, 3, 9])', '[3, 2]'),
+            t.eq('in_both([], [1])', '[]'),
+            t.hidden('in_both([1, 2], [3])', '[]'),
+            t.hidden('in_both([5, 5, 5], [5])', '[5]'),
+            t.hidden('len(in_both(list(range(20000)), list(range(10000, 30000))))', '10000'),
+          ],
+          hints: ['For each song in `a` you ask "is it in `b`?" How expensive is that question with a list?', 'Make the repeated question O(1).', 'A set of `b`, plus a second set for what you already output.'],
+          explanation: 'The repeated work is membership testing. A set turns each check from O(len(b)) into O(1): O(n + m) instead of O(n·m), which matters at this size.',
+          complexity: { time: 'O(n + m)', space: 'O(n + m)' },
+          signature: 'mixed:set-intersection-ordered',
+          minutes: 5,
+        }),
+        write({
+          id: 'o11-ni-two-hops',
+          title: 'Friends of friends',
+          skills: ['graph_adjacency', 'graph_bfs', 'set_membership'],
+          difficulty: 3,
+          prompt: 'People are numbered `0..n-1`. `pairs` lists friendships `[a, b]` (friendship goes both ways). Return, sorted, everyone who is a friend of one of `p`\'s friends but is neither `p` nor already `p`\'s friend.',
+          starterCode: `def two_away(n, pairs, p):
+    pass
+`,
+          solution: `def two_away(n, pairs, p):
+    graph = {i: [] for i in range(n)}
+    for a, b in pairs:
+        graph[a].append(b)
+        graph[b].append(a)
+    direct = set(graph[p])
+    out = set()
+    for f in direct:
+        for g in graph[f]:
+            if g != p and g not in direct:
+                out.add(g)
+    return sorted(out)
+`,
+          tests: [
+            t.eq('two_away(5, [[0, 1], [1, 2], [1, 3], [3, 4]], 0)', '[2, 3]'),
+            t.eq('two_away(3, [[0, 1], [0, 2], [1, 2]], 0)', '[]'),
+            t.hidden('two_away(1, [], 0)', '[]'),
+            t.hidden('two_away(4, [[0, 1], [1, 2], [2, 3]], 0)', '[2]'),
+            t.hidden('two_away(5, [[0, 1], [0, 2], [1, 3], [2, 3], [3, 4]], 0)', '[3]'),
+          ],
+          hints: ['Draw the friendships. What shape is this data?', 'You keep asking "who are X\'s friends?" Store the answer for every person once.', 'Adjacency list, then look one ring further out than the direct friends.'],
+          explanation: 'The pairs describe a graph. An adjacency list makes "friends of X" a lookup; "exactly two away" is the second BFS ring, minus `p` and the first ring.',
+          complexity: { time: 'O(n + e)', space: 'O(n + e)' },
+          signature: 'mixed:graph-second-ring',
+          minutes: 7,
+        }),
+        write({
+          id: 'o11-ni-streak',
+          title: 'Longest streak with one slip',
+          skills: ['sliding_window', 'window_state', 'enumerate'],
+          difficulty: 3,
+          prompt: '`days` is a list of `1` (practiced) and `0` (missed). One missed day can be forgiven. Return the length of the longest run of **consecutive** days that contains at most one `0`.',
+          starterCode: `def best_streak(days):
+    pass
+`,
+          solution: `def best_streak(days):
+    left = 0
+    zeros = 0
+    best = 0
+    for right, d in enumerate(days):
+        if d == 0:
+            zeros += 1
+        while zeros > 1:
+            if days[left] == 0:
+                zeros -= 1
+            left += 1
+        best = max(best, right - left + 1)
+    return best
+`,
+          tests: [
+            t.eq('best_streak([1, 1, 0, 1, 1, 1, 0, 1])', '6'),
+            t.eq('best_streak([0, 0, 0])', '1'),
+            t.hidden('best_streak([])', '0'),
+            t.hidden('best_streak([1, 1, 1])', '3'),
+            t.hidden('best_streak([0, 1, 0, 1, 0])', '3'),
+            t.hidden('best_streak([1, 0, 0, 1])', '2'),
+          ],
+          hints: ['Checking every start and end re-scans the same days again and again.', 'Keep one stretch and extend it to the right; what makes it invalid?', 'Track how many zeros the stretch holds; while it is more than one, move the left edge.'],
+          explanation: 'A contiguous run with a limit on what it may contain is a variable sliding window: each day enters once and leaves once, O(n) instead of O(n²).',
+          complexity: { time: 'O(n)', space: 'O(1)' },
+          signature: 'mixed:window-at-most-one-zero',
+          minutes: 7,
+        }),
+        write({
+          id: 'o11-ni-latest-at-or-before',
+          title: 'Latest reading at or before',
+          skills: ['binary_search', 'search_invariant'],
+          difficulty: 3,
+          prompt: '`times` holds distinct reading times in increasing order. For each time in `queries`, return the **index** of the latest reading at or before it, or `-1` if there is none. There can be hundreds of thousands of readings and thousands of queries.',
+          starterCode: `def latest_before(times, queries):
+    pass
+`,
+          solution: `def latest_before(times, queries):
+    out = []
+    for q in queries:
+        lo, hi = 0, len(times) - 1
+        ans = -1
+        while lo <= hi:
+            mid = (lo + hi) // 2
+            if times[mid] <= q:
+                ans = mid
+                lo = mid + 1
+            else:
+                hi = mid - 1
+        out.append(ans)
+    return out
+`,
+          tests: [
+            t.eq('latest_before([1, 4, 9], [0, 4, 5, 10])', '[-1, 1, 1, 2]'),
+            t.eq('latest_before([], [3])', '[-1]'),
+            t.hidden('latest_before([2], [2, 1])', '[0, -1]'),
+            t.hidden('latest_before(list(range(0, 400000, 2)), list(range(0, 400000, 80)))[-1]', '199960'),
+          ],
+          hints: ['A scan per query repeats a lot of work. What do you know about `times`?', 'Sorted data and a yes/no question about each position: "is this reading at or before q?"', 'Binary search for the last index where `times[mid] <= q`, remembering the best index so far.'],
+          explanation: 'The input is sorted, and the question is monotonic (true, then false), so each query is O(log n). A dict does not help: queries rarely match a reading exactly.',
+          complexity: { time: 'O(q log n)', space: 'O(q)' },
+          signature: 'mixed:binary-search-last-at-most',
+          minutes: 7,
+        }),
+      ],
+    },
   ],
   capstones: [],
   mocks: ['mock-1', 'mock-2'],

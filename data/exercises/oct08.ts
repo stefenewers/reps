@@ -965,6 +965,54 @@ def valid_path(n: int, edges: List[List[int]], source: int, destination: int) ->
       signature: 'explain:path-exists',
       minutes: 5,
     }),
+    write({
+      id: 'o8-fu-fewest-hops',
+      title: 'Follow-up: fewest hops',
+      style: 'modify',
+      skills: ['graph_bfs', 'queue_deque', 'graph_adjacency', 'visited_set'],
+      prompt: '**Interviewer follow-up.** `valid_path` answers *whether* you can get there. Now return the **fewest edges** on a path from `source` to `destination`, `0` if they are the same node, or `-1` if there is no path. Adapt it as `fewest_hops(n, edges, source, destination)`. Which traversal order guarantees the first time you reach a node is the shortest way there?',
+      starterCode: `def fewest_hops(n, edges, source, destination):
+    graph = {i: [] for i in range(n)}
+    for a, b in edges:
+        graph[a].append(b)
+        graph[b].append(a)
+    visited = {source}
+    stack = [source]
+    while stack:
+        node = stack.pop()
+        if node == destination:
+            return True
+        for nxt in graph[node]:
+            if nxt not in visited:
+                visited.add(nxt)
+                stack.append(nxt)
+    return False
+`,
+      solution: `from collections import deque
+
+def fewest_hops(n, edges, source, destination):
+    graph = {i: [] for i in range(n)}
+    for a, b in edges:
+        graph[a].append(b)
+        graph[b].append(a)
+    dist = {source: 0}
+    queue = deque([source])
+    while queue:
+        node = queue.popleft()
+        if node == destination:
+            return dist[node]
+        for nxt in graph[node]:
+            if nxt not in dist:
+                dist[nxt] = dist[node] + 1
+                queue.append(nxt)
+    return -1
+`,
+      tests: [t.eq('fewest_hops(4, [[0, 1], [1, 2], [2, 3], [0, 3]], 0, 2)', '2'), t.eq('fewest_hops(3, [[0, 1]], 0, 2)', '-1'), t.hidden('fewest_hops(1, [], 0, 0)', '0'), t.hidden('fewest_hops(5, [[0, 1], [1, 2], [2, 3], [3, 4], [0, 4]], 0, 3)', '2'), t.hidden('fewest_hops(6, [[0, 1], [1, 2], [2, 5], [0, 3], [3, 4], [4, 5]], 0, 5)', '3')],
+      hints: ['A stack explores one branch deeply, so the first arrival can be a long way round.', 'A queue explores in rings: everything 1 edge away, then 2, and so on.', 'Swap the stack for a deque and store each node’s distance when you first see it.'],
+      explanation: 'Reachability works with any traversal, but shortest path in an unweighted graph needs BFS: nodes leave the queue in order of distance. Same O(V + E).',
+      signature: 'followup:reachability-to-shortest',
+      minutes: 7,
+    }),
   ],
 }
 
