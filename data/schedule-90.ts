@@ -26,6 +26,12 @@ export interface PlanDay {
 export const PLAN_START = '2026-10-11'
 export const PLAN_END = '2027-01-08'
 
+/** A re-solve lands this many days after the first solve (it slides only to miss a Sunday, a day off or a full day). */
+export const RESOLVE_WINDOWS = {"review1": [3, 4], "review2": [10, 12], "review3": [30, 33]} as const
+
+/** The most re-solves a day may carry, by phase: [weekday, Saturday]. */
+export const RESOLVE_CAPS = {"off": [0, 0], "soft": [2, 2], "build": [3, 2], "full": [5, 3], "buffer": [5, 4], "final": [5, 5]} as const
+
 export const PLAN_90 = [
  {
   "date": "2026-10-11",
@@ -285,9 +291,18 @@ export const PLAN_90 = [
   "date": "2026-10-17",
   "week": 1,
   "phase": "soft",
-  "unit": "Hashing",
-  "short": "Hashing",
-  "sections": [],
+  "unit": "Hashing → Strings + two pointers",
+  "short": "Hashing → Pointers",
+  "sections": [
+   {
+    "id": "d3-strings",
+    "reps": [
+     "d3-str-trace-index"
+    ],
+    "gate": false,
+    "label": null
+   }
+  ],
   "leetcode": [
    {
     "lc": 1,
@@ -320,7 +335,7 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/product-of-array-except-self/"
    }
   ],
-  "minutes": 80
+  "minutes": 84
  },
  {
   "date": "2026-10-18",
@@ -342,7 +357,6 @@ export const PLAN_90 = [
    {
     "id": "d3-strings",
     "reps": [
-     "d3-str-trace-index",
      "d3-str-count-vowels",
      "d3-str-same-ends",
      "d3-str-debug-immutable",
@@ -387,7 +401,7 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/encode-and-decode-strings/"
    }
   ],
-  "minutes": 139
+  "minutes": 134
  },
  {
   "date": "2026-10-20",
@@ -606,16 +620,6 @@ export const PLAN_90 = [
   ],
   "leetcode": [
    {
-    "lc": 383,
-    "title": "Ransom Note",
-    "difficulty": "Easy",
-    "pattern": "Frequency map as a budget",
-    "type": "review2",
-    "mode": null,
-    "video": null,
-    "url": "https://leetcode.com/problems/ransom-note/"
-   },
-   {
     "lc": 1,
     "title": "Two Sum",
     "difficulty": "Easy",
@@ -624,6 +628,16 @@ export const PLAN_90 = [
     "mode": null,
     "video": "https://www.youtube.com/watch?v=KLlXCFG5TnA",
     "url": "https://leetcode.com/problems/two-sum/"
+   },
+   {
+    "lc": 383,
+    "title": "Ransom Note",
+    "difficulty": "Easy",
+    "pattern": "Frequency map as a budget",
+    "type": "review2",
+    "mode": null,
+    "video": null,
+    "url": "https://leetcode.com/problems/ransom-note/"
    }
   ],
   "minutes": 74
@@ -1320,16 +1334,6 @@ export const PLAN_90 = [
   ],
   "leetcode": [
    {
-    "lc": 704,
-    "title": "Binary Search",
-    "difficulty": "Easy",
-    "pattern": "Binary search",
-    "type": "review1",
-    "mode": null,
-    "video": "https://www.youtube.com/watch?v=s4DPM8ct1pI",
-    "url": "https://leetcode.com/problems/binary-search/"
-   },
-   {
     "lc": 153,
     "title": "Find Minimum in Rotated Sorted Array",
     "difficulty": "Medium",
@@ -1338,6 +1342,16 @@ export const PLAN_90 = [
     "mode": null,
     "video": "https://www.youtube.com/watch?v=nIVW4P8b1VA",
     "url": "https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/"
+   },
+   {
+    "lc": 704,
+    "title": "Binary Search",
+    "difficulty": "Easy",
+    "pattern": "Binary search",
+    "type": "review1",
+    "mode": null,
+    "video": "https://www.youtube.com/watch?v=s4DPM8ct1pI",
+    "url": "https://leetcode.com/problems/binary-search/"
    },
    {
     "lc": 3,
@@ -1490,7 +1504,26 @@ export const PLAN_90 = [
    {
     "id": "d06-functions",
     "reps": [
-     "d06-fn-print-vs-return"
+     "d06-fn-print-vs-return",
+     "d06-fn-tuple",
+     "d06-fn-dbg-return",
+     "d06-fn-params",
+     "d06-fn-helper"
+    ],
+    "gate": false,
+    "label": null
+   },
+   {
+    "id": "d06-recursion",
+    "reps": [
+     "d06-rec-fact-stack",
+     "d06-rec-sum-to",
+     "d06-rec-power",
+     "d06-rec-dbg-base",
+     "d06-rec-dbg-no-return",
+     "d06-rec-index-param",
+     "d06-rec-fib",
+     "d06-rec-reverse-str"
     ],
     "gate": false,
     "label": null
@@ -1526,26 +1559,6 @@ export const PLAN_90 = [
     "mode": "attempt-first",
     "video": "https://www.youtube.com/watch?v=XVuQxVej6y8",
     "url": "https://leetcode.com/problems/remove-nth-node-from-end-of-list/"
-   },
-   {
-    "lc": 143,
-    "title": "Reorder List",
-    "difficulty": "Medium",
-    "pattern": "Linked list combo",
-    "type": "new",
-    "mode": "attempt-first",
-    "video": "https://www.youtube.com/watch?v=S5bfdUTrKLM",
-    "url": "https://leetcode.com/problems/reorder-list/"
-   },
-   {
-    "lc": 23,
-    "title": "Merge k Sorted Lists",
-    "difficulty": "Hard",
-    "pattern": "Heap merge",
-    "type": "new",
-    "mode": "attempt-first",
-    "video": "https://www.youtube.com/watch?v=q5a5OiGbT6Q",
-    "url": "https://leetcode.com/problems/merge-k-sorted-lists/"
    }
   ],
   "minutes": 168
@@ -1554,31 +1567,12 @@ export const PLAN_90 = [
   "date": "2026-11-13",
   "week": 5,
   "phase": "full",
-  "unit": "Recursion + trees",
-  "short": "Trees",
+  "unit": "Linked lists → Recursion + trees",
+  "short": "Lists → Trees",
   "sections": [
-   {
-    "id": "d06-functions",
-    "reps": [
-     "d06-fn-tuple",
-     "d06-fn-dbg-return",
-     "d06-fn-params",
-     "d06-fn-helper"
-    ],
-    "gate": false,
-    "label": null
-   },
    {
     "id": "d06-recursion",
     "reps": [
-     "d06-rec-fact-stack",
-     "d06-rec-sum-to",
-     "d06-rec-power",
-     "d06-rec-dbg-base",
-     "d06-rec-dbg-no-return",
-     "d06-rec-index-param",
-     "d06-rec-fib",
-     "d06-rec-reverse-str",
      "d06-rec-list-len",
      "d06-rec-translate",
      "d06-rec-pal"
@@ -1620,6 +1614,16 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/valid-parentheses/"
    },
    {
+    "lc": 1,
+    "title": "Two Sum",
+    "difficulty": "Easy",
+    "pattern": "Hash map complement",
+    "type": "review3",
+    "mode": null,
+    "video": "https://www.youtube.com/watch?v=KLlXCFG5TnA",
+    "url": "https://leetcode.com/problems/two-sum/"
+   },
+   {
     "lc": 383,
     "title": "Ransom Note",
     "difficulty": "Easy",
@@ -1630,14 +1634,24 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/ransom-note/"
    },
    {
-    "lc": 1,
-    "title": "Two Sum",
-    "difficulty": "Easy",
-    "pattern": "Hash map complement",
-    "type": "review3",
-    "mode": null,
-    "video": "https://www.youtube.com/watch?v=KLlXCFG5TnA",
-    "url": "https://leetcode.com/problems/two-sum/"
+    "lc": 143,
+    "title": "Reorder List",
+    "difficulty": "Medium",
+    "pattern": "Linked list combo",
+    "type": "new",
+    "mode": "attempt-first",
+    "video": "https://www.youtube.com/watch?v=S5bfdUTrKLM",
+    "url": "https://leetcode.com/problems/reorder-list/"
+   },
+   {
+    "lc": 23,
+    "title": "Merge k Sorted Lists",
+    "difficulty": "Hard",
+    "pattern": "Heap merge",
+    "type": "new",
+    "mode": "attempt-first",
+    "video": "https://www.youtube.com/watch?v=q5a5OiGbT6Q",
+    "url": "https://leetcode.com/problems/merge-k-sorted-lists/"
    }
   ],
   "minutes": 168
@@ -1733,16 +1747,6 @@ export const PLAN_90 = [
   ],
   "leetcode": [
    {
-    "lc": 141,
-    "title": "Linked List Cycle",
-    "difficulty": "Easy",
-    "pattern": "Fast/slow pointers",
-    "type": "review1",
-    "mode": null,
-    "video": "https://www.youtube.com/watch?v=gBTe7lFR3vc",
-    "url": "https://leetcode.com/problems/linked-list-cycle/"
-   },
-   {
     "lc": 19,
     "title": "Remove Nth Node From End of List",
     "difficulty": "Medium",
@@ -1753,14 +1757,14 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/remove-nth-node-from-end-of-list/"
    },
    {
-    "lc": 143,
-    "title": "Reorder List",
-    "difficulty": "Medium",
-    "pattern": "Linked list combo",
+    "lc": 141,
+    "title": "Linked List Cycle",
+    "difficulty": "Easy",
+    "pattern": "Fast/slow pointers",
     "type": "review1",
     "mode": null,
-    "video": "https://www.youtube.com/watch?v=S5bfdUTrKLM",
-    "url": "https://leetcode.com/problems/reorder-list/"
+    "video": "https://www.youtube.com/watch?v=gBTe7lFR3vc",
+    "url": "https://leetcode.com/problems/linked-list-cycle/"
    },
    {
     "lc": 23,
@@ -1773,14 +1777,24 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/merge-k-sorted-lists/"
    },
    {
-    "lc": 704,
-    "title": "Binary Search",
-    "difficulty": "Easy",
-    "pattern": "Binary search",
+    "lc": 143,
+    "title": "Reorder List",
+    "difficulty": "Medium",
+    "pattern": "Linked list combo",
+    "type": "review1",
+    "mode": null,
+    "video": "https://www.youtube.com/watch?v=S5bfdUTrKLM",
+    "url": "https://leetcode.com/problems/reorder-list/"
+   },
+   {
+    "lc": 153,
+    "title": "Find Minimum in Rotated Sorted Array",
+    "difficulty": "Medium",
+    "pattern": "Binary search rotated",
     "type": "review2",
     "mode": null,
-    "video": "https://www.youtube.com/watch?v=s4DPM8ct1pI",
-    "url": "https://leetcode.com/problems/binary-search/"
+    "video": "https://www.youtube.com/watch?v=nIVW4P8b1VA",
+    "url": "https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/"
    }
   ],
   "minutes": 158
@@ -1827,24 +1841,14 @@ export const PLAN_90 = [
   ],
   "leetcode": [
    {
-    "lc": 153,
-    "title": "Find Minimum in Rotated Sorted Array",
-    "difficulty": "Medium",
-    "pattern": "Binary search rotated",
+    "lc": 704,
+    "title": "Binary Search",
+    "difficulty": "Easy",
+    "pattern": "Binary search",
     "type": "review2",
     "mode": null,
-    "video": "https://www.youtube.com/watch?v=nIVW4P8b1VA",
-    "url": "https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/"
-   },
-   {
-    "lc": 33,
-    "title": "Search in Rotated Sorted Array",
-    "difficulty": "Medium",
-    "pattern": "Binary search rotated",
-    "type": "review2",
-    "mode": null,
-    "video": "https://www.youtube.com/watch?v=U8XENwh8Oy8",
-    "url": "https://leetcode.com/problems/search-in-rotated-sorted-array/"
+    "video": "https://www.youtube.com/watch?v=s4DPM8ct1pI",
+    "url": "https://leetcode.com/problems/binary-search/"
    },
    {
     "lc": 49,
@@ -1855,6 +1859,16 @@ export const PLAN_90 = [
     "mode": null,
     "video": "https://www.youtube.com/watch?v=vzdNOK2oB2E",
     "url": "https://leetcode.com/problems/group-anagrams/"
+   },
+   {
+    "lc": 33,
+    "title": "Search in Rotated Sorted Array",
+    "difficulty": "Medium",
+    "pattern": "Binary search rotated",
+    "type": "review2",
+    "mode": null,
+    "video": "https://www.youtube.com/watch?v=U8XENwh8Oy8",
+    "url": "https://leetcode.com/problems/search-in-rotated-sorted-array/"
    },
    {
     "lc": 128,
@@ -1935,9 +1949,34 @@ export const PLAN_90 = [
   "date": "2026-11-19",
   "week": 6,
   "phase": "full",
-  "unit": "Recursion + trees",
-  "short": "Trees",
-  "sections": [],
+  "unit": "Recursion + trees → BFS + grids",
+  "short": "Trees → BFS",
+  "sections": [
+   {
+    "id": "o7-deque",
+    "reps": [
+     "o7-dq-why-not-pop0",
+     "o7-dq-trace-basic",
+     "o7-dq-drain",
+     "o7-dq-dbg-pop-end",
+     "o7-dq-recent",
+     "o7-dq-rotate-elim"
+    ],
+    "gate": false,
+    "label": null
+   },
+   {
+    "id": "o7-tree-bfs",
+    "reps": [
+     "o7-t-trace-levels",
+     "o7-t-flat",
+     "o7-t-dbg-none-child",
+     "o7-t-depth"
+    ],
+    "gate": false,
+    "label": null
+   }
+  ],
   "leetcode": [
    {
     "lc": 104,
@@ -1968,37 +2007,29 @@ export const PLAN_90 = [
     "mode": "attempt-first",
     "video": "https://www.youtube.com/watch?v=gs2LMfuOR9k",
     "url": "https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree/"
-   },
-   {
-    "lc": 98,
-    "title": "Validate Binary Search Tree",
-    "difficulty": "Medium",
-    "pattern": "Tree DFS with bounds",
-    "type": "new",
-    "mode": "attempt-first",
-    "video": "https://www.youtube.com/watch?v=s6ATEkipzow",
-    "url": "https://leetcode.com/problems/validate-binary-search-tree/"
-   },
-   {
-    "lc": 230,
-    "title": "Kth Smallest Element in a BST",
-    "difficulty": "Medium",
-    "pattern": "Inorder traversal",
-    "type": "new",
-    "mode": "attempt-first",
-    "video": "https://www.youtube.com/watch?v=5LUXSvjmGCw",
-    "url": "https://leetcode.com/problems/kth-smallest-element-in-a-bst/"
    }
   ],
-  "minutes": 145
+  "minutes": 170
  },
  {
   "date": "2026-11-20",
   "week": 6,
   "phase": "full",
-  "unit": "Recursion + trees → Tries",
-  "short": "Trees → Tries",
-  "sections": [],
+  "unit": "Recursion + trees → BFS + grids",
+  "short": "Trees → BFS",
+  "sections": [
+   {
+    "id": "o7-tree-bfs",
+    "reps": [
+     "o7-t-sums",
+     "o7-t-dbg-snapshot",
+     "o7-t-right-view",
+     "o7-t-min-depth"
+    ],
+    "gate": false,
+    "label": null
+   }
+  ],
   "leetcode": [
    {
     "lc": 100,
@@ -2021,67 +2052,35 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/reverse-linked-list/"
    },
    {
-    "lc": 105,
-    "title": "Construct Binary Tree from Preorder and Inorder Traversal",
+    "lc": 98,
+    "title": "Validate Binary Search Tree",
     "difficulty": "Medium",
-    "pattern": "Tree construction",
+    "pattern": "Tree DFS with bounds",
     "type": "new",
     "mode": "attempt-first",
-    "video": "https://www.youtube.com/watch?v=ihj4IQGZ2zc",
-    "url": "https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/"
+    "video": "https://www.youtube.com/watch?v=s6ATEkipzow",
+    "url": "https://leetcode.com/problems/validate-binary-search-tree/"
    },
    {
-    "lc": 124,
-    "title": "Binary Tree Maximum Path Sum",
-    "difficulty": "Hard",
-    "pattern": "Tree DFS return-two-things",
+    "lc": 230,
+    "title": "Kth Smallest Element in a BST",
+    "difficulty": "Medium",
+    "pattern": "Inorder traversal",
     "type": "new",
     "mode": "attempt-first",
-    "video": "https://www.youtube.com/watch?v=Hr5cWUld4vU",
-    "url": "https://leetcode.com/problems/binary-tree-maximum-path-sum/"
-   },
-   {
-    "lc": 208,
-    "title": "Implement Trie (Prefix Tree)",
-    "difficulty": "Medium",
-    "pattern": "Trie",
-    "type": "new",
-    "mode": "study-first",
-    "video": "https://www.youtube.com/watch?v=oobqoCJlHA0",
-    "url": "https://leetcode.com/problems/implement-trie-prefix-tree/"
+    "video": "https://www.youtube.com/watch?v=5LUXSvjmGCw",
+    "url": "https://leetcode.com/problems/kth-smallest-element-in-a-bst/"
    }
   ],
-  "minutes": 150
+  "minutes": 170
  },
  {
   "date": "2026-11-21",
   "week": 6,
   "phase": "full",
-  "unit": "Tries → BFS + grids",
-  "short": "Tries → BFS",
-  "sections": [
-   {
-    "id": "o7-deque",
-    "reps": [
-     "o7-dq-why-not-pop0",
-     "o7-dq-trace-basic",
-     "o7-dq-drain",
-     "o7-dq-dbg-pop-end",
-     "o7-dq-recent",
-     "o7-dq-rotate-elim"
-    ],
-    "gate": false,
-    "label": null
-   },
-   {
-    "id": "o7-tree-bfs",
-    "reps": [
-     "o7-t-trace-levels"
-    ],
-    "gate": false,
-    "label": null
-   }
-  ],
+  "unit": "Recursion + trees",
+  "short": "Trees",
+  "sections": [],
   "leetcode": [
    {
     "lc": 226,
@@ -2114,17 +2113,27 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/valid-palindrome/"
    },
    {
-    "lc": 211,
-    "title": "Design Add and Search Words Data Structure",
+    "lc": 105,
+    "title": "Construct Binary Tree from Preorder and Inorder Traversal",
     "difficulty": "Medium",
-    "pattern": "Trie + DFS wildcard",
+    "pattern": "Tree construction",
     "type": "new",
     "mode": "attempt-first",
-    "video": "https://www.youtube.com/watch?v=BTf05gs_8iU",
-    "url": "https://leetcode.com/problems/design-add-and-search-words-data-structure/"
+    "video": "https://www.youtube.com/watch?v=ihj4IQGZ2zc",
+    "url": "https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/"
+   },
+   {
+    "lc": 124,
+    "title": "Binary Tree Maximum Path Sum",
+    "difficulty": "Hard",
+    "pattern": "Tree DFS return-two-things",
+    "type": "new",
+    "mode": "attempt-first",
+    "video": "https://www.youtube.com/watch?v=Hr5cWUld4vU",
+    "url": "https://leetcode.com/problems/binary-tree-maximum-path-sum/"
    }
   ],
-  "minutes": 93
+  "minutes": 100
  },
  {
   "date": "2026-11-22",
@@ -2180,16 +2189,6 @@ export const PLAN_90 = [
   ],
   "leetcode": [
    {
-    "lc": 572,
-    "title": "Subtree of Another Tree",
-    "difficulty": "Easy",
-    "pattern": "Tree DFS nested",
-    "type": "review1",
-    "mode": null,
-    "video": "https://www.youtube.com/watch?v=E36O5SWp-LE",
-    "url": "https://leetcode.com/problems/subtree-of-another-tree/"
-   },
-   {
     "lc": 235,
     "title": "Lowest Common Ancestor of a Binary Search Tree",
     "difficulty": "Medium",
@@ -2198,6 +2197,16 @@ export const PLAN_90 = [
     "mode": null,
     "video": "https://www.youtube.com/watch?v=gs2LMfuOR9k",
     "url": "https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree/"
+   },
+   {
+    "lc": 572,
+    "title": "Subtree of Another Tree",
+    "difficulty": "Easy",
+    "pattern": "Tree DFS nested",
+    "type": "review1",
+    "mode": null,
+    "video": "https://www.youtube.com/watch?v=E36O5SWp-LE",
+    "url": "https://leetcode.com/problems/subtree-of-another-tree/"
    },
    {
     "lc": 98,
@@ -2220,24 +2229,14 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/kth-smallest-element-in-a-bst/"
    },
    {
-    "lc": 105,
-    "title": "Construct Binary Tree from Preorder and Inorder Traversal",
+    "lc": 19,
+    "title": "Remove Nth Node From End of List",
     "difficulty": "Medium",
-    "pattern": "Tree construction",
-    "type": "review1",
+    "pattern": "Two-gap pointers",
+    "type": "review2",
     "mode": null,
-    "video": "https://www.youtube.com/watch?v=ihj4IQGZ2zc",
-    "url": "https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/"
-   },
-   {
-    "lc": 124,
-    "title": "Binary Tree Maximum Path Sum",
-    "difficulty": "Hard",
-    "pattern": "Tree DFS return-two-things",
-    "type": "review1",
-    "mode": null,
-    "video": "https://www.youtube.com/watch?v=Hr5cWUld4vU",
-    "url": "https://leetcode.com/problems/binary-tree-maximum-path-sum/"
+    "video": "https://www.youtube.com/watch?v=XVuQxVej6y8",
+    "url": "https://leetcode.com/problems/remove-nth-node-from-end-of-list/"
    }
   ],
   "minutes": 108
@@ -2286,26 +2285,6 @@ export const PLAN_90 = [
   ],
   "leetcode": [
    {
-    "lc": 208,
-    "title": "Implement Trie (Prefix Tree)",
-    "difficulty": "Medium",
-    "pattern": "Trie",
-    "type": "review1",
-    "mode": null,
-    "video": "https://www.youtube.com/watch?v=oobqoCJlHA0",
-    "url": "https://leetcode.com/problems/implement-trie-prefix-tree/"
-   },
-   {
-    "lc": 211,
-    "title": "Design Add and Search Words Data Structure",
-    "difficulty": "Medium",
-    "pattern": "Trie + DFS wildcard",
-    "type": "review1",
-    "mode": null,
-    "video": "https://www.youtube.com/watch?v=BTf05gs_8iU",
-    "url": "https://leetcode.com/problems/design-add-and-search-words-data-structure/"
-   },
-   {
     "lc": 141,
     "title": "Linked List Cycle",
     "difficulty": "Easy",
@@ -2316,24 +2295,24 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/linked-list-cycle/"
    },
    {
-    "lc": 19,
-    "title": "Remove Nth Node From End of List",
+    "lc": 105,
+    "title": "Construct Binary Tree from Preorder and Inorder Traversal",
     "difficulty": "Medium",
-    "pattern": "Two-gap pointers",
-    "type": "review2",
+    "pattern": "Tree construction",
+    "type": "review1",
     "mode": null,
-    "video": "https://www.youtube.com/watch?v=XVuQxVej6y8",
-    "url": "https://leetcode.com/problems/remove-nth-node-from-end-of-list/"
+    "video": "https://www.youtube.com/watch?v=ihj4IQGZ2zc",
+    "url": "https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/"
    },
    {
-    "lc": 143,
-    "title": "Reorder List",
-    "difficulty": "Medium",
-    "pattern": "Linked list combo",
-    "type": "review2",
+    "lc": 124,
+    "title": "Binary Tree Maximum Path Sum",
+    "difficulty": "Hard",
+    "pattern": "Tree DFS return-two-things",
+    "type": "review1",
     "mode": null,
-    "video": "https://www.youtube.com/watch?v=S5bfdUTrKLM",
-    "url": "https://leetcode.com/problems/reorder-list/"
+    "video": "https://www.youtube.com/watch?v=Hr5cWUld4vU",
+    "url": "https://leetcode.com/problems/binary-tree-maximum-path-sum/"
    },
    {
     "lc": 23,
@@ -2344,6 +2323,16 @@ export const PLAN_90 = [
     "mode": null,
     "video": "https://www.youtube.com/watch?v=q5a5OiGbT6Q",
     "url": "https://leetcode.com/problems/merge-k-sorted-lists/"
+   },
+   {
+    "lc": 143,
+    "title": "Reorder List",
+    "difficulty": "Medium",
+    "pattern": "Linked list combo",
+    "type": "review2",
+    "mode": null,
+    "video": "https://www.youtube.com/watch?v=S5bfdUTrKLM",
+    "url": "https://leetcode.com/problems/reorder-list/"
    }
   ],
   "minutes": 106
@@ -2478,16 +2467,6 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/same-tree/"
    },
    {
-    "lc": 226,
-    "title": "Invert Binary Tree",
-    "difficulty": "Easy",
-    "pattern": "Tree DFS",
-    "type": "review2",
-    "mode": null,
-    "video": "https://www.youtube.com/watch?v=OnSn2XEQ4MY",
-    "url": "https://leetcode.com/problems/invert-binary-tree/"
-   },
-   {
     "lc": 15,
     "title": "3Sum",
     "difficulty": "Medium",
@@ -2496,6 +2475,16 @@ export const PLAN_90 = [
     "mode": null,
     "video": "https://www.youtube.com/watch?v=jzZsG8n2R9A",
     "url": "https://leetcode.com/problems/3sum/"
+   },
+   {
+    "lc": 226,
+    "title": "Invert Binary Tree",
+    "difficulty": "Easy",
+    "pattern": "Tree DFS",
+    "type": "review2",
+    "mode": null,
+    "video": "https://www.youtube.com/watch?v=OnSn2XEQ4MY",
+    "url": "https://leetcode.com/problems/invert-binary-tree/"
    }
   ],
   "minutes": 104
@@ -2514,25 +2503,31 @@ export const PLAN_90 = [
   "date": "2026-11-30",
   "week": 8,
   "phase": "full",
-  "unit": "BFS + grids",
-  "short": "BFS",
+  "unit": "Tries → BFS + grids",
+  "short": "Tries → BFS",
   "sections": [
    {
-    "id": "o7-tree-bfs",
+    "id": "o7-cap-level-order",
     "reps": [
-     "o7-t-flat",
-     "o7-t-dbg-none-child",
-     "o7-t-depth",
-     "o7-t-sums",
-     "o7-t-dbg-snapshot",
-     "o7-t-right-view",
-     "o7-t-min-depth"
+     "cap-level-order",
+     "o7-explain-level-order",
+     "o7-fu-zigzag"
     ],
     "gate": false,
     "label": null
    }
   ],
   "leetcode": [
+   {
+    "lc": 235,
+    "title": "Lowest Common Ancestor of a Binary Search Tree",
+    "difficulty": "Medium",
+    "pattern": "BST property",
+    "type": "review2",
+    "mode": null,
+    "video": "https://www.youtube.com/watch?v=gs2LMfuOR9k",
+    "url": "https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree/"
+   },
    {
     "lc": 572,
     "title": "Subtree of Another Tree",
@@ -2544,14 +2539,14 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/subtree-of-another-tree/"
    },
    {
-    "lc": 235,
-    "title": "Lowest Common Ancestor of a Binary Search Tree",
+    "lc": 3,
+    "title": "Longest Substring Without Repeating Characters",
     "difficulty": "Medium",
-    "pattern": "BST property",
-    "type": "review2",
+    "pattern": "Sliding window (variable)",
+    "type": "review3",
     "mode": null,
-    "video": "https://www.youtube.com/watch?v=gs2LMfuOR9k",
-    "url": "https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree/"
+    "video": "https://www.youtube.com/watch?v=wiGpQwVHdE0",
+    "url": "https://leetcode.com/problems/longest-substring-without-repeating-characters/"
    },
    {
     "lc": 98,
@@ -2574,17 +2569,27 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/kth-smallest-element-in-a-bst/"
    },
    {
-    "lc": 105,
-    "title": "Construct Binary Tree from Preorder and Inorder Traversal",
+    "lc": 208,
+    "title": "Implement Trie (Prefix Tree)",
     "difficulty": "Medium",
-    "pattern": "Tree construction",
-    "type": "review2",
-    "mode": null,
-    "video": "https://www.youtube.com/watch?v=ihj4IQGZ2zc",
-    "url": "https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/"
+    "pattern": "Trie",
+    "type": "new",
+    "mode": "study-first",
+    "video": "https://www.youtube.com/watch?v=oobqoCJlHA0",
+    "url": "https://leetcode.com/problems/implement-trie-prefix-tree/"
+   },
+   {
+    "lc": 211,
+    "title": "Design Add and Search Words Data Structure",
+    "difficulty": "Medium",
+    "pattern": "Trie + DFS wildcard",
+    "type": "new",
+    "mode": "attempt-first",
+    "video": "https://www.youtube.com/watch?v=BTf05gs_8iU",
+    "url": "https://leetcode.com/problems/design-add-and-search-words-data-structure/"
    }
   ],
-  "minutes": 142
+  "minutes": 169
  },
  {
   "date": "2026-12-01",
@@ -2593,16 +2598,6 @@ export const PLAN_90 = [
   "unit": "BFS + grids",
   "short": "BFS",
   "sections": [
-   {
-    "id": "o7-cap-level-order",
-    "reps": [
-     "cap-level-order",
-     "o7-explain-level-order",
-     "o7-fu-zigzag"
-    ],
-    "gate": false,
-    "label": null
-   },
    {
     "id": "o7-grids",
     "reps": [
@@ -2622,76 +2617,7 @@ export const PLAN_90 = [
      "o7-n-trace",
      "o7-n-list",
      "o7-n-land",
-     "o7-n-dbg-bounds"
-    ],
-    "gate": false,
-    "label": null
-   }
-  ],
-  "leetcode": [
-   {
-    "lc": 124,
-    "title": "Binary Tree Maximum Path Sum",
-    "difficulty": "Hard",
-    "pattern": "Tree DFS return-two-things",
-    "type": "review2",
-    "mode": null,
-    "video": "https://www.youtube.com/watch?v=Hr5cWUld4vU",
-    "url": "https://leetcode.com/problems/binary-tree-maximum-path-sum/"
-   },
-   {
-    "lc": 208,
-    "title": "Implement Trie (Prefix Tree)",
-    "difficulty": "Medium",
-    "pattern": "Trie",
-    "type": "review2",
-    "mode": null,
-    "video": "https://www.youtube.com/watch?v=oobqoCJlHA0",
-    "url": "https://leetcode.com/problems/implement-trie-prefix-tree/"
-   },
-   {
-    "lc": 211,
-    "title": "Design Add and Search Words Data Structure",
-    "difficulty": "Medium",
-    "pattern": "Trie + DFS wildcard",
-    "type": "review2",
-    "mode": null,
-    "video": "https://www.youtube.com/watch?v=BTf05gs_8iU",
-    "url": "https://leetcode.com/problems/design-add-and-search-words-data-structure/"
-   },
-   {
-    "lc": 3,
-    "title": "Longest Substring Without Repeating Characters",
-    "difficulty": "Medium",
-    "pattern": "Sliding window (variable)",
-    "type": "review3",
-    "mode": null,
-    "video": "https://www.youtube.com/watch?v=wiGpQwVHdE0",
-    "url": "https://leetcode.com/problems/longest-substring-without-repeating-characters/"
-   },
-   {
-    "lc": 424,
-    "title": "Longest Repeating Character Replacement",
-    "difficulty": "Medium",
-    "pattern": "Sliding window + counts",
-    "type": "review3",
-    "mode": null,
-    "video": "https://www.youtube.com/watch?v=gqXU1UyA8pk",
-    "url": "https://leetcode.com/problems/longest-repeating-character-replacement/"
-   }
-  ],
-  "minutes": 165
- },
- {
-  "date": "2026-12-02",
-  "week": 8,
-  "phase": "full",
-  "unit": "BFS + grids",
-  "short": "BFS",
-  "sections": [
-   {
-    "id": "o7-neighbors",
-    "reps": [
+     "o7-n-dbg-bounds",
      "o7-n-dbg-dirs",
      "o7-n-wt-wrap",
      "o7-n-perimeter"
@@ -2704,17 +2630,43 @@ export const PLAN_90 = [
     "reps": [
      "o7-v-trace-order",
      "o7-v-finish",
-     "o7-v-reachable-strings",
-     "o7-v-dbg-late-mark",
-     "o7-v-dbg-tuple",
-     "o7-v-shortest",
-     "o7-v-flood-fill"
+     "o7-v-reachable-strings"
     ],
     "gate": false,
     "label": null
    }
   ],
   "leetcode": [
+   {
+    "lc": 424,
+    "title": "Longest Repeating Character Replacement",
+    "difficulty": "Medium",
+    "pattern": "Sliding window + counts",
+    "type": "review3",
+    "mode": null,
+    "video": "https://www.youtube.com/watch?v=gqXU1UyA8pk",
+    "url": "https://leetcode.com/problems/longest-repeating-character-replacement/"
+   },
+   {
+    "lc": 105,
+    "title": "Construct Binary Tree from Preorder and Inorder Traversal",
+    "difficulty": "Medium",
+    "pattern": "Tree construction",
+    "type": "review2",
+    "mode": null,
+    "video": "https://www.youtube.com/watch?v=ihj4IQGZ2zc",
+    "url": "https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/"
+   },
+   {
+    "lc": 124,
+    "title": "Binary Tree Maximum Path Sum",
+    "difficulty": "Hard",
+    "pattern": "Tree DFS return-two-things",
+    "type": "review2",
+    "mode": null,
+    "video": "https://www.youtube.com/watch?v=Hr5cWUld4vU",
+    "url": "https://leetcode.com/problems/binary-tree-maximum-path-sum/"
+   },
    {
     "lc": 76,
     "title": "Minimum Window Substring",
@@ -2726,10 +2678,10 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/minimum-window-substring/"
    }
   ],
-  "minutes": 153
+  "minutes": 165
  },
  {
-  "date": "2026-12-03",
+  "date": "2026-12-02",
   "week": 8,
   "phase": "full",
   "unit": "BFS + grids",
@@ -2738,6 +2690,10 @@ export const PLAN_90 = [
    {
     "id": "o7-grid-bfs",
     "reps": [
+     "o7-v-dbg-late-mark",
+     "o7-v-dbg-tuple",
+     "o7-v-shortest",
+     "o7-v-flood-fill",
      "o7-v-dfs-stack",
      "o7-v-multi-source"
     ],
@@ -2748,15 +2704,74 @@ export const PLAN_90 = [
     "id": "o7-islands",
     "reps": [
      "o7-i-sink-dfs",
-     "o7-i-sink-iter",
-     "cap-number-of-islands",
-     "o7-explain-islands"
+     "o7-i-sink-iter"
     ],
     "gate": false,
     "label": null
    }
   ],
+  "leetcode": [],
+  "minutes": 160
+ },
+ {
+  "date": "2026-12-03",
+  "week": 8,
+  "phase": "full",
+  "unit": "BFS + grids",
+  "short": "BFS",
+  "sections": [
+   {
+    "id": "o7-islands",
+    "reps": [
+     "cap-number-of-islands",
+     "o7-explain-islands",
+     "o7-i-dbg-count-every",
+     "o7-i-max-area"
+    ],
+    "gate": false,
+    "label": null
+   },
+   {
+    "id": "o7-cold",
+    "reps": [
+     "o7-c-neighbors",
+     "o7-c-last-level"
+    ],
+    "gate": true,
+    "label": "BFS + grids check"
+   }
+  ],
   "leetcode": [
+   {
+    "lc": 102,
+    "title": "Binary Tree Level Order Traversal",
+    "difficulty": "Medium",
+    "pattern": "Tree BFS levels",
+    "type": "review1",
+    "mode": null,
+    "video": "https://www.youtube.com/watch?v=6ZnyEApgFYg",
+    "url": "https://leetcode.com/problems/binary-tree-level-order-traversal/"
+   },
+   {
+    "lc": 208,
+    "title": "Implement Trie (Prefix Tree)",
+    "difficulty": "Medium",
+    "pattern": "Trie",
+    "type": "review1",
+    "mode": null,
+    "video": "https://www.youtube.com/watch?v=oobqoCJlHA0",
+    "url": "https://leetcode.com/problems/implement-trie-prefix-tree/"
+   },
+   {
+    "lc": 211,
+    "title": "Design Add and Search Words Data Structure",
+    "difficulty": "Medium",
+    "pattern": "Trie + DFS wildcard",
+    "type": "review1",
+    "mode": null,
+    "video": "https://www.youtube.com/watch?v=BTf05gs_8iU",
+    "url": "https://leetcode.com/problems/design-add-and-search-words-data-structure/"
+   },
    {
     "lc": 20,
     "title": "Valid Parentheses",
@@ -2768,7 +2783,7 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/valid-parentheses/"
    }
   ],
-  "minutes": 164
+  "minutes": 162
  },
  {
   "date": "2026-12-04",
@@ -2778,19 +2793,8 @@ export const PLAN_90 = [
   "short": "BFS → Graphs",
   "sections": [
    {
-    "id": "o7-islands",
-    "reps": [
-     "o7-i-dbg-count-every",
-     "o7-i-max-area"
-    ],
-    "gate": false,
-    "label": null
-   },
-   {
     "id": "o7-cold",
     "reps": [
-     "o7-c-neighbors",
-     "o7-c-last-level",
      "o7-c-blobs"
     ],
     "gate": true,
@@ -2804,36 +2808,7 @@ export const PLAN_90 = [
      "o8-a-dbg-one-way",
      "o8-a-build-directed",
      "o8-a-dbg-shared-list",
-     "o8-a-in-degree"
-    ],
-    "gate": false,
-    "label": null
-   }
-  ],
-  "leetcode": [
-   {
-    "lc": 102,
-    "title": "Binary Tree Level Order Traversal",
-    "difficulty": "Medium",
-    "pattern": "Tree BFS levels",
-    "type": "review1",
-    "mode": null,
-    "video": "https://www.youtube.com/watch?v=6ZnyEApgFYg",
-    "url": "https://leetcode.com/problems/binary-tree-level-order-traversal/"
-   }
-  ],
-  "minutes": 162
- },
- {
-  "date": "2026-12-05",
-  "week": 8,
-  "phase": "full",
-  "unit": "Graphs",
-  "short": "Graphs",
-  "sections": [
-   {
-    "id": "o8-adjacency",
-    "reps": [
+     "o8-a-in-degree",
      "o8-a-matrix"
     ],
     "gate": false,
@@ -2846,15 +2821,45 @@ export const PLAN_90 = [
      "o8-d-order",
      "o8-v-fix-bounce",
      "o8-d-stack",
-     "o8-d-translate",
-     "o8-v-optimize-list"
+     "o8-d-translate"
     ],
     "gate": false,
     "label": null
    }
   ],
   "leetcode": [],
-  "minutes": 93
+  "minutes": 161
+ },
+ {
+  "date": "2026-12-05",
+  "week": 8,
+  "phase": "full",
+  "unit": "Graphs",
+  "short": "Graphs",
+  "sections": [
+   {
+    "id": "o8-dfs",
+    "reps": [
+     "o8-v-optimize-list",
+     "o8-d-directed-reach",
+     "o8-d-dbg-directed-both",
+     "o8-d-path"
+    ],
+    "gate": false,
+    "label": null
+   },
+   {
+    "id": "o8-bfs",
+    "reps": [
+     "o8-b-order",
+     "o8-b-dbg-pop-end"
+    ],
+    "gate": false,
+    "label": null
+   }
+  ],
+  "leetcode": [],
+  "minutes": 94
  },
  {
   "date": "2026-12-06",
@@ -2874,23 +2879,29 @@ export const PLAN_90 = [
   "short": "Graphs",
   "sections": [
    {
-    "id": "o8-dfs",
+    "id": "o8-bfs",
     "reps": [
-     "o8-d-directed-reach",
-     "o8-d-dbg-directed-both",
-     "o8-d-path"
+     "o8-b-distances",
+     "o8-b-dbg-late-mark",
+     "o8-b-shortest"
     ],
     "gate": false,
     "label": null
    },
    {
-    "id": "o8-bfs",
+    "id": "o8-cap-path-exists",
     "reps": [
-     "o8-b-order",
-     "o8-b-dbg-pop-end",
-     "o8-b-distances",
-     "o8-b-dbg-late-mark",
-     "o8-b-shortest"
+     "cap-path-exists",
+     "o8-explain-path-exists",
+     "o8-fu-fewest-hops"
+    ],
+    "gate": false,
+    "label": null
+   },
+   {
+    "id": "o8-cycles",
+    "reps": [
+     "o8-y-trace-states"
     ],
     "gate": false,
     "label": null
@@ -2908,16 +2919,6 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/number-of-islands/"
    },
    {
-    "lc": 704,
-    "title": "Binary Search",
-    "difficulty": "Easy",
-    "pattern": "Binary search",
-    "type": "review3",
-    "mode": null,
-    "video": "https://www.youtube.com/watch?v=s4DPM8ct1pI",
-    "url": "https://leetcode.com/problems/binary-search/"
-   },
-   {
     "lc": 153,
     "title": "Find Minimum in Rotated Sorted Array",
     "difficulty": "Medium",
@@ -2926,6 +2927,16 @@ export const PLAN_90 = [
     "mode": null,
     "video": "https://www.youtube.com/watch?v=nIVW4P8b1VA",
     "url": "https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/"
+   },
+   {
+    "lc": 704,
+    "title": "Binary Search",
+    "difficulty": "Easy",
+    "pattern": "Binary search",
+    "type": "review3",
+    "mode": null,
+    "video": "https://www.youtube.com/watch?v=s4DPM8ct1pI",
+    "url": "https://leetcode.com/problems/binary-search/"
    },
    {
     "lc": 33,
@@ -2938,7 +2949,7 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/search-in-rotated-sorted-array/"
    }
   ],
-  "minutes": 142
+  "minutes": 148
  },
  {
   "date": "2026-12-08",
@@ -2948,30 +2959,21 @@ export const PLAN_90 = [
   "short": "Graphs",
   "sections": [
    {
-    "id": "o8-cap-path-exists",
-    "reps": [
-     "cap-path-exists",
-     "o8-explain-path-exists",
-     "o8-fu-fewest-hops"
-    ],
-    "gate": false,
-    "label": null
-   },
-   {
     "id": "o8-cycles",
     "reps": [
-     "o8-y-trace-states",
      "o8-y-has-cycle",
      "o8-y-dbg-no-visiting",
      "o8-y-dbg-never-done",
-     "o8-y-wt-diamond"
+     "o8-y-wt-diamond",
+     "o8-y-reachable-cycle",
+     "o8-y-kahn-write"
     ],
     "gate": false,
     "label": null
    }
   ],
   "leetcode": [],
-  "minutes": 155
+  "minutes": 124
  },
  {
   "date": "2026-12-09",
@@ -2980,15 +2982,6 @@ export const PLAN_90 = [
   "unit": "Graphs",
   "short": "Graphs",
   "sections": [
-   {
-    "id": "o8-cycles",
-    "reps": [
-     "o8-y-reachable-cycle",
-     "o8-y-kahn-write"
-    ],
-    "gate": false,
-    "label": null
-   },
    {
     "id": "o8-cap-course-schedule",
     "reps": [
@@ -3001,25 +2994,7 @@ export const PLAN_90 = [
    {
     "id": "o8-cold",
     "reps": [
-     "o8-cold-build"
-    ],
-    "gate": true,
-    "label": "Graphs check"
-   }
-  ],
-  "leetcode": [],
-  "minutes": 148
- },
- {
-  "date": "2026-12-10",
-  "week": 9,
-  "phase": "full",
-  "unit": "Graphs",
-  "short": "Graphs",
-  "sections": [
-   {
-    "id": "o8-cold",
-    "reps": [
+     "o8-cold-build",
      "o8-cold-components",
      "o8-cold-cycle",
      "o8-cold-grid-steps"
@@ -3028,42 +3003,11 @@ export const PLAN_90 = [
     "label": "Graphs check"
    }
   ],
-  "leetcode": [
-   {
-    "lc": 206,
-    "title": "Reverse Linked List",
-    "difficulty": "Easy",
-    "pattern": "Linked list rewiring",
-    "type": "review3",
-    "mode": null,
-    "video": "https://www.youtube.com/watch?v=G0_I-ZF0S38",
-    "url": "https://leetcode.com/problems/reverse-linked-list/"
-   },
-   {
-    "lc": 133,
-    "title": "Clone Graph",
-    "difficulty": "Medium",
-    "pattern": "Graph traversal + hash map",
-    "type": "new",
-    "mode": "attempt-first",
-    "video": "https://www.youtube.com/watch?v=mQeF6bN8hMk",
-    "url": "https://leetcode.com/problems/clone-graph/"
-   },
-   {
-    "lc": 417,
-    "title": "Pacific Atlantic Water Flow",
-    "difficulty": "Medium",
-    "pattern": "Reverse multi-source DFS",
-    "type": "new",
-    "mode": "attempt-first",
-    "video": "https://www.youtube.com/watch?v=s-VkcjHqkGI",
-    "url": "https://leetcode.com/problems/pacific-atlantic-water-flow/"
-   }
-  ],
-  "minutes": 159
+  "leetcode": [],
+  "minutes": 169
  },
  {
-  "date": "2026-12-11",
+  "date": "2026-12-10",
   "week": 9,
   "phase": "full",
   "unit": "Graphs → Sorting + heaps",
@@ -3108,6 +3052,99 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/binary-tree-level-order-traversal/"
    },
    {
+    "lc": 208,
+    "title": "Implement Trie (Prefix Tree)",
+    "difficulty": "Medium",
+    "pattern": "Trie",
+    "type": "review2",
+    "mode": null,
+    "video": "https://www.youtube.com/watch?v=oobqoCJlHA0",
+    "url": "https://leetcode.com/problems/implement-trie-prefix-tree/"
+   },
+   {
+    "lc": 211,
+    "title": "Design Add and Search Words Data Structure",
+    "difficulty": "Medium",
+    "pattern": "Trie + DFS wildcard",
+    "type": "review2",
+    "mode": null,
+    "video": "https://www.youtube.com/watch?v=BTf05gs_8iU",
+    "url": "https://leetcode.com/problems/design-add-and-search-words-data-structure/"
+   },
+   {
+    "lc": 206,
+    "title": "Reverse Linked List",
+    "difficulty": "Easy",
+    "pattern": "Linked list rewiring",
+    "type": "review3",
+    "mode": null,
+    "video": "https://www.youtube.com/watch?v=G0_I-ZF0S38",
+    "url": "https://leetcode.com/problems/reverse-linked-list/"
+   },
+   {
+    "lc": 133,
+    "title": "Clone Graph",
+    "difficulty": "Medium",
+    "pattern": "Graph traversal + hash map",
+    "type": "new",
+    "mode": "attempt-first",
+    "video": "https://www.youtube.com/watch?v=mQeF6bN8hMk",
+    "url": "https://leetcode.com/problems/clone-graph/"
+   },
+   {
+    "lc": 417,
+    "title": "Pacific Atlantic Water Flow",
+    "difficulty": "Medium",
+    "pattern": "Reverse multi-source DFS",
+    "type": "new",
+    "mode": "attempt-first",
+    "video": "https://www.youtube.com/watch?v=s-VkcjHqkGI",
+    "url": "https://leetcode.com/problems/pacific-atlantic-water-flow/"
+   }
+  ],
+  "minutes": 168
+ },
+ {
+  "date": "2026-12-11",
+  "week": 9,
+  "phase": "full",
+  "unit": "Graphs → Sorting + heaps",
+  "short": "Graphs → Heaps",
+  "sections": [
+   {
+    "id": "d9-keys",
+    "reps": [
+     "d9-key-records",
+     "d9-key-distance",
+     "d9-key-dict-by-value",
+     "d9-key-dbg-wrong-index",
+     "d9-key-dbg-reverse-ties"
+    ],
+    "gate": false,
+    "label": null
+   },
+   {
+    "id": "d9-freq-sort",
+    "reps": [
+     "d9-freq-most-common",
+     "d9-freq-topk-by-sort",
+     "d9-freq-dbg-pairs",
+     "d9-freq-sort-chars"
+    ],
+    "gate": false,
+    "label": null
+   },
+   {
+    "id": "d9-heapq",
+    "reps": [
+     "d9-heap-push-trace"
+    ],
+    "gate": false,
+    "label": null
+   }
+  ],
+  "leetcode": [
+   {
     "lc": 21,
     "title": "Merge Two Sorted Lists",
     "difficulty": "Easy",
@@ -3138,7 +3175,7 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/number-of-connected-components-in-an-undirected-graph/"
    }
   ],
-  "minutes": 168
+  "minutes": 169
  },
  {
   "date": "2026-12-12",
@@ -3148,33 +3185,24 @@ export const PLAN_90 = [
   "short": "Heaps",
   "sections": [
    {
-    "id": "d9-keys",
-    "reps": [
-     "d9-key-records",
-     "d9-key-distance",
-     "d9-key-dict-by-value",
-     "d9-key-dbg-wrong-index",
-     "d9-key-dbg-reverse-ties"
-    ],
-    "gate": false,
-    "label": null
-   },
-   {
-    "id": "d9-freq-sort",
-    "reps": [
-     "d9-freq-most-common",
-     "d9-freq-topk-by-sort",
-     "d9-freq-dbg-pairs",
-     "d9-freq-sort-chars"
-    ],
-    "gate": false,
-    "label": null
-   },
-   {
     "id": "d9-heapq",
     "reps": [
-     "d9-heap-push-trace",
-     "d9-heap-smallest-k"
+     "d9-heap-smallest-k",
+     "d9-heap-sort",
+     "d9-heap-ropes",
+     "d9-heap-run-order",
+     "d9-heap-dbg-slice"
+    ],
+    "gate": false,
+    "label": null
+   },
+   {
+    "id": "d9-top-k",
+    "reps": [
+     "d9-topk-trace",
+     "d9-topk-kth-by-sort",
+     "d9-topk-optimize",
+     "d9-topk-dbg-no-trim"
     ],
     "gate": false,
     "label": null
@@ -3192,16 +3220,6 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/course-schedule/"
    },
    {
-    "lc": 141,
-    "title": "Linked List Cycle",
-    "difficulty": "Easy",
-    "pattern": "Fast/slow pointers",
-    "type": "review3",
-    "mode": null,
-    "video": "https://www.youtube.com/watch?v=gBTe7lFR3vc",
-    "url": "https://leetcode.com/problems/linked-list-cycle/"
-   },
-   {
     "lc": 19,
     "title": "Remove Nth Node From End of List",
     "difficulty": "Medium",
@@ -3210,9 +3228,19 @@ export const PLAN_90 = [
     "mode": null,
     "video": "https://www.youtube.com/watch?v=XVuQxVej6y8",
     "url": "https://leetcode.com/problems/remove-nth-node-from-end-of-list/"
+   },
+   {
+    "lc": 141,
+    "title": "Linked List Cycle",
+    "difficulty": "Easy",
+    "pattern": "Fast/slow pointers",
+    "type": "review3",
+    "mode": null,
+    "video": "https://www.youtube.com/watch?v=gBTe7lFR3vc",
+    "url": "https://leetcode.com/problems/linked-list-cycle/"
    }
   ],
-  "minutes": 100
+  "minutes": 87
  },
  {
   "date": "2026-12-13",
@@ -3232,26 +3260,13 @@ export const PLAN_90 = [
   "short": "Heaps",
   "sections": [
    {
-    "id": "d9-heapq",
-    "reps": [
-     "d9-heap-sort",
-     "d9-heap-ropes",
-     "d9-heap-run-order",
-     "d9-heap-dbg-slice"
-    ],
-    "gate": false,
-    "label": null
-   },
-   {
     "id": "d9-top-k",
     "reps": [
-     "d9-topk-trace",
-     "d9-topk-kth-by-sort",
-     "d9-topk-optimize",
-     "d9-topk-dbg-no-trim",
      "d9-topk-closest",
      "d9-topk-keys-by-count",
-     "d9-topk-dbg-tuple-order"
+     "d9-topk-dbg-tuple-order",
+     "cap-kth-largest",
+     "d9-explain-kth-largest"
     ],
     "gate": false,
     "label": null
@@ -3309,7 +3324,7 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/number-of-islands/"
    }
   ],
-  "minutes": 123
+  "minutes": 115
  },
  {
   "date": "2026-12-15",
@@ -3321,8 +3336,6 @@ export const PLAN_90 = [
    {
     "id": "d9-top-k",
     "reps": [
-     "cap-kth-largest",
-     "d9-explain-kth-largest",
      "cap-top-k-frequent",
      "d9-explain-top-k-frequent"
     ],
@@ -3334,23 +3347,19 @@ export const PLAN_90 = [
     "reps": [
      "d9-iv-overlaps-line",
      "d9-iv-intersection",
-     "d9-iv-merge-trace"
+     "d9-iv-merge-trace",
+     "d9-iv-merge-sorted",
+     "d9-iv-dbg-overwrite-end",
+     "d9-iv-dbg-strict",
+     "d9-iv-dbg-unsorted",
+     "d9-iv-can-attend",
+     "d9-iv-covered-length"
     ],
     "gate": false,
     "label": null
    }
   ],
   "leetcode": [
-   {
-    "lc": 143,
-    "title": "Reorder List",
-    "difficulty": "Medium",
-    "pattern": "Linked list combo",
-    "type": "review3",
-    "mode": null,
-    "video": "https://www.youtube.com/watch?v=S5bfdUTrKLM",
-    "url": "https://leetcode.com/problems/reorder-list/"
-   },
    {
     "lc": 23,
     "title": "Merge k Sorted Lists",
@@ -3360,9 +3369,19 @@ export const PLAN_90 = [
     "mode": null,
     "video": "https://www.youtube.com/watch?v=q5a5OiGbT6Q",
     "url": "https://leetcode.com/problems/merge-k-sorted-lists/"
+   },
+   {
+    "lc": 143,
+    "title": "Reorder List",
+    "difficulty": "Medium",
+    "pattern": "Linked list combo",
+    "type": "review3",
+    "mode": null,
+    "video": "https://www.youtube.com/watch?v=S5bfdUTrKLM",
+    "url": "https://leetcode.com/problems/reorder-list/"
    }
   ],
-  "minutes": 166
+  "minutes": 165
  },
  {
   "date": "2026-12-16",
@@ -3374,12 +3393,6 @@ export const PLAN_90 = [
    {
     "id": "d9-intervals",
     "reps": [
-     "d9-iv-merge-sorted",
-     "d9-iv-dbg-overwrite-end",
-     "d9-iv-dbg-strict",
-     "d9-iv-dbg-unsorted",
-     "d9-iv-can-attend",
-     "d9-iv-covered-length",
      "d9-iv-write-test",
      "cap-merge-intervals",
      "d9-explain-merge-intervals",
@@ -3391,7 +3404,11 @@ export const PLAN_90 = [
    {
     "id": "d9-cold",
     "reps": [
-     "d9-cold-sort-second-desc"
+     "d9-cold-sort-second-desc",
+     "d9-cold-kth-smallest",
+     "d9-cold-any-overlap",
+     "d9-cold-top-words",
+     "d9-cold-last-rock"
     ],
     "gate": true,
     "label": "Intervals check"
@@ -3409,28 +3426,52 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/maximum-depth-of-binary-tree/"
    }
   ],
-  "minutes": 168
+  "minutes": 153
  },
  {
   "date": "2026-12-17",
   "week": 10,
   "phase": "full",
-  "unit": "Intervals",
-  "short": "Intervals",
+  "unit": "Intervals → Backtracking",
+  "short": "Intervals → Backtracking",
   "sections": [
    {
-    "id": "d9-cold",
+    "id": "d10-decisions",
     "reps": [
-     "d9-cold-kth-smallest",
-     "d9-cold-any-overlap",
-     "d9-cold-top-words",
-     "d9-cold-last-rock"
+     "d10-dt-call-order",
+     "d10-dt-include-exclude",
+     "d10-dt-all-sums",
+     "d10-dt-bit-strings",
+     "d10-dt-dbg-base",
+     "d10-dt-can-reach",
+     "d10-dt-signs"
     ],
-    "gate": true,
-    "label": "Intervals check"
+    "gate": false,
+    "label": null
+   },
+   {
+    "id": "d10-path",
+    "reps": [
+     "d10-ps-copy-trace",
+     "d10-ps-subsequences-finish",
+     "d10-ps-dice",
+     "d10-ps-dbg-alias"
+    ],
+    "gate": false,
+    "label": null
    }
   ],
   "leetcode": [
+   {
+    "lc": 215,
+    "title": "Kth Largest Element in an Array",
+    "difficulty": "Medium",
+    "pattern": "Heap / quickselect",
+    "type": "review1",
+    "mode": null,
+    "video": "https://www.youtube.com/watch?v=XEmy13g1Qxc",
+    "url": "https://leetcode.com/problems/kth-largest-element-in-an-array/"
+   },
    {
     "lc": 100,
     "title": "Same Tree",
@@ -3460,19 +3501,9 @@ export const PLAN_90 = [
     "mode": "attempt-first",
     "video": "https://www.youtube.com/watch?v=PaJxqZVPhbg",
     "url": "https://leetcode.com/problems/meeting-rooms/"
-   },
-   {
-    "lc": 435,
-    "title": "Non-overlapping Intervals",
-    "difficulty": "Medium",
-    "pattern": "Intervals greedy",
-    "type": "new",
-    "mode": "attempt-first",
-    "video": "https://www.youtube.com/watch?v=nONCGxWoUfM",
-    "url": "https://leetcode.com/problems/non-overlapping-intervals/"
    }
   ],
-  "minutes": 157
+  "minutes": 166
  },
  {
   "date": "2026-12-18",
@@ -3482,44 +3513,19 @@ export const PLAN_90 = [
   "short": "Intervals → Backtracking",
   "sections": [
    {
-    "id": "d10-decisions",
-    "reps": [
-     "d10-dt-call-order",
-     "d10-dt-include-exclude",
-     "d10-dt-all-sums",
-     "d10-dt-bit-strings",
-     "d10-dt-dbg-base",
-     "d10-dt-can-reach",
-     "d10-dt-signs"
-    ],
-    "gate": false,
-    "label": null
-   },
-   {
     "id": "d10-path",
     "reps": [
-     "d10-ps-copy-trace",
-     "d10-ps-subsequences-finish",
-     "d10-ps-dice",
-     "d10-ps-dbg-alias",
      "d10-ps-combos",
-     "d10-ps-dbg-no-pop"
+     "d10-ps-dbg-no-pop",
+     "d10-ps-letter-combos",
+     "d10-ps-orderings",
+     "d10-ps-dbg-used"
     ],
     "gate": false,
     "label": null
    }
   ],
   "leetcode": [
-   {
-    "lc": 215,
-    "title": "Kth Largest Element in an Array",
-    "difficulty": "Medium",
-    "pattern": "Heap / quickselect",
-    "type": "review1",
-    "mode": null,
-    "video": "https://www.youtube.com/watch?v=XEmy13g1Qxc",
-    "url": "https://leetcode.com/problems/kth-largest-element-in-an-array/"
-   },
    {
     "lc": 347,
     "title": "Top K Frequent Elements",
@@ -3541,6 +3547,16 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/invert-binary-tree/"
    },
    {
+    "lc": 435,
+    "title": "Non-overlapping Intervals",
+    "difficulty": "Medium",
+    "pattern": "Intervals greedy",
+    "type": "new",
+    "mode": "attempt-first",
+    "video": "https://www.youtube.com/watch?v=nONCGxWoUfM",
+    "url": "https://leetcode.com/problems/non-overlapping-intervals/"
+   },
+   {
     "lc": 253,
     "title": "Meeting Rooms II",
     "difficulty": "Medium",
@@ -3551,7 +3567,7 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/meeting-rooms-ii/"
    }
   ],
-  "minutes": 169
+  "minutes": 164
  },
  {
   "date": "2026-12-19",
@@ -3563,9 +3579,6 @@ export const PLAN_90 = [
    {
     "id": "d10-path",
     "reps": [
-     "d10-ps-letter-combos",
-     "d10-ps-orderings",
-     "d10-ps-dbg-used",
      "d10-ps-tree-paths"
     ],
     "gate": false,
@@ -3574,7 +3587,9 @@ export const PLAN_90 = [
    {
     "id": "d10-subsets",
     "reps": [
-     "d10-sub-loop-style"
+     "d10-sub-loop-style",
+     "d10-sub-target-subsets",
+     "d10-sub-write-test"
     ],
     "gate": false,
     "label": null
@@ -3602,17 +3617,17 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/course-schedule/"
    },
    {
-    "lc": 572,
-    "title": "Subtree of Another Tree",
-    "difficulty": "Easy",
-    "pattern": "Tree DFS nested",
+    "lc": 235,
+    "title": "Lowest Common Ancestor of a Binary Search Tree",
+    "difficulty": "Medium",
+    "pattern": "BST property",
     "type": "review3",
     "mode": null,
-    "video": "https://www.youtube.com/watch?v=E36O5SWp-LE",
-    "url": "https://leetcode.com/problems/subtree-of-another-tree/"
+    "video": "https://www.youtube.com/watch?v=gs2LMfuOR9k",
+    "url": "https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree/"
    }
   ],
-  "minutes": 92
+  "minutes": 63
  },
  {
   "date": "2026-12-20",
@@ -3653,16 +3668,6 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/meeting-rooms/"
    },
    {
-    "lc": 435,
-    "title": "Non-overlapping Intervals",
-    "difficulty": "Medium",
-    "pattern": "Intervals greedy",
-    "type": "review1",
-    "mode": null,
-    "video": "https://www.youtube.com/watch?v=nONCGxWoUfM",
-    "url": "https://leetcode.com/problems/non-overlapping-intervals/"
-   },
-   {
     "lc": 253,
     "title": "Meeting Rooms II",
     "difficulty": "Medium",
@@ -3673,6 +3678,16 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/meeting-rooms-ii/"
    },
    {
+    "lc": 435,
+    "title": "Non-overlapping Intervals",
+    "difficulty": "Medium",
+    "pattern": "Intervals greedy",
+    "type": "review1",
+    "mode": null,
+    "video": "https://www.youtube.com/watch?v=nONCGxWoUfM",
+    "url": "https://leetcode.com/problems/non-overlapping-intervals/"
+   },
+   {
     "lc": 133,
     "title": "Clone Graph",
     "difficulty": "Medium",
@@ -3681,16 +3696,6 @@ export const PLAN_90 = [
     "mode": null,
     "video": "https://www.youtube.com/watch?v=mQeF6bN8hMk",
     "url": "https://leetcode.com/problems/clone-graph/"
-   },
-   {
-    "lc": 417,
-    "title": "Pacific Atlantic Water Flow",
-    "difficulty": "Medium",
-    "pattern": "Reverse multi-source DFS",
-    "type": "review2",
-    "mode": null,
-    "video": "https://www.youtube.com/watch?v=s-VkcjHqkGI",
-    "url": "https://leetcode.com/problems/pacific-atlantic-water-flow/"
    }
   ],
   "minutes": 0
@@ -3703,6 +3708,26 @@ export const PLAN_90 = [
   "short": "Re-solves",
   "sections": [],
   "leetcode": [
+   {
+    "lc": 417,
+    "title": "Pacific Atlantic Water Flow",
+    "difficulty": "Medium",
+    "pattern": "Reverse multi-source DFS",
+    "type": "review2",
+    "mode": null,
+    "video": "https://www.youtube.com/watch?v=s-VkcjHqkGI",
+    "url": "https://leetcode.com/problems/pacific-atlantic-water-flow/"
+   },
+   {
+    "lc": 572,
+    "title": "Subtree of Another Tree",
+    "difficulty": "Easy",
+    "pattern": "Tree DFS nested",
+    "type": "review3",
+    "mode": null,
+    "video": "https://www.youtube.com/watch?v=E36O5SWp-LE",
+    "url": "https://leetcode.com/problems/subtree-of-another-tree/"
+   },
    {
     "lc": 261,
     "title": "Graph Valid Tree",
@@ -3724,16 +3749,6 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/number-of-connected-components-in-an-undirected-graph/"
    },
    {
-    "lc": 235,
-    "title": "Lowest Common Ancestor of a Binary Search Tree",
-    "difficulty": "Medium",
-    "pattern": "BST property",
-    "type": "review3",
-    "mode": null,
-    "video": "https://www.youtube.com/watch?v=gs2LMfuOR9k",
-    "url": "https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree/"
-   },
-   {
     "lc": 98,
     "title": "Validate Binary Search Tree",
     "difficulty": "Medium",
@@ -3742,7 +3757,18 @@ export const PLAN_90 = [
     "mode": null,
     "video": "https://www.youtube.com/watch?v=s6ATEkipzow",
     "url": "https://leetcode.com/problems/validate-binary-search-tree/"
-   },
+   }
+  ],
+  "minutes": 0
+ },
+ {
+  "date": "2026-12-23",
+  "week": 11,
+  "phase": "buffer",
+  "unit": "Re-solves",
+  "short": "Re-solves",
+  "sections": [],
+  "leetcode": [
    {
     "lc": 230,
     "title": "Kth Smallest Element in a BST",
@@ -3762,18 +3788,7 @@ export const PLAN_90 = [
     "mode": null,
     "video": "https://www.youtube.com/watch?v=ihj4IQGZ2zc",
     "url": "https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/"
-   }
-  ],
-  "minutes": 0
- },
- {
-  "date": "2026-12-23",
-  "week": 11,
-  "phase": "buffer",
-  "unit": "Re-solves",
-  "short": "Re-solves",
-  "sections": [],
-  "leetcode": [
+   },
    {
     "lc": 124,
     "title": "Binary Tree Maximum Path Sum",
@@ -3783,26 +3798,6 @@ export const PLAN_90 = [
     "mode": null,
     "video": "https://www.youtube.com/watch?v=Hr5cWUld4vU",
     "url": "https://leetcode.com/problems/binary-tree-maximum-path-sum/"
-   },
-   {
-    "lc": 208,
-    "title": "Implement Trie (Prefix Tree)",
-    "difficulty": "Medium",
-    "pattern": "Trie",
-    "type": "review3",
-    "mode": null,
-    "video": "https://www.youtube.com/watch?v=oobqoCJlHA0",
-    "url": "https://leetcode.com/problems/implement-trie-prefix-tree/"
-   },
-   {
-    "lc": 211,
-    "title": "Design Add and Search Words Data Structure",
-    "difficulty": "Medium",
-    "pattern": "Trie + DFS wildcard",
-    "type": "review3",
-    "mode": null,
-    "video": "https://www.youtube.com/watch?v=BTf05gs_8iU",
-    "url": "https://leetcode.com/problems/design-add-and-search-words-data-structure/"
    }
   ],
   "minutes": 0
@@ -3882,16 +3877,24 @@ export const PLAN_90 = [
   "date": "2026-12-28",
   "week": 12,
   "phase": "full",
-  "unit": "Backtracking",
-  "short": "Backtracking",
+  "unit": "Backtracking → Dynamic programming",
+  "short": "Backtracking → DP",
   "sections": [
    {
     "id": "d10-subsets",
     "reps": [
-     "d10-sub-target-subsets",
-     "d10-sub-write-test",
      "cap-subsets",
      "d10-explain-subsets"
+    ],
+    "gate": false,
+    "label": null
+   },
+   {
+    "id": "d10-recurrence",
+    "reps": [
+     "d10-rec-fib-calls",
+     "d10-rec-fib-naive",
+     "d10-rec-three-steps"
     ],
     "gate": false,
     "label": null
@@ -3919,16 +3922,6 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/meeting-rooms/"
    },
    {
-    "lc": 435,
-    "title": "Non-overlapping Intervals",
-    "difficulty": "Medium",
-    "pattern": "Intervals greedy",
-    "type": "review2",
-    "mode": null,
-    "video": "https://www.youtube.com/watch?v=nONCGxWoUfM",
-    "url": "https://leetcode.com/problems/non-overlapping-intervals/"
-   },
-   {
     "lc": 253,
     "title": "Meeting Rooms II",
     "difficulty": "Medium",
@@ -3939,6 +3932,16 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/meeting-rooms-ii/"
    },
    {
+    "lc": 435,
+    "title": "Non-overlapping Intervals",
+    "difficulty": "Medium",
+    "pattern": "Intervals greedy",
+    "type": "review2",
+    "mode": null,
+    "video": "https://www.youtube.com/watch?v=nONCGxWoUfM",
+    "url": "https://leetcode.com/problems/non-overlapping-intervals/"
+   },
+   {
     "lc": 39,
     "title": "Combination Sum",
     "difficulty": "Medium",
@@ -3947,23 +3950,30 @@ export const PLAN_90 = [
     "mode": "attempt-first",
     "video": "https://www.youtube.com/watch?v=GBKI9VSKdGg",
     "url": "https://leetcode.com/problems/combination-sum/"
+   },
+   {
+    "lc": 79,
+    "title": "Word Search",
+    "difficulty": "Medium",
+    "pattern": "Grid backtracking",
+    "type": "new",
+    "mode": "attempt-first",
+    "video": "https://www.youtube.com/watch?v=pfiQ_PS1g8E",
+    "url": "https://leetcode.com/problems/word-search/"
    }
   ],
-  "minutes": 134
+  "minutes": 169
  },
  {
   "date": "2026-12-29",
   "week": 12,
   "phase": "full",
-  "unit": "Backtracking → Dynamic programming",
-  "short": "Backtracking → DP",
+  "unit": "Dynamic programming",
+  "short": "DP",
   "sections": [
    {
     "id": "d10-recurrence",
     "reps": [
-     "d10-rec-fib-calls",
-     "d10-rec-fib-naive",
-     "d10-rec-three-steps",
      "d10-rec-grid-paths",
      "d10-rec-dbg-base"
     ],
@@ -3988,25 +3998,18 @@ export const PLAN_90 = [
     "id": "d10-bottom-up",
     "reps": [
      "d10-bu-trace",
-     "d10-bu-translate"
+     "d10-bu-translate",
+     "d10-bu-three-steps",
+     "d10-bu-any-steps",
+     "d10-bu-dbg-range",
+     "d10-bu-min-cost"
     ],
     "gate": false,
     "label": null
    }
   ],
-  "leetcode": [
-   {
-    "lc": 79,
-    "title": "Word Search",
-    "difficulty": "Medium",
-    "pattern": "Grid backtracking",
-    "type": "new",
-    "mode": "attempt-first",
-    "video": "https://www.youtube.com/watch?v=pfiQ_PS1g8E",
-    "url": "https://leetcode.com/problems/word-search/"
-   }
-  ],
-  "minutes": 160
+  "leetcode": [],
+  "minutes": 155
  },
  {
   "date": "2026-12-30",
@@ -4018,10 +4021,6 @@ export const PLAN_90 = [
    {
     "id": "d10-bottom-up",
     "reps": [
-     "d10-bu-three-steps",
-     "d10-bu-any-steps",
-     "d10-bu-dbg-range",
-     "d10-bu-min-cost",
      "cap-climbing-stairs",
      "d10-explain-climbing-stairs",
      "d10-fu-broken-steps"
@@ -4036,14 +4035,48 @@ export const PLAN_90 = [
      "d10-roll-fib",
      "d10-roll-dbg-two-lines",
      "d10-roll-trib",
-     "d10-roll-robber-trace"
+     "d10-roll-robber-trace",
+     "d10-roll-robber-memo",
+     "d10-roll-robber-table",
+     "d10-roll-dbg-adjacent"
     ],
     "gate": false,
     "label": null
    }
   ],
-  "leetcode": [],
-  "minutes": 156
+  "leetcode": [
+   {
+    "lc": 102,
+    "title": "Binary Tree Level Order Traversal",
+    "difficulty": "Medium",
+    "pattern": "Tree BFS levels",
+    "type": "review3",
+    "mode": null,
+    "video": "https://www.youtube.com/watch?v=6ZnyEApgFYg",
+    "url": "https://leetcode.com/problems/binary-tree-level-order-traversal/"
+   },
+   {
+    "lc": 208,
+    "title": "Implement Trie (Prefix Tree)",
+    "difficulty": "Medium",
+    "pattern": "Trie",
+    "type": "review3",
+    "mode": null,
+    "video": "https://www.youtube.com/watch?v=oobqoCJlHA0",
+    "url": "https://leetcode.com/problems/implement-trie-prefix-tree/"
+   },
+   {
+    "lc": 211,
+    "title": "Design Add and Search Words Data Structure",
+    "difficulty": "Medium",
+    "pattern": "Trie + DFS wildcard",
+    "type": "review3",
+    "mode": null,
+    "video": "https://www.youtube.com/watch?v=BTf05gs_8iU",
+    "url": "https://leetcode.com/problems/design-add-and-search-words-data-structure/"
+   }
+  ],
+  "minutes": 140
  },
  {
   "date": "2026-12-31",
@@ -4055,9 +4088,6 @@ export const PLAN_90 = [
    {
     "id": "d10-rolling",
     "reps": [
-     "d10-roll-robber-memo",
-     "d10-roll-robber-table",
-     "d10-roll-dbg-adjacent",
      "cap-house-robber",
      "d10-explain-house-robber"
     ],
@@ -4078,16 +4108,6 @@ export const PLAN_90 = [
   ],
   "leetcode": [
    {
-    "lc": 78,
-    "title": "Subsets",
-    "difficulty": "Medium",
-    "pattern": "Backtracking include/exclude",
-    "type": "review1",
-    "mode": null,
-    "video": "https://www.youtube.com/watch?v=REOH22Xwdkk",
-    "url": "https://leetcode.com/problems/subsets/"
-   },
-   {
     "lc": 39,
     "title": "Combination Sum",
     "difficulty": "Medium",
@@ -4098,14 +4118,34 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/combination-sum/"
    },
    {
-    "lc": 102,
-    "title": "Binary Tree Level Order Traversal",
+    "lc": 78,
+    "title": "Subsets",
     "difficulty": "Medium",
-    "pattern": "Tree BFS levels",
-    "type": "review3",
+    "pattern": "Backtracking include/exclude",
+    "type": "review1",
     "mode": null,
-    "video": "https://www.youtube.com/watch?v=6ZnyEApgFYg",
-    "url": "https://leetcode.com/problems/binary-tree-level-order-traversal/"
+    "video": "https://www.youtube.com/watch?v=REOH22Xwdkk",
+    "url": "https://leetcode.com/problems/subsets/"
+   },
+   {
+    "lc": 79,
+    "title": "Word Search",
+    "difficulty": "Medium",
+    "pattern": "Grid backtracking",
+    "type": "review1",
+    "mode": null,
+    "video": "https://www.youtube.com/watch?v=pfiQ_PS1g8E",
+    "url": "https://leetcode.com/problems/word-search/"
+   },
+   {
+    "lc": 213,
+    "title": "House Robber II",
+    "difficulty": "Medium",
+    "pattern": "1D DP circular",
+    "type": "new",
+    "mode": "attempt-first",
+    "video": "https://www.youtube.com/watch?v=rWAJCfYYOvM",
+    "url": "https://leetcode.com/problems/house-robber-ii/"
    }
   ],
   "minutes": 159
@@ -4129,16 +4169,6 @@ export const PLAN_90 = [
   "sections": [],
   "leetcode": [
    {
-    "lc": 79,
-    "title": "Word Search",
-    "difficulty": "Medium",
-    "pattern": "Grid backtracking",
-    "type": "review1",
-    "mode": null,
-    "video": "https://www.youtube.com/watch?v=pfiQ_PS1g8E",
-    "url": "https://leetcode.com/problems/word-search/"
-   },
-   {
     "lc": 70,
     "title": "Climbing Stairs",
     "difficulty": "Easy",
@@ -4159,16 +4189,6 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/number-of-islands/"
    },
    {
-    "lc": 213,
-    "title": "House Robber II",
-    "difficulty": "Medium",
-    "pattern": "1D DP circular",
-    "type": "new",
-    "mode": "attempt-first",
-    "video": "https://www.youtube.com/watch?v=rWAJCfYYOvM",
-    "url": "https://leetcode.com/problems/house-robber-ii/"
-   },
-   {
     "lc": 53,
     "title": "Maximum Subarray",
     "difficulty": "Medium",
@@ -4177,6 +4197,16 @@ export const PLAN_90 = [
     "mode": "attempt-first",
     "video": "https://www.youtube.com/watch?v=5WZl3MMT0Eg",
     "url": "https://leetcode.com/problems/maximum-subarray/"
+   },
+   {
+    "lc": 55,
+    "title": "Jump Game",
+    "difficulty": "Medium",
+    "pattern": "Greedy reach",
+    "type": "new",
+    "mode": "attempt-first",
+    "video": "https://www.youtube.com/watch?v=Yan0cv2cLy8",
+    "url": "https://leetcode.com/problems/jump-game/"
    }
   ],
   "minutes": 80
@@ -4210,14 +4240,14 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/house-robber/"
    },
    {
-    "lc": 55,
-    "title": "Jump Game",
+    "lc": 213,
+    "title": "House Robber II",
     "difficulty": "Medium",
-    "pattern": "Greedy reach",
-    "type": "new",
-    "mode": "attempt-first",
-    "video": "https://www.youtube.com/watch?v=Yan0cv2cLy8",
-    "url": "https://leetcode.com/problems/jump-game/"
+    "pattern": "1D DP circular",
+    "type": "review1",
+    "mode": null,
+    "video": "https://www.youtube.com/watch?v=rWAJCfYYOvM",
+    "url": "https://leetcode.com/problems/house-robber-ii/"
    },
    {
     "lc": 322,
@@ -4228,6 +4258,16 @@ export const PLAN_90 = [
     "mode": "attempt-first",
     "video": "https://www.youtube.com/watch?v=H9bfqozjoqs",
     "url": "https://leetcode.com/problems/coin-change/"
+   },
+   {
+    "lc": 139,
+    "title": "Word Break",
+    "difficulty": "Medium",
+    "pattern": "1D DP on prefixes",
+    "type": "new",
+    "mode": "attempt-first",
+    "video": "https://www.youtube.com/watch?v=Sx9NNgInc3A",
+    "url": "https://leetcode.com/problems/word-break/"
    }
   ],
   "minutes": 80
@@ -4241,16 +4281,6 @@ export const PLAN_90 = [
   "sections": [],
   "leetcode": [
    {
-    "lc": 213,
-    "title": "House Robber II",
-    "difficulty": "Medium",
-    "pattern": "1D DP circular",
-    "type": "review1",
-    "mode": null,
-    "video": "https://www.youtube.com/watch?v=rWAJCfYYOvM",
-    "url": "https://leetcode.com/problems/house-robber-ii/"
-   },
-   {
     "lc": 53,
     "title": "Maximum Subarray",
     "difficulty": "Medium",
@@ -4261,14 +4291,14 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/maximum-subarray/"
    },
    {
-    "lc": 139,
-    "title": "Word Break",
+    "lc": 55,
+    "title": "Jump Game",
     "difficulty": "Medium",
-    "pattern": "1D DP on prefixes",
-    "type": "new",
-    "mode": "attempt-first",
-    "video": "https://www.youtube.com/watch?v=Sx9NNgInc3A",
-    "url": "https://leetcode.com/problems/word-break/"
+    "pattern": "Greedy reach",
+    "type": "review1",
+    "mode": null,
+    "video": "https://www.youtube.com/watch?v=Yan0cv2cLy8",
+    "url": "https://leetcode.com/problems/jump-game/"
    },
    {
     "lc": 300,
@@ -4279,6 +4309,16 @@ export const PLAN_90 = [
     "mode": "attempt-first",
     "video": "https://www.youtube.com/watch?v=cjWnW0hdF1Y",
     "url": "https://leetcode.com/problems/longest-increasing-subsequence/"
+   },
+   {
+    "lc": 5,
+    "title": "Longest Palindromic Substring",
+    "difficulty": "Medium",
+    "pattern": "Expand around center",
+    "type": "new",
+    "mode": "attempt-first",
+    "video": "https://www.youtube.com/watch?v=XYQecbcd6_c",
+    "url": "https://leetcode.com/problems/longest-palindromic-substring/"
    }
   ],
   "minutes": 80
@@ -4292,16 +4332,6 @@ export const PLAN_90 = [
   "sections": [],
   "leetcode": [
    {
-    "lc": 5,
-    "title": "Longest Palindromic Substring",
-    "difficulty": "Medium",
-    "pattern": "Expand around center",
-    "type": "new",
-    "mode": "attempt-first",
-    "video": "https://www.youtube.com/watch?v=XYQecbcd6_c",
-    "url": "https://leetcode.com/problems/longest-palindromic-substring/"
-   },
-   {
     "lc": 62,
     "title": "Unique Paths",
     "difficulty": "Medium",
@@ -4310,6 +4340,16 @@ export const PLAN_90 = [
     "mode": "attempt-first",
     "video": "https://www.youtube.com/watch?v=IlEsdxuD4lY",
     "url": "https://leetcode.com/problems/unique-paths/"
+   },
+   {
+    "lc": 1143,
+    "title": "Longest Common Subsequence",
+    "difficulty": "Medium",
+    "pattern": "2D DP strings",
+    "type": "new",
+    "mode": "attempt-first",
+    "video": "https://www.youtube.com/watch?v=Ua0GhsJSlWM",
+    "url": "https://leetcode.com/problems/longest-common-subsequence/"
    }
   ],
   "minutes": 80
@@ -4323,14 +4363,14 @@ export const PLAN_90 = [
   "sections": [],
   "leetcode": [
    {
-    "lc": 55,
-    "title": "Jump Game",
+    "lc": 139,
+    "title": "Word Break",
     "difficulty": "Medium",
-    "pattern": "Greedy reach",
+    "pattern": "1D DP on prefixes",
     "type": "review1",
     "mode": null,
-    "video": "https://www.youtube.com/watch?v=Yan0cv2cLy8",
-    "url": "https://leetcode.com/problems/jump-game/"
+    "video": "https://www.youtube.com/watch?v=Sx9NNgInc3A",
+    "url": "https://leetcode.com/problems/word-break/"
    },
    {
     "lc": 322,
@@ -4343,16 +4383,6 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/coin-change/"
    },
    {
-    "lc": 78,
-    "title": "Subsets",
-    "difficulty": "Medium",
-    "pattern": "Backtracking include/exclude",
-    "type": "review2",
-    "mode": null,
-    "video": "https://www.youtube.com/watch?v=REOH22Xwdkk",
-    "url": "https://leetcode.com/problems/subsets/"
-   },
-   {
     "lc": 39,
     "title": "Combination Sum",
     "difficulty": "Medium",
@@ -4363,14 +4393,34 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/combination-sum/"
    },
    {
-    "lc": 1143,
-    "title": "Longest Common Subsequence",
+    "lc": 78,
+    "title": "Subsets",
     "difficulty": "Medium",
-    "pattern": "2D DP strings",
+    "pattern": "Backtracking include/exclude",
+    "type": "review2",
+    "mode": null,
+    "video": "https://www.youtube.com/watch?v=REOH22Xwdkk",
+    "url": "https://leetcode.com/problems/subsets/"
+   },
+   {
+    "lc": 79,
+    "title": "Word Search",
+    "difficulty": "Medium",
+    "pattern": "Grid backtracking",
+    "type": "review2",
+    "mode": null,
+    "video": "https://www.youtube.com/watch?v=pfiQ_PS1g8E",
+    "url": "https://leetcode.com/problems/word-search/"
+   },
+   {
+    "lc": 91,
+    "title": "Decode Ways",
+    "difficulty": "Medium",
+    "pattern": "1D DP on prefixes",
     "type": "new",
     "mode": "attempt-first",
-    "video": "https://www.youtube.com/watch?v=Ua0GhsJSlWM",
-    "url": "https://leetcode.com/problems/longest-common-subsequence/"
+    "video": "https://www.youtube.com/watch?v=6aEyTjOwlJU",
+    "url": "https://leetcode.com/problems/decode-ways/"
    },
    {
     "lc": 48,
@@ -4394,14 +4444,14 @@ export const PLAN_90 = [
   "sections": [],
   "leetcode": [
    {
-    "lc": 139,
-    "title": "Word Break",
+    "lc": 5,
+    "title": "Longest Palindromic Substring",
     "difficulty": "Medium",
-    "pattern": "1D DP on prefixes",
+    "pattern": "Expand around center",
     "type": "review1",
     "mode": null,
-    "video": "https://www.youtube.com/watch?v=Sx9NNgInc3A",
-    "url": "https://leetcode.com/problems/word-break/"
+    "video": "https://www.youtube.com/watch?v=XYQecbcd6_c",
+    "url": "https://leetcode.com/problems/longest-palindromic-substring/"
    },
    {
     "lc": 300,
@@ -4412,16 +4462,6 @@ export const PLAN_90 = [
     "mode": null,
     "video": "https://www.youtube.com/watch?v=cjWnW0hdF1Y",
     "url": "https://leetcode.com/problems/longest-increasing-subsequence/"
-   },
-   {
-    "lc": 79,
-    "title": "Word Search",
-    "difficulty": "Medium",
-    "pattern": "Grid backtracking",
-    "type": "review2",
-    "mode": null,
-    "video": "https://www.youtube.com/watch?v=pfiQ_PS1g8E",
-    "url": "https://leetcode.com/problems/word-search/"
    },
    {
     "lc": 207,

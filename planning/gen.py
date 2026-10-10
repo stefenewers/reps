@@ -30,10 +30,14 @@ SOFT_END = dt.date(2026, 10, 17)
 BUILD_END = dt.date(2026, 11, 7)
 FINAL = dt.date(2027, 1, 4)
 STEPS = [3, 10, 30]
+# A re-solve may slide a little to miss a Sunday, a day off or a full day, but never outside its window (days after the first solve).
+WINDOWS = {1: (3, 4), 2: (10, 12), 3: (30, 33)}
+REVIEW_CAPS = {'off': (0, 0), 'soft': (2, 2), 'build': (3, 2), 'full': (5, 3), 'buffer': (5, 4), 'final': (5, 5)}   # (weekday, Saturday)
 
 REPS_FACTOR = 2.25                      # real minutes per authored Reps minute (measured 2.5 on dictionaries; later ladders reuse earlier moves)
 LC_COST = {'Easy': 25, 'Medium': 40, 'Hard': 60}
 STUDY_FIRST_EXTRA = 10                  # the walkthrough comes first on a pattern's first problem
+MAX_NEW_LC = 2                          # new LeetCode problems in one day, whatever the minute budget says
 
 BLIND75 = {1,121,217,238,53,152,153,33,15,11,371,191,338,268,190,70,322,300,1143,139,39,198,213,91,62,55,133,207,417,200,128,269,261,323,57,56,435,252,253,206,141,21,23,19,143,73,54,48,79,3,424,76,242,49,20,125,5,647,271,104,100,226,124,102,297,572,105,98,230,235,208,211,212,347,295}
 CORE_HARDS_TO_STRETCH = {269, 212, 297, 295}
@@ -99,8 +103,8 @@ def budget(d):                           # real minutes of NEW work (ladder reps
     sat = d.weekday() == 5
     return {'off': 0, 'soft': 80, 'build': 80 if sat else 130, 'full': 95 if sat else 155, 'buffer': 100, 'final': 100}[phase(d)]
 def review_cap(d):
-    sat = d.weekday() == 5
-    return {'off': 0, 'soft': 2, 'build': 2 if sat else 3, 'full': 3 if sat else 5, 'buffer': 4 if sat else 6, 'final': 5}[phase(d)]
+    weekday, saturday = REVIEW_CAPS[phase(d)]
+    return saturday if d.weekday() == 5 else weekday
 def week_of(d): return 1 if d <= SOFT_END else (d - dt.date(2026, 10, 12)).days // 7 + 1
 def slug(title):
     s = re.sub(r"[^a-z0-9 -]", '', title.lower())
@@ -145,8 +149,11 @@ def build(more_allowed):
         return dict(lc=lc, title=m['title'], difficulty=m['difficulty'], pattern=m['pattern'], type=kind, mode=mode or None, video=m['neetcode_video'] or None,
                     url=f"https://leetcode.com/problems/{slug(m['title'])}/")
     def after(d, lc, start=1):
-        for i, gap in enumerate(STEPS[start - 1:], start=start):
-            reviews.append((i, d + dt.timedelta(gap), lc))
+        for i in range(start, len(STEPS) + 1):
+            reviews.append((i, d, lc))          # (round, first-solve date, problem)
+    def window(q):
+        lo, hi = WINDOWS[q[0]]
+        return q[1] + dt.timedelta(lo), q[1] + dt.timedelta(hi)
 
     for d in days:
         ph = phase(d)
@@ -159,15 +166,34 @@ def build(more_allowed):
             day['leetcode'].append(lc_row(d, seeds[d], 'review1', tier='seed'))
             after(d, seeds[d], start=2)
             used_rev += 1
-        due = sorted([q for q in reviews if q[1] <= d], key=lambda q: (q[0], q[1]))
-        for q in due[: max(0, review_cap(d) - used_rev)]:
+        # Most urgent first: the re-solve whose window closes soonest. One that cannot fit before its window closes is a bug in the plan.
+        for q in reviews:
+            assert window(q)[1] >= d or window(q)[1] > END, f'LC {q[2]} re-solve {q[0]} missed its window (closed {window(q)[1]})'
+        due = sorted([q for q in reviews if window(q)[0] <= d <= window(q)[1]], key=lambda q: (window(q)[1], q[0], q[2]))
+        room = max(0, review_cap(d) - used_rev)
+        # Take what must go today (window closing, or no later study day inside it), then fill with the rest.
+        def last_chance(q):
+            return not any(is_study(d + dt.timedelta(n)) for n in range(1, (window(q)[1] - d).days + 1))
+        must = [q for q in due if last_chance(q)]
+        assert len(must) <= room, f'{d}: {len(must)} re-solves close today but the cap is {room}'
+        for q in (must + [q for q in due if q not in must])[:room]:
             reviews.remove(q)
             day['leetcode'].append(lc_row(d, q[2], f'review{q[0]}'))
         # Buffer weeks carry interview practice only: they exist to absorb slips, so no ladder work is planned into them.
         src_q = iq if ph in ('buffer', 'final') and iq else ([] if ph == 'buffer' else queue)
         used, units = 0.0, []
-        while src_q and (used == 0 or used + src_q[0]['cost'] <= budget(d) * 1.1):
-            it = src_q.pop(0)
+        new_lc = 0
+        def pick(q):
+            # Next item to place: the front of the queue, or, once today's new LeetCode problems are used up,
+            # the first ladder rep behind them (the next pattern's ladder starts while this one's problems finish).
+            if not q: return None
+            if q[0]['kind'] != 'lc' or new_lc < MAX_NEW_LC: return 0
+            return next((j for j, x in enumerate(q) if x['kind'] == 'rep'), None)
+        while True:
+            j = pick(src_q)
+            if j is None or not (used == 0 or used + src_q[j]['cost'] <= budget(d) * 1.1): break
+            if src_q[j]['kind'] == 'lc': new_lc += 1
+            it = src_q.pop(j)
             used += it['cost']
             if it['unit'] >= 0 and it['unit'] not in units: units.append(it['unit'])
             if it['kind'] == 'rep':
@@ -182,8 +208,11 @@ def build(more_allowed):
                 after(d, it['lc'])
         # the final week also takes whatever new work is left once interview practice is placed
         if ph == 'final' and not iq:
-            while queue and used + queue[0]['cost'] <= budget(d) * 1.1:
-                it = queue.pop(0); used += it['cost']
+            while True:
+                j = pick(queue)
+                if j is None or used + queue[j]['cost'] > budget(d) * 1.1: break
+                if queue[j]['kind'] == 'lc': new_lc += 1
+                it = queue.pop(j); used += it['cost']
                 if it['unit'] not in units: units.append(it['unit'])
                 if it['kind'] == 'rep':
                     if day['sections'] and day['sections'][-1]['id'] == it['section']: day['sections'][-1]['reps'].append(it['id'])
@@ -195,6 +224,7 @@ def build(more_allowed):
         names = [UNITS[u]['name'] for u in units] or (['Interview practice'] if day['sections'] else (['Re-solves'] if day['leetcode'] else []))
         day['unit'] = ' → '.join(names)
         day['short'] = ' → '.join([UNITS[u]['short'] for u in units]) or ('Interview' if day['sections'] else 'Re-solves')
+    reviews = [q for q in reviews]
     return plan, lc_rows, queue, iq, reviews, meta
 
 def main():
@@ -228,6 +258,10 @@ def main():
         "export interface PlanLeetcode {\n  lc: number\n  title: string\n  difficulty: string\n  pattern: string\n  type: 'new' | 'review1' | 'review2' | 'review3'\n  mode: 'study-first' | 'attempt-first' | null\n  video: string | null\n  url: string\n}\n"
         "export interface PlanDay {\n  date: string\n  week: number\n  phase: 'soft' | 'build' | 'full' | 'buffer' | 'final' | 'off'\n  /** The pattern(s) this day works on. */\n  unit: string\n  short: string\n  /** Reps reps for the day, grouped by their section. `gate` marks a mastery check. */\n  sections: { id: string; reps: string[]; gate: boolean; label: string | null }[]\n  leetcode: PlanLeetcode[]\n  /** Estimated real minutes of new work (ladder reps and new LeetCode problems). */\n  minutes: number\n}\n\n"
         f"export const PLAN_START = '{START.isoformat()}'\nexport const PLAN_END = '{END.isoformat()}'\n\n"
+        "/** A re-solve lands this many days after the first solve (it slides only to miss a Sunday, a day off or a full day). */\n"
+        f"export const RESOLVE_WINDOWS = {json.dumps({f'review{k}': list(v) for k, v in WINDOWS.items()})} as const\n\n"
+        "/** The most re-solves a day may carry, by phase: [weekday, Saturday]. */\n"
+        f"export const RESOLVE_CAPS = {json.dumps({k: list(v) for k, v in REVIEW_CAPS.items()})} as const\n\n"
         f"export const PLAN_90 = {body} as PlanDay[]\n")
 
     # ---- weekly summary
