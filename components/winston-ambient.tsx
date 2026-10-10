@@ -83,6 +83,7 @@ export default function WinstonAmbient() {
   }, [])
 
   if (x === null || perched) return null
+  if (pathname?.startsWith('/demo')) return null
   return (
     <div className="wa" aria-hidden="true" style={{ left: x, '--walk-ms': `${walkMs}ms` } as CSSProperties}>
       <span className={`wa-sprite ${walking ? 'wa-sprite--walk' : 'wa-sprite--idle'}`} style={{ '--face': facing } as CSSProperties} />

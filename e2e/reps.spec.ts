@@ -1,5 +1,7 @@
 import { test, expect, type Page } from '@playwright/test'
-import { DAYS, DAY_BY_DATE, FIRST_DAY, LAST_DAY, dayExercises } from '@/data/curriculum'
+import { DAYS, DAY_BY_DATE, EXERCISE_BY_ID, FIRST_DAY, LAST_DAY, dayExercises } from '@/data/curriculum'
+import { DEMO_REPS } from '@/data/demo'
+import { PLAN_UNITS } from '@/data/schedule-90'
 import { clampDate, localDate } from '@/lib/dates'
 import type { Exercise } from '@/lib/types'
 import { blockingGate } from '@/lib/progress'
@@ -137,4 +139,23 @@ test('the plan calendar links every day, and unknown reps are a real 404', async
   await expect(page.locator('section[aria-labelledby^="wk-"] a[href^="/day/"]')).toHaveCount(90)
   const res = await page.request.get('/rep/not-a-real-rep')
   expect(res.status()).toBe(404)
+})
+
+test('the public demo: no app chrome, a rep runs against its tests, the base plan lists every pattern', async ({ page }) => {
+  await page.goto('/demo')
+  await expect(page.getByRole('heading', { level: 1, name: 'Build fluency through repetition.' })).toBeVisible()
+  await expect(page.getByRole('navigation', { name: 'Main' })).toHaveCount(0)
+  await expect(page.getByRole('link', { name: 'Interview' })).toHaveCount(0)
+
+  const first = EXERCISE_BY_ID[DEMO_REPS[0].id]
+  await page.locator('.cm-content').click()
+  await page.keyboard.press('ControlOrMeta+a')
+  await page.keyboard.press('Backspace')
+  await page.keyboard.insertText(first.solution!)
+  await page.getByTestId('demo-run').click()
+  await expect(page.getByRole('button', { name: 'Next rep' })).toBeVisible({ timeout: 90_000 })
+
+  await expect(page.getByTestId('demo-plan').locator('details')).toHaveCount(PLAN_UNITS.length)
+  // Nothing is stored: the demo leaves no drafts or progress behind.
+  expect(await page.evaluate(() => Object.keys(localStorage).filter((k) => /draft|attempt|solve/.test(k)).length)).toBe(0)
 })

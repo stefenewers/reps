@@ -55,6 +55,8 @@ export default function Header() {
   const program = useMemo(() => programProgress(DAYS, attempts), [attempts])
   const lastLocal = useCallback(() => repo.lastLocalCompletionAt, [repo])
   const pct = Math.round(program.fraction * 100)
+  // The public demo has its own minimal top bar and none of the personal navigation.
+  if (pathname.startsWith('/demo')) return null
   return (
     <header className="site-header sticky top-0 z-30 bg-bg/85 backdrop-blur-md supports-[backdrop-filter]:bg-bg/75">
       <div className="flex h-14 items-center gap-3 px-4 sm:gap-6 sm:px-6">
