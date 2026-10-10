@@ -2,10 +2,16 @@
 
 Build fluency through repetition.
 
-A private, single-user practice system for the Google SWE internship interview on
-October 12, 2026. LeetCode problems are capstones of skill graphs, not the teaching
-material, so Reps trains the Python primitives and patterns underneath them until they
-come out automatically, then asks for the capstone.
+A private, single-user practice system for full-time SWE I (new-grad) interview loops.
+LeetCode problems are capstones of skill graphs, not the teaching material, so Reps
+trains the Python primitives and patterns underneath them until they come out
+automatically, then asks for the capstone.
+
+It began as a ten-day sprint (Oct 2–10, 2026) and now runs a **90-day ladder plan**
+(Oct 11, 2026 → Jan 8, 2027): every pattern is a ladder of reps from the ground up, a
+mastery check passed without the solution, then that pattern's LeetCode problems with
+spaced re-solves. The plan, its research basis and its generator are in `planning/`;
+`python3 planning/gen.py` rewrites `data/schedule-90.ts`, which the app reads.
 
 ## Run it
 

@@ -1,0 +1,6432 @@
+[
+ {
+  "module": "2026-10-02",
+  "id": "o2-python-recall",
+  "title": "Python recall",
+  "summary": "List literals, indexing (including negative), len, append and return.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "o2-list-literal",
+    "title": "Spot the list literal",
+    "minutes": 0.5,
+    "kind": "choice",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-list-index-trace",
+    "title": "Trace: indexing and len",
+    "minutes": 1.5,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-bookends",
+    "title": "Write: first and last",
+    "minutes": 3.5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dbg-last-item",
+    "title": "Debug: the last item",
+    "minutes": 2.5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-append-line",
+    "title": "Write: append in a loop",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dbg-append-none",
+    "title": "Debug: building a doubled list",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dbg-print-return",
+    "title": "Debug: print is not return",
+    "minutes": 2,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-02",
+  "id": "o2-loops",
+  "title": "Loops & range",
+  "summary": "for over a list, range with 1/2/3 arguments, accumulators, conditions, early return.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "o2-for-trace",
+    "title": "Trace: for over a list",
+    "minutes": 1.5,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-for-print-write",
+    "title": "Write: a printing loop",
+    "minutes": 2,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dbg-for-of",
+    "title": "Debug: total length of words",
+    "minutes": 2,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-range-basic",
+    "title": "Trace: range with 1, 2 and 3 arguments",
+    "minutes": 2,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-countdown",
+    "title": "Write: count down with range",
+    "minutes": 3.5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dbg-squares-range",
+    "title": "Debug: squares up to n",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-sum-fill",
+    "title": "Write: sum with an accumulator",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-count-evens",
+    "title": "Write: count the evens",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-max-manual",
+    "title": "Write: largest without max()",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dbg-smallest-zero",
+    "title": "Debug: smallest number",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-early-return-trace",
+    "title": "Trace: early return",
+    "minutes": 2,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-contains-loop",
+    "title": "Write: contains with early return",
+    "minutes": 3.5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dbg-early-else",
+    "title": "Debug: any negative?",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-02",
+  "id": "o2-enumerate",
+  "title": "enumerate",
+  "summary": "Index and value together: for i, x in enumerate(seq).",
+  "gate": false,
+  "reps": [
+   {
+    "id": "o2-enum-trace",
+    "title": "Trace: enumerate",
+    "minutes": 1.5,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-enum-print-write",
+    "title": "Write: print index and value",
+    "minutes": 2,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-enum-fill",
+    "title": "Write: (index, word) pairs",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-index-of",
+    "title": "Write: first index of a value",
+    "minutes": 3.5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-enum-translate",
+    "title": "Translate: index loop to enumerate",
+    "minutes": 3.5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-all-indexes",
+    "title": "Write: every index of a value",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dbg-enum-order",
+    "title": "Debug: find the first match",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-02",
+  "id": "o2-sets",
+  "title": "Sets",
+  "summary": "set(), .add, duplicates ignored, fast membership with in.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "o2-set-empty",
+    "title": "Empty set vs empty dict",
+    "minutes": 1,
+    "kind": "choice",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-set-add-trace",
+    "title": "Trace: add ignores duplicates",
+    "minutes": 1.5,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-set-add-fill",
+    "title": "Write: distinct values, sorted",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-set-unique-count",
+    "title": "Write: count distinct words, ignoring case",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dbg-seen-list",
+    "title": "Debug: distinct values in order",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-set-common",
+    "title": "Write: values in both lists",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-set-optimize",
+    "title": "Optimize: membership against a list",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-02",
+  "id": "o2-contains-duplicate",
+  "title": "Contains Duplicate",
+  "summary": "Brute force first, then a seen-set with early return.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "o2-dup-brute",
+    "title": "Write: duplicate check, brute force",
+    "minutes": 4.5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dup-trace",
+    "title": "Trace: the seen-set",
+    "minutes": 2,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dup-fill",
+    "title": "Finish: the seen-set loop",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "cap-contains-duplicate",
+    "title": "Capstone: Contains Duplicate",
+    "minutes": 20,
+    "kind": "code",
+    "capstone": true,
+    "problemId": "contains-duplicate"
+   },
+   {
+    "id": "o2-dup-write-test",
+    "title": "Write a test: break the adjacent check",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dbg-dup-add-first",
+    "title": "Debug: duplicate check says True too often",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-cap-contains-duplicate-explain",
+    "title": "Explain: Contains Duplicate",
+    "minutes": 4,
+    "kind": "explain",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-02",
+  "id": "o2-dictionaries",
+  "title": "Dictionaries",
+  "summary": "Create, assign, overwrite, look up, KeyError, and in (keys only).",
+  "gate": false,
+  "reps": [
+   {
+    "id": "o2-dict-assign-trace",
+    "title": "Trace: assign, overwrite, look up",
+    "minutes": 2,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dict-squares-map",
+    "title": "Write: build a dict in a loop",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dict-in-keys",
+    "title": "Trace: in checks keys",
+    "minutes": 1.5,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dbg-keyerror",
+    "title": "Debug: stock lookup",
+    "minutes": 2.5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dict-safe-lookup",
+    "title": "Write: lookup guarded by in",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dbg-in-values",
+    "title": "Debug: does any value match?",
+    "minutes": 2.5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dict-invert",
+    "title": "Write: swap keys and values",
+    "minutes": 3.5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-02",
+  "id": "o2-dict-revision",
+  "title": "Dictionary check",
+  "summary": "Create, assign, look up, check and loop again, in a new scenario. Pass every rep without opening the solution to unlock .get().",
+  "gate": true,
+  "reps": [
+   {
+    "id": "o2-drev-trace",
+    "title": "Trace: keep the table",
+    "minutes": 2,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-drev-crash",
+    "title": "Which line crashes?",
+    "minutes": 1,
+    "kind": "choice",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-drev-make-menu",
+    "title": "Write: menu from two lists",
+    "minutes": 3.5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-drev-bill",
+    "title": "Write: total a bill",
+    "minutes": 3.5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-drev-dbg-cheapest",
+    "title": "Debug: cheapest item",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-drev-under",
+    "title": "Write: items under a budget",
+    "minutes": 3.5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-drev-seat-chart",
+    "title": "Write: who sits where",
+    "minutes": 3.5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-drev-reprice",
+    "title": "Write: apply price changes",
+    "minutes": 4.5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-02",
+  "id": "o2-get",
+  "title": ".get()",
+  "summary": "Read without crashing: d.get(key) and d.get(key, default), in many shapes.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "o2-get-trace",
+    "title": "Trace: .get with and without default",
+    "minutes": 2,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-get-line",
+    "title": "Write one line: read with .get",
+    "minutes": 1.5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-get-total-cost",
+    "title": "Write: total with .get in a loop",
+    "minutes": 3.5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dbg-get-args",
+    "title": "Debug: price list",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-get-count-fill",
+    "title": "Fill: the counting default",
+    "minutes": 1,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-get-list-default",
+    "title": "Write: group words by first letter",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-02",
+  "id": "o2-iter-dicts",
+  "title": "Iterating dicts",
+  "summary": "Loop over keys, .values() and .items(); reason about key vs value.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "o2-iter-items",
+    "title": "Trace: keys, values, items",
+    "minutes": 2,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-iter-fill",
+    "title": "Write: describe each pair",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-iter-keys-above",
+    "title": "Write: keys whose value passes a test",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dbg-items-unpack",
+    "title": "Debug: total score",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-02",
+  "id": "o2-frequency",
+  "title": "Frequency maps",
+  "summary": "counts[x] = counts.get(x, 0) + 1, then use the counts.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "o2-freq-trace",
+    "title": "Trace: a frequency map grows",
+    "minutes": 2,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-freq-fill",
+    "title": "Write: character counts",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dbg-freq-plus-eq",
+    "title": "Debug: count letters",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dbg-freq-overwrite",
+    "title": "Debug: tally the numbers",
+    "minutes": 2.5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-freq-words",
+    "title": "Write: word counts",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dbg-get-no-default",
+    "title": "Debug: count words by length",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-freq-most-common",
+    "title": "Write: most common value",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-freq-same-counts",
+    "title": "Write: same items, same counts",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-freq-first-unique",
+    "title": "Write: first character that appears once",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-02",
+  "id": "o2-dict-mastery",
+  "title": "Dictionaries from scratch",
+  "summary": "Everything from today, mixed, in a new scenario, from a bare signature. Pass every rep without the solution before tomorrow unlocks.",
+  "gate": true,
+  "reps": [
+   {
+    "id": "o2-dmas-trace",
+    "title": "Trace: counts and .get",
+    "minutes": 2.5,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dmas-count-plays",
+    "title": "From scratch: count plays",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dmas-dbg-minutes",
+    "title": "Debug: playlist length",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dmas-merge",
+    "title": "From scratch: merge two play counts",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dmas-by-artist",
+    "title": "From scratch: songs by artist",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dmas-top-song",
+    "title": "From scratch: most played song",
+    "minutes": 4.5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-02",
+  "id": "o2-dict-ladder",
+  "title": "Dictionary ladder",
+  "summary": "30 reps from the ground up: foundations, looping, building, positions, then real LeetCode problems.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "o2-dl-empty",
+    "title": "Rung 1 · Make an empty dict",
+    "minutes": 0.5,
+    "kind": "choice",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dl-trace-basic",
+    "title": "Rung 1 · Trace: add and overwrite",
+    "minutes": 2,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dl-add-line",
+    "title": "Rung 1 · Add one entry",
+    "minutes": 1,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dl-in-trace",
+    "title": "Rung 1 · Trace: in looks at keys",
+    "minutes": 1.5,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dl-crash",
+    "title": "Rung 1 · Which line crashes?",
+    "minutes": 1,
+    "kind": "choice",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dl-price-or",
+    "title": "Rung 1 · Price or a message",
+    "minutes": 2.5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dl-get-trace",
+    "title": "Rung 1 · Trace: .get",
+    "minutes": 1.5,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dl-sell",
+    "title": "Rung 1 · Sell one",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dl-loop-trace",
+    "title": "Rung 2 · Trace: three ways to loop",
+    "minutes": 2,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dl-sum-values",
+    "title": "Rung 2 · Add up the values",
+    "minutes": 2.5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dl-keys-for",
+    "title": "Rung 2 · Who got this score?",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dl-dbg-values",
+    "title": "Rung 2 · Debug: count the expensive ones",
+    "minutes": 2.5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dl-max-key",
+    "title": "Rung 2 · Top student",
+    "minutes": 3.5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dl-flip",
+    "title": "Rung 2 · Flip a phone code table",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dl-initials",
+    "title": "Rung 3 · Build: name → first letter",
+    "minutes": 2.5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dl-pair-up",
+    "title": "Rung 3 · Build from two lists",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dl-letter-count",
+    "title": "Rung 3 · Count letters",
+    "minutes": 2.5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dl-dbg-reset",
+    "title": "Rung 3 · Debug: the votes never go up",
+    "minutes": 2.5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dl-group-len",
+    "title": "Rung 3 · Group words by length",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dl-enum-trace",
+    "title": "Rung 4 · Trace: positions into a dict",
+    "minutes": 2,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dl-first-index",
+    "title": "Rung 4 · First position of each value",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dl-lookup-positions",
+    "title": "Rung 4 · Answer position queries",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dl-dbg-direction",
+    "title": "Rung 4 · Debug: backwards map",
+    "minutes": 2.5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dl-lc-two-sum",
+    "title": "Rung 5 · LeetCode 1: Two Sum",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dl-lc-anagram",
+    "title": "Rung 5 · LeetCode 242: Valid Anagram",
+    "minutes": 4.5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dl-lc-first-unique",
+    "title": "Rung 5 · LeetCode 387: First unique (words)",
+    "minutes": 4.5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dl-lc-ransom",
+    "title": "Rung 5 · LeetCode 383: Ransom Note",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dl-lc-majority",
+    "title": "Rung 5 · LeetCode 169: Majority Element",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dl-lc-close-dup",
+    "title": "Rung 5 · LeetCode 219: Contains Duplicate II",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dl-lc-group-anagrams",
+    "title": "Rung 5 · LeetCode 49: Group Anagrams",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-02",
+  "id": "o2-valid-anagram",
+  "title": "Valid Anagram",
+  "summary": "Compare frequency maps; quick length check; the decrement variant.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "o2-anagram-sorted-trace",
+    "title": "Trace: the sorting baseline",
+    "minutes": 1.5,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-anagram-fill",
+    "title": "Finish: two maps, then compare",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "cap-valid-anagram",
+    "title": "Capstone: Valid Anagram",
+    "minutes": 20,
+    "kind": "code",
+    "capstone": true,
+    "problemId": "valid-anagram"
+   },
+   {
+    "id": "o2-anagram-write-test",
+    "title": "Write a test: break the set comparison",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dbg-anagram-length",
+    "title": "Debug: one map, count up then down",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-cap-valid-anagram-explain",
+    "title": "Explain: Valid Anagram",
+    "minutes": 4,
+    "kind": "explain",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-02",
+  "id": "o2-index-maps",
+  "title": "Index maps",
+  "summary": "value → index while scanning; first vs last occurrence.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "o2-imap-trace",
+    "title": "Trace: value → index",
+    "minutes": 1.5,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-imap-fill",
+    "title": "Write: positions",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dbg-seen-direction",
+    "title": "Debug: where is each number?",
+    "minutes": 2.5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-imap-first-code",
+    "title": "Write: first positions",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-imap-widest",
+    "title": "Write: widest gap between equal values",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dbg-closest-repeat",
+    "title": "Debug: closest repeat",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-02",
+  "id": "o2-complements",
+  "title": "Complements",
+  "summary": "complement = target - num, and asking \"have I seen it?\" with a set.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "o2-comp-write",
+    "title": "Write: list the complements",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-comp-nested",
+    "title": "Write: pair check, brute force",
+    "minutes": 4.5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-comp-set-trace",
+    "title": "Trace: complement against a seen-set",
+    "minutes": 2,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-comp-set-code",
+    "title": "Optimize: pair check in one pass",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dbg-comp-inverted",
+    "title": "Debug: pair check finds pairs everywhere",
+    "minutes": 2.5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dbg-comp-self-pair",
+    "title": "Debug: a number pairs with itself",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-02",
+  "id": "o2-two-sum",
+  "title": "Two Sum",
+  "summary": "enumerate + index map + complement + membership, assembled step by step.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "o2-ts-trace-full",
+    "title": "Trace: the whole algorithm",
+    "minutes": 3,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-ts-find-pair",
+    "title": "Combine: find the pair of values",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-ts-modify",
+    "title": "Modify: return indexes instead of values",
+    "minutes": 4.5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "cap-two-sum",
+    "title": "Capstone: Two Sum",
+    "minutes": 25,
+    "kind": "code",
+    "capstone": true,
+    "problemId": "two-sum"
+   },
+   {
+    "id": "o2-ts-write-test",
+    "title": "Write a test: break store-before-check",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-dbg-ts-store-indent",
+    "title": "Debug: Two Sum never finds the pair",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-cap-two-sum-explain",
+    "title": "Explain: Two Sum",
+    "minutes": 4,
+    "kind": "explain",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-ts-pattern-count",
+    "title": "Pattern: replace the nested loop",
+    "minutes": 7,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-02",
+  "id": "o2-cold",
+  "title": "Cold reps",
+  "summary": "Write from scratch: no starter beyond a signature.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "o2-cold-letter-counts",
+    "title": "Cold: letter counts",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-cold-tally",
+    "title": "Cold: tally votes, then pick the winner",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-cold-first-index",
+    "title": "Cold: first index of each value",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-cold-last-index",
+    "title": "Cold: make an index",
+    "minutes": 3.5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-cold-has-repeat",
+    "title": "Cold: any repeats?",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-cold-over-k",
+    "title": "Cold: words seen more than k times",
+    "minutes": 5.5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-cold-anagram",
+    "title": "Cold: same letters?",
+    "minutes": 5.5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o2-cold-two-sum",
+    "title": "Cold: pair indexes",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-03",
+  "id": "d3-warmup",
+  "title": "Warm-up",
+  "summary": "Yesterday from a bare signature: frequency maps, sets, index maps, Two Sum.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "d3-warm-char-counts",
+    "title": "Count characters",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d3-warm-most-common",
+    "title": "Most common item",
+    "minutes": 7,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d3-warm-has-dup",
+    "title": "Any duplicate?",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d3-warm-first-index",
+    "title": "First index of each value",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d3-warm-two-sum",
+    "title": "Two Sum from memory",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-03",
+  "id": "d3-strings",
+  "title": "Strings",
+  "summary": "Index into strings (including negative indexes) and loop over characters.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "d3-str-trace-index",
+    "title": "Trace string indexes",
+    "minutes": 2,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d3-str-count-vowels",
+    "title": "Count vowels",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d3-str-same-ends",
+    "title": "Same first and last",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d3-str-debug-immutable",
+    "title": "Capitalize the first letter",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d3-str-first-digit",
+    "title": "Index of the first digit",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d3-str-mirror-pairs",
+    "title": "Mirror index pairs",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-03",
+  "id": "d3-slicing",
+  "title": "Slicing",
+  "summary": "s[a:b] excludes b; [::-1] reverses; slices never raise.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "d3-slice-trace",
+    "title": "Trace four slices",
+    "minutes": 2,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d3-slice-is-mirror",
+    "title": "Palindrome in one line",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d3-slice-split-halves",
+    "title": "Split into halves",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d3-slice-debug-reverse",
+    "title": "Find the palindrome words",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d3-slice-rotate",
+    "title": "Rotate left",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d3-slice-debug-middle",
+    "title": "Middle three characters",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d3-slice-break-last-k",
+    "title": "Break last_k",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-03",
+  "id": "d3-methods",
+  "title": "String methods",
+  "summary": ".lower(), .isalnum(), .split() and .join() to clean and rebuild text.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "d3-meth-trace",
+    "title": "Trace lower, split, join",
+    "minutes": 2,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d3-meth-keep-letters",
+    "title": "Keep only letters",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d3-meth-clean",
+    "title": "Clean a phrase",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d3-meth-debug-isalnum",
+    "title": "Count letters and digits",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d3-meth-reverse-words",
+    "title": "Reverse word order",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d3-meth-word-counts",
+    "title": "Word frequency",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d3-meth-clean-mirror",
+    "title": "Clean, then compare",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-03",
+  "id": "d3-two-pointers",
+  "title": "Two pointers",
+  "summary": "left and right indexes walking toward each other in a while loop.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "d3-tp-trace-pairs",
+    "title": "Trace pointers on \"racecar\"",
+    "minutes": 2,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d3-tp-palindrome-plain",
+    "title": "Palindrome with pointers",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d3-tp-debug-step",
+    "title": "Fix the pointer walk",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d3-tp-swap-reverse",
+    "title": "Reverse a list in place",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d3-tp-mismatches",
+    "title": "Changes to make a palindrome",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d3-tp-reverse-of",
+    "title": "Is one the reverse of the other?",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-03",
+  "id": "d3-pointer-updates",
+  "title": "Move one pointer",
+  "summary": "On a sorted array, a comparison decides which single pointer moves.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "d3-pu-trace-sorted-sum",
+    "title": "Trace a sorted pair search",
+    "minutes": 2.5,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d3-pu-has-pair",
+    "title": "Sorted pair search",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d3-pu-debug-swapped",
+    "title": "Fix the pair finder",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d3-pu-count-pairs",
+    "title": "Count pairs with a sum",
+    "minutes": 7,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d3-pu-skip-spaces",
+    "title": "Palindrome, skipping spaces",
+    "minutes": 7,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d3-pu-count-below",
+    "title": "Count pairs below a target",
+    "minutes": 9,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-03",
+  "id": "d3-pointer-patterns",
+  "title": "Pointer patterns",
+  "summary": "Pointers in the same direction and across two sequences.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "d3-pp-subsequence",
+    "title": "Is it a subsequence?",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d3-pp-merge",
+    "title": "Merge two sorted lists",
+    "minutes": 8,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d3-pp-debug-common",
+    "title": "Fix the common values",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d3-pp-dedupe",
+    "title": "Dedupe a sorted list in place",
+    "minutes": 7,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-03",
+  "id": "d3-running-state",
+  "title": "Running min/max",
+  "summary": "Carry the best-so-far or min-so-far through one scan.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "d3-rs-trace-min",
+    "title": "Trace min so far",
+    "minutes": 2,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d3-rs-largest",
+    "title": "Largest by hand",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d3-rs-debug-init",
+    "title": "Fix min and max",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d3-rs-prefix-mins",
+    "title": "Prefix minimums",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d3-rs-records",
+    "title": "Count new records",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d3-rs-biggest-drop",
+    "title": "Biggest fall from a peak",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-03",
+  "id": "d3-valid-palindrome",
+  "title": "Valid Palindrome",
+  "summary": "Two pointers that skip junk and compare case-insensitively.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "cap-valid-palindrome",
+    "title": "Valid Palindrome",
+    "minutes": 25,
+    "kind": "code",
+    "capstone": true,
+    "problemId": "valid-palindrome"
+   },
+   {
+    "id": "d3-explain-valid-palindrome",
+    "title": "Explain Valid Palindrome",
+    "minutes": 5,
+    "kind": "explain",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d3-vp-debug-case",
+    "title": "Fix the mirror check: case",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d3-vp-debug-guard",
+    "title": "Fix the mirror check: junk",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d3-vp-one-deletion",
+    "title": "Palindrome after one deletion",
+    "minutes": 11,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-03",
+  "id": "d3-stock",
+  "title": "Stock profit",
+  "summary": "Min so far plus best so far in one pass.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "cap-best-time-stock",
+    "title": "Best Time to Buy and Sell Stock",
+    "minutes": 25,
+    "kind": "code",
+    "capstone": true,
+    "problemId": "best-time-stock"
+   },
+   {
+    "id": "d3-explain-stock",
+    "title": "Explain Stock profit",
+    "minutes": 5,
+    "kind": "explain",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d3-stock-debug-order",
+    "title": "Fix the profit calculator",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d3-stock-days",
+    "title": "Which days to trade?",
+    "minutes": 8,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-03",
+  "id": "d3-two-sum-ii",
+  "title": "Two Sum II",
+  "summary": "Sorted input lets two pointers replace the hash map.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "cap-two-sum-ii",
+    "title": "Two Sum II (sorted input)",
+    "minutes": 25,
+    "kind": "code",
+    "capstone": true,
+    "problemId": "two-sum-ii"
+   },
+   {
+    "id": "d3-explain-two-sum-ii",
+    "title": "Explain Two Sum II",
+    "minutes": 5,
+    "kind": "explain",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d3-tsii-debug-positions",
+    "title": "Fix the positions",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d3-tsii-optimize-diff",
+    "title": "Pair with a difference",
+    "minutes": 9,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d3-tsii-triplet",
+    "title": "Three numbers to a target",
+    "minutes": 11,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-03",
+  "id": "d3-cold",
+  "title": "Cold reps",
+  "summary": "Today’s primitives once more: a signature and nothing else.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "d3-cold-last-k",
+    "title": "Last k characters",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d3-cold-pair-exists",
+    "title": "Sorted pair, from a signature",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d3-cold-sell-today",
+    "title": "Profit if you sell today",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d3-cold-letter-pal",
+    "title": "Letters-only palindrome",
+    "minutes": 8,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-04",
+  "id": "d4-warmup",
+  "title": "Warm-up",
+  "summary": "Yesterday from a bare signature: slicing, running min, pointers, sets.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "d4-warm-reverse-each",
+    "title": "Reverse each word",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d4-warm-profit",
+    "title": "Best profit from memory",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d4-warm-palindrome",
+    "title": "Valid Palindrome from memory",
+    "minutes": 8,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d4-warm-first-repeat",
+    "title": "First repeated character",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d4-warm-two-sum-ii",
+    "title": "Two Sum II from memory",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-04",
+  "id": "d4-windows",
+  "title": "Windows",
+  "summary": "A window is s[left..right]; slide it by moving its edges.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "d4-win-trace-slices",
+    "title": "Trace fixed windows",
+    "minutes": 2,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d4-win-all-windows",
+    "title": "List every window",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d4-win-max-sum-k",
+    "title": "Slide a running sum",
+    "minutes": 7,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d4-win-debug-leaving",
+    "title": "Fix the smallest window sum",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d4-win-max-vowels",
+    "title": "Most vowels in k letters",
+    "minutes": 7,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d4-win-trace-variable",
+    "title": "Trace grow and shrink",
+    "minutes": 2.5,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d4-win-longest-under",
+    "title": "Longest run under a limit",
+    "minutes": 8,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d4-win-debug-shrink",
+    "title": "Fix the shortest window",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-04",
+  "id": "d4-window-state",
+  "title": "Window state",
+  "summary": "A set or count map that mirrors what is inside the window, updated on both edges.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "d4-ws-trace-set",
+    "title": "Trace a set window",
+    "minutes": 2.5,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d4-ws-remove-one",
+    "title": "Decrement and delete",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d4-ws-nearby-dup",
+    "title": "Duplicate within k",
+    "minutes": 7,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d4-ws-longest-run",
+    "title": "Longest run of one character",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d4-ws-debug-size",
+    "title": "Fix the rising run",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d4-ws-distinct-windows",
+    "title": "Distinct values per window",
+    "minutes": 11,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d4-ws-debug-no-del",
+    "title": "Fix the distinct counter",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d4-ws-anagram-window",
+    "title": "Hidden anagram",
+    "minutes": 11,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d4-ws-flip-zeros",
+    "title": "Longest ones with k flips",
+    "minutes": 10,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d4-ws-two-kinds",
+    "title": "Longest with at most two kinds",
+    "minutes": 10,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d4-ws-k-kinds",
+    "title": "At most k kinds",
+    "minutes": 8,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-04",
+  "id": "d4-longest-substring",
+  "title": "Longest Substring",
+  "summary": "Variable window with a set: no repeated characters inside.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "cap-longest-substring",
+    "title": "Longest Substring Without Repeating Characters",
+    "minutes": 30,
+    "kind": "code",
+    "capstone": true,
+    "problemId": "longest-substring"
+   },
+   {
+    "id": "d4-explain-longest-substring",
+    "title": "Explain Longest Substring",
+    "minutes": 5,
+    "kind": "explain",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d4-ls-debug-shrink",
+    "title": "Fix the unique window",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d4-ls-last-seen",
+    "title": "Jump with a last-seen map",
+    "minutes": 10,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d4-ls-break-jump",
+    "title": "Break the jump",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d4-ls-return-substring",
+    "title": "Return the substring itself",
+    "minutes": 7,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-04",
+  "id": "d4-stacks",
+  "title": "Stacks",
+  "summary": "A list as a stack: append pushes, pop removes the top, stack[-1] peeks.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "d4-st-trace",
+    "title": "Trace push and pop",
+    "minutes": 2,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d4-st-reverse",
+    "title": "Reverse with a stack",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d4-st-backspace",
+    "title": "Apply backspaces",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d4-st-debug-empty-pop",
+    "title": "Fix the star remover",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d4-st-adjacent-pairs",
+    "title": "Cancel adjacent twins",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d4-st-round-balanced",
+    "title": "Balanced round brackets",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d4-st-max-depth",
+    "title": "Deepest nesting",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d4-st-debug-postfix",
+    "title": "Fix the postfix calculator",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d4-st-simplify-path",
+    "title": "Simplify a file path",
+    "minutes": 7,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d4-st-next-greater",
+    "title": "Next greater value",
+    "minutes": 10,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-04",
+  "id": "d4-matching",
+  "title": "Matching pairs",
+  "summary": "A closer→opener dict plus the stack top decides every closer.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "d4-mp-trace",
+    "title": "Trace a closer lookup",
+    "minutes": 2.5,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d4-mp-one-line-lookup",
+    "title": "Look up the opener",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d4-mp-closes-top",
+    "title": "Does it close the top?",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d4-mp-first-bad",
+    "title": "First bad closer",
+    "minutes": 7,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d4-mp-pair-positions",
+    "title": "Where does each pair close?",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d4-mp-debug-peek",
+    "title": "Fix the widest pair",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d4-mp-min-to-fix",
+    "title": "Brackets to add",
+    "minutes": 7,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d4-mp-reorder",
+    "title": "Rebuild the bracket checker",
+    "minutes": 3,
+    "kind": "reorder",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-04",
+  "id": "d4-valid-parentheses",
+  "title": "Valid Parentheses",
+  "summary": "Stack of openers, closer→opener map, empty-stack checks.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "cap-valid-parentheses",
+    "title": "Valid Parentheses",
+    "minutes": 25,
+    "kind": "code",
+    "capstone": true,
+    "problemId": "valid-parentheses"
+   },
+   {
+    "id": "d4-explain-valid-parentheses",
+    "title": "Explain Valid Parentheses",
+    "minutes": 5,
+    "kind": "explain",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d4-vp-fix-bug",
+    "title": "Fix the bracket checker",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d4-vp-with-text",
+    "title": "Brackets inside code",
+    "minutes": 7,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d4-vp-debug-map-direction",
+    "title": "Fix the bracket map",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-04",
+  "id": "d4-cold",
+  "title": "Cold reps",
+  "summary": "Windows and stacks once more: a signature and nothing else.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "d4-cold-longest-unique",
+    "title": "Longest unique, from a signature",
+    "minutes": 8,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d4-cold-valid",
+    "title": "Brackets, from a signature",
+    "minutes": 8,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d4-cold-shortest",
+    "title": "Shortest window, from a signature",
+    "minutes": 8,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d4-cold-backspace-equal",
+    "title": "Same after backspaces?",
+    "minutes": 7,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d4-cold-avg-window",
+    "title": "Count good windows",
+    "minutes": 7,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-05",
+  "id": "d05-warmup",
+  "title": "Warm-up",
+  "summary": "Cold reps on sets, index maps, two pointers, windows and stacks.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "d05-warm-first-dup",
+    "title": "First repeated value",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d05-warm-two-sum",
+    "title": "Two Sum, cold",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d05-warm-pal",
+    "title": "Palindrome with two pointers",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d05-warm-window",
+    "title": "Best window of size k",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d05-warm-brackets",
+    "title": "Balanced brackets",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-05",
+  "id": "d05-while",
+  "title": "While + indexes",
+  "summary": "Loops that move an index on purpose and stop for a reason.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "d05-while-halve",
+    "title": "Halving trace",
+    "minutes": 1.5,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d05-while-halvings",
+    "title": "Count the halvings",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d05-while-dbg-bounds",
+    "title": "Debug: scan to the first negative",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d05-while-first-at-least",
+    "title": "First index at least target (slow way)",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-05",
+  "id": "d05-bs",
+  "title": "Binary search",
+  "summary": "Trace lo/hi/mid once, then write it, optimize into it, break it and test it.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "d05-bs-trace-found",
+    "title": "Trace: lo, hi, mid",
+    "minutes": 2,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d05-bs-body",
+    "title": "Write the loop",
+    "minutes": 7,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d05-bs-contains",
+    "title": "Contains, from a signature",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d05-bs-dbg-lt",
+    "title": "Debug: misses some targets",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d05-bs-optimize",
+    "title": "Optimize: linear scan → binary search",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d05-bs-dbg-index",
+    "title": "Debug: wrong thing compared",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d05-bs-write-test",
+    "title": "Write the test that catches it",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-05",
+  "id": "d05-variants",
+  "title": "Search variants",
+  "summary": "Same skeleton, different question: insertion point, first/last, search on an answer.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "d05-var-insert",
+    "title": "Search insert position",
+    "minutes": 7,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d05-var-first",
+    "title": "First occurrence",
+    "minutes": 8,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d05-var-last",
+    "title": "Modify: first → last occurrence",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d05-var-dbg-first",
+    "title": "Debug: not the first one",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d05-var-dbg-lower",
+    "title": "Debug: half-open lower bound",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d05-var-sqrt",
+    "title": "Search on the answer: floor sqrt",
+    "minutes": 9,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d05-var-first-true",
+    "title": "First True",
+    "minutes": 7,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-05",
+  "id": "d05-cap-search",
+  "title": "Capstone: Binary Search",
+  "summary": "Write it cold with edge cases, then explain it.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "cap-binary-search",
+    "title": "Binary Search",
+    "minutes": 25,
+    "kind": "code",
+    "capstone": true,
+    "problemId": "binary-search"
+   },
+   {
+    "id": "d05-explain-bs",
+    "title": "Explain binary search",
+    "minutes": 5,
+    "kind": "explain",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d05-fu-insert-position",
+    "title": "Follow-up: where would it go?",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-05",
+  "id": "d05-listnode",
+  "title": "ListNode + traversal",
+  "summary": "Nodes, references, and walking with while node.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "d05-ll-walk",
+    "title": "Walk the list",
+    "minutes": 1.5,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d05-ll-to-array",
+    "title": "Write list_to_array yourself",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d05-ll-alias",
+    "title": "Names are references",
+    "minutes": 2,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d05-ll-sum",
+    "title": "Sum a list",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d05-ll-dbg-max",
+    "title": "Debug: largest value",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d05-ll-translate",
+    "title": "Translate: Python list → linked list",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d05-ll-kth",
+    "title": "Value at position k",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d05-ll-last",
+    "title": "Last value",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d05-ll-middle",
+    "title": "Middle value",
+    "minutes": 8,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-05",
+  "id": "d05-rewire",
+  "title": "Pointer rewiring",
+  "summary": "Change .next safely: save what you need before you overwrite it.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "d05-rw-insert-after",
+    "title": "Insert after head",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d05-rw-remove-second",
+    "title": "Skip a node",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d05-rw-dbg-insert-order",
+    "title": "Debug: insert after a value",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d05-rw-reverse-trace",
+    "title": "Trace a reversal",
+    "minutes": 2.5,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d05-rw-finish-reverse",
+    "title": "Finish: the reversal loop",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d05-rw-dbg-lose-next",
+    "title": "Debug: reversal loses nodes",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d05-rw-reversed-copy",
+    "title": "Reversed copy (push to front)",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d05-rw-dbg-return",
+    "title": "Debug: reversal returns nothing",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d05-rw-reorder",
+    "title": "Reassemble reversal",
+    "minutes": 3,
+    "kind": "reorder",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-05",
+  "id": "d05-cap-reverse",
+  "title": "Capstone: Reverse Linked List",
+  "summary": "prev/curr/nxt from memory, then explain it.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "cap-reverse-linked-list",
+    "title": "Reverse Linked List",
+    "minutes": 25,
+    "kind": "code",
+    "capstone": true,
+    "problemId": "reverse-linked-list"
+   },
+   {
+    "id": "d05-explain-reverse",
+    "title": "Explain reversal",
+    "minutes": 5,
+    "kind": "explain",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-05",
+  "id": "d05-dummy",
+  "title": "Dummy head",
+  "summary": "Build result lists with dummy + tail, then merge.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "d05-dummy-trace",
+    "title": "dummy + tail",
+    "minutes": 1.5,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d05-dummy-from-values",
+    "title": "Write build_list yourself",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d05-dummy-dbg-return",
+    "title": "Debug: an extra node",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d05-dummy-evens",
+    "title": "Keep the evens",
+    "minutes": 7,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d05-dummy-remove",
+    "title": "Remove every x (in place)",
+    "minutes": 10,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d05-dummy-merge-arrays",
+    "title": "Merge two sorted Python lists",
+    "minutes": 8,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d05-dummy-dbg-leftover",
+    "title": "Debug: merge drops nodes",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-05",
+  "id": "d05-cap-merge",
+  "title": "Capstone: Merge Two Lists",
+  "summary": "Dummy head + two pointers on nodes, then explain it.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "cap-merge-two-lists",
+    "title": "Merge Two Sorted Lists",
+    "minutes": 30,
+    "kind": "code",
+    "capstone": true,
+    "problemId": "merge-two-lists"
+   },
+   {
+    "id": "d05-explain-merge",
+    "title": "Explain the merge",
+    "minutes": 5,
+    "kind": "explain",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-05",
+  "id": "d05-cold",
+  "title": "Cold reps",
+  "summary": "No scaffolding: today’s three primitives from a bare signature.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "d05-cold-index-of",
+    "title": "Binary search, cold",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d05-cold-reverse",
+    "title": "Reverse, cold",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d05-cold-append",
+    "title": "Append to the end",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d05-cold-first-at-least",
+    "title": "Lower bound, cold",
+    "minutes": 7,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d05-cold-merge",
+    "title": "Merge, cold",
+    "minutes": 8,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-06",
+  "id": "d06-warmup",
+  "title": "Warm-up",
+  "summary": "Cold reps on yesterday’s search and pointers, plus maps, running state and windows.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "d06-warm-bs",
+    "title": "Binary search, cold",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d06-warm-reverse",
+    "title": "Reverse a linked list, cold",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d06-warm-from-values",
+    "title": "Dummy head, cold",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d06-warm-anagram",
+    "title": "Same letters (frequency map)",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d06-warm-profit",
+    "title": "Best single trade (running min)",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d06-warm-unique-window",
+    "title": "Longest run without repeats",
+    "minutes": 8,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-06",
+  "id": "d06-functions",
+  "title": "Functions",
+  "summary": "Return values, mutation vs rebinding, inner helpers: the parts recursion is made of.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "d06-fn-print-vs-return",
+    "title": "print is not return",
+    "minutes": 1.5,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d06-fn-tuple",
+    "title": "Return two things",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d06-fn-dbg-return",
+    "title": "Debug: the average disappears",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d06-fn-params",
+    "title": "What a parameter can change",
+    "minutes": 2,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d06-fn-helper",
+    "title": "Inner helper + shared list",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-06",
+  "id": "d06-recursion",
+  "title": "Recursion",
+  "summary": "Base case, smaller call, return the combination. Write it, break it, fix it.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "d06-rec-fact-stack",
+    "title": "Call stack: factorial",
+    "minutes": 2.5,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d06-rec-sum-to",
+    "title": "Sum 1..n recursively",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d06-rec-power",
+    "title": "Power, recursively",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d06-rec-dbg-base",
+    "title": "Debug: factorial blows up",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d06-rec-dbg-no-return",
+    "title": "Debug: the result vanishes",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d06-rec-index-param",
+    "title": "Recursion with an index parameter",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d06-rec-fib",
+    "title": "Two recursive calls: fib",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d06-rec-reverse-str",
+    "title": "Reverse a string recursively",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d06-rec-list-len",
+    "title": "Linked list length, recursively",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d06-rec-translate",
+    "title": "Translate: loop → recursion",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d06-rec-pal",
+    "title": "Palindrome, recursively",
+    "minutes": 7,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-06",
+  "id": "d06-treenode",
+  "title": "TreeNode",
+  "summary": "val, left, right, and None where a child is missing.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "d06-tn-level-order",
+    "title": "Read a level-order list",
+    "minutes": 2,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d06-tn-is-leaf",
+    "title": "is_leaf",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d06-tn-children-sum",
+    "title": "Sum the children",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d06-tn-dbg-none",
+    "title": "Debug: left leaf check",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-06",
+  "id": "d06-dfs",
+  "title": "Tree DFS",
+  "summary": "Visit, return and combine children’s answers, carry state down, and fix the classic bugs.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "d06-dfs-pre-trace",
+    "title": "Preorder trace",
+    "minutes": 2,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d06-dfs-preorder",
+    "title": "Preorder into a list",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d06-dfs-count",
+    "title": "Count nodes",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d06-dfs-modify-count",
+    "title": "Modify: count only big values",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d06-dfs-dbg-ignore",
+    "title": "Debug: tree sum",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d06-dfs-max",
+    "title": "Largest value",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d06-dfs-leaves",
+    "title": "Count leaves",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d06-dfs-dbg-leaf-base",
+    "title": "Debug: leaf values",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d06-dfs-contains",
+    "title": "Search the tree",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d06-dfs-inorder-return",
+    "title": "Inorder by returning lists",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d06-dfs-at-depth",
+    "title": "Values at depth d",
+    "minutes": 8,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d06-dfs-path-sum",
+    "title": "Root-to-leaf sum",
+    "minutes": 10,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d06-dfs-dbg-path",
+    "title": "Debug: path sum stops too early",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d06-dfs-translate-stack",
+    "title": "Translate: recursion → explicit stack",
+    "minutes": 8,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d06-dfs-dbg-depth",
+    "title": "Debug: height is too small",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-06",
+  "id": "d06-cap-depth",
+  "title": "Capstone: Max Depth",
+  "summary": "Postorder combine from a bare signature, then explain it.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "cap-max-depth",
+    "title": "Maximum Depth of Binary Tree",
+    "minutes": 25,
+    "kind": "code",
+    "capstone": true,
+    "problemId": "max-depth"
+   },
+   {
+    "id": "d06-explain-depth",
+    "title": "Explain max depth",
+    "minutes": 5,
+    "kind": "explain",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d06-fu-min-depth",
+    "title": "Follow-up: shallowest leaf",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-06",
+  "id": "d06-pairs",
+  "title": "Two trees at once",
+  "summary": "Recurse on a pair of nodes: base cases for None on either side, then values.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "d06-pair-lists",
+    "title": "Equal linked lists, recursively",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d06-pair-dbg-order",
+    "title": "Debug: same shape",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d06-pair-bigger",
+    "title": "Every node bigger?",
+    "minutes": 7,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d06-pair-dbg-values",
+    "title": "Debug: values match, trees don’t",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d06-pair-mirror",
+    "title": "Mirror images",
+    "minutes": 7,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-06",
+  "id": "d06-cap-same",
+  "title": "Capstone: Same Tree",
+  "summary": "Pair recursion from a bare signature, then explain it.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "cap-same-tree",
+    "title": "Same Tree",
+    "minutes": 25,
+    "kind": "code",
+    "capstone": true,
+    "problemId": "same-tree"
+   },
+   {
+    "id": "d06-explain-same",
+    "title": "Explain Same Tree",
+    "minutes": 5,
+    "kind": "explain",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-06",
+  "id": "d06-mutate",
+  "title": "Changing trees",
+  "summary": "Swap children safely, mutate in place, build new trees, and return the root.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "d06-mut-swap",
+    "title": "Tuple swap",
+    "minutes": 1.5,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d06-mut-dbg-swap",
+    "title": "Debug: swap the root’s children",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d06-mut-add-one",
+    "title": "Add one everywhere",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d06-mut-copy",
+    "title": "Copy a tree",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d06-mut-dbg-mirror",
+    "title": "Debug: mirrored copy",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-06",
+  "id": "d06-cap-invert",
+  "title": "Capstone: Invert Tree",
+  "summary": "Swap at every node, then explain it.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "cap-invert-tree",
+    "title": "Invert Binary Tree",
+    "minutes": 25,
+    "kind": "code",
+    "capstone": true,
+    "problemId": "invert-tree"
+   },
+   {
+    "id": "d06-explain-invert",
+    "title": "Explain inversion",
+    "minutes": 5,
+    "kind": "explain",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-06",
+  "id": "d06-cold",
+  "title": "Cold reps",
+  "summary": "No scaffolding: recursion and tree DFS from a bare signature.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "d06-cold-digits",
+    "title": "Digit sum, recursively",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d06-cold-tree-sum",
+    "title": "Tree sum, cold",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d06-cold-postorder",
+    "title": "Postorder, cold",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d06-cold-height",
+    "title": "Height, cold",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d06-cold-same",
+    "title": "Same tree, cold",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d06-cold-mirror",
+    "title": "Mirror, cold",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-07",
+  "id": "o7-warmup",
+  "title": "Warm-up",
+  "summary": "Cold reps on dicts, two pointers, stacks and tree DFS.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "o7-wu-word-counts",
+    "title": "Count words",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o7-wu-pair-sorted",
+    "title": "Pair in sorted list",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o7-wu-balanced",
+    "title": "Balanced brackets",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o7-wu-max-depth",
+    "title": "Tree depth (DFS)",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-07",
+  "id": "o7-deque",
+  "title": "deque",
+  "summary": "A FIFO queue: append on the right, popleft from the left, both O(1).",
+  "gate": false,
+  "reps": [
+   {
+    "id": "o7-dq-why-not-pop0",
+    "title": "Why not list.pop(0)?",
+    "minutes": 1,
+    "kind": "choice",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o7-dq-trace-basic",
+    "title": "Trace append / popleft",
+    "minutes": 1.5,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o7-dq-drain",
+    "title": "Drain a queue",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o7-dq-dbg-pop-end",
+    "title": "Debug: wrong end of the queue",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o7-dq-recent",
+    "title": "Recent events counter",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o7-dq-rotate-elim",
+    "title": "Pass and eliminate",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-07",
+  "id": "o7-grids",
+  "title": "Grids",
+  "summary": "Nested lists: grid[r][c], rows = len(grid), cols = len(grid[0]).",
+  "gate": false,
+  "reps": [
+   {
+    "id": "o7-g-trace-dims",
+    "title": "Rows, cols, cells",
+    "minutes": 1.5,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o7-g-count",
+    "title": "Count a value",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o7-g-dbg-dims",
+    "title": "Debug: row maximums",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o7-g-find-all",
+    "title": "Coordinates of a value",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o7-g-dbg-alias",
+    "title": "Debug: identity grid",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o7-g-dbg-strings",
+    "title": "Debug: count the land",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-07",
+  "id": "o7-neighbors",
+  "title": "Neighbors",
+  "summary": "A directions list plus a bounds check generates every valid neighbor.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "o7-n-trace",
+    "title": "Trace a neighbor loop",
+    "minutes": 2,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o7-n-list",
+    "title": "List the neighbors",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o7-n-land",
+    "title": "Count land neighbors",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o7-n-dbg-bounds",
+    "title": "Debug: neighbors off the edge",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o7-n-dbg-dirs",
+    "title": "Debug: a missing direction",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o7-n-wt-wrap",
+    "title": "Break it: negative indexes",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o7-n-perimeter",
+    "title": "Island perimeter",
+    "minutes": 9,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-07",
+  "id": "o7-grid-bfs",
+  "title": "Grid BFS",
+  "summary": "Queue + directions + bounds + visited set, marked when enqueuing.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "o7-v-trace-order",
+    "title": "BFS visit order",
+    "minutes": 3,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o7-v-finish",
+    "title": "Finish the grid BFS",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o7-v-reachable-strings",
+    "title": "Reachable land, from scratch",
+    "minutes": 9,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o7-v-dbg-late-mark",
+    "title": "Debug: cells visited twice",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o7-v-dbg-tuple",
+    "title": "Debug: what goes in visited",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o7-v-shortest",
+    "title": "Fewest steps to the corner",
+    "minutes": 12,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o7-v-flood-fill",
+    "title": "Flood fill (BFS)",
+    "minutes": 11,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o7-v-dfs-stack",
+    "title": "Translate: queue to stack",
+    "minutes": 10,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o7-v-multi-source",
+    "title": "Distance to nearest exit",
+    "minutes": 11,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-07",
+  "id": "o7-tree-bfs",
+  "title": "BFS by level",
+  "summary": "Snapshot size = len(q) and pop exactly that many to handle one level.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "o7-t-trace-levels",
+    "title": "Trace levels",
+    "minutes": 2,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o7-t-flat",
+    "title": "BFS values",
+    "minutes": 9,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o7-t-dbg-none-child",
+    "title": "Debug: counting leaves",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o7-t-depth",
+    "title": "Depth by BFS",
+    "minutes": 10,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o7-t-sums",
+    "title": "Level sums",
+    "minutes": 11,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o7-t-dbg-snapshot",
+    "title": "Debug: levels run together",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o7-t-right-view",
+    "title": "Right side view",
+    "minutes": 12,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o7-t-min-depth",
+    "title": "Shallowest leaf",
+    "minutes": 11,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-07",
+  "id": "o7-cap-level-order",
+  "title": "Level Order",
+  "summary": "Capstone: group a binary tree by level, then explain it.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "cap-level-order",
+    "title": "Level order traversal",
+    "minutes": 25,
+    "kind": "code",
+    "capstone": true,
+    "problemId": "level-order"
+   },
+   {
+    "id": "o7-explain-level-order",
+    "title": "Explain level order",
+    "minutes": 5,
+    "kind": "explain",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o7-fu-zigzag",
+    "title": "Follow-up: zigzag levels",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-07",
+  "id": "o7-islands",
+  "title": "Number of Islands",
+  "summary": "Count connected regions: scan every cell, start a traversal at each unvisited land cell.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "o7-i-sink-dfs",
+    "title": "Sink an island (DFS)",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o7-i-sink-iter",
+    "title": "Translate: recursion to a stack",
+    "minutes": 12,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "cap-number-of-islands",
+    "title": "Number of islands",
+    "minutes": 30,
+    "kind": "code",
+    "capstone": true,
+    "problemId": "number-of-islands"
+   },
+   {
+    "id": "o7-explain-islands",
+    "title": "Explain number of islands",
+    "minutes": 5,
+    "kind": "explain",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o7-i-dbg-count-every",
+    "title": "Debug: too many islands",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o7-i-max-area",
+    "title": "Largest island area",
+    "minutes": 14,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-07",
+  "id": "o7-cold",
+  "title": "Cold reps",
+  "summary": "Today's primitives from a bare signature.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "o7-c-neighbors",
+    "title": "Neighbors from memory",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o7-c-last-level",
+    "title": "Deepest level",
+    "minutes": 12,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o7-c-blobs",
+    "title": "Count blobs in strings",
+    "minutes": 14,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-08",
+  "id": "o8-warmup",
+  "title": "Warm-up",
+  "summary": "Cold reps on grids, windows, linked lists and tree DFS.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "o8-wu-open-neighbors",
+    "title": "Open neighbors",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o8-wu-longest-unique",
+    "title": "Longest run without repeats",
+    "minutes": 7,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o8-wu-reverse-list",
+    "title": "Reverse a linked list",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o8-wu-path-sum",
+    "title": "Root-to-leaf sum",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-08",
+  "id": "o8-adjacency",
+  "title": "Adjacency lists",
+  "summary": "Turn an edge list into a dict of neighbor lists, including nodes with no edges.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "o8-a-trace-build",
+    "title": "Trace a build",
+    "minutes": 2,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o8-a-build-undirected",
+    "title": "Build undirected",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o8-a-dbg-one-way",
+    "title": "Debug: friends of a node",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o8-a-build-directed",
+    "title": "Build directed",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o8-a-dbg-shared-list",
+    "title": "Debug: everyone has the same friends",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o8-a-in-degree",
+    "title": "In-degrees",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o8-a-matrix",
+    "title": "Matrix to adjacency list",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-08",
+  "id": "o8-dfs",
+  "title": "Graph DFS",
+  "summary": "Recursive and stack DFS over an adjacency list, with a visited set.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "o8-d-trace-recursive",
+    "title": "Trace recursive DFS",
+    "minutes": 2.5,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o8-d-order",
+    "title": "DFS order (recursive)",
+    "minutes": 8,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o8-v-fix-bounce",
+    "title": "Debug: the bouncing DFS",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o8-d-stack",
+    "title": "Reachable set (stack)",
+    "minutes": 8,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o8-d-translate",
+    "title": "Translate: stack to recursion",
+    "minutes": 7,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o8-v-optimize-list",
+    "title": "Optimize: visited as a list",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o8-d-directed-reach",
+    "title": "One-way reachability",
+    "minutes": 11,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o8-d-dbg-directed-both",
+    "title": "Debug: downstream count",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o8-d-path",
+    "title": "Return an actual path",
+    "minutes": 9,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-08",
+  "id": "o8-bfs",
+  "title": "Graph BFS",
+  "summary": "Queue-based traversal over an adjacency list; the tool for fewest edges.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "o8-b-order",
+    "title": "BFS order from scratch",
+    "minutes": 9,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o8-b-dbg-pop-end",
+    "title": "Debug: nearest first?",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o8-b-distances",
+    "title": "Distance to every node",
+    "minutes": 8,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o8-b-dbg-late-mark",
+    "title": "Debug: distances that grow",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o8-b-shortest",
+    "title": "Fewest edges between two nodes",
+    "minutes": 13,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-08",
+  "id": "o8-cap-path-exists",
+  "title": "Path Exists",
+  "summary": "Capstone: build the graph, traverse from the source, answer reachability.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "cap-path-exists",
+    "title": "Is there a path?",
+    "minutes": 25,
+    "kind": "code",
+    "capstone": true,
+    "problemId": "path-exists"
+   },
+   {
+    "id": "o8-explain-path-exists",
+    "title": "Explain path exists",
+    "minutes": 5,
+    "kind": "explain",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o8-fu-fewest-hops",
+    "title": "Follow-up: fewest hops",
+    "minutes": 7,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-08",
+  "id": "o8-components",
+  "title": "Components",
+  "summary": "Count groups: start a traversal from every node not yet visited.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "o8-c-trace",
+    "title": "Trace component starts",
+    "minutes": 2.5,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o8-c-count",
+    "title": "Count components",
+    "minutes": 14,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o8-c-dbg-visited-reset",
+    "title": "Debug: every node is its own group",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o8-c-dbg-missing-isolated",
+    "title": "Debug: the lonely nodes",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-08",
+  "id": "o8-cap-provinces",
+  "title": "Number of Provinces",
+  "summary": "Capstone: components when the graph arrives as a matrix.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "cap-number-of-provinces",
+    "title": "Count the provinces",
+    "minutes": 25,
+    "kind": "code",
+    "capstone": true,
+    "problemId": "number-of-provinces"
+   },
+   {
+    "id": "o8-explain-provinces",
+    "title": "Explain provinces",
+    "minutes": 5,
+    "kind": "explain",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-08",
+  "id": "o8-cycles",
+  "title": "Directed cycles",
+  "summary": "Three states: unvisited (0), on the current path (1), done (2). Reaching a 1 means a cycle.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "o8-y-trace-states",
+    "title": "Trace three states",
+    "minutes": 3,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o8-y-has-cycle",
+    "title": "Directed cycle from edges",
+    "minutes": 14,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o8-y-dbg-no-visiting",
+    "title": "Debug: the cycle nobody saw",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o8-y-dbg-never-done",
+    "title": "Debug: cycles that are not there",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o8-y-wt-diamond",
+    "title": "Break it: the naive detector",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o8-y-reachable-cycle",
+    "title": "Can this start loop forever?",
+    "minutes": 11,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o8-y-kahn-write",
+    "title": "Kahn's algorithm",
+    "minutes": 15,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-08",
+  "id": "o8-cap-course-schedule",
+  "title": "Course Schedule",
+  "summary": "Capstone: prerequisites form a directed graph; finishing is possible iff there is no cycle.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "cap-course-schedule",
+    "title": "Can every course be finished?",
+    "minutes": 30,
+    "kind": "code",
+    "capstone": true,
+    "problemId": "course-schedule"
+   },
+   {
+    "id": "o8-explain-course-schedule",
+    "title": "Explain course schedule",
+    "minutes": 5,
+    "kind": "explain",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-08",
+  "id": "o8-cold",
+  "title": "Cold reps",
+  "summary": "Today's graph primitives from a bare signature.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "o8-cold-build",
+    "title": "Adjacency from memory",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o8-cold-components",
+    "title": "Components, cold",
+    "minutes": 12,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o8-cold-cycle",
+    "title": "Cycle check, cold",
+    "minutes": 10,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o8-cold-grid-steps",
+    "title": "Grid BFS, a day later",
+    "minutes": 13,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-09",
+  "id": "d9-warmup",
+  "title": "Warm-up",
+  "summary": "Cold reps on dicts, pointers, windows, binary search, trees and graphs.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "d9-warm-word-counts",
+    "title": "Warm-up: count words",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d9-warm-sorted-pair",
+    "title": "Warm-up: pair in a sorted list",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d9-warm-window-sum",
+    "title": "Warm-up: best window of size k",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d9-warm-lower-bound",
+    "title": "Warm-up: first index at least target",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d9-warm-max-depth",
+    "title": "Warm-up: tree depth",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d9-warm-components",
+    "title": "Warm-up: count components",
+    "minutes": 8,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-09",
+  "id": "d9-sorting",
+  "title": "Sorting",
+  "summary": "sorted() vs .sort(), reverse=True, and the bugs they cause.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "d9-sort-returns-none",
+    "title": "What does .sort() return?",
+    "minutes": 1.5,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d9-sort-inplace-desc",
+    "title": "Sort in place, largest first",
+    "minutes": 1.5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d9-sort-second-largest",
+    "title": "Second largest distinct value",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d9-sort-median",
+    "title": "Median without touching the input",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d9-sort-min-gap",
+    "title": "Smallest gap between two values",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d9-sort-dbg-assign-none",
+    "title": "Debug: consecutive run check",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d9-sort-dbg-discarded",
+    "title": "Debug: duplicate check by sorting",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d9-sort-group-anagrams",
+    "title": "Group anagrams by sorted letters",
+    "minutes": 7,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-09",
+  "id": "d9-keys",
+  "title": "Sort keys",
+  "summary": "key=lambda by field, by tuple, named key functions.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "d9-key-len-stable",
+    "title": "Sorting by length, with ties",
+    "minutes": 2,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d9-sort-tuples",
+    "title": "How tuples sort",
+    "minutes": 1.5,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d9-key-age-desc",
+    "title": "Oldest first, in place",
+    "minutes": 2.5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d9-key-len-then-alpha",
+    "title": "Shortest words first, ties alphabetical",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d9-key-records",
+    "title": "Names by age, then name",
+    "minutes": 3.5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d9-key-distance",
+    "title": "Points by distance, with a named key",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d9-key-dict-by-value",
+    "title": "Dict keys by value, highest first",
+    "minutes": 3.5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d9-key-dbg-wrong-index",
+    "title": "Debug: rank by score",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d9-key-dbg-reverse-ties",
+    "title": "Debug: leaderboard ties",
+    "minutes": 3.5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-09",
+  "id": "d9-freq-sort",
+  "title": "Frequency + sort",
+  "summary": "Count with a dict, then order the counts.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "d9-freq-most-common",
+    "title": "Most common character",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d9-freq-topk-by-sort",
+    "title": "Top k by sorting the counts",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d9-freq-dbg-pairs",
+    "title": "Debug: most frequent values",
+    "minutes": 3.5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d9-freq-sort-chars",
+    "title": "Rebuild a string by frequency",
+    "minutes": 7,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-09",
+  "id": "d9-heapq",
+  "title": "heapq",
+  "summary": "heappush, heappop, heapify, heap[0], tuples in heaps.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "d9-heap-push-trace",
+    "title": "Pushing onto a heap",
+    "minutes": 1.5,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d9-heap-smallest-k",
+    "title": "k smallest by popping",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d9-heap-sort",
+    "title": "Heap sort with push and pop",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d9-heap-ropes",
+    "title": "Join ropes as cheaply as possible",
+    "minutes": 7,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d9-heap-run-order",
+    "title": "Run tasks by priority",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d9-heap-dbg-slice",
+    "title": "Debug: three smallest",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-09",
+  "id": "d9-max-heap",
+  "title": "Max-heap",
+  "summary": "Negate on the way in and out.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "d9-maxheap-trace",
+    "title": "Negation trace",
+    "minutes": 2,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d9-maxheap-k-largest-desc",
+    "title": "k largest, biggest first",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d9-maxheap-dbg-no-negate",
+    "title": "Debug: heaviest items",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d9-maxheap-smash",
+    "title": "Smash the two heaviest",
+    "minutes": 9,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-09",
+  "id": "d9-top-k",
+  "title": "Top-k",
+  "summary": "Size-k heaps, then the k-th largest and top-k frequent capstones.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "d9-topk-trace",
+    "title": "Size-k heap trace",
+    "minutes": 2,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d9-topk-kth-by-sort",
+    "title": "k-th largest, the sorting way",
+    "minutes": 2,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d9-topk-optimize",
+    "title": "Optimize: sort everything → size-k heap",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d9-topk-dbg-no-trim",
+    "title": "Debug: sum of the k largest",
+    "minutes": 3.5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d9-topk-closest",
+    "title": "k closest points",
+    "minutes": 10,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d9-topk-keys-by-count",
+    "title": "Top k keys from a count dict",
+    "minutes": 7,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d9-topk-dbg-tuple-order",
+    "title": "Debug: busiest users",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "cap-kth-largest",
+    "title": "K-th largest value",
+    "minutes": 25,
+    "kind": "code",
+    "capstone": true,
+    "problemId": "kth-largest"
+   },
+   {
+    "id": "d9-explain-kth-largest",
+    "title": "Explain: k-th largest",
+    "minutes": 5,
+    "kind": "explain",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "cap-top-k-frequent",
+    "title": "Most frequent k values",
+    "minutes": 30,
+    "kind": "code",
+    "capstone": true,
+    "problemId": "top-k-frequent"
+   },
+   {
+    "id": "d9-explain-top-k-frequent",
+    "title": "Explain: top k frequent",
+    "minutes": 5,
+    "kind": "explain",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-09",
+  "id": "d9-intervals",
+  "title": "Intervals",
+  "summary": "Overlap test, the merge loop, its three classic bugs, then merge intervals.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "d9-iv-overlaps-line",
+    "title": "Overlap test in one line",
+    "minutes": 2,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d9-iv-intersection",
+    "title": "Where two ranges overlap",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d9-iv-merge-trace",
+    "title": "Trace the merge loop",
+    "minutes": 3,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d9-iv-merge-sorted",
+    "title": "Merge, input already sorted",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d9-iv-dbg-overwrite-end",
+    "title": "Debug: nested ranges",
+    "minutes": 3.5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d9-iv-dbg-strict",
+    "title": "Debug: back-to-back bookings",
+    "minutes": 3.5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d9-iv-dbg-unsorted",
+    "title": "Debug: ranges in any order",
+    "minutes": 3.5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d9-iv-can-attend",
+    "title": "Can one person attend every meeting?",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d9-iv-covered-length",
+    "title": "Total length covered",
+    "minutes": 8,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d9-iv-write-test",
+    "title": "Write the tests that catch merge bugs",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "cap-merge-intervals",
+    "title": "Merge overlapping ranges",
+    "minutes": 28,
+    "kind": "code",
+    "capstone": true,
+    "problemId": "merge-intervals"
+   },
+   {
+    "id": "d9-explain-merge-intervals",
+    "title": "Explain: merge intervals",
+    "minutes": 5,
+    "kind": "explain",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d9-fu-touching-apart",
+    "title": "Follow-up: touching stays apart",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-09",
+  "id": "d9-cold",
+  "title": "Cold reps",
+  "summary": "From a signature, no scaffolding.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "d9-cold-sort-second-desc",
+    "title": "Cold: rank names by points",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d9-cold-kth-smallest",
+    "title": "Cold: k-th smallest with a heap",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d9-cold-any-overlap",
+    "title": "Cold: any overlap?",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d9-cold-top-words",
+    "title": "Cold: top k words, ordered",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d9-cold-last-rock",
+    "title": "Cold: smash the two heaviest",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-10",
+  "id": "d10-warmup",
+  "title": "Warm-up",
+  "summary": "Cold reps on sorting, heaps, intervals, trees, grids and sets.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "d10-warm-sort-by-end",
+    "title": "Warm-up: sort by end, then start",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d10-warm-k-largest-sum",
+    "title": "Warm-up: sum of the k largest",
+    "minutes": 7,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d10-warm-merge-count",
+    "title": "Warm-up: how many blocks after merging?",
+    "minutes": 7,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d10-warm-tree-sum",
+    "title": "Warm-up: sum a tree",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d10-warm-grid-steps",
+    "title": "Warm-up: fewest steps through a grid",
+    "minutes": 11,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d10-warm-first-repeat",
+    "title": "Warm-up: first repeated value",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-10",
+  "id": "d10-decisions",
+  "title": "Decision trees",
+  "summary": "Include / exclude recursion with the state passed as parameters.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "d10-dt-call-order",
+    "title": "Down and back up",
+    "minutes": 2,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d10-dt-include-exclude",
+    "title": "Include first, then exclude",
+    "minutes": 2.5,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d10-dt-all-sums",
+    "title": "Every subset sum",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d10-dt-bit-strings",
+    "title": "All bit strings of length n",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d10-dt-dbg-base",
+    "title": "Debug: count subsets hitting a target",
+    "minutes": 3.5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d10-dt-can-reach",
+    "title": "Can some subset reach the target?",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d10-dt-signs",
+    "title": "Plus or minus each number",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-10",
+  "id": "d10-path",
+  "title": "Path state",
+  "summary": "One shared path: append, recurse, pop, and copy with path[:].",
+  "gate": false,
+  "reps": [
+   {
+    "id": "d10-ps-copy-trace",
+    "title": "One shared path",
+    "minutes": 2,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d10-ps-subsequences-finish",
+    "title": "Finish: choose, explore, un-choose",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d10-ps-dice",
+    "title": "Every roll sequence",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d10-ps-dbg-alias",
+    "title": "Debug: every 0/1 list",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d10-ps-combos",
+    "title": "Groups of exactly k",
+    "minutes": 9,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d10-ps-dbg-no-pop",
+    "title": "Debug: increasing picks from 1..n",
+    "minutes": 3.5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d10-ps-letter-combos",
+    "title": "Keypad letter combinations",
+    "minutes": 9,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d10-ps-orderings",
+    "title": "Every ordering",
+    "minutes": 12,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d10-ps-dbg-used",
+    "title": "Debug: arrangements",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d10-ps-tree-paths",
+    "title": "Root-to-leaf paths",
+    "minutes": 9,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-10",
+  "id": "d10-subsets",
+  "title": "Subsets",
+  "summary": "Two subset styles, a test that catches the classic bugs, then the subsets capstone.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "d10-sub-loop-style",
+    "title": "Subsets, loop style",
+    "minutes": 7,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d10-sub-target-subsets",
+    "title": "Subsets that hit a sum",
+    "minutes": 8,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d10-sub-write-test",
+    "title": "Write the test that catches subset bugs",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "cap-subsets",
+    "title": "Every subset",
+    "minutes": 25,
+    "kind": "code",
+    "capstone": true,
+    "problemId": "subsets"
+   },
+   {
+    "id": "d10-explain-subsets",
+    "title": "Explain: subsets",
+    "minutes": 5,
+    "kind": "explain",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-10",
+  "id": "d10-recurrence",
+  "title": "Recurrences",
+  "summary": "Answers in terms of smaller answers, and getting the base cases right.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "d10-rec-fib-calls",
+    "title": "How many calls?",
+    "minutes": 2.5,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d10-rec-fib-naive",
+    "title": "Fibonacci, plain recursion",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d10-rec-three-steps",
+    "title": "Steps of 1, 2 or 3",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d10-rec-grid-paths",
+    "title": "Paths through a grid",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d10-rec-dbg-base",
+    "title": "Debug: stair count base cases",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-10",
+  "id": "d10-memo",
+  "title": "Memoization",
+  "summary": "Check, compute, store with a dict; where the dict lives; the key; functools.cache.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "d10-memo-trace",
+    "title": "What ends up in the memo?",
+    "minutes": 2,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d10-memo-optimize",
+    "title": "Optimize: add a memo",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d10-memo-fib",
+    "title": "Memoized Fibonacci",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d10-memo-dbg-inside",
+    "title": "Debug: the memo that never remembers",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d10-memo-grid",
+    "title": "Memoized grid paths",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d10-memo-dbg-key",
+    "title": "Debug: memoized paths with a bad cache",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d10-memo-cache-ways3",
+    "title": "@cache on 1/2/3 steps",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-10",
+  "id": "d10-bottom-up",
+  "title": "Bottom-up DP",
+  "summary": "Memo to table, then climbing stairs.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "d10-bu-trace",
+    "title": "Fill the table",
+    "minutes": 2,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d10-bu-translate",
+    "title": "Translate: memo → table",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d10-bu-three-steps",
+    "title": "Table for 1/2/3 steps",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d10-bu-any-steps",
+    "title": "Any set of step sizes",
+    "minutes": 7,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d10-bu-dbg-range",
+    "title": "Debug: domino tilings",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d10-bu-min-cost",
+    "title": "Cheapest climb",
+    "minutes": 10,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "cap-climbing-stairs",
+    "title": "Ways up a staircase",
+    "minutes": 20,
+    "kind": "code",
+    "capstone": true,
+    "problemId": "climbing-stairs"
+   },
+   {
+    "id": "d10-explain-climbing-stairs",
+    "title": "Explain: climbing stairs",
+    "minutes": 5,
+    "kind": "explain",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d10-fu-broken-steps",
+    "title": "Follow-up: broken steps",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-10",
+  "id": "d10-rolling",
+  "title": "Rolling state",
+  "summary": "Two variables instead of a list, take-or-skip three ways, then house robber.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "d10-roll-trace",
+    "title": "Two variables marching forward",
+    "minutes": 2,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d10-roll-fib",
+    "title": "Fibonacci in O(1) space",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d10-roll-dbg-two-lines",
+    "title": "Debug: rolling Fibonacci",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d10-roll-trib",
+    "title": "Three rolling variables",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d10-roll-robber-trace",
+    "title": "Trace the take-or-skip table",
+    "minutes": 2.5,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d10-roll-robber-memo",
+    "title": "Take or skip, top-down",
+    "minutes": 7,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d10-roll-robber-table",
+    "title": "Take or skip, bottom-up",
+    "minutes": 7,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d10-roll-dbg-adjacent",
+    "title": "Debug: no neighbours allowed",
+    "minutes": 3.5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "cap-house-robber",
+    "title": "No two neighbours",
+    "minutes": 25,
+    "kind": "code",
+    "capstone": true,
+    "problemId": "house-robber"
+   },
+   {
+    "id": "d10-explain-house-robber",
+    "title": "Explain: house robber",
+    "minutes": 5,
+    "kind": "explain",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-10",
+  "id": "d10-cold",
+  "title": "Cold reps",
+  "summary": "From a signature, no scaffolding.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "d10-cold-letter-subsets",
+    "title": "Cold: every subsequence of a word",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d10-cold-pick-k",
+    "title": "Cold: choose k items",
+    "minutes": 7,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d10-cold-pieces",
+    "title": "Cold: pieces of length 1 and 3",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "d10-cold-cache-stairs",
+    "title": "Cold: stairs with @cache",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-11",
+  "id": "o11-speed",
+  "title": "Python speed round",
+  "summary": "Fast mixed primitives from a signature: .get counting, enumerate, deque, heapq, sort keys, grid neighbors.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "o11-speed-count",
+    "title": "Count with .get",
+    "minutes": 2.5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o11-speed-first-seen",
+    "title": "Trace first-seen indexes",
+    "minutes": 1.5,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o11-speed-last-seen",
+    "title": "Last index of each value",
+    "minutes": 2,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o11-speed-deque",
+    "title": "Pass the parcel",
+    "minutes": 2.5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o11-cx-pop-front",
+    "title": "pop(0) in a loop",
+    "minutes": 1,
+    "kind": "choice",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o11-speed-heap-small",
+    "title": "k smallest with heapq",
+    "minutes": 2.5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o11-speed-heap-tuples",
+    "title": "Trace a heap of tuples",
+    "minutes": 1.5,
+    "kind": "output",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o11-speed-sort-key",
+    "title": "Sort by length, then alphabet",
+    "minutes": 2,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o11-speed-slicing",
+    "title": "Slices",
+    "minutes": 1,
+    "kind": "choice",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o11-speed-leaderboard",
+    "title": "Leaderboard",
+    "minutes": 2.5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o11-speed-neighbors",
+    "title": "In-bounds neighbors",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-11",
+  "id": "o11-debug",
+  "title": "Debug sprint",
+  "summary": "One classic bug from every day. Read the failing test, fix, run, next.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "o11-bug-get",
+    "title": "Character counts",
+    "minutes": 2,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o11-bug-dict-direction",
+    "title": "Pair sum, one pass",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o11-bug-bsearch-hi",
+    "title": "Search the sorted list",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o11-bug-reverse-order",
+    "title": "Reverse a linked list",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o11-bug-base-case",
+    "title": "Sum a tree",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o11-bug-visited-late",
+    "title": "Count reachable cells",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o11-bug-path-copy",
+    "title": "All subsets",
+    "minutes": 2.5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o11-bug-heap-trim",
+    "title": "k largest",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o11-bug-unsorted",
+    "title": "Merge meetings",
+    "minutes": 2.5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o11-bug-dummy",
+    "title": "Merge two sorted lists",
+    "minutes": 2.5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o11-bug-window-left",
+    "title": "Longest run without repeats",
+    "minutes": 3.5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-11",
+  "id": "o11-edges",
+  "title": "Edge cases",
+  "summary": "Write the input that breaks the code, then fix the code so it survives it.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "o11-wt-profit",
+    "title": "Break it: profit",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o11-dbg-profit",
+    "title": "Fix it: profit",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o11-wt-bsearch",
+    "title": "Break it: binary search",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o11-edge-bsearch-fix",
+    "title": "Fix the binary search",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o11-dbg-brackets",
+    "title": "Fix it: brackets",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o11-edge-second",
+    "title": "Second largest distinct",
+    "minutes": 4,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o11-dbg-touching",
+    "title": "Fix it: touching intervals",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o11-dbg-empty-grid",
+    "title": "Fix it: empty grid",
+    "minutes": 2.5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o11-edge-kth-end",
+    "title": "k-th node from the end",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o11-wt-two-sum",
+    "title": "Break it: pair sum",
+    "minutes": 3.5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-11",
+  "id": "o11-cold",
+  "title": "Cold capstones",
+  "summary": "Core problems from a bare signature, timed, then a short complexity or approach follow-up.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "cold-two-sum",
+    "title": "Capstone: Two Sum (cold)",
+    "minutes": 11,
+    "kind": "code",
+    "capstone": false,
+    "problemId": "two-sum"
+   },
+   {
+    "id": "o11-say-pair-sum",
+    "title": "Brute force to optimal",
+    "minutes": 4,
+    "kind": "explain",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "cold-longest-substring",
+    "title": "Longest Substring Without Repeating Characters (cold)",
+    "minutes": 15,
+    "kind": "code",
+    "capstone": false,
+    "problemId": "longest-substring"
+   },
+   {
+    "id": "o11-cx-window-explain",
+    "title": "Justify the window",
+    "minutes": 4,
+    "kind": "explain",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o11-say-dry-run",
+    "title": "Dry-run out loud",
+    "minutes": 5,
+    "kind": "explain",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "cold-valid-parentheses",
+    "title": "Valid Parentheses (cold)",
+    "minutes": 15,
+    "kind": "code",
+    "capstone": false,
+    "problemId": "valid-parentheses"
+   },
+   {
+    "id": "cold-reverse-linked-list",
+    "title": "Reverse Linked List (cold)",
+    "minutes": 11,
+    "kind": "code",
+    "capstone": false,
+    "problemId": "reverse-linked-list"
+   },
+   {
+    "id": "cold-number-of-islands",
+    "title": "Number of islands (cold)",
+    "minutes": 20,
+    "kind": "code",
+    "capstone": false,
+    "problemId": "number-of-islands"
+   },
+   {
+    "id": "o11-cx-grid-bfs",
+    "title": "Grid traversal",
+    "minutes": 1,
+    "kind": "choice",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "cold-level-order",
+    "title": "Level order traversal (cold)",
+    "minutes": 20,
+    "kind": "code",
+    "capstone": false,
+    "problemId": "level-order"
+   },
+   {
+    "id": "cold-course-schedule",
+    "title": "Can every course be finished? (cold)",
+    "minutes": 20,
+    "kind": "code",
+    "capstone": false,
+    "problemId": "course-schedule"
+   },
+   {
+    "id": "o11-cx-graph-explain",
+    "title": "Justify a graph traversal",
+    "minutes": 4,
+    "kind": "explain",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "cold-top-k-frequent",
+    "title": "Most frequent k values (cold)",
+    "minutes": 15,
+    "kind": "code",
+    "capstone": false,
+    "problemId": "top-k-frequent"
+   },
+   {
+    "id": "cold-merge-intervals",
+    "title": "Merge overlapping ranges (cold)",
+    "minutes": 11,
+    "kind": "code",
+    "capstone": false,
+    "problemId": "merge-intervals"
+   },
+   {
+    "id": "o11-say-clarify",
+    "title": "Clarifying questions",
+    "minutes": 4,
+    "kind": "explain",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "cold-subsets",
+    "title": "Every subset (cold)",
+    "minutes": 18,
+    "kind": "code",
+    "capstone": false,
+    "problemId": "subsets"
+   },
+   {
+    "id": "o11-cx-subsets",
+    "title": "All subsets",
+    "minutes": 1,
+    "kind": "choice",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "cold-house-robber",
+    "title": "No two neighbours (cold)",
+    "minutes": 8,
+    "kind": "code",
+    "capstone": false,
+    "problemId": "house-robber"
+   },
+   {
+    "id": "o11-cx-memo",
+    "title": "Memoized recursion",
+    "minutes": 1,
+    "kind": "choice",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-11",
+  "id": "o11-mixed",
+  "title": "Mixed patterns",
+  "summary": "Fresh short problems; recognizing the pattern is part of the rep.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "o11-mix-nearby-repeat",
+    "title": "Nearby repeat",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o11-opt-common",
+    "title": "Make it linear",
+    "minutes": 3,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o11-mix-sorted-squares",
+    "title": "Squares in order",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o11-mix-two-kinds",
+    "title": "At most two kinds",
+    "minutes": 7,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o11-mix-first-at-least",
+    "title": "First position at least target",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o11-mix-path-sum",
+    "title": "Root-to-leaf total",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o11-cx-tree-space",
+    "title": "Space of tree recursion",
+    "minutes": 1,
+    "kind": "choice",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o11-mix-k-closest",
+    "title": "Closest k points",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o11-cx-heap-k",
+    "title": "Size-k heap",
+    "minutes": 1,
+    "kind": "choice",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o11-mix-groups",
+    "title": "Count friend groups",
+    "minutes": 7,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o11-mix-cheapest-climb",
+    "title": "Cheapest climb",
+    "minutes": 6,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o11-mix-choose",
+    "title": "Pick k of n",
+    "minutes": 7,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o11-mix-fewest-steps",
+    "title": "Fewest steps through a maze",
+    "minutes": 8,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o11-say-stuck",
+    "title": "When you are stuck",
+    "minutes": 4,
+    "kind": "explain",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ },
+ {
+  "module": "2026-10-11",
+  "id": "o11-name-it",
+  "title": "Name the pattern",
+  "summary": "No labels: read the problem, find the expensive repeated work, and pick the pattern that makes it cheap.",
+  "gate": false,
+  "reps": [
+   {
+    "id": "o11-ni-shared",
+    "title": "Both playlists",
+    "minutes": 5,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o11-ni-two-hops",
+    "title": "Friends of friends",
+    "minutes": 7,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o11-ni-streak",
+    "title": "Longest streak with one slip",
+    "minutes": 7,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   },
+   {
+    "id": "o11-ni-latest-at-or-before",
+    "title": "Latest reading at or before",
+    "minutes": 7,
+    "kind": "code",
+    "capstone": false,
+    "problemId": null
+   }
+  ]
+ }
+]

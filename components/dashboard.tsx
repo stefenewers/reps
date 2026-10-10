@@ -2,20 +2,21 @@
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useState, useSyncExternalStore } from 'react'
 import { useReps } from '@/components/reps-provider'
 import RoadToReady from '@/components/road-to-ready'
 import { InterviewTargetCompact } from '@/components/interview-target'
 import LearningPath from '@/components/learning-path'
 import ChallengeMe from '@/components/challenge-me'
 import ProgressIO from '@/components/progress-io'
+import LeetcodeList from '@/components/leetcode-list'
 import { ScoreBar, StatusLabel } from '@/components/mastery-bits'
 import { kindOf } from '@/components/rep-kind'
 import { BarsPattern, EmptyState, RepsBars } from '@/components/motif'
 import { ConceptGlyph } from '@/components/concept-icons'
 import { IconArrowRight, IconClock, IconSnow, IconSpark } from '@/components/icons'
 import WinstonPerch from '@/components/winston-perch'
-import { ALL_EXERCISES, DAY_BY_DATE, DAY_OF_EXERCISE, DAYS, MODULE_OF_EXERCISE, dayExercises } from '@/data/curriculum'
+import { ALL_EXERCISES, DAY_BY_DATE, DAY_OF_EXERCISE, DAYS, MODULE_OF_EXERCISE, dayExercises, dayLabel } from '@/data/curriculum'
 import { PROGRAM_STAGES } from '@/data/program'
 import { skillName } from '@/data/skills'
 import { formatMinutes, localDate, parseLocal } from '@/lib/dates'
@@ -25,12 +26,22 @@ import { buildSkillSession, createSession } from '@/lib/sessions'
 
 const LONG_DAY = new Intl.DateTimeFormat('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
 
+const noop = () => () => {}
+
 export default function Dashboard() {
+  // The page is prerendered at deploy time, so "today" on the server is the deploy date.
+  // Draw the day only once we are in the browser and know the real one.
+  const inBrowser = useSyncExternalStore(noop, () => true, () => false)
+  if (!inBrowser) return <main className="relative flex-1 bg-canvas" aria-busy="true" />
+  return <DashboardToday />
+}
+
+function DashboardToday() {
   const router = useRouter()
   const { repo, attempts, reviews, mastery, today, loaded } = useReps()
   const [busy, setBusy] = useState(false)
   const day = DAY_BY_DATE[today]
-  const dayIndex = DAYS.findIndex((d) => d.date === today) + 1
+  const lcToday = day.leetcode ?? []
   const stats = dayStats(day, attempts)
   const passed = passedSet(attempts)
   // An uncleared mastery check from an earlier day comes first: it is what holds today's reps.
@@ -87,7 +98,7 @@ export default function Dashboard() {
         <header className="flex flex-wrap items-end justify-between gap-x-10 gap-y-6">
           <div>
             <p className="eyebrow text-muted" suppressHydrationWarning>
-              {LONG_DAY.format(parseLocal(localDate()))} · Day {dayIndex} of {DAYS.length}
+              {LONG_DAY.format(parseLocal(localDate()))} · {dayLabel(day)}
             </p>
             <h1 className="display-xl mt-2">Today&apos;s Reps</h1>
             <p className="mt-2 text-[16px] text-ink-2">{day.title}</p>
@@ -102,7 +113,7 @@ export default function Dashboard() {
             <div className="flex items-center gap-2">
               <span aria-hidden="true" className="size-1.5 rounded-full bg-accent" />
               <span className="eyebrow text-ink-2">
-                {carry ? `Finish first · ${carry.title}` : `${todayStage?.title ?? `Day ${dayIndex}`} · ${next ? (started ? 'Continue' : 'Start here') : 'Done for today'}`}
+                {carry ? `Finish first · ${carry.title}` : `${day.planDay ? day.title : (todayStage?.title ?? day.short)} · ${next ? (started ? 'Continue' : 'Start here') : 'Done for today'}`}
               </span>
             </div>
 
@@ -135,9 +146,15 @@ export default function Dashboard() {
               </div>
             ) : (
               <div className="flex flex-wrap items-center justify-between gap-4">
-                <EmptyState title="Reps complete">
-                  Every required rep for today is done. Cold reps are scheduled for tomorrow.
-                </EmptyState>
+                {day.phase === 'off' || (stats.total === 0 && !lcToday.length) ? (
+                  <EmptyState title="Rest day">Nothing is planned today. Rest is part of the plan.</EmptyState>
+                ) : stats.total === 0 && lcToday.length ? (
+                  <EmptyState title="LeetCode day">No ladder reps today. Today’s work is the LeetCode list below.</EmptyState>
+                ) : (
+                  <EmptyState title="Reps complete">
+                    Every required rep for today is done.{lcToday.length ? ' Your LeetCode problems for today are below.' : ' Cold reps are scheduled for tomorrow.'}
+                  </EmptyState>
+                )}
                 <div className="flex flex-wrap items-center gap-2">
                   <Link href={`/day/${today}/summary`} className="btn btn-lg">
                     Review the day
@@ -180,6 +197,12 @@ export default function Dashboard() {
           <MiniStat label="Planned" value={formatMinutes(stats.minutesRemaining)} sub="left today" />
           <MiniStat label="Cold reps" value={String(due.length)} sub={due.length ? 'due now' : 'none due'} />
         </dl>
+
+        {lcToday.length > 0 && (
+          <div className="mt-8">
+            <LeetcodeList items={lcToday} />
+          </div>
+        )}
 
         <div className="mt-8">
           <RoadToReady />

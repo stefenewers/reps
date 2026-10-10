@@ -97,8 +97,8 @@ export default function Header() {
           <Link
             href="/interview"
             data-testid="interview-target-chip"
-            title={`${INTERVIEW_TARGET.company} ${INTERVIEW_TARGET.role}: ${INTERVIEW_TARGET.rounds} technical interviews, ${INTERVIEW_TARGET.minutes} minutes each, in ${INTERVIEW_TARGET.language}`}
-            aria-label={`Interview target: ${INTERVIEW_TARGET.company} ${INTERVIEW_TARGET.role}, ${INTERVIEW_TARGET.rounds} × ${INTERVIEW_TARGET.minutes} minute technical interviews in ${INTERVIEW_TARGET.language}`}
+            title={`${INTERVIEW_TARGET.role}: ${INTERVIEW_TARGET.company}, about ${INTERVIEW_TARGET.rounds} rounds of ${INTERVIEW_TARGET.minutes} minutes, in ${INTERVIEW_TARGET.language}`}
+            aria-label={`Interview target: ${INTERVIEW_TARGET.role}, ${INTERVIEW_TARGET.company}, about ${INTERVIEW_TARGET.rounds} rounds of ${INTERVIEW_TARGET.minutes} minutes in ${INTERVIEW_TARGET.language}`}
             className="inline-flex h-7 items-center gap-1.5 rounded-full bg-surface-2 px-2.5 text-[12px] text-ink-2 transition-colors hover:bg-surface-3"
           >
             <span className="hidden items-center gap-1.5 sm:inline-flex">

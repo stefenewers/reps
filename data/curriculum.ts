@@ -11,6 +11,7 @@ import { day as oct10 } from '@/data/exercises/oct10'
 import { day as oct11 } from '@/data/exercises/oct11'
 import { MOCK_EXERCISES } from '@/data/mocks'
 import { OPTIONAL_SECTIONS, PICKS, REQUIRED_COLD_CAPSTONES, SCHEDULE, TRIM_FROM } from '@/data/schedule'
+import { PLAN_90, PLAN_START } from '@/data/schedule-90'
 import { PROGRAM_STAGES } from '@/data/program'
 
 /**
@@ -88,15 +89,35 @@ for (const m of MODULES) for (const s of m.sections) SECTION_HOME.set(s.id, { mo
 
 const STAGE_BY_MODULE = Object.fromEntries(PROGRAM_STAGES.map((s) => [s.dayDate, s]))
 
+/** Every rep the 90-day plan schedules, and the ones inside its mastery checks. */
+const PLAN_REP_IDS = new Set(PLAN_90.flatMap((d) => d.sections.flatMap((s) => s.reps)))
+const PLAN_GATE_IDS = new Set(PLAN_90.flatMap((d) => d.sections.filter((s) => s.gate).flatMap((s) => s.reps)))
+
+/** A section without the reps the 90-day plan has taken over; null when nothing is left. */
+function withoutPlanReps(s: Section): Section | null {
+  const exercises = s.exercises.filter((e) => !PLAN_REP_IDS.has(e.id))
+  return exercises.length ? { ...s, exercises } : null
+}
+
 function buildDays(): DayModule[] {
   const scheduledIds = new Set(SCHEDULE.flatMap((d) => d.sections))
-  // A module's unscheduled sections (warm-up, cold) land on the day its last scheduled section does.
+  // A module's leftover sections (warm-ups, anything neither calendar uses) land as extras on the last day the module appears.
   const lastDayOfModule = new Map<string, string>()
   for (const d of SCHEDULE) for (const id of d.sections) lastDayOfModule.set(SECTION_HOME.get(id)!.module.date, d.date)
+  for (const d of PLAN_90) for (const s of d.sections) lastDayOfModule.set(SECTION_HOME.get(s.id)!.module.date, d.date)
+  const leftoversFor = (date: string): Section[] =>
+    MODULES.filter((m) => lastDayOfModule.get(m.date) === date).flatMap((m) =>
+      m.sections.flatMap((s) => {
+        if (scheduledIds.has(s.id)) return []
+        const rest = withoutPlanReps(s)
+        return rest ? [{ ...rest, id: rest.exercises.length === s.exercises.length ? s.id : `${s.id}-extra`, optional: true }] : []
+      }),
+    )
 
-  return SCHEDULE.map(({ date, sections: ids, short: shortName, title: titleName }) => {
+  // ── the October sprint (Oct 2–10), as it happened
+  const sprint: DayModule[] = SCHEDULE.map(({ date, sections: ids, short: shortName, title: titleName }) => {
     // A day with nothing scheduled is an off day.
-    if (!ids.length) return { date, short: 'Off day', title: 'Off day', focus: 'No reps planned.', sections: [], capstones: [], modules: [] }
+    if (!ids.length) return { date, short: 'Off day', title: 'Off day', focus: 'No reps planned.', sections: leftoversFor(date), capstones: [], modules: [] }
     const required: Section[] = []
     const extra: Section[] = []
     const modules: string[] = []
@@ -105,13 +126,13 @@ function buildDays(): DayModule[] {
       if (!home) throw new Error(`schedule: unknown section ${id}`)
       if (!modules.includes(home.module.date)) modules.push(home.module.date)
       const { required: r, extra: x } = splitSection(home.module.date, home.section, date >= TRIM_FROM)
-      if (r) required.push(r)
-      if (x) extra.push(x)
+      // Reps the 90-day plan re-schedules leave the sprint day they were first planned on.
+      const rr = r && withoutPlanReps(r)
+      const xx = x && withoutPlanReps(x)
+      if (rr) required.push(rr)
+      if (xx) extra.push(xx)
     }
-    for (const m of MODULES) {
-      if (lastDayOfModule.get(m.date) !== date) continue
-      for (const s of m.sections) if (!scheduledIds.has(s.id)) extra.push({ ...s, optional: true })
-    }
+    extra.push(...leftoversFor(date))
 
     const module0 = MODULES.find((m) => m.date === modules[0])!
     const stages = modules.map((m) => STAGE_BY_MODULE[m]).filter(Boolean)
@@ -132,9 +153,54 @@ function buildDays(): DayModule[] {
       modules,
     }
   })
+
+  // ── the 90-day ladder plan (from Oct 11): each pattern is a ladder, a mastery check, then its LeetCode problems
+  const plan: DayModule[] = PLAN_90.map((d, i) => {
+    const planDay = i + 1
+    if (d.phase === 'off') return { date: d.date, short: 'Off day', title: 'Off day', focus: 'Rest. Nothing is planned.', sections: leftoversFor(d.date), capstones: [], modules: [], phase: 'off', planDay }
+    const modules: string[] = []
+    const required: Section[] = d.sections.map((item) => {
+      const home = SECTION_HOME.get(item.id)
+      if (!home) throw new Error(`plan: unknown section ${item.id}`)
+      if (!modules.includes(home.module.date)) modules.push(home.module.date)
+      const exercises = item.reps.map((id) => {
+        const e = home.section.exercises.find((x) => x.id === id)
+        if (!e) throw new Error(`plan: ${id} is not in ${item.id}`)
+        return e
+      })
+      return {
+        ...home.section,
+        // A mastery check keeps its own label; a section split across days says so.
+        title: item.label ?? home.section.title,
+        summary: item.gate ? 'The mastery check for this pattern: cold reps, passed without opening the solution, before what follows unlocks.' : home.section.summary,
+        exercises,
+        gate: item.gate || undefined,
+      }
+    })
+    const news = d.leetcode.filter((x) => x.type === 'new').length
+    const resolves = d.leetcode.length - news
+    const parts = [
+      required.length ? `Reps: ${required.map((s) => s.title).filter((t, k, a) => a.indexOf(t) === k).join(' → ')}` : '',
+      news ? `${news} new on LeetCode` : '',
+      resolves ? `${resolves} re-solve${resolves === 1 ? '' : 's'}` : '',
+    ].filter(Boolean)
+    return {
+      date: d.date,
+      short: d.short || 'Re-solves',
+      title: d.unit || 'Re-solves',
+      focus: `${parts.join(' · ')}.`,
+      sections: [...required, ...leftoversFor(d.date)],
+      capstones: required.flatMap((s) => s.exercises.filter((e) => e.repType === 'capstone' && e.problemId).map((e) => e.problemId!)),
+      modules,
+      leetcode: d.leetcode,
+      phase: d.phase,
+      planDay,
+    }
+  })
+  return [...sprint, ...plan]
 }
 
-/** The ten-day calendar, October 2 through October 11. */
+/** The calendar: the October sprint (Oct 2–10) followed by the 90-day ladder plan (Oct 11 → Jan 8). */
 export const DAYS: DayModule[] = buildDays()
 
 export const FIRST_DAY = DAYS[0].date
@@ -143,7 +209,19 @@ export const LAST_DAY = DAYS[DAYS.length - 1].date
 export const DAY_BY_DATE: Record<string, DayModule> = Object.fromEntries(DAYS.map((d) => [d.date, d]))
 
 /** Every curriculum exercise (each exactly once), in module order, plus mock problems. */
-export const ALL_EXERCISES: Exercise[] = [...MODULES.flatMap((d) => d.sections.flatMap((s) => s.exercises)), ...MOCK_EXERCISES]
+export const ALL_EXERCISES: Exercise[] = [
+  // Reps inside a plan mastery check only count when passed without the solution.
+  ...MODULES.flatMap((d) => d.sections.flatMap((s) => s.exercises)).map((e) => (PLAN_GATE_IDS.has(e.id) ? { ...e, cleanPass: true } : e)),
+  ...MOCK_EXERCISES,
+]
+
+/** Where the 90-day plan begins. */
+export { PLAN_START }
+
+/** "Day 12 of 90" inside the plan; the sprint days before it are just dated. */
+export function dayLabel(day: DayModule): string {
+  return day.planDay ? `Day ${day.planDay} of ${PLAN_90.length}` : 'October sprint'
+}
 
 export const EXERCISE_BY_ID: Record<string, Exercise> = Object.fromEntries(ALL_EXERCISES.map((e) => [e.id, e]))
 

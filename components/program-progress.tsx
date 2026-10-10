@@ -2,10 +2,11 @@
 
 import { useEffect, useRef, useState } from 'react'
 import type { ProgramProgress as Progress } from '@/lib/progress'
-import { shortDate } from '@/lib/dates'
+import { parseLocal, shortDate } from '@/lib/dates'
 
 /**
- * The whole-program rail under the header: how far through Oct 2 → Oct 11.
+ * The whole-program rail under the header: how far through the calendar
+ * (the October sprint, then the 90-day ladder plan).
  *
  * It animates only for genuine progress made in this tab (a rep completed
  * moments ago). Hydration from the local cache and reconciliation from Supabase
@@ -67,15 +68,14 @@ export default function ProgramProgress({ progress, loaded, lastLocalCompletionA
 
     if (target >= 1) {
       setFinale(true)
-      setToast({ text: 'Ready for interview day.', at: 1 })
+      setToast({ text: 'Every rep in the plan is done.', at: 1 })
       later(() => setFinale(false), 1600)
       later(() => setToast(null), TOAST_MS + 1200)
     } else if (newlyDone.length) {
       const date = newlyDone[newlyDone.length - 1]
-      const i = progress.days.findIndex((d) => d.date === date)
-      const day = progress.days[i]
+      const day = progress.days.find((d) => d.date === date)!
       setJustDone(date)
-      setToast({ text: `Day ${i + 1} complete · ${day.short}`, at: day.end })
+      setToast({ text: `${shortDate(day.date)} complete · ${day.short}`, at: day.end })
       later(() => setJustDone(null), 700)
       later(() => setToast(null), TOAST_MS)
     }
@@ -108,6 +108,9 @@ export default function ProgramProgress({ progress, loaded, lastLocalCompletionA
 
         {progress.days.map((d, i) => {
           const last = i === progress.days.length - 1
+          // With ~100 days a marker per day is noise: mark week ends (Saturdays) and the finish.
+          const mark = progress.days.length <= 20 || last || parseLocal(d.date).getDay() === 6
+          if (d.total === 0 && !last) return null
           return (
             <span key={d.date} aria-hidden="true">
               <span className={`pp-seg ${i === 0 ? 'pp-seg-first' : ''} ${last ? 'pp-seg-last' : ''}`} style={{ left: `${d.start * 100}%`, width: `${(d.end - d.start) * 100}%` }}>
@@ -118,19 +121,21 @@ export default function ProgramProgress({ progress, loaded, lastLocalCompletionA
                   </span>
                 </span>
               </span>
-              <span
-                className={`pp-mark ${last ? 'pp-mark-end' : ''}`}
-                data-done={d.complete}
-                data-pop={justDone === d.date || (last && finale)}
-                style={{ left: `${d.end * 100}%` }}
-              />
+              {mark && (
+                <span
+                  className={`pp-mark ${last ? 'pp-mark-end' : ''}`}
+                  data-done={d.complete}
+                  data-pop={justDone === d.date || (last && finale)}
+                  style={{ left: `${d.end * 100}%` }}
+                />
+              )}
             </span>
           )
         })}
 
         {/* Keyboard focus shows the summary the hover tips give per day. */}
         <span className="pp-focus-tip" aria-hidden="true">
-          <b>{pct}%</b> of Reps · {progress.completed}/{progress.total} reps{current ? ` · now ${shortDate(current.date)} · ${current.short}` : ' · ready for Oct 12'}
+          <b>{pct}%</b> of Reps · {progress.completed}/{progress.total} reps{current ? ` · now ${shortDate(current.date)} · ${current.short}` : ' · plan complete'}
         </span>
       </div>
 

@@ -1,15 +1,15 @@
-| Wk | Dates | New | New problems (LC) | Re-solves |
-|---|---|---|---|---|
-| 1 | Oct 11–Oct 17 | 7 | 1, 49, 347, 128, 238, 271, 36 | 10 |
-| 2 | Oct 19–Oct 24 | 11 | 560, 283, 11, 15, 125, 167, 680, 3, 121, 424, 209 | 16 |
-| 3 | Oct 26–Oct 31 | 11 | 567, 1004, 76, 20, 22, 150, 155, 739, 1249, 74, 704 | 22 |
-| 4 | Nov 2–Nov 7 | 11 | 875, 33, 153, 34, 981, 21, 141, 143, 206, 2, 19 | 22 |
-| 5 | Nov 9–Nov 14 | 11 | 138, 23, 146, 287, 226, 100, 104, 110, 543, 102, 235 | 30 |
-| 6 | Nov 16–Nov 21 | 11 | 572, 98, 199, 230, 1448, 105, 236, 124, 208, 211, 703 | 33 |
-| 7 | Nov 23–Nov 28 | 0 | — | 22 |
-| 8 | Nov 30–Dec 5 | 11 | 1046, 215, 621, 973, 56, 57, 252, 435, 253, 39, 78 | 29 |
-| 9 | Dec 7–Dec 12 | 11 | 46, 79, 17, 200, 695, 133, 417, 994, 207, 210, 261 | 26 |
-| 10 | Dec 14–Dec 19 | 11 | 323, 684, 743, 70, 198, 213, 5, 91, 322, 647, 139 | 33 |
-| 11 | Dec 21–Dec 26 | 0 | — | 20 |
-| 12 | Dec 28–Jan 2 | 9 | 152, 300, 53, 55, 62, 1143, 48, 54, 73 | 16 |
-| 13 | Jan 4–Jan 8 | 5 | 746, 416, 45, 763, 72 | 23 |
+| Wk | Dates | Patterns | Reps reps | New LeetCode | LeetCode re-solves |
+|---|---|---|---|---|---|
+| 1 | Oct 11–Oct 17 | Hashing | 35 | 49, 128, 238 | 7 |
+| 2 | Oct 19–Oct 24 | Hashing, Strings + two pointers | 44 | 271 | 10 |
+| 3 | Oct 26–Oct 31 | Strings + two pointers, Sliding window, Stacks | 34 | 11, 15, 424, 76 | 10 |
+| 4 | Nov 2–Nov 7 | Stacks, Binary search, Linked lists | 52 | 153, 33 | 9 |
+| 5 | Nov 9–Nov 14 | Linked lists, Recursion + trees | 58 | 141, 19, 143, 23 | 16 |
+| 6 | Nov 16–Nov 21 | Recursion + trees, Tries, BFS + grids | 35 | 572, 235, 98, 230, 105, 124, 208, 211 | 17 |
+| 7 | Nov 23–Nov 28 | Interview practice | 50 | — | 19 |
+| 8 | Nov 30–Dec 5 | BFS + grids, Graphs | 54 | — | 13 |
+| 9 | Dec 7–Dec 12 | Graphs, Sorting + heaps | 47 | 133, 417, 261, 323 | 10 |
+| 10 | Dec 14–Dec 19 | Sorting + heaps, Intervals, Backtracking | 51 | 57, 252, 435, 253 | 15 |
+| 11 | Dec 21–Dec 26 | Re-solves | 0 | — | 18 |
+| 12 | Dec 28–Jan 2 | Backtracking, Dynamic programming | 39 | 39, 79, 213, 53 | 10 |
+| 13 | Jan 4–Jan 8 | Dynamic programming, Matrix | 0 | 55, 322, 139, 300, 5, 62, 1143, 48, 54, 73 | 11 |

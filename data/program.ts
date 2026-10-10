@@ -6,19 +6,19 @@
  */
 
 export const INTERVIEW_TARGET = {
-  company: 'Google',
-  role: 'Software Engineering Internship',
-  short: 'Google SWE',
-  rounds: 2,
+  company: 'Full-time',
+  role: 'Software Engineer I',
+  short: 'SWE I',
+  rounds: 4,
   minutes: 45,
   language: 'Python',
-  medium: 'Google Meet',
-  focus: 'Data structures & algorithms',
+  medium: 'shared editor',
+  focus: 'Data structures & algorithms, plus light design and behavioral',
   /** Compact header chip, deliberately without a date. */
-  chip: { full: ['Google SWE', '2×45m', 'Python'], compact: '2×45m' },
+  chip: { full: ['SWE I', 'New grad', 'Python'], compact: 'SWE I' },
 }
 
-/** The finish line. 635 reps is training volume; this is the goal. */
+/** The finish line. Rep and problem counts are training volume; this is the goal. */
 export const FINISH_LINE =
   'Solve unfamiliar DS&A problems in Python from a blank editor, reason aloud, test and debug the implementation, and explain the time and space tradeoffs under interview conditions.'
 

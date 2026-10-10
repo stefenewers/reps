@@ -102,5 +102,5 @@ test('mock completion counts finished results only, once per mock', () => {
 test('the interview target describes the interview, never its date', () => {
   const text = [INTERVIEW_TARGET.chip.full.join(' '), INTERVIEW_TARGET.chip.compact, INTERVIEW_TARGET.role, FINISH_LINE].join(' ')
   assert.doesNotMatch(text, /oct|october|\b12\b|2026|days?\b/i)
-  assert.match(INTERVIEW_TARGET.chip.full.join(' · '), /Google SWE · 2×45m · Python/)
+  assert.match(INTERVIEW_TARGET.chip.full.join(' · '), /SWE I · New grad · Python/)
 })

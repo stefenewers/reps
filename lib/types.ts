@@ -145,6 +145,24 @@ export interface DayModule {
   mocks?: string[]
   /** Topic modules (by their authored date) this calendar day draws from. */
   modules?: string[]
+  /** 90-day plan: the LeetCode problems for the day (new ones and spaced re-solves), solved on LeetCode. */
+  leetcode?: LeetcodeItem[]
+  /** 90-day plan: soft start, build, full, buffer week, final week, or an off day. */
+  phase?: 'soft' | 'build' | 'full' | 'buffer' | 'final' | 'off'
+  /** 90-day plan: 1-based day number, Oct 11 = 1. */
+  planDay?: number
+}
+
+export interface LeetcodeItem {
+  lc: number
+  title: string
+  difficulty: string
+  pattern: string
+  type: 'new' | 'review1' | 'review2' | 'review3'
+  /** Only on new problems: watch the walkthrough first, or attempt for 30 minutes first. */
+  mode: 'study-first' | 'attempt-first' | null
+  video: string | null
+  url: string
 }
 
 export interface Skill {

@@ -6,7 +6,8 @@ import ProgressRing from '@/components/progress-ring'
 import { kindOf, compositionText } from '@/components/rep-kind'
 import { IconArrowRight, IconCheck, IconLock } from '@/components/icons'
 import { ConceptGlyph, sectionKind } from '@/components/concept-icons'
-import { DAY_BY_DATE, DAYS, dayExercises } from '@/data/curriculum'
+import { DAY_BY_DATE, dayExercises, dayLabel } from '@/data/curriculum'
+import LeetcodeList from '@/components/leetcode-list'
 import { PROBLEM_BY_ID } from '@/data/problems'
 import { MOCKS } from '@/data/mocks'
 import { formatMinutes, longDate } from '@/lib/dates'
@@ -26,7 +27,6 @@ export default function DayView({ date }: { date: string }) {
   const passed = passedSet(attempts)
   const tried = attemptedSet(attempts)
   const next = nextExercise(day, attempts)
-  const dayNumber = DAYS.findIndex((d) => d.date === day.date) + 1
   const currentSection = day.sections.findIndex((s) => !s.optional && s.exercises.some((e) => !passed.has(e.id)))
   const offsets = day.sections.map((_, i) => day.sections.slice(0, i).reduce((c, x) => c + x.exercises.length, 0))
 
@@ -34,10 +34,10 @@ export default function DayView({ date }: { date: string }) {
     <main className="flex-1 bg-canvas">
       <div className="mx-auto w-full max-w-[920px] px-5 pb-28 pt-10 sm:px-8">
         <p className="text-[13px] text-muted">
-          {longDate(day.date)} · Day {dayNumber} of {DAYS.length}
+          {longDate(day.date)} · {dayLabel(day)}
           {day.date === today ? ' · Today' : ''}
         </p>
-        <h1 className="display-xl mt-1.5">{day.date === '2026-10-11' ? 'Interview Reps' : day.short}</h1>
+        <h1 className="display-xl mt-1.5">{day.short}</h1>
         <p className="mt-1.5 text-[15.5px] text-ink-2">{day.title}</p>
         <p className="mt-2 max-w-[680px] text-[14px] leading-relaxed text-muted">{day.focus}</p>
 
@@ -195,6 +195,12 @@ export default function DayView({ date }: { date: string }) {
             ]
           })}
         </ol>
+
+        {(day.leetcode?.length ?? 0) > 0 && (
+          <div className="mt-8">
+            <LeetcodeList items={day.leetcode!} heading={day.date === today ? 'On LeetCode today' : 'On LeetCode this day'} />
+          </div>
+        )}
       </div>
     </main>
   )

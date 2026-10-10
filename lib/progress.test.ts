@@ -70,7 +70,7 @@ test('retrieval type: first exposure, run it back, cold after 12 hours', () => {
 })
 
 test('curriculum integrity: every day, skill and capstone is wired', () => {
-  assert.equal(DAYS.length, 10)
+  assert.equal(DAYS.length, 99) // Oct 2–10 sprint + the 90-day plan
   for (const e of ALL_EXERCISES) for (const s of [...e.skills, ...e.prerequisites]) assert.ok(SKILL_BY_ID[s], `${e.id}: ${s}`)
   for (const p of PROBLEMS) assert.ok(EXERCISE_BY_ID[`cap-${p.id}`], `capstone for ${p.id}`)
   assert.ok(MODULES[0].sections.flatMap((s) => s.exercises).length >= 100, 'the foundation module is the thorough one')

@@ -26,7 +26,7 @@ test('today → first rep → correct answer → mastery updates → reload → 
   await expect(page.getByRole('heading', { name: "Today's Reps" })).toBeVisible()
   // The header names the interview, not its date.
   const chip = page.getByTestId('interview-target-chip')
-  await expect(chip).toContainText('Google SWE')
+  await expect(chip).toContainText('SWE I')
   await expect(chip).not.toContainText(/Oct|October|days?\b/)
   await expect(chip).toHaveAttribute('href', '/interview')
   await expect(page.getByRole('heading', { name: 'Road to Ready' })).toBeVisible()
