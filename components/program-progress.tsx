@@ -109,7 +109,8 @@ export default function ProgramProgress({ progress, loaded, lastLocalCompletionA
         {progress.days.map((d, i) => {
           const last = i === progress.days.length - 1
           // With ~100 days a marker per day is noise: mark week ends (Saturdays) and the finish.
-          const mark = progress.days.length <= 20 || last || parseLocal(d.date).getDay() === 6
+          // No marker at the very end: at the edge of the screen it reads as a stray dot.
+          const mark = !last && (progress.days.length <= 20 || parseLocal(d.date).getDay() === 6)
           if (d.total === 0 && !last) return null
           return (
             <span key={d.date} aria-hidden="true">

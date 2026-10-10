@@ -97,3 +97,30 @@ test('a debug rep loads broken code, shows failing tests, and accepts the fix', 
   await page.getByTestId('submit').click()
   await expect(page.getByTestId('rep-complete')).toBeVisible({ timeout: 60_000 })
 })
+
+test('a re-solve that needed help is logged, and comes back as a redo on the next working day', async ({ page }) => {
+  // The first day of the plan has one LeetCode re-solve.
+  await page.goto('/day/2026-10-11')
+  const list = page.getByTestId('leetcode-list')
+  await expect(list).toBeVisible()
+  await list.getByRole('button', { name: 'Needed help' }).first().click()
+  await expect(list.getByText(/1 of \d logged/)).toBeVisible() // a redo due on this same day adds a second row
+
+  // It is in the solve log, with the redo as its next review.
+  await page.goto('/log')
+  await expect(page.getByRole('heading', { name: 'Solve log' })).toBeVisible()
+  await expect(page.locator('tbody tr')).toHaveCount(1)
+  await expect(page.locator('tbody tr').first()).toContainText('Hinted')
+
+  // A redo is queued for a later working day, never the off day.
+  await expect(page.getByRole('heading', { name: 'Re-solve queue' })).toBeVisible()
+  await expect(page.getByText(/^Redo/).first()).toBeVisible()
+})
+
+test('the plan calendar links every day, and unknown reps are a real 404', async ({ page }) => {
+  await page.goto('/plan')
+  await expect(page.getByRole('heading', { name: 'Plan', exact: true })).toBeVisible()
+  await expect(page.locator('a[href^="/day/2026-"], a[href^="/day/2027-"]')).toHaveCount(90)
+  const res = await page.request.get('/rep/not-a-real-rep')
+  expect(res.status()).toBe(404)
+})

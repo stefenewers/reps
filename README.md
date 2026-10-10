@@ -14,6 +14,13 @@ spaced re-solves. The plan, its research basis and its generator are in `plannin
 (the canonical plan); `python3 planning/gen.py` rewrites `data/schedule-90.ts`, which
 the app reads.
 
+Pages: **Today** (the day's blocks, ladder reps and LeetCode list), **Plan** (all 13
+weeks), **Skills**, **Problems**, **Log** (every solve, the re-solve queue, a form for
+outside problems), **Progress** (heatmap, time against plan, pattern readiness,
+checkpoints) and **Interview** (mocks, a mock log, the design track and the stories
+checklist). CI (`.github/workflows/ci.yml`) runs lint, tests, content verification and
+the build on Node 20.
+
 `archive/first-plan/` keeps the first 90-day plan (`plan.md`), its problem list
 (`problems.csv`, which the generator still reads for metadata and verified video links)
 and the original app-rebuild prompt. They are history, not the plan.

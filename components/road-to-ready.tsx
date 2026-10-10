@@ -149,7 +149,7 @@ export default function RoadToReady() {
               >
                 <span className="block font-semibold">{s.stage.title}</span>
                 <span className="mt-0.5 block text-white/60">
-                  {s.total} reps{capstones.length ? ` · ${capstones.join(', ')}` : ''}
+                  {s.total} rep{s.total === 1 ? '' : 's'}{capstones.length ? ` · ${capstones.join(', ')}` : ''}
                 </span>
                 <span className="mt-1.5 block text-white/85">{def?.description}</span>
               </span>

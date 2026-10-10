@@ -5,20 +5,23 @@ import { useReps } from '@/components/reps-provider'
 import { useSolveLog } from '@/components/use-solve-log'
 import { PLAN_DAYS, dayExercises } from '@/data/curriculum'
 import { CHECKPOINTS, PHASE_LABEL } from '@/data/program-90day'
-import { parseLocal, shortDate } from '@/lib/dates'
+import { addDays, parseLocal, shortDate } from '@/lib/dates'
 import { passedSet } from '@/lib/progress'
 import { planSolveId } from '@/lib/solve-log'
 
 /** The whole 90 days, week by week. Every day links to its page. */
 
-const WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+/** The Sunday that starts a date's calendar row. */
+const rowOf = (date: string) => addDays(date, -parseLocal(date).getDay())
 
 export default function PlanView() {
   const { attempts, today } = useReps()
   const { entries } = useSolveLog()
   const passed = passedSet(attempts)
   const logged = new Set(entries.map((e) => e.id))
-  const weeks = [...new Set(PLAN_DAYS.map((d) => d.planWeek!))]
+  // One row per calendar week, Sunday to Saturday, so days always read in date order (Day 1 is a Sunday).
+  const rows = [...new Set(PLAN_DAYS.map((d) => rowOf(d.date)))]
   const checkpoint = new Map<string, string>(CHECKPOINTS.map((c) => [c.date, c.label]))
 
   return (
@@ -26,7 +29,7 @@ export default function PlanView() {
       <div className="mx-auto w-full max-w-[1180px] px-5 pb-28 pt-10 sm:px-8">
         <h1 className="display-xl">Plan</h1>
         <p className="mt-2 max-w-[680px] text-[15px] leading-relaxed text-ink-2">
-          Ninety days, Oct 11 to Jan 8. Each pattern is a ladder in Reps, a mastery check, then its LeetCode problems, with re-solves spaced out after. Sundays are off; weeks 7 and 11 are buffers.
+          Ninety days, Oct 11 to Jan 8. Each pattern is a ladder in Reps, a mastery check, then its LeetCode problems, with re-solves spaced out after. Sundays are off after Day 1; weeks 7 and 11 are buffers.
         </p>
         <p className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-[12.5px] text-muted">
           <span>
@@ -45,12 +48,13 @@ export default function PlanView() {
         </p>
 
         <div className="mt-8 flex flex-col gap-6">
-          {weeks.map((w) => {
-            const days = PLAN_DAYS.filter((d) => d.planWeek === w)
+          {rows.map((row) => {
+            const days = PLAN_DAYS.filter((d) => rowOf(d.date) === row)
             const patterns = [...new Set(days.flatMap((d) => (d.phase === 'off' ? [] : d.title.split(' → '))))]
             const phase = days.find((d) => d.phase !== 'off')?.phase
-            // Lay the week out Monday to Sunday; week 1 starts on a Sunday, which sits in the last column.
-            const cells = WEEKDAYS.map((_, i) => days.find((d) => (parseLocal(d.date).getDay() + 6) % 7 === i))
+            // The plan numbers its weeks from the working days, so a leading Sunday off takes the next week's number.
+            const w = (days.find((d) => d.phase !== 'off') ?? days[days.length - 1]).planWeek!
+            const cells = WEEKDAYS.map((_, i) => days.find((d) => parseLocal(d.date).getDay() === i))
             return (
               <section key={w} aria-labelledby={`wk-${w}`}>
                 <div className="mb-2 flex flex-wrap items-baseline gap-x-3 gap-y-1">
@@ -81,7 +85,7 @@ export default function PlanView() {
                         <Link
                           href={`/day/${d.date}`}
                           aria-current={isToday ? 'date' : undefined}
-                          aria-label={`${shortDate(d.date)}, day ${d.planDay}: ${off ? 'off' : `${d.title}. ${reps.length} reps, ${news} new problems, ${lc.length - news} re-solves`}${complete ? '. Complete' : ''}`}
+                          aria-label={`${shortDate(d.date)}, day ${d.planDay}: ${off ? 'off' : `${d.title}. ${reps.length} rep${reps.length === 1 ? '' : 's'}, ${news} new problem${news === 1 ? '' : 's'}, ${lc.length - news} re-solve${lc.length - news === 1 ? '' : 's'}`}${complete ? '. Complete' : ''}`}
                           className={`flex h-full min-h-[92px] flex-col rounded-xl px-3 py-2.5 text-[12.5px] transition-colors ${
                             isToday ? 'bg-bg shadow-[0_0_0_2px_var(--accent)]' : off ? 'bg-transparent shadow-[inset_0_0_0_1px_var(--line)] hover:bg-surface' : 'bg-bg shadow-[0_0_0_1px_var(--line)] hover:bg-surface'
                           }`}

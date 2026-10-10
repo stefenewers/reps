@@ -205,7 +205,7 @@ function DashboardToday() {
         </section>
 
         <dl className="mt-4 grid grid-cols-2 gap-x-6 gap-y-3 px-2 sm:grid-cols-3">
-          <MiniStat label="Done today" value={`${stats.completed}`} sub={`of ${stats.total} reps · ${stats.percent}%`} />
+          <MiniStat label="Done today" value={`${stats.completed}`} sub={`of ${stats.total} rep${stats.total === 1 ? '' : 's'} · ${stats.percent}%`} />
           <MiniStat label="Planned" value={formatMinutes(stats.minutesRemaining)} sub="left today" />
           <MiniStat label="Cold reps" value={String(due.length)} sub={due.length ? 'due now' : 'none due'} />
         </dl>

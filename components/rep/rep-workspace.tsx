@@ -82,6 +82,22 @@ function blankStarter(e: Exercise): string {
 
 type Phase = 'idle' | 'running' | 'passed' | 'failed'
 
+const DRAFT_KEY = (id: string) => `reps-draft:${id}`
+function localDraft(id: string): string | undefined {
+  try {
+    return window.localStorage.getItem(DRAFT_KEY(id)) ?? undefined
+  } catch {
+    return undefined // private mode, storage disabled, or not in a browser
+  }
+}
+function saveLocalDraft(id: string, code: string) {
+  try {
+    window.localStorage.setItem(DRAFT_KEY(id), code)
+  } catch {
+    /* the synced draft still saves */
+  }
+}
+
 export default function RepWorkspace({ exerciseId, sessionId, fromId, initialMode }: { exerciseId: string; sessionId?: string; fromId?: string; initialMode?: Mode }) {
   const router = useRouter()
   const { repo, attempts, mastery, today, loaded } = useReps()
@@ -184,7 +200,7 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
   const [announce, setAnnounce] = useState('')
 
   // Answers
-  const [code, setCode] = useState(() => repo.draft(ex.id) ?? blankStarter(ex))
+  const [code, setCode] = useState(() => repo.draft(ex.id) ?? localDraft(ex.id) ?? blankStarter(ex))
   const [choice, setChoice] = useState<number | null>(null)
   const [outputText, setOutputText] = useState('')
   const [order, setOrder] = useState<number[]>(() => shuffledOrder(ex.lines?.length ?? 0, ex.id))
@@ -315,6 +331,8 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
   // Drafts: saved locally after a pause in typing, synced later in the background.
   useEffect(() => {
     if (!isCode || phase === 'passed') return
+    // Kept per rep on this device straight away (survives a closed tab), then synced after a short pause.
+    saveLocalDraft(ex.id, code)
     const t = window.setTimeout(() => void repo.saveDraft(ex.id, code), 800)
     return () => window.clearTimeout(t)
   }, [code, isCode, ex.id, repo, phase])
@@ -361,6 +379,19 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
     },
     [ex.tests],
   )
+
+  // Run my code: your own call, separate from the tests. Nothing here is graded or recorded.
+  const [customOpen, setCustomOpen] = useState(false)
+  const [customCall, setCustomCall] = useState('')
+  const [customOut, setCustomOut] = useState<{ text: string; error: boolean } | null>(null)
+  const [customBusy, setCustomBusy] = useState(false)
+  const runCustom = async () => {
+    if (!customCall.trim() || customBusy) return
+    setCustomBusy(true)
+    const r = await getRunner().run(`${code}\n\n__reps_out = (${customCall.trim()})\nprint(repr(__reps_out))\n`, [])
+    setCustomOut(r.infraError ? { text: `Python could not run: ${r.infraError}`, error: true } : r.error ? { text: `${r.stdout}${r.error}`, error: true } : { text: r.stdout.replace(/\n$/, '') || '(nothing printed)', error: false })
+    setCustomBusy(false)
+  }
 
   const onRun = useCallback(async () => {
     if (ex.kind !== 'code' || phase === 'running') return
@@ -682,6 +713,8 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
   // ── render ─────────────────────────────────────────────────────────────────
 
   const passed = phase === 'passed'
+  // Suggest a call to the rep's own function, e.g. `two_sum(...)`.
+  const customPlaceholder = `${/def\s+([A-Za-z_]\w*)\s*\(/.exec(code)?.[1] ?? 'my_function'}(...)`
   /** A check rep passed with the solution open: it does not count until it is run back clean. */
   const checkUncleared = passed && Boolean(ex.cleanPass) && !session && solutionShown
   const assisted = hintsShown + aiHints.length > 0 || solutionShown
@@ -1039,6 +1072,45 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
               )}
             </div>
 
+            {ex.kind === 'code' && !interview && (
+              <div className="shrink-0 bg-bg px-4 py-2" style={{ boxShadow: '0 -1px 0 var(--line)' }} data-testid="custom-run">
+                {customOpen ? (
+                  <div className="flex flex-col gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <label htmlFor="custom-call" className="text-[12.5px] text-muted">
+                        Run my code with
+                      </label>
+                      <input
+                        id="custom-call"
+                        className="input mono !h-8 min-w-0 flex-1 !text-[12.5px]"
+                        value={customCall}
+                        placeholder={customPlaceholder}
+                        onChange={(e) => setCustomCall(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && void runCustom()}
+                      />
+                      <button type="button" className="btn btn-sm" onClick={() => void runCustom()} disabled={customBusy || !customCall.trim()}>
+                        <IconPlay size={10} /> {customBusy ? 'Running…' : 'Run my code'}
+                      </button>
+                      <button type="button" className="btn btn-ghost btn-sm" onClick={() => setCustomOpen(false)}>
+                        Hide
+                      </button>
+                    </div>
+                    {customOut ? (
+                      <pre className={`code-view max-h-32 overflow-auto !py-2 !text-[12.5px] ${customOut.error ? '!text-fail' : ''}`} aria-live="polite">
+                        {customOut.text}
+                      </pre>
+                    ) : (
+                      <p className="text-[12px] text-muted">Type a call to your function. It runs your current code and prints what comes back. The tests are not involved.</p>
+                    )}
+                  </div>
+                ) : (
+                  <button type="button" className="text-[12.5px] text-muted underline decoration-line-strong underline-offset-4 hover:text-ink" onClick={() => setCustomOpen(true)}>
+                    Try my own input
+                  </button>
+                )}
+              </div>
+            )}
+
             {/* Results */}
             <p className="sr-only" role="status" aria-live="polite">
               {announce}
@@ -1078,7 +1150,7 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
 
             {/* Actions */}
             {passed ? (
-              <div className="success-in relative flex shrink-0 flex-wrap items-center gap-x-4 gap-y-3 overflow-hidden bg-surface py-3.5 pl-4 pr-24" style={{ boxShadow: '0 -1px 0 var(--line)' }} data-testid="rep-complete">
+              <div className="success-in relative flex shrink-0 flex-wrap items-center gap-x-4 gap-y-3 overflow-hidden bg-surface py-3.5 pl-4 pr-4 max-lg:sticky max-lg:bottom-0 max-lg:z-10 lg:pr-24" style={{ boxShadow: '0 -1px 0 var(--line)' }} data-testid="rep-complete">
                 <span aria-hidden="true" className="success-wash pointer-events-none absolute inset-0" />
                 <div className="flex min-w-0 items-center gap-3">
                   <span className="pop-in grid size-8 shrink-0 place-items-center rounded-full bg-pass text-white shadow-sm">
@@ -1138,7 +1210,7 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
                 )}
               </div>
             ) : (
-              <div className="flex shrink-0 flex-wrap items-center gap-2 bg-bg py-3 pl-3 pr-24" style={{ boxShadow: '0 -1px 0 var(--line)' }}>
+              <div className="flex shrink-0 flex-wrap items-center gap-2 bg-bg py-3 pl-3 pr-3 max-lg:sticky max-lg:bottom-0 max-lg:z-10 lg:pr-24" data-testid="action-bar" style={{ boxShadow: '0 -1px 0 var(--line)' }}>
                 {!interview && (
                   <button type="button" className="btn btn-ghost" onClick={nextHint} disabled={coachBusy !== null}>
                     <IconBulb size={14} />
