@@ -10,13 +10,19 @@ import LearningPath from '@/components/learning-path'
 import ChallengeMe from '@/components/challenge-me'
 import ProgressIO from '@/components/progress-io'
 import LeetcodeList from '@/components/leetcode-list'
+import TodayBlocks from '@/components/today-blocks'
+import PaceGauge from '@/components/pace-gauge'
+import { usePacing } from '@/components/use-pacing'
+import { nextRep } from '@/lib/pace-calendar'
+import { lcMeta, useSolveLog } from '@/components/use-solve-log'
+import { leetcodeFor } from '@/lib/solve-log'
 import { ScoreBar, StatusLabel } from '@/components/mastery-bits'
 import { kindOf } from '@/components/rep-kind'
 import { BarsPattern, EmptyState, RepsBars } from '@/components/motif'
 import { ConceptGlyph } from '@/components/concept-icons'
 import { IconArrowRight, IconClock, IconSnow, IconSpark } from '@/components/icons'
 import WinstonPerch from '@/components/winston-perch'
-import { ALL_EXERCISES, DAY_BY_DATE, DAY_OF_EXERCISE, DAYS, MODULE_OF_EXERCISE, dayExercises, dayLabel } from '@/data/curriculum'
+import { ALL_EXERCISES, DAY_BY_DATE, DAY_OF_EXERCISE, DAYS, EXERCISE_BY_ID, MODULE_OF_EXERCISE, PLAN_DAYS, PLAN_START, dayExercises, dayLabel } from '@/data/curriculum'
 import { PROGRAM_STAGES } from '@/data/program'
 import { skillName } from '@/data/skills'
 import { formatMinutes, localDate, parseLocal } from '@/lib/dates'
@@ -40,8 +46,14 @@ function DashboardToday() {
   const router = useRouter()
   const { repo, attempts, reviews, mastery, today, loaded } = useReps()
   const [busy, setBusy] = useState(false)
-  const day = DAY_BY_DATE[today]
+  // Today is drawn from the queue and the pace, not from a fixed date in the schedule.
+  const pace = usePacing()
+  const day = pace.dayFor(today) ?? DAY_BY_DATE[today]
   const lcToday = day.leetcode ?? []
+  const { entries: solves } = useSolveLog()
+  const lcItems = leetcodeFor(day, solves, DAYS, lcMeta)
+  // Before the plan begins: how many days until Day 1.
+  const startsIn = day.planDay ? null : Math.round((parseLocal(PLAN_START).getTime() - parseLocal(today).getTime()) / 86_400_000)
   const stats = dayStats(day, attempts)
   const passed = passedSet(attempts)
   // An uncleared mastery check from an earlier day comes first: it is what holds today's reps.
@@ -57,12 +69,9 @@ function DashboardToday() {
   const todayStage = PROGRAM_STAGES.find((s) => s.dayDate === (next ? MODULE_OF_EXERCISE[next.id] : day.modules?.[day.modules.length - 1]))
   const started = stats.completed > 0
   const nextKind = next ? kindOf(next) : null
-  // Done early? The next scheduled rep on a later day, to get ahead.
-  const ahead = next
-    ? undefined
-    : DAYS.filter((d) => d.date > today)
-        .map((d) => nextExercise(d, attempts))
-        .find(Boolean)
+  // Today's stretch finished? The queue simply continues: the next rep, whatever day the forecast puts it on.
+  const upcoming = next ? null : nextRep(pace.queue, passed)
+  const ahead = upcoming ? EXERCISE_BY_ID[upcoming.key] : undefined
 
   const startReview = async () => {
     setBusy(true)
@@ -98,16 +107,21 @@ function DashboardToday() {
         <header className="flex flex-wrap items-end justify-between gap-x-10 gap-y-6">
           <div>
             <p className="eyebrow text-muted" suppressHydrationWarning>
-              {LONG_DAY.format(parseLocal(localDate()))} · {dayLabel(day)}
+              {LONG_DAY.format(parseLocal(localDate()))}
             </p>
             <h1 className="display-xl mt-2">Today&apos;s Reps</h1>
-            <p className="mt-2 text-[16px] text-ink-2">{day.title}</p>
+            <p className="mt-2 text-[16px] text-ink-2" data-testid="day-heading">
+              {day.planDay ? `${dayLabel(day)} · ${day.title}` : startsIn !== null ? `Day 1 starts ${startsIn === 1 ? 'tomorrow' : `in ${startsIn} days`}` : day.title}
+            </p>
           </div>
           <InterviewTargetCompact />
         </header>
 
+        {/* Before Day 1, unless an earlier mastery check is still open: that comes first. */}
+        {startsIn !== null && !carry && <PlanPreview first={PLAN_DAYS[0]} startsIn={startsIn} />}
+
         {/* The anchor: the one thing to do now. */}
-        <section aria-labelledby="now" className="relative mt-9 overflow-hidden rounded-[20px] bg-bg shadow-[0_0_0_1px_var(--hairline),0_2px_4px_rgba(28,24,12,0.04),0_18px_40px_-16px_rgba(28,24,12,0.18)]">
+        <section aria-labelledby="now" hidden={startsIn !== null && !carry} className="relative mt-9 overflow-hidden rounded-[20px] bg-bg shadow-[0_0_0_1px_var(--hairline),0_2px_4px_rgba(28,24,12,0.04),0_18px_40px_-16px_rgba(28,24,12,0.18)]">
           <BarsPattern className="-right-10 -top-16 text-ink [mask-image:linear-gradient(to_bottom,black,transparent)]" opacity={0.045} />
           <div className="relative flex flex-col gap-6 p-6 sm:p-8">
             <div className="flex items-center gap-2">
@@ -151,8 +165,8 @@ function DashboardToday() {
                 ) : stats.total === 0 && lcToday.length ? (
                   <EmptyState title="LeetCode day">No ladder reps today. Today’s work is the LeetCode list below.</EmptyState>
                 ) : (
-                  <EmptyState title="Reps complete">
-                    Every required rep for today is done.{lcToday.length ? ' Your LeetCode problems for today are below.' : ' Cold reps are scheduled for tomorrow.'}
+                  <EmptyState title="Today’s stretch is done">
+                    You have covered today’s pace.{lcToday.length ? ' Your LeetCode problems for today are below.' : ''} Stop here, or keep going: the queue just continues.
                   </EmptyState>
                 )}
                 <div className="flex flex-wrap items-center gap-2">
@@ -161,7 +175,7 @@ function DashboardToday() {
                   </Link>
                   {ahead && (
                     <Link href={`/rep/${ahead.id}`} className="btn btn-primary btn-lg">
-                      Get ahead: {ahead.title.replace(/^[A-Za-z]+: /, '')} <IconArrowRight size={15} />
+                      Keep going: {ahead.title.replace(/^[A-Za-z]+: /, '')} <IconArrowRight size={15} />
                     </Link>
                   )}
                 </div>
@@ -193,16 +207,24 @@ function DashboardToday() {
         </section>
 
         <dl className="mt-4 grid grid-cols-2 gap-x-6 gap-y-3 px-2 sm:grid-cols-3">
-          <MiniStat label="Done today" value={`${stats.completed}`} sub={`of ${stats.total} reps · ${stats.percent}%`} />
-          <MiniStat label="Planned" value={formatMinutes(stats.minutesRemaining)} sub="left today" />
+          <MiniStat label="Done today" value={`${stats.completed}`} sub={`rep${stats.completed === 1 ? '' : 's'} · ${stats.total - stats.completed} more in today’s stretch`} />
+          <MiniStat label="Re-solves waiting" value={String(pace.due.length)} sub={pace.due.length ? 'on LeetCode, oldest first' : 'none due'} />
           <MiniStat label="Cold reps" value={String(due.length)} sub={due.length ? 'due now' : 'none due'} />
         </dl>
 
-        {lcToday.length > 0 && (
+        {day.planDay && (
           <div className="mt-8">
-            <LeetcodeList items={lcToday} />
+            <PaceGauge pace={pace} planEnd={PLAN_DAYS[PLAN_DAYS.length - 1].date} />
           </div>
         )}
+
+        <div className="mt-8 empty:hidden">
+          <TodayBlocks day={day} resolves={lcItems.filter((x) => x.type !== 'new').length} />
+        </div>
+
+        <div className="mt-8 empty:hidden">
+          <LeetcodeList day={day} />
+        </div>
 
         <div className="mt-8">
           <RoadToReady />
@@ -315,5 +337,55 @@ function MiniStat({ label, value, sub }: { label: string; value: string; sub: st
         {value} <span className="text-[12.5px] font-normal text-muted">{sub}</span>
       </dd>
     </div>
+  )
+}
+
+
+/** Before Day 1: say when it starts and show exactly what it holds, with a way to begin early. */
+function PlanPreview({ first, startsIn }: { first: (typeof PLAN_DAYS)[number]; startsIn: number }) {
+  const reps = dayExercises(first)
+  const sections = first.sections.filter((s) => !s.optional)
+  return (
+    <section aria-labelledby="preview-h" data-testid="plan-preview" className="relative mt-9 overflow-hidden rounded-[20px] bg-bg p-6 shadow-[0_0_0_1px_var(--hairline),0_2px_4px_rgba(28,24,12,0.04),0_18px_40px_-16px_rgba(28,24,12,0.18)] sm:p-8">
+      <p className="eyebrow text-ink-2">The 90-day plan</p>
+      <h2 id="preview-h" className="mt-2 text-[28px] font-semibold leading-tight tracking-tight">
+        Day 1 starts {startsIn === 1 ? 'tomorrow' : `in ${startsIn} days`}
+      </h2>
+      <p className="mt-2 max-w-[640px] text-[14.5px] leading-relaxed text-ink-2">
+        Nothing is due today. Day 1 is deliberately small: {reps.length} ladder reps on {first.title.toLowerCase()} and {(first.leetcode ?? []).length} re-solve on LeetCode, about an hour and a half.
+      </p>
+      <ul className="mt-4 flex flex-col gap-1.5 text-[14px]">
+        {sections.map((s) => (
+          <li key={s.id} className="flex items-baseline gap-2">
+            <span className="font-medium text-ink">{s.title}</span>
+            <span className="text-muted">
+              {s.exercises.length} rep{s.exercises.length === 1 ? '' : 's'} · {s.exercises.map((e) => e.title.replace(/^[A-Za-z0-9 ·]+: /, '')).slice(0, 2).join(', ')}
+              {s.exercises.length > 2 ? '…' : ''}
+            </span>
+          </li>
+        ))}
+        {(first.leetcode ?? []).map((x) => (
+          <li key={x.lc} className="flex items-baseline gap-2">
+            <span className="font-medium text-ink">LeetCode</span>
+            <span className="text-muted">
+              LC {x.lc} · {x.title} (a problem you have already solved)
+            </span>
+          </li>
+        ))}
+      </ul>
+      <div className="mt-6 flex flex-wrap items-center gap-2">
+        <Link href={`/day/${first.date}`} className="btn btn-lg">
+          Preview Day 1
+        </Link>
+        {reps[0] && (
+          <Link href={`/rep/${reps[0].id}`} className="btn btn-primary btn-lg" data-testid="start-early">
+            Start early <IconArrowRight size={15} />
+          </Link>
+        )}
+        <Link href="/plan" className="ml-1 text-[13.5px] text-muted underline underline-offset-4 hover:text-ink">
+          See all 90 days
+        </Link>
+      </div>
+    </section>
   )
 }

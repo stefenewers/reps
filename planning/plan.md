@@ -19,7 +19,7 @@ ladder in Reps  →  mastery check  →  LeetCode problems  →  spaced re-solve
 1. **Ladder.** The pattern's reps in Reps, smallest idea first: trace it, write it, break it, fix it, then its capstone. Basics, plain-English briefs and walkthrough videos are one tap away.
 2. **Mastery check.** That pattern's cold reps, from a blank editor. Each must be passed **without opening the solution** before anything after it unlocks. Hints and Basics are fine.
 3. **LeetCode problems.** By now they are applications of something you can already do. Attempt for up to 30 minutes, then study.
-4. **Re-solves.** Every LeetCode problem comes back three times, cold, about 15 minutes each.
+4. **Re-solves.** Every LeetCode problem comes back three times, cold, about 15 minutes each: 3–4, 10–12 and 30–33 days after you first solve it. A re-solve slides only to miss a Sunday, a day off or a full day, never outside its window.
 
 A capstone you solve inside Reps **is** that LeetCode problem (Two Sum, Valid Palindrome, Number of Islands and 19 more). Its re-solves happen on LeetCode.
 
@@ -38,11 +38,12 @@ A capstone you solve inside Reps **is** that LeetCode problem (Two Sum, Valid Pa
 | | Count |
 |---|---|
 | Ladder reps in Reps | **499** across 15 patterns |
-| LeetCode problems | **66**: 44 solved on LeetCode + 22 as Reps capstones |
-| LeetCode re-solves scheduled | **165** (48 more fall after Jan 8: the maintenance queue, 3 a day) |
+| LeetCode problems | **67**: 45 solved on LeetCode + 22 as Reps capstones |
+| LeetCode re-solves scheduled | **166**, each inside its window (50 more fall after Jan 8: the maintenance queue, 3 a day) |
 | Left for when you are ahead | `stretch.csv`, in priority order |
 
-- The 66 are **62 Blind 75 problems** plus four other Reps capstones (Two Sum II, Binary Search, Kth Largest Element, Subsets). The Blind 75 problems not scheduled are its four hardest Hards, three DP problems and the bit-manipulation set; they lead `stretch.csv`.
+- The 67 are **63 Blind 75 problems** plus four other Reps capstones (Two Sum II, Binary Search, Kth Largest Element, Subsets). The Blind 75 problems not scheduled are its four hardest Hards, two DP problems and the bit-manipulation set; they lead `stretch.csv`.
+- **At most 2 new LeetCode problems a day.** When a day has its two, it carries on with the next pattern's ladder, so patterns overlap a little at the edges.
 - Fewer LeetCode problems than the first plan (198), on purpose: 499 ladder reps are where the skill gets built. A pattern you own makes the next ten problems fast.
 - Three low-yield ladders are left out: extra pointer patterns, the separate max-heap drill, and the second components drill (Number of Islands teaches it).
 - Tries and matrix problems have no ladder in Reps, so their first problem is **study-first**: watch the walkthrough, then write it from blank.
@@ -57,7 +58,7 @@ A capstone you solve inside Reps **is** that LeetCode problem (Two Sum, Valid Pa
 | **Final week** | Jan 4–8 | ~100 min | up to 5 | mocks | ~4 h |
 
 "New work" is ladder reps or new LeetCode problems, in real minutes at your pace. Sundays are off after tomorrow. Days off: Nov 26–27, Dec 24–25, Jan 1.
-**Buffer weeks (7 and 11) carry no ladder work.** Week 7 has mixed interview practice in Reps; week 11 has re-solves only. If you slip, they absorb it.
+**Buffer weeks (7 and 11) carry no ladder work.** Week 7 has mixed interview practice in Reps; week 11 has re-solves only (up to 5 a day, 4 on Saturday). If you slip, they absorb it.
 
 **A weekday in the Full phase**
 
@@ -71,7 +72,19 @@ A capstone you solve inside Reps **is** that LeetCode problem (Two Sum, Valid Pa
 
 No studying at night.
 
-## 5. Where everything lives
+## 5. Pacing, not daily goals
+
+The 15 modules are one ordered queue: ladder, check, problems, pattern after pattern. **Next up is always the first thing you have not done, whatever the date.** The calendar is a gauge laid over that queue:
+
+- **Pace:** on pace, N working days ahead, or N behind, measured against the original line. Today's own work never counts against you.
+- **Today's stretch:** how far today's pace would take you. A suggestion; the queue continues past it.
+- **Forecast:** every date from today on shows what the current pace reaches by then, and when the queue finishes. Past days are a record of what you did.
+- **Re-solves** fall due 3, 10 and 30 days after you actually solved each problem.
+- **Missing a day** moves the gauge. Nothing is rebuilt and nothing is dropped. The buffer weeks take up the slack first; beyond that the finish date moves later.
+
+The dates in §7 and §8 are the original line the gauge measures against.
+
+## 5b. Where everything lives
 
 - **Reps → Today** shows the day's ladder reps and, under them, the day's LeetCode list with links, walkthroughs and the Unaided / Needed help buttons.
 - **A re-solve you needed help on:** redo it tomorrow before it rejoins the schedule.
@@ -91,21 +104,21 @@ No studying at night.
 
 | Wk | Dates | Patterns | Ladder reps (in Reps) | New on LeetCode | Re-solves | Mocks | Design · stories · applications |
 |---|---|---|---|---|---|---|---|
-| 1 | Oct 11–Oct 17 | Hashing | 35 | 49, 128, 238 | 7 | — | — |
-| 2 | Oct 19–Oct 24 | Hashing, Strings + two pointers | 44 | 271 | 10 | 1 self (recorded) | Résumé final; list of SWE I postings open now |
+| 1 | Oct 11–Oct 17 | Hashing, Strings + two pointers | 36 | 49, 128, 238 | 7 | — | — |
+| 2 | Oct 19–Oct 24 | Hashing, Strings + two pointers | 43 | 271 | 10 | 1 self (recorded) | Résumé final; list of SWE I postings open now |
 | 3 | Oct 26–Oct 31 | Strings + two pointers, Sliding window, Stacks | 34 | 11, 15, 424, 76 | 10 | 1 self | Object design: Min Stack; stories 1–2; 5 applications |
 | 4 | Nov 2–Nov 7 | Stacks, Binary search, Linked lists | 52 | 153, 33 | 9 | 2 (self + Nadani) | Object design: parking lot; stories 3–4; 5 applications |
 | 5 | Nov 9–Nov 14 | Linked lists, Recursion + trees | 58 | 141, 19, 143, 23 | 16 | 2 | LRU cache design; story 5; 5 applications · **Day 30 = Mon Nov 9** |
-| 6 | Nov 16–Nov 21 | Recursion + trees, Tries, BFS + grids | 35 | 572, 235, 98, 230, 105, 124, 208, 211 | 17 | 2 | Rate limiter design; story 6; 5 applications |
-| 7 | Nov 23–Nov 28 | Interview practice | 50 | — | 19 | 1 | **Buffer.** Interview practice in Reps; catch up or rest (Nov 26–27 off) |
-| 8 | Nov 30–Dec 5 | BFS + grids, Graphs | 54 | — | 13 | 2 + 1 timed set | System design primer; stories 7–8; 5 applications |
-| 9 | Dec 7–Dec 12 | Graphs, Sorting + heaps | 47 | 133, 417, 261, 323 | 10 | 2 | URL shortener; behavioral mock · **Day 60 = Wed Dec 9** |
-| 10 | Dec 14–Dec 19 | Sorting + heaps, Intervals, Backtracking | 51 | 57, 252, 435, 253 | 15 | 2 (1 AI-assisted) | Key-value store design; stories 9–10 |
-| 11 | Dec 21–Dec 26 | Re-solves | 0 | — | 18 | 1 | **Buffer.** Re-solves only; rest (Dec 24–25 off) |
-| 12 | Dec 28–Jan 2 | Backtracking, Dynamic programming | 39 | 39, 79, 213, 53 | 10 | 2 | Code-review drill; stories 11–12 (Jan 1 off) |
-| 13 | Jan 4–Jan 8 | Dynamic programming, Matrix | 0 | 55, 322, 139, 300, 5, 62, 1143, 48, 54, 73 | 11 | 3–4 full loops | Final polish · **Day 90 = Fri Jan 8** |
+| 6 | Nov 16–Nov 21 | Recursion + trees, BFS + grids | 42 | 572, 235, 98, 230, 105, 124 | 17 | 2 | Rate limiter design; story 6; 5 applications |
+| 7 | Nov 23–Nov 28 | Interview practice | 50 | — | 17 | 1 | **Buffer.** Interview practice in Reps; catch up or rest (Nov 26–27 off) |
+| 8 | Nov 30–Dec 5 | Tries, BFS + grids, Graphs | 52 | 208, 211 | 13 | 2 + 1 timed set | System design primer; stories 7–8; 5 applications |
+| 9 | Dec 7–Dec 12 | Graphs, Sorting + heaps | 50 | 133, 417, 261, 323 | 12 | 2 | URL shortener; behavioral mock · **Day 60 = Wed Dec 9** |
+| 10 | Dec 14–Dec 19 | Sorting + heaps, Intervals, Backtracking | 45 | 57, 252, 435, 253 | 15 | 2 (1 AI-assisted) | Key-value store design; stories 9–10 |
+| 11 | Dec 21–Dec 26 | Re-solves | 0 | — | 16 | 1 | **Buffer.** Re-solves only; rest (Dec 24–25 off) |
+| 12 | Dec 28–Jan 2 | Backtracking, Dynamic programming | 37 | 39, 79, 213, 53, 55 | 12 | 2 | Code-review drill; stories 11–12 (Jan 1 off) |
+| 13 | Jan 4–Jan 8 | Dynamic programming, Matrix | 0 | 322, 139, 300, 5, 62, 1143, 91, 48, 54, 73 | 12 | 3–4 full loops | Final polish · **Day 90 = Fri Jan 8** |
 
-**Mastery checks land on:** Hashing Oct 15–16 · Strings + two pointers Oct 26 · Windows + stacks Nov 4 · Binary search + linked lists Nov 11 · Trees Nov 18 · BFS + grids Dec 4 · Graphs Dec 9–10 · Heaps + intervals Dec 16–17 · Backtracking + DP Dec 31.
+**Mastery checks land on (about):** Hashing Oct 15–16 · Strings + two pointers Oct 26 · Windows + stacks Nov 4 · Binary search + linked lists Nov 11 · Trees Nov 18 · BFS + grids Dec 4 · Graphs Dec 9–10 · Heaps + intervals Dec 16–17 · Backtracking + DP Dec 31.
 
 **Applications:** five a week from week 3 (Thursday block), full-time new-grad / SWE I / "University Grad" roles only. Online assessments will arrive before you feel ready; take them.
 **Optional, when you are able:** a two-line note to the Google recruiter about the internship interview. The internship is no longer the goal, but "family bereavement" is better than silence with a contact you may want for full-time roles.
@@ -117,7 +130,7 @@ No studying at night.
 |---|---|---|---|
 | **Day 30** | Mon Nov 9 | 5 patterns finished (hashing, pointers, windows, stacks, binary search); ~18 LeetCode problems; ≥65% of re-solves unaided; every mastery check so far cleared; 5 mocks; 4 story drafts; 15 applications | Buffer week 7 becomes catch-up on the weakest pattern's ladder |
 | **Day 60** | Wed Dec 9 | 9 patterns finished (plus linked lists, trees, tries, BFS + grids); ~38 problems; ≥75% unaided; a problem you have seen takes ≤20 min; mock average ≥2.5 of 4; 8 stories; 2 designs | Buffer week 11 becomes catch-up; the DP tail moves to stretch |
-| **Day 90** | Fri Jan 8 | All 15 patterns; ~66 problems; ≥80% unaided; a new Medium in ≤35 min with the follow-up handled in 2 of the last 3 mocks; 12 stories; 3 object designs and 1 system design | Maintenance mode (a few ladder reps + 3 re-solves a day) while interviewing |
+| **Day 90** | Fri Jan 8 | All 15 patterns; ~67 problems; ≥80% unaided; a new Medium in ≤35 min with the follow-up handled in 2 of the last 3 mocks; 12 stories; 3 object designs and 1 system design | Maintenance mode (a few ladder reps + 3 re-solves a day) while interviewing |
 
 **When to change the pace** (check on Fridays):
 - **Speed up:** two weeks running with ≥80% unaided re-solves and ladder days finishing early → add one problem a day from the top of `stretch.csv`.
@@ -164,4 +177,4 @@ No studying at night.
 - `planning/gen.py`: regenerates the schedule. Change the pace in one place (`budget`, `review_cap`, `REPS_FACTOR`) and rerun.
 - `planning/reps-sections.json`, `planning/done.json`: the generator's inputs (authored reps; what you had passed on Oct 10).
 - `data/schedule-90.ts`: generated; what the Reps app reads.
-- `plan.md`, `problems.csv`, `rebuild_prompt.md` in the repo root: the first version, left untouched.
+- `archive/first-plan/`: the first version of the plan, its problem list (still the generator's source for metadata and video links) and the app-rebuild prompt.

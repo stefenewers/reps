@@ -157,7 +157,7 @@ function buildDays(): DayModule[] {
   // ── the 90-day ladder plan (from Oct 11): each pattern is a ladder, a mastery check, then its LeetCode problems
   const plan: DayModule[] = PLAN_90.map((d, i) => {
     const planDay = i + 1
-    if (d.phase === 'off') return { date: d.date, short: 'Off day', title: 'Off day', focus: 'Rest. Nothing is planned.', sections: leftoversFor(d.date), capstones: [], modules: [], phase: 'off', planDay }
+    if (d.phase === 'off') return { date: d.date, short: 'Off day', title: 'Off day', focus: 'Rest. Nothing is planned.', sections: leftoversFor(d.date), capstones: [], modules: [], phase: 'off', planDay, planWeek: d.week, planMinutes: 0 }
     const modules: string[] = []
     const required: Section[] = d.sections.map((item) => {
       const home = SECTION_HOME.get(item.id)
@@ -195,6 +195,9 @@ function buildDays(): DayModule[] {
       leetcode: d.leetcode,
       phase: d.phase,
       planDay,
+      planWeek: d.week,
+      planMinutes: d.minutes,
+      planOrder: d.order,
     }
   })
   return [...sprint, ...plan]
@@ -218,10 +221,35 @@ export const ALL_EXERCISES: Exercise[] = [
 /** Where the 90-day plan begins. */
 export { PLAN_START }
 
-/** "Day 12 of 90" inside the plan; the sprint days before it are just dated. */
+/** "Day 12 of 90" inside the plan; the days before it carry no label, only their date. */
 export function dayLabel(day: DayModule): string {
-  return day.planDay ? `Day ${day.planDay} of ${PLAN_90.length}` : 'October sprint'
+  if (!day.planDay) return ''
+  // If the pace has slipped past the last planned day, the count simply keeps going.
+  return day.planDay <= PLAN_90.length ? `Day ${day.planDay} of ${PLAN_90.length}` : `Day ${day.planDay}`
 }
+
+/** A plan section's label and whether it is a mastery check, as the generator decided. */
+const PLAN_SECTION_META = new Map<string, { gate: boolean; label: string | null }>()
+for (const d of PLAN_90) for (const s of d.sections) if (!PLAN_SECTION_META.has(s.id) || s.gate) PLAN_SECTION_META.set(s.id, { gate: s.gate, label: s.label })
+
+/** Some reps of an authored section, as a section of their own (for a forecast day or a record of a past one). */
+export function sectionSlice(sectionId: string, repIds: string[]): Section | null {
+  const home = SECTION_HOME.get(sectionId)
+  if (!home) return null
+  const meta = PLAN_SECTION_META.get(sectionId)
+  const exercises = home.section.exercises.filter((e) => repIds.includes(e.id))
+  if (!exercises.length) return null
+  return {
+    ...home.section,
+    title: meta?.label ?? home.section.title,
+    summary: meta?.gate ? 'The mastery check for this pattern: cold reps, passed without opening the solution, before what follows unlocks.' : home.section.summary,
+    exercises,
+    gate: meta?.gate || undefined,
+  }
+}
+
+/** Days in the 90-day plan, in order. */
+export const PLAN_DAYS: DayModule[] = DAYS.filter((d) => d.planDay)
 
 export const EXERCISE_BY_ID: Record<string, Exercise> = Object.fromEntries(ALL_EXERCISES.map((e) => [e.id, e]))
 

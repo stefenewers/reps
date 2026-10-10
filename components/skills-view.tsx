@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { useReps } from '@/components/reps-provider'
 import { ScoreBar, StatusLabel } from '@/components/mastery-bits'
 import { SKILLS, SKILL_GROUPS } from '@/data/skills'
@@ -38,12 +38,34 @@ export function evidenceText(e: ReturnType<typeof evidenceFor>): string {
     .join(' · ')
 }
 
+type Filter = 'all' | 'practiced' | 'weak' | 'unseen'
+type Sort = 'group' | 'weakest' | 'strongest' | 'recent'
+const FILTERS: Record<Filter, { label: string; keep: (status: string) => boolean }> = {
+  all: { label: 'All', keep: () => true },
+  practiced: { label: 'Practiced', keep: (s) => s !== 'unseen' },
+  weak: { label: 'Needs reps', keep: (s) => s === 'weak' },
+  unseen: { label: 'Not started', keep: (s) => s === 'unseen' },
+}
+
 export default function SkillsView() {
   const { mastery, attempts } = useReps()
   const seen = Object.values(mastery).filter((m) => m.status !== 'unseen')
   const strong = seen.filter((m) => m.status === 'fluent' || m.status === 'competent').length
   const weak = seen.filter((m) => m.status === 'weak').length
   const evidence = useMemo(() => Object.fromEntries(SKILLS.map((s) => [s.id, evidenceFor(s.id, attempts)])), [attempts])
+  const [filter, setFilter] = useState<Filter>('all')
+  const [sort, setSort] = useState<Sort>('group')
+  const shown = SKILLS.filter((s) => FILTERS[filter].keep(mastery[s.id].status))
+  const sorted =
+    sort === 'weakest'
+      ? [...shown].sort((a, b) => Number(mastery[a.id].status === 'unseen') - Number(mastery[b.id].status === 'unseen') || mastery[a.id].score - mastery[b.id].score)
+      : sort === 'strongest'
+        ? [...shown].sort((a, b) => mastery[b.id].score - mastery[a.id].score)
+        : sort === 'recent'
+          ? [...shown].sort((a, b) => (mastery[b.id].lastPracticed ?? '').localeCompare(mastery[a.id].lastPracticed ?? ''))
+          : shown
+  // Sorted views are one flat list; the default keeps the skill groups.
+  const groups: { title: string | null; list: typeof SKILLS }[] = sort === 'group' ? SKILL_GROUPS.map((g) => ({ title: g as string, list: sorted.filter((s) => s.group === g) })).filter((g) => g.list.length) : [{ title: null, list: sorted }]
 
   return (
     <main className="flex-1 bg-canvas">
@@ -63,18 +85,50 @@ export default function SkillsView() {
           ))}
         </dl>
 
-        <div className="mt-10 flex flex-col gap-10">
-          {SKILL_GROUPS.map((g) => {
-            const list = SKILLS.filter((s) => s.group === g)
+        <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
+          <div role="radiogroup" aria-label="Show" className="seg">
+            {(Object.keys(FILTERS) as Filter[]).map((f) => (
+              <button key={f} type="button" role="radio" aria-checked={filter === f} onClick={() => setFilter(f)}>
+                {FILTERS[f].label}
+              </button>
+            ))}
+          </div>
+          <label className="flex items-center gap-2 text-[13px] text-muted">
+            Sort
+            <select className="input !h-8 !w-auto !py-0 text-[13px]" value={sort} onChange={(e) => setSort(e.target.value as Sort)}>
+              <option value="group">By group</option>
+              <option value="weakest">Weakest first</option>
+              <option value="strongest">Strongest first</option>
+              <option value="recent">Most recently practiced</option>
+            </select>
+          </label>
+          <p className="num text-[12.5px] text-muted" role="status">
+            {shown.length} of {SKILLS.length} skills
+          </p>
+        </div>
+
+        {shown.length === 0 && (
+          <p className="mt-8 text-[14px] text-muted">
+            No skills match. {filter === 'weak' ? 'Nothing needs reps right now.' : 'Skills appear here as you practice them.'}{' '}
+            <button type="button" className="text-ink underline underline-offset-4" onClick={() => setFilter('all')}>
+              Show all skills
+            </button>
+          </p>
+        )}
+
+        <div className="mt-8 flex flex-col gap-10">
+          {groups.map(({ title: g, list }) => {
             return (
-              <section key={g} aria-labelledby={`g-${g}`}>
-                <h2 id={`g-${g}`} className="h2 mb-3 flex items-center gap-2.5">
-                  <span className="grid size-7 place-items-center rounded-lg bg-bg text-ink-2 shadow-[0_0_0_1px_var(--hairline)]">{createElement(GROUP_GLYPH[g] ?? GlyphBraces, { size: 15 })}</span>
-                  {g}
-                  <span className="num text-[12.5px] font-normal text-faint">
-                    {list.filter((x) => mastery[x.id].status !== 'unseen').length}/{list.length}
-                  </span>
-                </h2>
+              <section key={g ?? 'all'} aria-label={g ?? 'Skills'}>
+                {g && (
+                  <h2 className="h2 mb-3 flex items-center gap-2.5">
+                    <span className="grid size-7 place-items-center rounded-lg bg-bg text-ink-2 shadow-[0_0_0_1px_var(--hairline)]">{createElement(GROUP_GLYPH[g as keyof typeof GROUP_GLYPH] ?? GlyphBraces, { size: 15 })}</span>
+                    {g}
+                    <span className="num text-[12.5px] font-normal text-muted">
+                      {SKILLS.filter((x) => x.group === g && mastery[x.id].status !== 'unseen').length}/{SKILLS.filter((x) => x.group === g).length}
+                    </span>
+                  </h2>
+                )}
                 <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                   {list.map((s) => {
                     const m = mastery[s.id]

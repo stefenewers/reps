@@ -10,8 +10,20 @@ automatically, then asks for the capstone.
 It began as a ten-day sprint (Oct 2–10, 2026) and now runs a **90-day ladder plan**
 (Oct 11, 2026 → Jan 8, 2027): every pattern is a ladder of reps from the ground up, a
 mastery check passed without the solution, then that pattern's LeetCode problems with
-spaced re-solves. The plan, its research basis and its generator are in `planning/`;
-`python3 planning/gen.py` rewrites `data/schedule-90.ts`, which the app reads.
+spaced re-solves. The plan, its research basis and its generator are in `planning/`
+(the canonical plan); `python3 planning/gen.py` rewrites `data/schedule-90.ts`, which
+the app reads.
+
+Pages: **Today** (the day's blocks, ladder reps and LeetCode list), **Plan** (all 13
+weeks), **Skills**, **Problems**, **Log** (every solve, the re-solve queue, a form for
+outside problems), **Progress** (heatmap, time against plan, pattern readiness,
+checkpoints) and **Interview** (mocks, a mock log, the design track and the stories
+checklist). CI (`.github/workflows/ci.yml`) runs lint, tests, content verification and
+the build on Node 20.
+
+`archive/first-plan/` keeps the first 90-day plan (`plan.md`), its problem list
+(`problems.csv`, which the generator still reads for metadata and verified video links)
+and the original app-rebuild prompt. They are history, not the plan.
 
 ## Run it
 

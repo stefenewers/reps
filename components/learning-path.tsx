@@ -86,7 +86,7 @@ export default function LearningPath({ day, attempts, reviews = [] }: { day: Day
               </Link>
               {(isCurrent || (!complete && i === current + 1)) && (
                 <p className="mt-1 pl-[25px] text-[12.5px] text-muted">
-                  {r.total} reps · {formatMinutes(r.minutes)} · {compositionText(r.s.exercises)}
+                  {r.total} rep{r.total === 1 ? '' : 's'} · {formatMinutes(r.minutes)} · {compositionText(r.s.exercises)}
                 </p>
               )}
               {isCurrent && (

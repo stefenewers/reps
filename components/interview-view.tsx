@@ -5,20 +5,24 @@ import { GlyphTerminal, GlyphTimer } from '@/components/concept-icons'
 import { InterviewTargetFull } from '@/components/interview-target'
 import { useReps } from '@/components/reps-provider'
 import { MOCKS } from '@/data/mocks'
-import { DAY_BY_DATE, EXERCISE_BY_ID } from '@/data/curriculum'
+import { DAYS, EXERCISE_BY_ID, MODULES } from '@/data/curriculum'
+import MockLog from '@/components/mock-log'
+import { DesignTrack, StoriesChecklist } from '@/components/track-checklists'
 import { shortDate } from '@/lib/dates'
 import type { MockResult } from '@/lib/types'
 import type { StudyStateRow } from '@/lib/storage/types'
 
 export default function InterviewView() {
-  const { repo, version } = useReps()
+  const { repo, version, today } = useReps()
   void version
   const results = repo.engine
     .all('study_state')
     .filter((r: StudyStateRow) => r.id.startsWith('mock:'))
     .map((r) => r.value as MockResult)
     .sort((a, b) => b.startedAt.localeCompare(a.startedAt))
-  const cold = DAY_BY_DATE['2026-10-11']?.sections.flatMap((s) => s.exercises).filter((e) => e.repType === 'cold' && e.problemId) ?? []
+  // Cold capstones for every problem you have met so far: its capstone (or the cold rep itself) is on a day up to today.
+  const met = new Set(DAYS.filter((d) => d.date <= today).flatMap((d) => d.sections.flatMap((s) => s.exercises.map((e) => e.problemId).filter(Boolean))))
+  const cold = MODULES.flatMap((m) => m.sections.flatMap((s) => s.exercises)).filter((e) => e.repType === 'cold' && e.problemId && met.has(e.problemId))
 
   return (
     <main data-mode="interview" className="flex-1 bg-canvas">
@@ -78,9 +82,18 @@ export default function InterviewView() {
         </section>
       )}
 
+      {cold.length === 0 && (
+        <section className="mt-12">
+          <h2 className="h2">Timed cold solves</h2>
+          <p className="mt-1 text-[13.5px] text-muted">
+            These open as you meet each capstone in the plan. The first is Two Sum, in week 1. <Link href="/" className="text-ink underline underline-offset-4">Go to Today</Link>.
+          </p>
+        </section>
+      )}
+
       {results.length > 0 && (
         <section className="mt-12">
-          <h2 className="h2">History</h2>
+          <h2 className="h2">In-app mock history</h2>
           <ul className="card mt-3 divide-y divide-line px-4 text-[13.5px]">
             {results.map((r) => (
               <li key={r.id} className="flex justify-between gap-4 py-2.5">
@@ -95,6 +108,9 @@ export default function InterviewView() {
           </ul>
         </section>
       )}
+      <MockLog />
+      <DesignTrack />
+      <StoriesChecklist />
       </div>
     </main>
   )

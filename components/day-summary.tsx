@@ -25,7 +25,7 @@ export default function DaySummary({ date }: { date: string }) {
       <p className="text-[13px] text-muted">{longDate(date)}</p>
       <h1 className="display mt-1.5">{complete ? 'Reps complete' : 'Day so far'}</h1>
       <p className="mt-1 text-[14px] text-muted">
-        {s.completed} of {s.total} reps · {formatMinutes(st.timeSpentSeconds / 60)} logged
+        {s.completed} of {s.total} rep{s.total === 1 ? '' : 's'} · {formatMinutes(st.timeSpentSeconds / 60)} logged
       </p>
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2">

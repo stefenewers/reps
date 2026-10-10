@@ -7,13 +7,17 @@ import { DAYS } from '@/data/curriculum'
 import { INTERVIEW_TARGET } from '@/data/program'
 import { programProgress } from '@/lib/progress'
 import ProgramProgress from '@/components/program-progress'
+import BrandMark from '@/components/brand-mark'
 import { useCallback, useMemo } from 'react'
 import type { SyncStatus } from '@/lib/storage/types'
 
 const NAV = [
   { href: '/', label: 'Today', match: (p: string) => p === '/' || p.startsWith('/day') || p.startsWith('/rep') },
+  { href: '/plan', label: 'Plan', match: (p: string) => p.startsWith('/plan') },
   { href: '/skills', label: 'Skills', match: (p: string) => p.startsWith('/skills') },
   { href: '/problems', label: 'Problems', match: (p: string) => p.startsWith('/problems') },
+  { href: '/log', label: 'Log', match: (p: string) => p.startsWith('/log') },
+  { href: '/progress', label: 'Progress', match: (p: string) => p.startsWith('/progress') },
   { href: '/interview', label: 'Interview', match: (p: string) => p.startsWith('/interview') },
 ]
 
@@ -44,18 +48,6 @@ function SyncIndicator() {
 }
 
 /** The Reps mark: three stacked bars, one per rep. */
-function Mark() {
-  return (
-    <span aria-hidden="true" className="grid size-6 place-items-center rounded-[7px] bg-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.15)]">
-      <svg width="12" height="12" viewBox="0 0 12 12">
-        <rect x="1" y="2" width="10" height="2" rx="1" fill="white" />
-        <rect x="1" y="5" width="7" height="2" rx="1" fill="white" opacity="0.75" />
-        <rect x="1" y="8" width="4" height="2" rx="1" fill="white" opacity="0.5" />
-      </svg>
-    </span>
-  )
-}
-
 export default function Header() {
   const pathname = usePathname() ?? '/'
   const { attempts, loaded, repo } = useReps()
@@ -63,14 +55,16 @@ export default function Header() {
   const program = useMemo(() => programProgress(DAYS, attempts), [attempts])
   const lastLocal = useCallback(() => repo.lastLocalCompletionAt, [repo])
   const pct = Math.round(program.fraction * 100)
+  // The public demo has its own minimal top bar and none of the personal navigation.
+  if (pathname.startsWith('/demo')) return null
   return (
     <header className="site-header sticky top-0 z-30 bg-bg/85 backdrop-blur-md supports-[backdrop-filter]:bg-bg/75">
       <div className="flex h-14 items-center gap-3 px-4 sm:gap-6 sm:px-6">
         <Link href="/" className="flex items-center gap-2 rounded-md text-[15px] font-semibold tracking-tight">
-          <Mark />
+          <BrandMark size={24} />
           <span className="hidden sm:inline">Reps</span>
         </Link>
-        <nav aria-label="Main" className="flex min-w-0 items-center gap-0.5">
+        <nav aria-label="Main" className="flex min-w-0 items-center gap-0.5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {NAV.map((n) => {
             const active = n.match(pathname)
             return (
@@ -78,7 +72,7 @@ export default function Header() {
                 key={n.href}
                 href={n.href}
                 aria-current={active ? 'page' : undefined}
-                className={`relative rounded-lg px-2 py-1.5 text-[13.5px] transition-colors sm:px-3 ${
+                className={`relative shrink-0 rounded-lg px-2 py-1.5 text-[13.5px] transition-colors sm:px-3 ${
                   active ? 'bg-surface-2 font-medium text-ink' : 'text-muted hover:bg-surface hover:text-ink'
                 }`}
               >

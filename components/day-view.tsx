@@ -6,40 +6,75 @@ import ProgressRing from '@/components/progress-ring'
 import { kindOf, compositionText } from '@/components/rep-kind'
 import { IconArrowRight, IconCheck, IconLock } from '@/components/icons'
 import { ConceptGlyph, sectionKind } from '@/components/concept-icons'
-import { DAY_BY_DATE, dayExercises, dayLabel } from '@/data/curriculum'
+import { DAYS, dayExercises, dayLabel } from '@/data/curriculum'
+import { usePacing } from '@/components/use-pacing'
 import LeetcodeList from '@/components/leetcode-list'
 import { PROBLEM_BY_ID } from '@/data/problems'
 import { MOCKS } from '@/data/mocks'
-import { formatMinutes, longDate } from '@/lib/dates'
+import { formatMinutes, longDate, shortDate } from '@/lib/dates'
 import { attemptedSet, blockingGate, dayStats, exerciseUnlocked, nextExercise, passedSet, sectionUnlocked } from '@/lib/progress'
 
 export default function DayView({ date }: { date: string }) {
   const { attempts, today } = useReps()
-  const day = DAY_BY_DATE[date]
+  // Inside the plan a day is drawn from progress: a record of the past, today's stretch, or a forecast.
+  const pace = usePacing()
+  const day = pace.dayFor(date)
   if (!day) {
     return (
       <main className="flex-1 bg-canvas">
-        <div className="mx-auto w-full max-w-[880px] px-5 py-16 text-muted">No reps planned for {date}.</div>
+        <div className="mx-auto w-full max-w-[880px] px-5 py-16">
+          <p className="text-[15px] text-ink-2">Nothing is forecast for {shortDate(date)}: at the current pace the queue is finished before then.</p>
+          <Link href="/plan" className="btn mt-4">
+            See the plan
+          </Link>
+        </div>
       </main>
     )
   }
+  const when = !day.planDay ? null : date < today ? 'record' : date === today ? 'today' : 'forecast'
   const stats = dayStats(day, attempts)
   const passed = passedSet(attempts)
   const tried = attemptedSet(attempts)
   const next = nextExercise(day, attempts)
   const currentSection = day.sections.findIndex((s) => !s.optional && s.exercises.some((e) => !passed.has(e.id)))
   const offsets = day.sections.map((_, i) => day.sections.slice(0, i).reduce((c, x) => c + x.exercises.length, 0))
+  // The one mastery check (if any) holding this day's reps, and what is left of it.
+  const nextWork = pace.days.find((d) => d.date > day.date && (dayExercises(d).length > 0 || (d.leetcode?.length ?? 0) > 0))
+  const requiredCount = day.sections.filter((s) => !s.optional).length
+  // Order-based: a check holds what comes after it in the queue, on whatever day that lands.
+  const gate = day.sections.map((sec, i) => (sec.optional ? undefined : blockingGate(day, i, attempts))).find(Boolean)
+  void requiredCount
+  const gateLeft = gate ? DAYS.flatMap((d) => d.sections.filter((s) => s.gate && s.id === gate.id).flatMap((s) => s.exercises)).filter((e) => !passed.has(e.id)) : []
 
   return (
     <main className="flex-1 bg-canvas">
       <div className="mx-auto w-full max-w-[920px] px-5 pb-28 pt-10 sm:px-8">
-        <p className="text-[13px] text-muted">
-          {longDate(day.date)} · {dayLabel(day)}
-          {day.date === today ? ' · Today' : ''}
-        </p>
+        <p className="text-[13px] text-muted">{[longDate(day.date), dayLabel(day), day.date === today ? 'Today' : ''].filter(Boolean).join(' · ')}</p>
         <h1 className="display-xl mt-1.5">{day.short}</h1>
-        <p className="mt-1.5 text-[15.5px] text-ink-2">{day.title}</p>
+        {/* Only when it adds something: a one-pattern day would just repeat the heading. */}
+        {day.title !== day.short && <p className="mt-1.5 text-[15.5px] text-ink-2">{day.title}</p>}
         <p className="mt-2 max-w-[680px] text-[14px] leading-relaxed text-muted">{day.focus}</p>
+        {when && (
+          <p className="mt-2 max-w-[680px] text-[13px] leading-relaxed text-muted" data-testid="day-kind">
+            {when === 'record' && 'A record of what you did this day.'}
+            {when === 'today' && 'What you have done today, then the stretch today’s pace suggests. It is a gauge, not a goal: the queue continues either way.'}
+            {when === 'forecast' && 'A forecast: what the current pace reaches by this day. It moves as you do.'}
+          </p>
+        )}
+
+        {gate && (
+          <div role="status" data-testid="gate-banner" className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 rounded-2xl bg-bg px-5 py-4 shadow-[0_0_0_1px_var(--line-strong)]">
+            <IconLock size={16} className="shrink-0 text-ink-2" />
+            <p className="min-w-0 flex-1 text-[14px] leading-relaxed text-ink-2">
+              <span className="font-medium text-ink">These reps open once the {gate.title} is cleared.</span> Pass each of its {gateLeft.length} remaining rep{gateLeft.length === 1 ? '' : 's'} without opening the solution (hints and Basics are fine). You can still preview the capstones below.
+            </p>
+            {gateLeft[0] && (
+              <Link href={`/rep/${gateLeft[0].id}`} className="btn btn-primary btn-sm shrink-0">
+                Go to the check <IconArrowRight size={13} />
+              </Link>
+            )}
+          </div>
+        )}
 
         <section className="panel mt-7 flex flex-col gap-5 p-6 sm:flex-row sm:items-center">
           <ProgressRing value={stats.percent} size={64} stroke={5} tone="accent">
@@ -47,10 +82,26 @@ export default function DayView({ date }: { date: string }) {
           </ProgressRing>
           <div className="min-w-0 flex-1">
             <p className="num text-[15px] font-semibold">
-              {stats.completed} of {stats.total} reps
+              {stats.total ? `${stats.completed} of ${stats.total} rep${stats.total === 1 ? '' : 's'}` : day.phase === 'off' || !(day.leetcode?.length ?? 0) ? 'Nothing planned' : 'No ladder reps today'}
             </p>
             <p className="mt-0.5 text-[13.5px] text-muted">
-              {formatMinutes(stats.minutesRemaining)} left · {compositionText(dayExercises(day))}
+              {stats.total ? (
+                <>
+                  {formatMinutes(stats.minutesRemaining)} left · {compositionText(dayExercises(day))}
+                </>
+              ) : (day.leetcode?.length ?? 0) > 0 ? (
+                'This day’s work is the LeetCode list below.'
+              ) : nextWork ? (
+                <>
+                  Rest. The next working day is{' '}
+                  <Link href={`/day/${nextWork.date}`} className="text-ink underline underline-offset-4">
+                    {shortDate(nextWork.date)} · {nextWork.short}
+                  </Link>
+                  .
+                </>
+              ) : (
+                'Rest.'
+              )}
             </p>
             {(day.capstones.length > 0 || (day.mocks?.length ?? 0) > 0) && (
               <p className="mt-1.5 text-[13px] text-muted">
@@ -129,15 +180,11 @@ export default function DayView({ date }: { date: string }) {
                         </span>
                       )}
                       {s.gate && !complete && <span className="text-[12px] font-medium text-accent-ink">Mastery check · no solutions</span>}
-                      {gated ? (
-                        <span className="text-[12px] text-faint">Locked · clear the {gated.title} first</span>
-                      ) : (
-                        !unlocked && !complete && <span className="text-[12px] text-faint">Up next · open any rep anyway</span>
-                      )}
+                      {!gated && !unlocked && !complete && <span className="text-[12px] text-muted">Up next · open any rep anyway</span>}
                     </div>
                     <p className="mt-1 text-[13.5px] leading-relaxed text-muted">{s.summary}</p>
                     <p className="mt-1.5 text-[12.5px] text-faint">
-                      {s.exercises.length} reps · {formatMinutes(minutes)} · {compositionText(s.exercises)}
+                      {s.exercises.length} rep{s.exercises.length === 1 ? '' : 's'} · {formatMinutes(minutes)} · {compositionText(s.exercises)}
                     </p>
                   </div>
                   <div className="flex shrink-0 items-center gap-3">
@@ -161,11 +208,11 @@ export default function DayView({ date }: { date: string }) {
                       const isNext = next?.id === e.id
                       const k = kindOf(e)
                       return (
-                        <li key={e.id} className={gated ? 'pointer-events-none select-none opacity-60' : undefined}>
+                        <li key={e.id} className={gated && e.repType !== 'capstone' ? 'pointer-events-none select-none opacity-60' : undefined}>
                           <Link
                             href={`/rep/${e.id}`}
-                            tabIndex={gated ? -1 : undefined}
-                            aria-disabled={gated ? true : undefined}
+                            tabIndex={gated && e.repType !== 'capstone' ? -1 : undefined}
+                            aria-disabled={gated && e.repType !== 'capstone' ? true : undefined}
                             className={`group relative grid grid-cols-[30px_22px_1fr_auto] items-center gap-3 rounded-lg px-3 py-2 text-[14px] transition-colors hover:bg-surface ${isNext ? 'bg-surface-2 hover:bg-surface-2 before:absolute before:inset-y-2 before:left-0 before:w-[2px] before:rounded-full before:bg-accent' : ''} ${
                               !open && !isDone ? 'text-muted' : ''
                             }`}
@@ -196,11 +243,9 @@ export default function DayView({ date }: { date: string }) {
           })}
         </ol>
 
-        {(day.leetcode?.length ?? 0) > 0 && (
-          <div className="mt-8">
-            <LeetcodeList items={day.leetcode!} heading={day.date === today ? 'On LeetCode today' : 'On LeetCode this day'} />
-          </div>
-        )}
+        <div className="mt-8 empty:hidden">
+          <LeetcodeList day={day} heading={day.date === today ? 'On LeetCode today' : 'On LeetCode this day'} />
+        </div>
       </div>
     </main>
   )

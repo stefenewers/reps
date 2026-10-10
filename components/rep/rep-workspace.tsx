@@ -9,7 +9,7 @@ import Markdown from '@/components/markdown'
 import CodeView from '@/components/code-view'
 import { ChoiceInput, ExplainInput, OutputInput, ReorderInput } from '@/components/rep/answer-inputs'
 import { TestResults } from '@/components/rep/results'
-import { DAY_BY_DATE, DAY_OF_EXERCISE } from '@/data/curriculum'
+import { DAY_BY_DATE, DAY_OF_EXERCISE, DAYS } from '@/data/curriculum'
 import { PROBLEM_BY_ID } from '@/data/problems'
 import { skillName } from '@/data/skills'
 import { firstDifference, hasBlanks, outputMatches } from '@/lib/answers'
@@ -23,7 +23,7 @@ import { movesFor } from '@/data/primers/moves'
 import { BRIEFS } from '@/data/briefs'
 import { walkthroughFor } from '@/data/walkthroughs'
 import { IconArrowRight, IconBug, IconBulb, IconClock, IconDots, IconExternal, IconPlay, IconRotate, IconSpark, IconX } from '@/components/icons'
-import { followingExercise, lockedByGate, missingPrerequisites, passedSet, retrievalTypeFor } from '@/lib/progress'
+import { followingExercise, lockedByGate, missingPrerequisites, nextInOrder, passedSet, retrievalTypeFor } from '@/lib/progress'
 import { getRunner, type RunResult } from '@/lib/python/runner'
 import { buildRepairSet, createSession, findExercise, getSession, newId } from '@/lib/sessions'
 import {
@@ -82,6 +82,22 @@ function blankStarter(e: Exercise): string {
 
 type Phase = 'idle' | 'running' | 'passed' | 'failed'
 
+const DRAFT_KEY = (id: string) => `reps-draft:${id}`
+function localDraft(id: string): string | undefined {
+  try {
+    return window.localStorage.getItem(DRAFT_KEY(id)) ?? undefined
+  } catch {
+    return undefined // private mode, storage disabled, or not in a browser
+  }
+}
+function saveLocalDraft(id: string, code: string) {
+  try {
+    window.localStorage.setItem(DRAFT_KEY(id), code)
+  } catch {
+    /* the synced draft still saves */
+  }
+}
+
 export default function RepWorkspace({ exerciseId, sessionId, fromId, initialMode }: { exerciseId: string; sessionId?: string; fromId?: string; initialMode?: Mode }) {
   const router = useRouter()
   const { repo, attempts, mastery, today, loaded } = useReps()
@@ -100,14 +116,17 @@ export default function RepWorkspace({ exerciseId, sessionId, fromId, initialMod
   }
   const lockDay = DAY_BY_DATE[DAY_OF_EXERCISE[exercise.id]]
   const gate = !session && lockDay ? lockedByGate(lockDay, exercise.id, attempts) : undefined
-  if (gate) return <GateLock gate={gate} attempts={attempts} />
+  if (gate) return <GateLock gate={gate} attempts={attempts} exercise={exercise} />
   return <Workspace key={exercise.id} exercise={exercise} session={session} fromId={fromId} initialMode={initialMode} router={router} ctx={{ repo, attempts, mastery, today }} />
 }
 
 /** Behind an uncleared mastery check: no way round it, only through it. */
-function GateLock({ gate, attempts }: { gate: Section; attempts: Attempt[] }) {
+function GateLock({ gate, attempts, exercise }: { gate: Section; attempts: Attempt[]; exercise: Exercise }) {
   const passed = passedSet(attempts)
-  const left = gate.exercises.filter((e) => !passed.has(e.id))
+  // A check can span two days: count every part of it.
+  const left = DAYS.flatMap((d) => d.sections.filter((s) => s.gate && s.id === gate.id).flatMap((s) => s.exercises)).filter((e) => !passed.has(e.id))
+  const total = DAYS.flatMap((d) => d.sections.filter((s) => s.gate && s.id === gate.id).flatMap((s) => s.exercises)).length
+  const preview = exercise.repType === 'capstone'
   return (
     <main className="mx-auto w-full max-w-[620px] px-5 py-16">
       <p className="eyebrow text-faint">Locked</p>
@@ -115,7 +134,7 @@ function GateLock({ gate, attempts }: { gate: Section; attempts: Attempt[] }) {
       <p className="mt-3 text-[14.5px] leading-relaxed text-ink-2">
         Everything after it builds on dictionaries. Each rep in the check has to be passed <span className="font-medium text-ink">without opening the solution</span>. Hints and Basics are fine.
       </p>
-      <p className="mt-6 label">Still to clear · {left.length} of {gate.exercises.length}</p>
+      <p className="mt-6 label">Still to clear · {left.length} of {total}</p>
       <ul className="mt-2 flex flex-col gap-1">
         {left.map((e) => (
           <li key={e.id}>
@@ -129,6 +148,28 @@ function GateLock({ gate, attempts }: { gate: Section; attempts: Attempt[] }) {
         <Link href={`/rep/${left[0].id}`} className="btn btn-accent btn-lg mt-6">
           Continue the check <IconArrowRight size={15} />
         </Link>
+      )}
+      {preview && (
+        <section aria-labelledby="preview-h" data-testid="locked-preview" className="mt-10 rounded-2xl bg-bg p-6 shadow-[0_0_0_1px_var(--line)]">
+          <p className="eyebrow text-muted">Preview · where this ladder is heading</p>
+          <h2 id="preview-h" className="h2 mt-1.5">
+            {exercise.title}
+          </h2>
+          <Markdown text={exercise.prompt} className="mt-3 !text-[14.5px]" />
+          {exercise.examples && exercise.examples.length > 0 && (
+            <div className="well mt-4 divide-y divide-line overflow-hidden">
+              {exercise.examples.map((x, i) => (
+                <div key={i} className="grid grid-cols-[34px_1fr] gap-x-3 gap-y-1 px-4 py-3 text-[13px]">
+                  <span className="mono text-muted">in</span>
+                  <span className="mono break-all text-ink-2">{x.input}</span>
+                  <span className="mono text-muted">out</span>
+                  <span className="mono break-all font-medium text-ink">{x.output}</span>
+                </div>
+              ))}
+            </div>
+          )}
+          <p className="mt-4 text-[13px] text-muted">You can read it now. The editor opens when the check is cleared.</p>
+        </section>
       )}
     </main>
   )
@@ -159,7 +200,7 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
   const [announce, setAnnounce] = useState('')
 
   // Answers
-  const [code, setCode] = useState(() => repo.draft(ex.id) ?? blankStarter(ex))
+  const [code, setCode] = useState(() => repo.draft(ex.id) ?? localDraft(ex.id) ?? blankStarter(ex))
   const [choice, setChoice] = useState<number | null>(null)
   const [outputText, setOutputText] = useState('')
   const [order, setOrder] = useState<number[]>(() => shuffledOrder(ex.lines?.length ?? 0, ex.id))
@@ -290,6 +331,8 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
   // Drafts: saved locally after a pause in typing, synced later in the background.
   useEffect(() => {
     if (!isCode || phase === 'passed') return
+    // Kept per rep on this device straight away (survives a closed tab), then synced after a short pause.
+    saveLocalDraft(ex.id, code)
     const t = window.setTimeout(() => void repo.saveDraft(ex.id, code), 800)
     return () => window.clearTimeout(t)
   }, [code, isCode, ex.id, repo, phase])
@@ -336,6 +379,19 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
     },
     [ex.tests],
   )
+
+  // Run my code: your own call, separate from the tests. Nothing here is graded or recorded.
+  const [customOpen, setCustomOpen] = useState(false)
+  const [customCall, setCustomCall] = useState('')
+  const [customOut, setCustomOut] = useState<{ text: string; error: boolean } | null>(null)
+  const [customBusy, setCustomBusy] = useState(false)
+  const runCustom = async () => {
+    if (!customCall.trim() || customBusy) return
+    setCustomBusy(true)
+    const r = await getRunner().run(`${code}\n\n__reps_out = (${customCall.trim()})\nprint(repr(__reps_out))\n`, [])
+    setCustomOut(r.infraError ? { text: `Python could not run: ${r.infraError}`, error: true } : r.error ? { text: `${r.stdout}${r.error}`, error: true } : { text: r.stdout.replace(/\n$/, '') || '(nothing printed)', error: false })
+    setCustomBusy(false)
+  }
 
   const onRun = useCallback(async () => {
     if (ex.kind !== 'code' || phase === 'running') return
@@ -546,9 +602,12 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
       if (session.returnTo) return `/rep/${session.returnTo}`
       return '/'
     }
+    // The queue just continues: the next rep in the order of the work, whatever day it was first planned for.
+    const inOrder = nextInOrder(fromId ?? ex.id)
+    if (inOrder) return `/rep/${inOrder.id}`
     if (day) {
       const nxt = followingExercise(day, fromId ?? ex.id)
-      return nxt ? `/rep/${nxt.id}` : `/day/${day.date}/summary`
+      if (nxt) return `/rep/${nxt.id}`
     }
     return '/'
   }, [session, ex.id, day, fromId])
@@ -657,6 +716,8 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
   // ── render ─────────────────────────────────────────────────────────────────
 
   const passed = phase === 'passed'
+  // Suggest a call to the rep's own function, e.g. `two_sum(...)`.
+  const customPlaceholder = `${/def\s+([A-Za-z_]\w*)\s*\(/.exec(code)?.[1] ?? 'my_function'}(...)`
   /** A check rep passed with the solution open: it does not count until it is run back clean. */
   const checkUncleared = passed && Boolean(ex.cleanPass) && !session && solutionShown
   const assisted = hintsShown + aiHints.length > 0 || solutionShown
@@ -668,8 +729,10 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
   const kind = kindOf(ex)
   const crumbDay = day ? shortDate(day.date) : null
   const crumbTitle = session ? session.title : (section?.title ?? (ex.generated ? 'Generated rep' : 'Rep'))
-  const total = session ? session.exerciseIds.length : dayList.length
-  const index = session ? session.exerciseIds.indexOf(ex.id) + 1 : position + 1
+  // Outside a session, show where you are in the section: days are a gauge now, not a container.
+  const inSection = !session && section ? section.exercises.findIndex((e) => e.id === ex.id) : -1
+  const total = session ? session.exerciseIds.length : inSection >= 0 ? section!.exercises.length : dayList.length
+  const index = session ? session.exerciseIds.indexOf(ex.id) + 1 : inSection >= 0 ? inSection + 1 : position + 1
   const progressPct = total > 0 && index > 0 ? (index / total) * 100 : 0
   const runnable = ex.kind === 'code' || ex.kind === 'reorder'
   const testsPassed = result?.tests.filter((t) => t.passed).length ?? 0
@@ -702,7 +765,7 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
           <div className="hidden items-center gap-3 sm:flex">
             <span className="flex items-baseline gap-1.5">
               <span className="eyebrow text-ink">Rep {index}</span>
-              <span className="num text-[12px] text-faint">of {total}{session ? '' : ' today'}</span>
+              <span className="num text-[12px] text-faint">of {total}{session ? '' : ' in this section'}</span>
             </span>
             <span className="bar bar-thin w-32" aria-hidden="true">
               <span style={{ width: `${progressPct}%`, background: 'var(--accent)' }} />
@@ -1014,6 +1077,45 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
               )}
             </div>
 
+            {ex.kind === 'code' && !interview && (
+              <div className="shrink-0 bg-bg px-4 py-2" style={{ boxShadow: '0 -1px 0 var(--line)' }} data-testid="custom-run">
+                {customOpen ? (
+                  <div className="flex flex-col gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <label htmlFor="custom-call" className="text-[12.5px] text-muted">
+                        Run my code with
+                      </label>
+                      <input
+                        id="custom-call"
+                        className="input mono !h-8 min-w-0 flex-1 !text-[12.5px]"
+                        value={customCall}
+                        placeholder={customPlaceholder}
+                        onChange={(e) => setCustomCall(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && void runCustom()}
+                      />
+                      <button type="button" className="btn btn-sm" onClick={() => void runCustom()} disabled={customBusy || !customCall.trim()}>
+                        <IconPlay size={10} /> {customBusy ? 'Running…' : 'Run my code'}
+                      </button>
+                      <button type="button" className="btn btn-ghost btn-sm" onClick={() => setCustomOpen(false)}>
+                        Hide
+                      </button>
+                    </div>
+                    {customOut ? (
+                      <pre className={`code-view max-h-32 overflow-auto !py-2 !text-[12.5px] ${customOut.error ? '!text-fail' : ''}`} aria-live="polite">
+                        {customOut.text}
+                      </pre>
+                    ) : (
+                      <p className="text-[12px] text-muted">Type a call to your function. It runs your current code and prints what comes back. The tests are not involved.</p>
+                    )}
+                  </div>
+                ) : (
+                  <button type="button" className="text-[12.5px] text-muted underline decoration-line-strong underline-offset-4 hover:text-ink" onClick={() => setCustomOpen(true)}>
+                    Try my own input
+                  </button>
+                )}
+              </div>
+            )}
+
             {/* Results */}
             <p className="sr-only" role="status" aria-live="polite">
               {announce}
@@ -1053,7 +1155,7 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
 
             {/* Actions */}
             {passed ? (
-              <div className="success-in relative flex shrink-0 flex-wrap items-center gap-x-4 gap-y-3 overflow-hidden bg-surface py-3.5 pl-4 pr-24" style={{ boxShadow: '0 -1px 0 var(--line)' }} data-testid="rep-complete">
+              <div className="success-in relative flex shrink-0 flex-wrap items-center gap-x-4 gap-y-3 overflow-hidden bg-surface py-3.5 pl-4 pr-4 max-lg:sticky max-lg:bottom-0 max-lg:z-10 lg:pr-24" style={{ boxShadow: '0 -1px 0 var(--line)' }} data-testid="rep-complete">
                 <span aria-hidden="true" className="success-wash pointer-events-none absolute inset-0" />
                 <div className="flex min-w-0 items-center gap-3">
                   <span className="pop-in grid size-8 shrink-0 place-items-center rounded-full bg-pass text-white shadow-sm">
@@ -1113,7 +1215,7 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
                 )}
               </div>
             ) : (
-              <div className="flex shrink-0 flex-wrap items-center gap-2 bg-bg py-3 pl-3 pr-24" style={{ boxShadow: '0 -1px 0 var(--line)' }}>
+              <div className="flex shrink-0 flex-wrap items-center gap-2 bg-bg py-3 pl-3 pr-3 max-lg:sticky max-lg:bottom-0 max-lg:z-10 lg:pr-24" data-testid="action-bar" style={{ boxShadow: '0 -1px 0 var(--line)' }}>
                 {!interview && (
                   <button type="button" className="btn btn-ghost" onClick={nextHint} disabled={coachBusy !== null}>
                     <IconBulb size={14} />

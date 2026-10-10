@@ -95,3 +95,10 @@
     display: none;
   }
 }
+
+/* On narrow screens the corner is where Run / Submit and page footers live: Winston stays home. */
+@media (max-width: 1023px) {
+  .wa {
+    display: none;
+  }
+}

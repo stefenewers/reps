@@ -1,11 +1,14 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { DAYS, DAY_BY_DATE, EXERCISE_BY_ID, MODULES, allDayExercises, dayExercises, dayLabel } from '@/data/curriculum'
-import { PLAN_90, PLAN_END, PLAN_START } from '@/data/schedule-90'
+import { readFileSync } from 'node:fs'
+import { spawnSync } from 'node:child_process'
+import { PLAN_90, PLAN_END, PLAN_START, RESOLVE_CAPS, RESOLVE_WINDOWS } from '@/data/schedule-90'
 import { engagementOf } from '@/lib/curriculum-audit'
 import { blockingGate, lockedByGate } from '@/lib/progress'
 import { attempt } from '@/lib/test-helpers'
 import { parseLocal } from '@/lib/dates'
+import { PROBLEM_BY_ID } from '@/data/problems'
 
 /**
  * The calendar: the October sprint as it happened (Oct 2–10), then the 90-day
@@ -14,6 +17,9 @@ import { parseLocal } from '@/lib/dates'
 
 const required = (date: string) => DAY_BY_DATE[date].sections.filter((s) => !s.optional)
 const plan = DAYS.filter((d) => d.planDay)
+/** LeetCode number of each Reps capstone that stands in for a LeetCode problem. */
+const PROBLEM_NUMBER_OF_CAPSTONE: Record<string, number> = Object.fromEntries(Object.values(PROBLEM_BY_ID).filter((p) => p.exerciseId ?? `cap-${p.id}`).map((p) => [p.exerciseId ?? `cap-${p.id}`, p.number]))
+
 const dateOfRep = new Map(plan.flatMap((d) => dayExercises(d).map((e) => [e.id, d.date] as const)))
 
 // ── the sprint, as it happened ──────────────────────────────────────────────
@@ -25,7 +31,7 @@ test('the sprint is recorded as it happened: Oct 2–7 worked, Oct 6 and Oct 8�
   for (const id of ['o2-dict-revision', 'o2-dict-mastery']) assert.ok(required('2026-10-03').find((s) => s.id === id)?.gate, `${id} is a mastery check`)
   assert.deepEqual(required('2026-10-04').map((s) => s.id), ['o2-dict-ladder'])
   for (const date of ['2026-10-06', '2026-10-08', '2026-10-09', '2026-10-10']) assert.equal(dayExercises(DAY_BY_DATE[date]).length, 0, `${date} is an off day`)
-  assert.equal(dayLabel(DAY_BY_DATE['2026-10-03']), 'October sprint')
+  assert.equal(dayLabel(DAY_BY_DATE['2026-10-03']), '', 'days before the plan carry no label')
 })
 
 // ── the 90-day ladder plan ──────────────────────────────────────────────────
@@ -59,9 +65,54 @@ test('the first week is a soft start, and no day asks for more than the ceiling'
   }
   for (const p of PLAN_90) {
     assert.ok(p.minutes <= 175, `${p.date}: ${p.minutes} real minutes of new work`)
-    assert.ok(p.leetcode.filter((x) => x.type !== 'new').length <= 6, `${p.date}: re-solves`)
-    assert.ok(p.leetcode.filter((x) => x.type === 'new').length <= 4, `${p.date}: new LeetCode problems`)
+    assert.ok(p.leetcode.filter((x) => x.type === 'new').length <= 2, `${p.date}: new LeetCode problems`)
   }
+})
+
+test('no day carries more re-solves than its phase allows', () => {
+  for (const p of PLAN_90) {
+    const [weekday, saturday] = RESOLVE_CAPS[p.phase]
+    const cap = parseLocal(p.date).getDay() === 6 ? saturday : weekday
+    const n = p.leetcode.filter((x) => x.type !== 'new').length
+    assert.ok(n <= cap, `${p.date} (${p.phase}): ${n} re-solves, cap ${cap}`)
+  }
+  assert.ok(Math.max(...Object.values(RESOLVE_CAPS).flat()) <= 5, 'no phase allows more than five')
+})
+
+test('every re-solve lands inside its window: 3–4, 10–12 and 30–33 days after the first solve', () => {
+  assert.deepEqual(RESOLVE_WINDOWS, { review1: [3, 4], review2: [10, 12], review3: [30, 33] })
+  const days = (a: string, b: string) => Math.round((parseLocal(b).getTime() - parseLocal(a).getTime()) / 86_400_000)
+  // First solve: the day it is new on LeetCode, or the day its capstone is done in Reps.
+  const first = new Map<number, string>()
+  for (const p of PLAN_90) for (const x of p.leetcode) if (x.type === 'new') first.set(x.lc, p.date)
+  for (const p of PLAN_90) for (const s of p.sections) for (const id of s.reps) {
+    const lc = PROBLEM_NUMBER_OF_CAPSTONE[id]
+    if (lc) first.set(lc, p.date)
+  }
+  let checked = 0
+  const seeds = new Map<number, string>() // solved in Reps before the plan: their first LeetCode re-solve is the anchor
+  for (const p of PLAN_90)
+    for (const x of p.leetcode) {
+      if (x.type === 'new') continue
+      const anchor = first.get(x.lc) ?? seeds.get(x.lc)
+      if (!anchor) {
+        assert.equal(x.type, 'review1', `LC ${x.lc} on ${p.date} has no first solve`)
+        seeds.set(x.lc, p.date)
+        continue
+      }
+      const [lo, hi] = RESOLVE_WINDOWS[x.type]
+      const gap = days(anchor, p.date)
+      assert.ok(gap >= lo && gap <= hi, `LC ${x.lc} ${x.type} on ${p.date}: ${gap} days after ${anchor}, window ${lo}–${hi}`)
+      checked++
+    }
+  assert.ok(checked > 140, `${checked} re-solves checked`)
+})
+
+test('python3 planning/gen.py reproduces data/schedule-90.ts byte for byte', () => {
+  const before = readFileSync('data/schedule-90.ts')
+  const r = spawnSync('python3', ['planning/gen.py'], { encoding: 'utf8' })
+  assert.equal(r.status, 0, r.stderr)
+  assert.ok(before.equals(readFileSync('data/schedule-90.ts')), 'the committed schedule is stale: run python3 planning/gen.py and commit the result')
 })
 
 test('every pattern runs like dictionaries did: ladder, then its mastery check, then its LeetCode problems', () => {
