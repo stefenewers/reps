@@ -26,6 +26,249 @@ export interface PlanDay {
 export const PLAN_START = '2026-10-11'
 export const PLAN_END = '2027-01-08'
 
+/** The fifteen patterns, in order: each one's ladder sections, its mastery check, and its LeetCode problems. */
+export const PLAN_UNITS: { name: string; short: string; sections: string[]; check: string | null; leetcode: number[] }[] = [
+ {
+  "name": "Hashing",
+  "short": "Hashing",
+  "sections": [
+   "o2-dict-ladder",
+   "o2-valid-anagram",
+   "o2-index-maps",
+   "o2-complements",
+   "o2-two-sum"
+  ],
+  "check": "o2-cold",
+  "leetcode": [
+   49,
+   128,
+   238,
+   271
+  ]
+ },
+ {
+  "name": "Strings + two pointers",
+  "short": "Pointers",
+  "sections": [
+   "d3-strings",
+   "d3-slicing",
+   "d3-methods",
+   "d3-two-pointers",
+   "d3-pointer-updates",
+   "d3-running-state",
+   "d3-valid-palindrome",
+   "d3-stock",
+   "d3-two-sum-ii"
+  ],
+  "check": "d3-cold",
+  "leetcode": [
+   11,
+   15
+  ]
+ },
+ {
+  "name": "Sliding window",
+  "short": "Windows",
+  "sections": [
+   "d4-windows",
+   "d4-window-state",
+   "d4-longest-substring"
+  ],
+  "check": null,
+  "leetcode": [
+   424,
+   76
+  ]
+ },
+ {
+  "name": "Stacks",
+  "short": "Stacks",
+  "sections": [
+   "d4-stacks",
+   "d4-matching",
+   "d4-valid-parentheses"
+  ],
+  "check": "d4-cold",
+  "leetcode": []
+ },
+ {
+  "name": "Binary search",
+  "short": "Search",
+  "sections": [
+   "d05-while",
+   "d05-bs",
+   "d05-variants",
+   "d05-cap-search"
+  ],
+  "check": null,
+  "leetcode": [
+   153,
+   33
+  ]
+ },
+ {
+  "name": "Linked lists",
+  "short": "Lists",
+  "sections": [
+   "d05-listnode",
+   "d05-rewire",
+   "d05-cap-reverse",
+   "d05-dummy",
+   "d05-cap-merge"
+  ],
+  "check": "d05-cold",
+  "leetcode": [
+   141,
+   19,
+   143,
+   23
+  ]
+ },
+ {
+  "name": "Recursion + trees",
+  "short": "Trees",
+  "sections": [
+   "d06-functions",
+   "d06-recursion",
+   "d06-treenode",
+   "d06-dfs",
+   "d06-cap-depth",
+   "d06-pairs",
+   "d06-cap-same",
+   "d06-mutate",
+   "d06-cap-invert"
+  ],
+  "check": "d06-cold",
+  "leetcode": [
+   572,
+   235,
+   98,
+   230,
+   105,
+   124
+  ]
+ },
+ {
+  "name": "Tries",
+  "short": "Tries",
+  "sections": [],
+  "check": null,
+  "leetcode": [
+   208,
+   211
+  ]
+ },
+ {
+  "name": "BFS + grids",
+  "short": "BFS",
+  "sections": [
+   "o7-deque",
+   "o7-tree-bfs",
+   "o7-cap-level-order",
+   "o7-grids",
+   "o7-neighbors",
+   "o7-grid-bfs",
+   "o7-islands"
+  ],
+  "check": "o7-cold",
+  "leetcode": []
+ },
+ {
+  "name": "Graphs",
+  "short": "Graphs",
+  "sections": [
+   "o8-adjacency",
+   "o8-dfs",
+   "o8-bfs",
+   "o8-cap-path-exists",
+   "o8-cycles",
+   "o8-cap-course-schedule"
+  ],
+  "check": "o8-cold",
+  "leetcode": [
+   133,
+   417,
+   261,
+   323
+  ]
+ },
+ {
+  "name": "Sorting + heaps",
+  "short": "Heaps",
+  "sections": [
+   "d9-sorting",
+   "d9-keys",
+   "d9-freq-sort",
+   "d9-heapq",
+   "d9-top-k"
+  ],
+  "check": null,
+  "leetcode": []
+ },
+ {
+  "name": "Intervals",
+  "short": "Intervals",
+  "sections": [
+   "d9-intervals"
+  ],
+  "check": "d9-cold",
+  "leetcode": [
+   57,
+   252,
+   435,
+   253
+  ]
+ },
+ {
+  "name": "Backtracking",
+  "short": "Backtracking",
+  "sections": [
+   "d10-decisions",
+   "d10-path",
+   "d10-subsets"
+  ],
+  "check": null,
+  "leetcode": [
+   39,
+   79
+  ]
+ },
+ {
+  "name": "Dynamic programming",
+  "short": "DP",
+  "sections": [
+   "d10-recurrence",
+   "d10-memo",
+   "d10-bottom-up",
+   "d10-rolling"
+  ],
+  "check": "d10-cold",
+  "leetcode": [
+   213,
+   53,
+   55,
+   322,
+   139,
+   300,
+   5,
+   62,
+   1143,
+   91
+  ]
+ },
+ {
+  "name": "Matrix",
+  "short": "Matrix",
+  "sections": [],
+  "check": null,
+  "leetcode": [
+   48,
+   54,
+   73
+  ]
+ }
+]
+
 /** A re-solve lands this many days after the first solve (it slides only to miss a Sunday, a day off or a full day). */
 export const RESOLVE_WINDOWS = {"review1": [3, 4], "review2": [10, 12], "review3": [30, 33]} as const
 

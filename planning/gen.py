@@ -258,6 +258,10 @@ def main():
         "export interface PlanLeetcode {\n  lc: number\n  title: string\n  difficulty: string\n  pattern: string\n  type: 'new' | 'review1' | 'review2' | 'review3'\n  mode: 'study-first' | 'attempt-first' | null\n  video: string | null\n  url: string\n}\n"
         "export interface PlanDay {\n  date: string\n  week: number\n  phase: 'soft' | 'build' | 'full' | 'buffer' | 'final' | 'off'\n  /** The pattern(s) this day works on. */\n  unit: string\n  short: string\n  /** Reps reps for the day, grouped by their section. `gate` marks a mastery check. */\n  sections: { id: string; reps: string[]; gate: boolean; label: string | null }[]\n  leetcode: PlanLeetcode[]\n  /** Estimated real minutes of new work (ladder reps and new LeetCode problems). */\n  minutes: number\n}\n\n"
         f"export const PLAN_START = '{START.isoformat()}'\nexport const PLAN_END = '{END.isoformat()}'\n\n"
+        "/** The fifteen patterns, in order: each one's ladder sections, its mastery check, and its LeetCode problems. */\n"
+        "export const PLAN_UNITS: { name: string; short: string; sections: string[]; check: string | null; leetcode: number[] }[] = "
+        + json.dumps([dict(name=u['name'], short=u['short'], sections=u['ladder'], check=u['check'],
+                           leetcode=[lc for lc in u['core'] + u['more'] if lc in {r['lc'] for r in lc_rows if r['type'] == 'new'}]) for u in UNITS], indent=1) + "\n\n"
         "/** A re-solve lands this many days after the first solve (it slides only to miss a Sunday, a day off or a full day). */\n"
         f"export const RESOLVE_WINDOWS = {json.dumps({f'review{k}': list(v) for k, v in WINDOWS.items()})} as const\n\n"
         "/** The most re-solves a day may carry, by phase: [weekday, Saturday]. */\n"
