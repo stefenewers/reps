@@ -1,0 +1,667 @@
+week,day,date,lc,title,pattern,difficulty,source,type,reps_capstone,neetcode_video,video_length
+1,Mon,2026-10-12,1,Two Sum,Hash map complement,Easy,NC150,new,Y,https://www.youtube.com/watch?v=KLlXCFG5TnA,8:26
+1,Mon,2026-10-12,49,Group Anagrams,Hash map grouping,Medium,NC150,new,,https://www.youtube.com/watch?v=vzdNOK2oB2E,8:11
+1,Mon,2026-10-12,347,Top K Frequent Elements,Frequency + bucket/heap,Medium,NC150,new,Y,https://www.youtube.com/watch?v=YPTqKIgVk-k,13:13
+1,Tue,2026-10-13,217,Contains Duplicate,Hash set,Easy,NC150,review2,,https://www.youtube.com/watch?v=3OamzN90kPg,6:31
+1,Tue,2026-10-13,128,Longest Consecutive Sequence,Hash set sequence starts,Medium,NC150,new,,https://www.youtube.com/watch?v=P6RZZMu_maU,9:23
+1,Tue,2026-10-13,238,Product of Array Except Self,Prefix/suffix products,Medium,NC150,new,,https://www.youtube.com/watch?v=bNvIQI2wAjk,11:53
+1,Tue,2026-10-13,271,Encode and Decode Strings,String encoding,Medium,NC150,new,,https://www.youtube.com/watch?v=B1k_sxOSgv8,11:32
+1,Wed,2026-10-14,242,Valid Anagram,Frequency map,Easy,NC150,review2,,https://www.youtube.com/watch?v=9UtInBqnCgA,
+1,Wed,2026-10-14,36,Valid Sudoku,Hash sets per row/col/box,Medium,NC150,new,,https://www.youtube.com/watch?v=TjFXEUCMqI8,13:28
+1,Wed,2026-10-14,560,Subarray Sum Equals K,Prefix sum + hash map,Medium,extra,new,,https://www.youtube.com/watch?v=fFVZt-6sgyo,15:18
+1,Wed,2026-10-14,724,Find Pivot Index,Prefix sum,Easy,extra,new,,,
+1,Thu,2026-10-15,1,Two Sum,Hash map complement,Easy,NC150,review1,Y,https://www.youtube.com/watch?v=KLlXCFG5TnA,8:26
+1,Thu,2026-10-15,49,Group Anagrams,Hash map grouping,Medium,NC150,review1,,https://www.youtube.com/watch?v=vzdNOK2oB2E,8:11
+1,Thu,2026-10-15,347,Top K Frequent Elements,Frequency + bucket/heap,Medium,NC150,review1,Y,https://www.youtube.com/watch?v=YPTqKIgVk-k,13:13
+1,Thu,2026-10-15,88,Merge Sorted Array,Two pointers from end,Easy,extra,new,,,
+1,Thu,2026-10-15,283,Move Zeroes,Two pointers in-place,Easy,extra,new,,,
+1,Thu,2026-10-15,303,Range Sum Query - Immutable,Prefix sum,Easy,extra,new,,,
+1,Fri,2026-10-16,128,Longest Consecutive Sequence,Hash set sequence starts,Medium,NC150,review1,,https://www.youtube.com/watch?v=P6RZZMu_maU,9:23
+1,Fri,2026-10-16,238,Product of Array Except Self,Prefix/suffix products,Medium,NC150,review1,,https://www.youtube.com/watch?v=bNvIQI2wAjk,11:53
+1,Fri,2026-10-16,271,Encode and Decode Strings,String encoding,Medium,NC150,review1,,https://www.youtube.com/watch?v=B1k_sxOSgv8,11:32
+1,Fri,2026-10-16,485,Max Consecutive Ones,Running state,Easy,extra,review2,,,
+1,Fri,2026-10-16,13,Roman to Integer,String scan + map,Easy,extra,new,,,
+1,Fri,2026-10-16,14,Longest Common Prefix,String scan,Easy,extra,new,,,
+1,Fri,2026-10-16,380,Insert Delete GetRandom O(1),Hash map + array design,Medium,extra,new,,https://www.youtube.com/watch?v=j4KwhBziOpg,13:26
+1,Sat,2026-10-17,36,Valid Sudoku,Hash sets per row/col/box,Medium,NC150,review1,,https://www.youtube.com/watch?v=TjFXEUCMqI8,13:28
+1,Sat,2026-10-17,560,Subarray Sum Equals K,Prefix sum + hash map,Medium,extra,review1,,https://www.youtube.com/watch?v=fFVZt-6sgyo,15:18
+1,Sat,2026-10-17,724,Find Pivot Index,Prefix sum,Easy,extra,review1,,,
+1,Sat,2026-10-17,75,Sort Colors,Dutch flag three pointers,Medium,extra,new,,,
+1,Sat,2026-10-17,528,Random Pick with Weight,Prefix sum + binary search,Medium,extra,new,,,
+2,Mon,2026-10-19,13,Roman to Integer,String scan + map,Easy,extra,review1,,,
+2,Mon,2026-10-19,14,Longest Common Prefix,String scan,Easy,extra,review1,,,
+2,Mon,2026-10-19,88,Merge Sorted Array,Two pointers from end,Easy,extra,review1,,,
+2,Mon,2026-10-19,283,Move Zeroes,Two pointers in-place,Easy,extra,review1,,,
+2,Mon,2026-10-19,303,Range Sum Query - Immutable,Prefix sum,Easy,extra,review1,,,
+2,Mon,2026-10-19,380,Insert Delete GetRandom O(1),Hash map + array design,Medium,extra,review1,,https://www.youtube.com/watch?v=j4KwhBziOpg,13:26
+2,Mon,2026-10-19,11,Container With Most Water,Two pointers greedy,Medium,NC150,new,,https://www.youtube.com/watch?v=UuiTKBwPgAo,12:36
+2,Mon,2026-10-19,15,3Sum,Sort + two pointers,Medium,NC150,new,,https://www.youtube.com/watch?v=jzZsG8n2R9A,12:53
+2,Mon,2026-10-19,125,Valid Palindrome,Two pointers,Easy,NC150,new,Y,https://www.youtube.com/watch?v=jJXJ16kPFWg,
+2,Mon,2026-10-19,167,Two Sum II - Input Array Is Sorted,Two pointers,Medium,NC150,new,Y,https://www.youtube.com/watch?v=cQ1Oz4ckceM,8:18
+2,Tue,2026-10-20,75,Sort Colors,Dutch flag three pointers,Medium,extra,review1,,,
+2,Tue,2026-10-20,528,Random Pick with Weight,Prefix sum + binary search,Medium,extra,review1,,,
+2,Tue,2026-10-20,31,Next Permutation,Array scan from right,Medium,extra,new,,,
+2,Tue,2026-10-20,680,Valid Palindrome II,Two pointers + one skip,Easy,extra,new,,,
+2,Tue,2026-10-20,977,Squares of a Sorted Array,Two pointers from ends,Easy,extra,new,,,
+2,Wed,2026-10-21,3,Longest Substring Without Repeating Characters,Sliding window (variable),Medium,NC150,new,Y,https://www.youtube.com/watch?v=wiGpQwVHdE0,6:45
+2,Wed,2026-10-21,42,Trapping Rain Water,Two pointers / prefix max,Hard,NC150,new,,https://www.youtube.com/watch?v=ZI2z5pq0TqA,23:21
+2,Wed,2026-10-21,121,Best Time to Buy and Sell Stock,Running min / window,Easy,NC150,new,Y,https://www.youtube.com/watch?v=1pkOgXD63yU,
+2,Wed,2026-10-21,424,Longest Repeating Character Replacement,Sliding window + counts,Medium,NC150,new,,https://www.youtube.com/watch?v=gqXU1UyA8pk,20:44
+2,Thu,2026-10-22,1,Two Sum,Hash map complement,Easy,NC150,review2,Y,https://www.youtube.com/watch?v=KLlXCFG5TnA,8:26
+2,Thu,2026-10-22,11,Container With Most Water,Two pointers greedy,Medium,NC150,review1,,https://www.youtube.com/watch?v=UuiTKBwPgAo,12:36
+2,Thu,2026-10-22,15,3Sum,Sort + two pointers,Medium,NC150,review1,,https://www.youtube.com/watch?v=jzZsG8n2R9A,12:53
+2,Thu,2026-10-22,49,Group Anagrams,Hash map grouping,Medium,NC150,review2,,https://www.youtube.com/watch?v=vzdNOK2oB2E,8:11
+2,Thu,2026-10-22,125,Valid Palindrome,Two pointers,Easy,NC150,review1,Y,https://www.youtube.com/watch?v=jJXJ16kPFWg,
+2,Thu,2026-10-22,167,Two Sum II - Input Array Is Sorted,Two pointers,Medium,NC150,review1,Y,https://www.youtube.com/watch?v=cQ1Oz4ckceM,8:18
+2,Thu,2026-10-22,347,Top K Frequent Elements,Frequency + bucket/heap,Medium,NC150,review2,Y,https://www.youtube.com/watch?v=YPTqKIgVk-k,13:13
+2,Thu,2026-10-22,209,Minimum Size Subarray Sum,Sliding window (shrink),Medium,extra,new,,,
+2,Thu,2026-10-22,438,Find All Anagrams in a String,Sliding window (fixed) + counts,Medium,extra,new,,,
+2,Thu,2026-10-22,567,Permutation in String,Sliding window (fixed) + counts,Medium,NC150,new,,https://www.youtube.com/watch?v=UbyhOgBN834,19:40
+2,Fri,2026-10-23,31,Next Permutation,Array scan from right,Medium,extra,review1,,,
+2,Fri,2026-10-23,128,Longest Consecutive Sequence,Hash set sequence starts,Medium,NC150,review2,,https://www.youtube.com/watch?v=P6RZZMu_maU,9:23
+2,Fri,2026-10-23,238,Product of Array Except Self,Prefix/suffix products,Medium,NC150,review2,,https://www.youtube.com/watch?v=bNvIQI2wAjk,11:53
+2,Fri,2026-10-23,271,Encode and Decode Strings,String encoding,Medium,NC150,review2,,https://www.youtube.com/watch?v=B1k_sxOSgv8,11:32
+2,Fri,2026-10-23,680,Valid Palindrome II,Two pointers + one skip,Easy,extra,review1,,,
+2,Fri,2026-10-23,977,Squares of a Sorted Array,Two pointers from ends,Easy,extra,review1,,,
+2,Fri,2026-10-23,904,Fruit Into Baskets,Sliding window (at most 2 kinds),Medium,extra,new,,,
+2,Fri,2026-10-23,1004,Max Consecutive Ones III,Sliding window (k flips),Medium,extra,new,,,
+2,Fri,2026-10-23,1423,Maximum Points You Can Obtain from Cards,Fixed window complement,Medium,extra,new,,,
+2,Sat,2026-10-24,3,Longest Substring Without Repeating Characters,Sliding window (variable),Medium,NC150,review1,Y,https://www.youtube.com/watch?v=wiGpQwVHdE0,6:45
+2,Sat,2026-10-24,42,Trapping Rain Water,Two pointers / prefix max,Hard,NC150,review1,,https://www.youtube.com/watch?v=ZI2z5pq0TqA,23:21
+2,Sat,2026-10-24,121,Best Time to Buy and Sell Stock,Running min / window,Easy,NC150,review1,Y,https://www.youtube.com/watch?v=1pkOgXD63yU,
+2,Sat,2026-10-24,424,Longest Repeating Character Replacement,Sliding window + counts,Medium,NC150,review1,,https://www.youtube.com/watch?v=gqXU1UyA8pk,20:44
+2,Sat,2026-10-24,76,Minimum Window Substring,Sliding window + need counts,Hard,NC150,new,,https://www.youtube.com/watch?v=jSto0O4AJbM,25:41
+2,Sat,2026-10-24,239,Sliding Window Maximum,Monotonic deque,Hard,NC150,new,,https://www.youtube.com/watch?v=DfljaUwZsOk,15:46
+3,Mon,2026-10-26,36,Valid Sudoku,Hash sets per row/col/box,Medium,NC150,review2,,https://www.youtube.com/watch?v=TjFXEUCMqI8,13:28
+3,Mon,2026-10-26,209,Minimum Size Subarray Sum,Sliding window (shrink),Medium,extra,review1,,,
+3,Mon,2026-10-26,438,Find All Anagrams in a String,Sliding window (fixed) + counts,Medium,extra,review1,,,
+3,Mon,2026-10-26,560,Subarray Sum Equals K,Prefix sum + hash map,Medium,extra,review2,,https://www.youtube.com/watch?v=fFVZt-6sgyo,15:18
+3,Mon,2026-10-26,567,Permutation in String,Sliding window (fixed) + counts,Medium,NC150,review1,,https://www.youtube.com/watch?v=UbyhOgBN834,19:40
+3,Mon,2026-10-26,904,Fruit Into Baskets,Sliding window (at most 2 kinds),Medium,extra,review1,,,
+3,Mon,2026-10-26,1004,Max Consecutive Ones III,Sliding window (k flips),Medium,extra,review1,,,
+3,Mon,2026-10-26,1423,Maximum Points You Can Obtain from Cards,Fixed window complement,Medium,extra,review1,,,
+3,Mon,2026-10-26,20,Valid Parentheses,Stack matching,Easy,NC150,new,Y,https://www.youtube.com/watch?v=WTzjTskDFMg,10:43
+3,Mon,2026-10-26,22,Generate Parentheses,Backtracking with counts,Medium,NC150,new,,https://www.youtube.com/watch?v=s9fokUqJ76A,13:36
+3,Mon,2026-10-26,150,Evaluate Reverse Polish Notation,Stack evaluation,Medium,NC150,new,,https://www.youtube.com/watch?v=iu0082c4HDE,9:19
+3,Mon,2026-10-26,155,Min Stack,Stack design,Medium,NC150,new,,https://www.youtube.com/watch?v=qkLl7nAwDPo,8:53
+3,Tue,2026-10-27,13,Roman to Integer,String scan + map,Easy,extra,review2,,,
+3,Tue,2026-10-27,14,Longest Common Prefix,String scan,Easy,extra,review2,,,
+3,Tue,2026-10-27,76,Minimum Window Substring,Sliding window + need counts,Hard,NC150,review1,,https://www.youtube.com/watch?v=jSto0O4AJbM,25:41
+3,Tue,2026-10-27,88,Merge Sorted Array,Two pointers from end,Easy,extra,review2,,,
+3,Tue,2026-10-27,239,Sliding Window Maximum,Monotonic deque,Hard,NC150,review1,,https://www.youtube.com/watch?v=DfljaUwZsOk,15:46
+3,Tue,2026-10-27,283,Move Zeroes,Two pointers in-place,Easy,extra,review2,,,
+3,Tue,2026-10-27,303,Range Sum Query - Immutable,Prefix sum,Easy,extra,review2,,,
+3,Tue,2026-10-27,724,Find Pivot Index,Prefix sum,Easy,extra,review2,,,
+3,Tue,2026-10-27,739,Daily Temperatures,Monotonic stack,Medium,NC150,new,,https://www.youtube.com/watch?v=cTBiBSnjO3c,11:52
+3,Tue,2026-10-27,853,Car Fleet,Sort + stack,Medium,NC150,new,,https://www.youtube.com/watch?v=Pr6T-3yB9RM,16:10
+3,Tue,2026-10-27,1047,Remove All Adjacent Duplicates In String,Stack cancel,Easy,extra,new,,,
+3,Wed,2026-10-28,75,Sort Colors,Dutch flag three pointers,Medium,extra,review2,,,
+3,Wed,2026-10-28,380,Insert Delete GetRandom O(1),Hash map + array design,Medium,extra,review2,,https://www.youtube.com/watch?v=j4KwhBziOpg,13:26
+3,Wed,2026-10-28,528,Random Pick with Weight,Prefix sum + binary search,Medium,extra,review2,,,
+3,Wed,2026-10-28,71,Simplify Path,Stack of path parts,Medium,extra,new,,,
+3,Wed,2026-10-28,394,Decode String,"Stack of (count, string)",Medium,extra,new,,,
+3,Wed,2026-10-28,735,Asteroid Collision,Stack simulation,Medium,extra,new,,,
+3,Wed,2026-10-28,1249,Minimum Remove to Make Valid Parentheses,Stack of indices,Medium,extra,new,,,
+3,Thu,2026-10-29,11,Container With Most Water,Two pointers greedy,Medium,NC150,review2,,https://www.youtube.com/watch?v=UuiTKBwPgAo,12:36
+3,Thu,2026-10-29,15,3Sum,Sort + two pointers,Medium,NC150,review2,,https://www.youtube.com/watch?v=jzZsG8n2R9A,12:53
+3,Thu,2026-10-29,20,Valid Parentheses,Stack matching,Easy,NC150,review1,Y,https://www.youtube.com/watch?v=WTzjTskDFMg,10:43
+3,Thu,2026-10-29,22,Generate Parentheses,Backtracking with counts,Medium,NC150,review1,,https://www.youtube.com/watch?v=s9fokUqJ76A,13:36
+3,Thu,2026-10-29,125,Valid Palindrome,Two pointers,Easy,NC150,review2,Y,https://www.youtube.com/watch?v=jJXJ16kPFWg,
+3,Thu,2026-10-29,150,Evaluate Reverse Polish Notation,Stack evaluation,Medium,NC150,review1,,https://www.youtube.com/watch?v=iu0082c4HDE,9:19
+3,Thu,2026-10-29,155,Min Stack,Stack design,Medium,NC150,review1,,https://www.youtube.com/watch?v=qkLl7nAwDPo,8:53
+3,Thu,2026-10-29,167,Two Sum II - Input Array Is Sorted,Two pointers,Medium,NC150,review2,Y,https://www.youtube.com/watch?v=cQ1Oz4ckceM,8:18
+3,Thu,2026-10-29,84,Largest Rectangle in Histogram,Monotonic stack,Hard,NC150,new,,https://www.youtube.com/watch?v=zx5Sw9130L0,
+3,Thu,2026-10-29,227,Basic Calculator II,Stack with operator precedence,Medium,extra,new,,,
+3,Thu,2026-10-29,503,Next Greater Element II,Monotonic stack circular,Medium,extra,new,,,
+3,Fri,2026-10-30,31,Next Permutation,Array scan from right,Medium,extra,review2,,,
+3,Fri,2026-10-30,680,Valid Palindrome II,Two pointers + one skip,Easy,extra,review2,,,
+3,Fri,2026-10-30,739,Daily Temperatures,Monotonic stack,Medium,NC150,review1,,https://www.youtube.com/watch?v=cTBiBSnjO3c,11:52
+3,Fri,2026-10-30,853,Car Fleet,Sort + stack,Medium,NC150,review1,,https://www.youtube.com/watch?v=Pr6T-3yB9RM,16:10
+3,Fri,2026-10-30,977,Squares of a Sorted Array,Two pointers from ends,Easy,extra,review2,,,
+3,Fri,2026-10-30,1047,Remove All Adjacent Duplicates In String,Stack cancel,Easy,extra,review1,,,
+3,Fri,2026-10-30,74,Search a 2D Matrix,Binary search 2D,Medium,NC150,new,,https://www.youtube.com/watch?v=Ber2pi2C0j0,10:58
+3,Fri,2026-10-30,704,Binary Search,Binary search,Easy,NC150,new,Y,https://www.youtube.com/watch?v=s4DPM8ct1pI,9:39
+3,Fri,2026-10-30,875,Koko Eating Bananas,Binary search on answer,Medium,NC150,new,,https://www.youtube.com/watch?v=U2SozAs9RzA,15:12
+3,Sat,2026-10-31,71,Simplify Path,Stack of path parts,Medium,extra,review1,,,
+3,Sat,2026-10-31,394,Decode String,"Stack of (count, string)",Medium,extra,review1,,,
+3,Sat,2026-10-31,735,Asteroid Collision,Stack simulation,Medium,extra,review1,,,
+3,Sat,2026-10-31,1249,Minimum Remove to Make Valid Parentheses,Stack of indices,Medium,extra,review1,,,
+3,Sat,2026-10-31,33,Search in Rotated Sorted Array,Binary search rotated,Medium,NC150,new,,https://www.youtube.com/watch?v=U8XENwh8Oy8,13:28
+3,Sat,2026-10-31,153,Find Minimum in Rotated Sorted Array,Binary search rotated,Medium,NC150,new,,https://www.youtube.com/watch?v=nIVW4P8b1VA,12:30
+4,Mon,2026-11-02,42,Trapping Rain Water,Two pointers / prefix max,Hard,NC150,review2,,https://www.youtube.com/watch?v=ZI2z5pq0TqA,23:21
+4,Mon,2026-11-02,74,Search a 2D Matrix,Binary search 2D,Medium,NC150,review1,,https://www.youtube.com/watch?v=Ber2pi2C0j0,10:58
+4,Mon,2026-11-02,84,Largest Rectangle in Histogram,Monotonic stack,Hard,NC150,review1,,https://www.youtube.com/watch?v=zx5Sw9130L0,
+4,Mon,2026-11-02,121,Best Time to Buy and Sell Stock,Running min / window,Easy,NC150,review2,Y,https://www.youtube.com/watch?v=1pkOgXD63yU,
+4,Mon,2026-11-02,227,Basic Calculator II,Stack with operator precedence,Medium,extra,review1,,,
+4,Mon,2026-11-02,503,Next Greater Element II,Monotonic stack circular,Medium,extra,review1,,,
+4,Mon,2026-11-02,704,Binary Search,Binary search,Easy,NC150,review1,Y,https://www.youtube.com/watch?v=s4DPM8ct1pI,9:39
+4,Mon,2026-11-02,875,Koko Eating Bananas,Binary search on answer,Medium,NC150,review1,,https://www.youtube.com/watch?v=U2SozAs9RzA,15:12
+4,Mon,2026-11-02,34,Find First and Last Position of Element in Sorted Array,Binary search bounds,Medium,extra,new,,,
+4,Mon,2026-11-02,162,Find Peak Element,Binary search on slope,Medium,extra,new,,,
+4,Mon,2026-11-02,981,Time Based Key-Value Store,Hash map + binary search design,Medium,NC150,new,,https://www.youtube.com/watch?v=fu2cD_6E8Hw,17:15
+4,Mon,2026-11-02,1011,Capacity To Ship Packages Within D Days,Binary search on answer,Medium,extra,new,,,
+4,Tue,2026-11-03,3,Longest Substring Without Repeating Characters,Sliding window (variable),Medium,NC150,review2,Y,https://www.youtube.com/watch?v=wiGpQwVHdE0,6:45
+4,Tue,2026-11-03,33,Search in Rotated Sorted Array,Binary search rotated,Medium,NC150,review1,,https://www.youtube.com/watch?v=U8XENwh8Oy8,13:28
+4,Tue,2026-11-03,153,Find Minimum in Rotated Sorted Array,Binary search rotated,Medium,NC150,review1,,https://www.youtube.com/watch?v=nIVW4P8b1VA,12:30
+4,Tue,2026-11-03,209,Minimum Size Subarray Sum,Sliding window (shrink),Medium,extra,review2,,,
+4,Tue,2026-11-03,424,Longest Repeating Character Replacement,Sliding window + counts,Medium,NC150,review2,,https://www.youtube.com/watch?v=gqXU1UyA8pk,20:44
+4,Tue,2026-11-03,438,Find All Anagrams in a String,Sliding window (fixed) + counts,Medium,extra,review2,,,
+4,Tue,2026-11-03,567,Permutation in String,Sliding window (fixed) + counts,Medium,NC150,review2,,https://www.youtube.com/watch?v=UbyhOgBN834,19:40
+4,Tue,2026-11-03,1004,Max Consecutive Ones III,Sliding window (k flips),Medium,extra,review2,,,
+4,Tue,2026-11-03,4,Median of Two Sorted Arrays,Binary search partition,Hard,NC150,new,,https://www.youtube.com/watch?v=q6IEA26hvXc,22:21
+4,Tue,2026-11-03,658,Find K Closest Elements,Binary search window,Medium,extra,new,,,
+4,Tue,2026-11-03,1539,Kth Missing Positive Number,Binary search on count,Easy,extra,new,,,
+4,Wed,2026-11-04,76,Minimum Window Substring,Sliding window + need counts,Hard,NC150,review2,,https://www.youtube.com/watch?v=jSto0O4AJbM,25:41
+4,Wed,2026-11-04,239,Sliding Window Maximum,Monotonic deque,Hard,NC150,review2,,https://www.youtube.com/watch?v=DfljaUwZsOk,15:46
+4,Wed,2026-11-04,904,Fruit Into Baskets,Sliding window (at most 2 kinds),Medium,extra,review2,,,
+4,Wed,2026-11-04,1423,Maximum Points You Can Obtain from Cards,Fixed window complement,Medium,extra,review2,,,
+4,Wed,2026-11-04,21,Merge Two Sorted Lists,Dummy head merge,Easy,NC150,new,Y,https://www.youtube.com/watch?v=XIdigk956u0,6:16
+4,Wed,2026-11-04,141,Linked List Cycle,Fast/slow pointers,Easy,NC150,new,,https://www.youtube.com/watch?v=gBTe7lFR3vc,10:43
+4,Wed,2026-11-04,143,Reorder List,Linked list combo,Medium,NC150,new,,https://www.youtube.com/watch?v=S5bfdUTrKLM,13:47
+4,Wed,2026-11-04,206,Reverse Linked List,Linked list rewiring,Easy,NC150,new,Y,https://www.youtube.com/watch?v=G0_I-ZF0S38,11:07
+4,Thu,2026-11-05,20,Valid Parentheses,Stack matching,Easy,NC150,review2,Y,https://www.youtube.com/watch?v=WTzjTskDFMg,10:43
+4,Thu,2026-11-05,22,Generate Parentheses,Backtracking with counts,Medium,NC150,review2,,https://www.youtube.com/watch?v=s9fokUqJ76A,13:36
+4,Thu,2026-11-05,34,Find First and Last Position of Element in Sorted Array,Binary search bounds,Medium,extra,review1,,,
+4,Thu,2026-11-05,150,Evaluate Reverse Polish Notation,Stack evaluation,Medium,NC150,review2,,https://www.youtube.com/watch?v=iu0082c4HDE,9:19
+4,Thu,2026-11-05,155,Min Stack,Stack design,Medium,NC150,review2,,https://www.youtube.com/watch?v=qkLl7nAwDPo,8:53
+4,Thu,2026-11-05,162,Find Peak Element,Binary search on slope,Medium,extra,review1,,,
+4,Thu,2026-11-05,981,Time Based Key-Value Store,Hash map + binary search design,Medium,NC150,review1,,https://www.youtube.com/watch?v=fu2cD_6E8Hw,17:15
+4,Thu,2026-11-05,1011,Capacity To Ship Packages Within D Days,Binary search on answer,Medium,extra,review1,,,
+4,Thu,2026-11-05,2,Add Two Numbers,Linked list arithmetic,Medium,NC150,new,,https://www.youtube.com/watch?v=wgFPrzTjm7s,9:33
+4,Thu,2026-11-05,19,Remove Nth Node From End of List,Two-gap pointers,Medium,NC150,new,,https://www.youtube.com/watch?v=XVuQxVej6y8,7:09
+4,Thu,2026-11-05,138,Copy List with Random Pointer,Hash map node copy,Medium,NC150,new,,https://www.youtube.com/watch?v=5Y2EiZST97Y,10:06
+4,Fri,2026-11-06,4,Median of Two Sorted Arrays,Binary search partition,Hard,NC150,review1,,https://www.youtube.com/watch?v=q6IEA26hvXc,22:21
+4,Fri,2026-11-06,658,Find K Closest Elements,Binary search window,Medium,extra,review1,,,
+4,Fri,2026-11-06,739,Daily Temperatures,Monotonic stack,Medium,NC150,review2,,https://www.youtube.com/watch?v=cTBiBSnjO3c,11:52
+4,Fri,2026-11-06,853,Car Fleet,Sort + stack,Medium,NC150,review2,,https://www.youtube.com/watch?v=Pr6T-3yB9RM,16:10
+4,Fri,2026-11-06,1047,Remove All Adjacent Duplicates In String,Stack cancel,Easy,extra,review2,,,
+4,Fri,2026-11-06,1539,Kth Missing Positive Number,Binary search on count,Easy,extra,review1,,,
+4,Fri,2026-11-06,23,Merge k Sorted Lists,Heap merge,Hard,NC150,new,,https://www.youtube.com/watch?v=q5a5OiGbT6Q,10:34
+4,Fri,2026-11-06,146,LRU Cache,Hash map + doubly linked list design,Medium,NC150,new,,https://www.youtube.com/watch?v=7ABFKPK2hD4,17:49
+4,Fri,2026-11-06,287,Find the Duplicate Number,Floyd cycle on array,Medium,NC150,new,,https://www.youtube.com/watch?v=wjYnzkAhcNk,17:33
+4,Sat,2026-11-07,21,Merge Two Sorted Lists,Dummy head merge,Easy,NC150,review1,Y,https://www.youtube.com/watch?v=XIdigk956u0,6:16
+4,Sat,2026-11-07,141,Linked List Cycle,Fast/slow pointers,Easy,NC150,review1,,https://www.youtube.com/watch?v=gBTe7lFR3vc,10:43
+4,Sat,2026-11-07,143,Reorder List,Linked list combo,Medium,NC150,review1,,https://www.youtube.com/watch?v=S5bfdUTrKLM,13:47
+4,Sat,2026-11-07,206,Reverse Linked List,Linked list rewiring,Easy,NC150,review1,Y,https://www.youtube.com/watch?v=G0_I-ZF0S38,11:07
+4,Sat,2026-11-07,25,Reverse Nodes in k-Group,Linked list rewiring in groups,Hard,NC150,new,,https://www.youtube.com/watch?v=1UOPsfP85V4,12:20
+4,Sat,2026-11-07,226,Invert Binary Tree,Tree DFS,Easy,NC150,new,Y,https://www.youtube.com/watch?v=OnSn2XEQ4MY,3:54
+5,Mon,2026-11-09,2,Add Two Numbers,Linked list arithmetic,Medium,NC150,review1,,https://www.youtube.com/watch?v=wgFPrzTjm7s,9:33
+5,Mon,2026-11-09,19,Remove Nth Node From End of List,Two-gap pointers,Medium,NC150,review1,,https://www.youtube.com/watch?v=XVuQxVej6y8,7:09
+5,Mon,2026-11-09,23,Merge k Sorted Lists,Heap merge,Hard,NC150,review1,,https://www.youtube.com/watch?v=q5a5OiGbT6Q,10:34
+5,Mon,2026-11-09,138,Copy List with Random Pointer,Hash map node copy,Medium,NC150,review1,,https://www.youtube.com/watch?v=5Y2EiZST97Y,10:06
+5,Mon,2026-11-09,146,LRU Cache,Hash map + doubly linked list design,Medium,NC150,review1,,https://www.youtube.com/watch?v=7ABFKPK2hD4,17:49
+5,Mon,2026-11-09,287,Find the Duplicate Number,Floyd cycle on array,Medium,NC150,review1,,https://www.youtube.com/watch?v=wjYnzkAhcNk,17:33
+5,Mon,2026-11-09,735,Asteroid Collision,Stack simulation,Medium,extra,review2,,,
+5,Mon,2026-11-09,1249,Minimum Remove to Make Valid Parentheses,Stack of indices,Medium,extra,review2,,,
+5,Mon,2026-11-09,100,Same Tree,Tree DFS pairwise,Easy,NC150,new,Y,https://www.youtube.com/watch?v=vRbbcKXCxOw,7:52
+5,Mon,2026-11-09,104,Maximum Depth of Binary Tree,Tree DFS,Easy,NC150,new,Y,https://www.youtube.com/watch?v=hTM3phVI6YQ,16:43
+5,Mon,2026-11-09,110,Balanced Binary Tree,Tree DFS return-two-things,Easy,NC150,new,,https://www.youtube.com/watch?v=QfJsau0ItOY,13:10
+5,Mon,2026-11-09,543,Diameter of Binary Tree,Tree DFS return-two-things,Easy,NC150,new,,https://www.youtube.com/watch?v=K81C31ytOZE,7:25
+5,Tue,2026-11-10,25,Reverse Nodes in k-Group,Linked list rewiring in groups,Hard,NC150,review1,,https://www.youtube.com/watch?v=1UOPsfP85V4,12:20
+5,Tue,2026-11-10,71,Simplify Path,Stack of path parts,Medium,extra,review2,,,
+5,Tue,2026-11-10,84,Largest Rectangle in Histogram,Monotonic stack,Hard,NC150,review2,,https://www.youtube.com/watch?v=zx5Sw9130L0,
+5,Tue,2026-11-10,226,Invert Binary Tree,Tree DFS,Easy,NC150,review1,Y,https://www.youtube.com/watch?v=OnSn2XEQ4MY,3:54
+5,Tue,2026-11-10,227,Basic Calculator II,Stack with operator precedence,Medium,extra,review2,,,
+5,Tue,2026-11-10,394,Decode String,"Stack of (count, string)",Medium,extra,review2,,,
+5,Tue,2026-11-10,503,Next Greater Element II,Monotonic stack circular,Medium,extra,review2,,,
+5,Tue,2026-11-10,704,Binary Search,Binary search,Easy,NC150,review2,Y,https://www.youtube.com/watch?v=s4DPM8ct1pI,9:39
+5,Tue,2026-11-10,102,Binary Tree Level Order Traversal,Tree BFS levels,Medium,NC150,new,Y,https://www.youtube.com/watch?v=6ZnyEApgFYg,9:35
+5,Tue,2026-11-10,235,Lowest Common Ancestor of a Binary Search Tree,BST property,Medium,NC150,new,,https://www.youtube.com/watch?v=gs2LMfuOR9k,
+5,Tue,2026-11-10,572,Subtree of Another Tree,Tree DFS nested,Easy,NC150,new,,https://www.youtube.com/watch?v=E36O5SWp-LE,14:14
+5,Wed,2026-11-11,1,Two Sum,Hash map complement,Easy,NC150,review3,Y,https://www.youtube.com/watch?v=KLlXCFG5TnA,8:26
+5,Wed,2026-11-11,33,Search in Rotated Sorted Array,Binary search rotated,Medium,NC150,review2,,https://www.youtube.com/watch?v=U8XENwh8Oy8,13:28
+5,Wed,2026-11-11,49,Group Anagrams,Hash map grouping,Medium,NC150,review3,,https://www.youtube.com/watch?v=vzdNOK2oB2E,8:11
+5,Wed,2026-11-11,74,Search a 2D Matrix,Binary search 2D,Medium,NC150,review2,,https://www.youtube.com/watch?v=Ber2pi2C0j0,10:58
+5,Wed,2026-11-11,153,Find Minimum in Rotated Sorted Array,Binary search rotated,Medium,NC150,review2,,https://www.youtube.com/watch?v=nIVW4P8b1VA,12:30
+5,Wed,2026-11-11,347,Top K Frequent Elements,Frequency + bucket/heap,Medium,NC150,review3,Y,https://www.youtube.com/watch?v=YPTqKIgVk-k,13:13
+5,Wed,2026-11-11,875,Koko Eating Bananas,Binary search on answer,Medium,NC150,review2,,https://www.youtube.com/watch?v=U2SozAs9RzA,15:12
+5,Wed,2026-11-11,98,Validate Binary Search Tree,Tree DFS with bounds,Medium,NC150,new,,https://www.youtube.com/watch?v=s6ATEkipzow,
+5,Wed,2026-11-11,199,Binary Tree Right Side View,Tree BFS levels,Medium,NC150,new,,https://www.youtube.com/watch?v=d4zLyf32e3I,10:16
+5,Wed,2026-11-11,230,Kth Smallest Element in a BST,Inorder traversal,Medium,NC150,new,,https://www.youtube.com/watch?v=5LUXSvjmGCw,10:55
+5,Wed,2026-11-11,1448,Count Good Nodes in Binary Tree,Tree DFS with path state,Medium,NC150,new,,https://www.youtube.com/watch?v=7cp5imvDzl4,8:18
+5,Thu,2026-11-12,34,Find First and Last Position of Element in Sorted Array,Binary search bounds,Medium,extra,review2,,,
+5,Thu,2026-11-12,100,Same Tree,Tree DFS pairwise,Easy,NC150,review1,Y,https://www.youtube.com/watch?v=vRbbcKXCxOw,7:52
+5,Thu,2026-11-12,104,Maximum Depth of Binary Tree,Tree DFS,Easy,NC150,review1,Y,https://www.youtube.com/watch?v=hTM3phVI6YQ,16:43
+5,Thu,2026-11-12,110,Balanced Binary Tree,Tree DFS return-two-things,Easy,NC150,review1,,https://www.youtube.com/watch?v=QfJsau0ItOY,13:10
+5,Thu,2026-11-12,162,Find Peak Element,Binary search on slope,Medium,extra,review2,,,
+5,Thu,2026-11-12,543,Diameter of Binary Tree,Tree DFS return-two-things,Easy,NC150,review1,,https://www.youtube.com/watch?v=K81C31ytOZE,7:25
+5,Thu,2026-11-12,981,Time Based Key-Value Store,Hash map + binary search design,Medium,NC150,review2,,https://www.youtube.com/watch?v=fu2cD_6E8Hw,17:15
+5,Thu,2026-11-12,1011,Capacity To Ship Packages Within D Days,Binary search on answer,Medium,extra,review2,,,
+5,Thu,2026-11-12,105,Construct Binary Tree from Preorder and Inorder Traversal,Tree construction,Medium,NC150,new,,https://www.youtube.com/watch?v=ihj4IQGZ2zc,
+5,Thu,2026-11-12,236,Lowest Common Ancestor of a Binary Tree,Tree DFS post-order,Medium,extra,new,,,
+5,Thu,2026-11-12,938,Range Sum of BST,BST pruning DFS,Easy,extra,new,,,
+5,Fri,2026-11-13,4,Median of Two Sorted Arrays,Binary search partition,Hard,NC150,review2,,https://www.youtube.com/watch?v=q6IEA26hvXc,22:21
+5,Fri,2026-11-13,102,Binary Tree Level Order Traversal,Tree BFS levels,Medium,NC150,review1,Y,https://www.youtube.com/watch?v=6ZnyEApgFYg,9:35
+5,Fri,2026-11-13,128,Longest Consecutive Sequence,Hash set sequence starts,Medium,NC150,review3,,https://www.youtube.com/watch?v=P6RZZMu_maU,9:23
+5,Fri,2026-11-13,235,Lowest Common Ancestor of a Binary Search Tree,BST property,Medium,NC150,review1,,https://www.youtube.com/watch?v=gs2LMfuOR9k,
+5,Fri,2026-11-13,238,Product of Array Except Self,Prefix/suffix products,Medium,NC150,review3,,https://www.youtube.com/watch?v=bNvIQI2wAjk,11:53
+5,Fri,2026-11-13,572,Subtree of Another Tree,Tree DFS nested,Easy,NC150,review1,,https://www.youtube.com/watch?v=E36O5SWp-LE,14:14
+5,Fri,2026-11-13,658,Find K Closest Elements,Binary search window,Medium,extra,review2,,,
+5,Fri,2026-11-13,1539,Kth Missing Positive Number,Binary search on count,Easy,extra,review2,,,
+5,Fri,2026-11-13,129,Sum Root to Leaf Numbers,Tree DFS with path state,Medium,extra,new,,,
+5,Fri,2026-11-13,437,Path Sum III,Tree DFS + prefix sum,Medium,extra,new,,,
+5,Fri,2026-11-13,863,All Nodes Distance K in Binary Tree,Tree to graph + BFS,Medium,extra,new,,,
+5,Sat,2026-11-14,98,Validate Binary Search Tree,Tree DFS with bounds,Medium,NC150,review1,,https://www.youtube.com/watch?v=s6ATEkipzow,
+5,Sat,2026-11-14,199,Binary Tree Right Side View,Tree BFS levels,Medium,NC150,review1,,https://www.youtube.com/watch?v=d4zLyf32e3I,10:16
+5,Sat,2026-11-14,230,Kth Smallest Element in a BST,Inorder traversal,Medium,NC150,review1,,https://www.youtube.com/watch?v=5LUXSvjmGCw,10:55
+5,Sat,2026-11-14,1448,Count Good Nodes in Binary Tree,Tree DFS with path state,Medium,NC150,review1,,https://www.youtube.com/watch?v=7cp5imvDzl4,8:18
+5,Sat,2026-11-14,124,Binary Tree Maximum Path Sum,Tree DFS return-two-things,Hard,NC150,new,,https://www.youtube.com/watch?v=Hr5cWUld4vU,15:18
+5,Sat,2026-11-14,987,Vertical Order Traversal of a Binary Tree,BFS/DFS + sort by coords,Hard,extra,new,,,
+6,Mon,2026-11-16,21,Merge Two Sorted Lists,Dummy head merge,Easy,NC150,review2,Y,https://www.youtube.com/watch?v=XIdigk956u0,6:16
+6,Mon,2026-11-16,105,Construct Binary Tree from Preorder and Inorder Traversal,Tree construction,Medium,NC150,review1,,https://www.youtube.com/watch?v=ihj4IQGZ2zc,
+6,Mon,2026-11-16,129,Sum Root to Leaf Numbers,Tree DFS with path state,Medium,extra,review1,,,
+6,Mon,2026-11-16,206,Reverse Linked List,Linked list rewiring,Easy,NC150,review2,Y,https://www.youtube.com/watch?v=G0_I-ZF0S38,11:07
+6,Mon,2026-11-16,236,Lowest Common Ancestor of a Binary Tree,Tree DFS post-order,Medium,extra,review1,,,
+6,Mon,2026-11-16,437,Path Sum III,Tree DFS + prefix sum,Medium,extra,review1,,,
+6,Mon,2026-11-16,863,All Nodes Distance K in Binary Tree,Tree to graph + BFS,Medium,extra,review1,,,
+6,Mon,2026-11-16,938,Range Sum of BST,BST pruning DFS,Easy,extra,review1,,,
+6,Mon,2026-11-16,208,Implement Trie (Prefix Tree),Trie,Medium,NC150,new,,https://www.youtube.com/watch?v=oobqoCJlHA0,18:55
+6,Mon,2026-11-16,211,Design Add and Search Words Data Structure,Trie + DFS wildcard,Medium,NC150,new,,https://www.youtube.com/watch?v=BTf05gs_8iU,19:50
+6,Mon,2026-11-16,297,Serialize and Deserialize Binary Tree,Preorder serialization,Hard,NC150,new,,https://www.youtube.com/watch?v=u4JAi2JJhI8,13:48
+6,Mon,2026-11-16,1268,Search Suggestions System,Trie / sort + binary search,Medium,extra,new,,,
+6,Tue,2026-11-17,2,Add Two Numbers,Linked list arithmetic,Medium,NC150,review2,,https://www.youtube.com/watch?v=wgFPrzTjm7s,9:33
+6,Tue,2026-11-17,19,Remove Nth Node From End of List,Two-gap pointers,Medium,NC150,review2,,https://www.youtube.com/watch?v=XVuQxVej6y8,7:09
+6,Tue,2026-11-17,124,Binary Tree Maximum Path Sum,Tree DFS return-two-things,Hard,NC150,review1,,https://www.youtube.com/watch?v=Hr5cWUld4vU,15:18
+6,Tue,2026-11-17,138,Copy List with Random Pointer,Hash map node copy,Medium,NC150,review2,,https://www.youtube.com/watch?v=5Y2EiZST97Y,10:06
+6,Tue,2026-11-17,141,Linked List Cycle,Fast/slow pointers,Easy,NC150,review2,,https://www.youtube.com/watch?v=gBTe7lFR3vc,10:43
+6,Tue,2026-11-17,143,Reorder List,Linked list combo,Medium,NC150,review2,,https://www.youtube.com/watch?v=S5bfdUTrKLM,13:47
+6,Tue,2026-11-17,287,Find the Duplicate Number,Floyd cycle on array,Medium,NC150,review2,,https://www.youtube.com/watch?v=wjYnzkAhcNk,17:33
+6,Tue,2026-11-17,987,Vertical Order Traversal of a Binary Tree,BFS/DFS + sort by coords,Hard,extra,review1,,,
+6,Tue,2026-11-17,212,Word Search II,Trie + grid backtracking,Hard,NC150,new,,https://www.youtube.com/watch?v=asbcE9mZz_U,20:54
+6,Tue,2026-11-17,703,Kth Largest Element in a Stream,Min-heap size k,Easy,NC150,new,,https://www.youtube.com/watch?v=hOjcdrqMoQ8,11:17
+6,Tue,2026-11-17,1046,Last Stone Weight,Max-heap,Easy,NC150,new,,,
+6,Wed,2026-11-18,23,Merge k Sorted Lists,Heap merge,Hard,NC150,review2,,https://www.youtube.com/watch?v=q5a5OiGbT6Q,10:34
+6,Wed,2026-11-18,25,Reverse Nodes in k-Group,Linked list rewiring in groups,Hard,NC150,review2,,https://www.youtube.com/watch?v=1UOPsfP85V4,12:20
+6,Wed,2026-11-18,36,Valid Sudoku,Hash sets per row/col/box,Medium,NC150,review3,,https://www.youtube.com/watch?v=TjFXEUCMqI8,13:28
+6,Wed,2026-11-18,146,LRU Cache,Hash map + doubly linked list design,Medium,NC150,review2,,https://www.youtube.com/watch?v=7ABFKPK2hD4,17:49
+6,Wed,2026-11-18,226,Invert Binary Tree,Tree DFS,Easy,NC150,review2,Y,https://www.youtube.com/watch?v=OnSn2XEQ4MY,3:54
+6,Wed,2026-11-18,271,Encode and Decode Strings,String encoding,Medium,NC150,review3,,https://www.youtube.com/watch?v=B1k_sxOSgv8,11:32
+6,Wed,2026-11-18,560,Subarray Sum Equals K,Prefix sum + hash map,Medium,extra,review3,,https://www.youtube.com/watch?v=fFVZt-6sgyo,15:18
+6,Wed,2026-11-18,724,Find Pivot Index,Prefix sum,Easy,extra,review3,,,
+6,Wed,2026-11-18,215,Kth Largest Element in an Array,Heap / quickselect,Medium,NC150,new,Y,https://www.youtube.com/watch?v=XEmy13g1Qxc,18:48
+6,Wed,2026-11-18,355,Design Twitter,Heap merge design,Medium,NC150,new,,https://www.youtube.com/watch?v=pNichitDD2E,22:47
+6,Wed,2026-11-18,621,Task Scheduler,Heap + greedy,Medium,NC150,new,,https://www.youtube.com/watch?v=s8p8ukTyA2I,17:06
+6,Wed,2026-11-18,973,K Closest Points to Origin,Heap top-k,Medium,NC150,new,,https://www.youtube.com/watch?v=rI2EBUEMfTk,9:28
+6,Thu,2026-11-19,100,Same Tree,Tree DFS pairwise,Easy,NC150,review2,Y,https://www.youtube.com/watch?v=vRbbcKXCxOw,7:52
+6,Thu,2026-11-19,104,Maximum Depth of Binary Tree,Tree DFS,Easy,NC150,review2,Y,https://www.youtube.com/watch?v=hTM3phVI6YQ,16:43
+6,Thu,2026-11-19,110,Balanced Binary Tree,Tree DFS return-two-things,Easy,NC150,review2,,https://www.youtube.com/watch?v=QfJsau0ItOY,13:10
+6,Thu,2026-11-19,208,Implement Trie (Prefix Tree),Trie,Medium,NC150,review1,,https://www.youtube.com/watch?v=oobqoCJlHA0,18:55
+6,Thu,2026-11-19,211,Design Add and Search Words Data Structure,Trie + DFS wildcard,Medium,NC150,review1,,https://www.youtube.com/watch?v=BTf05gs_8iU,19:50
+6,Thu,2026-11-19,297,Serialize and Deserialize Binary Tree,Preorder serialization,Hard,NC150,review1,,https://www.youtube.com/watch?v=u4JAi2JJhI8,13:48
+6,Thu,2026-11-19,543,Diameter of Binary Tree,Tree DFS return-two-things,Easy,NC150,review2,,https://www.youtube.com/watch?v=K81C31ytOZE,7:25
+6,Thu,2026-11-19,1268,Search Suggestions System,Trie / sort + binary search,Medium,extra,review1,,,
+6,Thu,2026-11-19,692,Top K Frequent Words,Heap with tie-break,Medium,extra,new,,,
+6,Thu,2026-11-19,767,Reorganize String,Max-heap greedy,Medium,extra,new,,,
+6,Thu,2026-11-19,1094,Car Pooling,Sweep line / difference array,Medium,extra,new,,,
+6,Fri,2026-11-20,102,Binary Tree Level Order Traversal,Tree BFS levels,Medium,NC150,review2,Y,https://www.youtube.com/watch?v=6ZnyEApgFYg,9:35
+6,Fri,2026-11-20,212,Word Search II,Trie + grid backtracking,Hard,NC150,review1,,https://www.youtube.com/watch?v=asbcE9mZz_U,20:54
+6,Fri,2026-11-20,235,Lowest Common Ancestor of a Binary Search Tree,BST property,Medium,NC150,review2,,https://www.youtube.com/watch?v=gs2LMfuOR9k,
+6,Fri,2026-11-20,283,Move Zeroes,Two pointers in-place,Easy,extra,review3,,,
+6,Fri,2026-11-20,303,Range Sum Query - Immutable,Prefix sum,Easy,extra,review3,,,
+6,Fri,2026-11-20,572,Subtree of Another Tree,Tree DFS nested,Easy,NC150,review2,,https://www.youtube.com/watch?v=E36O5SWp-LE,14:14
+6,Fri,2026-11-20,703,Kth Largest Element in a Stream,Min-heap size k,Easy,NC150,review1,,https://www.youtube.com/watch?v=hOjcdrqMoQ8,11:17
+6,Fri,2026-11-20,1046,Last Stone Weight,Max-heap,Easy,NC150,review1,,,
+6,Fri,2026-11-20,56,Merge Intervals,Intervals sort + merge,Medium,NC150,new,Y,https://www.youtube.com/watch?v=44H3cEC2fFM,10:14
+6,Fri,2026-11-20,57,Insert Interval,Intervals,Medium,NC150,new,,https://www.youtube.com/watch?v=A8NUOmlwOlM,11:50
+6,Fri,2026-11-20,295,Find Median from Data Stream,Two heaps,Hard,NC150,new,,https://www.youtube.com/watch?v=itmhHWaHupI,23:35
+6,Sat,2026-11-21,215,Kth Largest Element in an Array,Heap / quickselect,Medium,NC150,review1,Y,https://www.youtube.com/watch?v=XEmy13g1Qxc,18:48
+6,Sat,2026-11-21,355,Design Twitter,Heap merge design,Medium,NC150,review1,,https://www.youtube.com/watch?v=pNichitDD2E,22:47
+6,Sat,2026-11-21,621,Task Scheduler,Heap + greedy,Medium,NC150,review1,,https://www.youtube.com/watch?v=s8p8ukTyA2I,17:06
+6,Sat,2026-11-21,973,K Closest Points to Origin,Heap top-k,Medium,NC150,review1,,https://www.youtube.com/watch?v=rI2EBUEMfTk,9:28
+6,Sat,2026-11-21,252,Meeting Rooms,Intervals sort,Easy,NC150,new,,https://www.youtube.com/watch?v=PaJxqZVPhbg,8:16
+6,Sat,2026-11-21,435,Non-overlapping Intervals,Intervals greedy,Medium,NC150,new,,https://www.youtube.com/watch?v=nONCGxWoUfM,12:52
+7,Mon,2026-11-23,56,Merge Intervals,Intervals sort + merge,Medium,NC150,review1,Y,https://www.youtube.com/watch?v=44H3cEC2fFM,10:14
+7,Mon,2026-11-23,57,Insert Interval,Intervals,Medium,NC150,review1,,https://www.youtube.com/watch?v=A8NUOmlwOlM,11:50
+7,Mon,2026-11-23,199,Binary Tree Right Side View,Tree BFS levels,Medium,NC150,review2,,https://www.youtube.com/watch?v=d4zLyf32e3I,10:16
+7,Mon,2026-11-23,295,Find Median from Data Stream,Two heaps,Hard,NC150,review1,,https://www.youtube.com/watch?v=itmhHWaHupI,23:35
+7,Mon,2026-11-23,692,Top K Frequent Words,Heap with tie-break,Medium,extra,review1,,,
+7,Mon,2026-11-23,767,Reorganize String,Max-heap greedy,Medium,extra,review1,,,
+7,Mon,2026-11-23,1094,Car Pooling,Sweep line / difference array,Medium,extra,review1,,,
+7,Mon,2026-11-23,1448,Count Good Nodes in Binary Tree,Tree DFS with path state,Medium,NC150,review2,,https://www.youtube.com/watch?v=7cp5imvDzl4,8:18
+7,Tue,2026-11-24,98,Validate Binary Search Tree,Tree DFS with bounds,Medium,NC150,review2,,https://www.youtube.com/watch?v=s6ATEkipzow,
+7,Tue,2026-11-24,105,Construct Binary Tree from Preorder and Inorder Traversal,Tree construction,Medium,NC150,review2,,https://www.youtube.com/watch?v=ihj4IQGZ2zc,
+7,Tue,2026-11-24,129,Sum Root to Leaf Numbers,Tree DFS with path state,Medium,extra,review2,,,
+7,Tue,2026-11-24,230,Kth Smallest Element in a BST,Inorder traversal,Medium,NC150,review2,,https://www.youtube.com/watch?v=5LUXSvjmGCw,10:55
+7,Tue,2026-11-24,236,Lowest Common Ancestor of a Binary Tree,Tree DFS post-order,Medium,extra,review2,,,
+7,Tue,2026-11-24,252,Meeting Rooms,Intervals sort,Easy,NC150,review1,,https://www.youtube.com/watch?v=PaJxqZVPhbg,8:16
+7,Tue,2026-11-24,435,Non-overlapping Intervals,Intervals greedy,Medium,NC150,review1,,https://www.youtube.com/watch?v=nONCGxWoUfM,12:52
+7,Tue,2026-11-24,938,Range Sum of BST,BST pruning DFS,Easy,extra,review2,,,
+7,Wed,2026-11-25,13,Roman to Integer,String scan + map,Easy,extra,review3,,,
+7,Wed,2026-11-25,14,Longest Common Prefix,String scan,Easy,extra,review3,,,
+7,Wed,2026-11-25,88,Merge Sorted Array,Two pointers from end,Easy,extra,review3,,,
+7,Wed,2026-11-25,124,Binary Tree Maximum Path Sum,Tree DFS return-two-things,Hard,NC150,review2,,https://www.youtube.com/watch?v=Hr5cWUld4vU,15:18
+7,Wed,2026-11-25,380,Insert Delete GetRandom O(1),Hash map + array design,Medium,extra,review3,,https://www.youtube.com/watch?v=j4KwhBziOpg,13:26
+7,Wed,2026-11-25,437,Path Sum III,Tree DFS + prefix sum,Medium,extra,review2,,,
+7,Wed,2026-11-25,863,All Nodes Distance K in Binary Tree,Tree to graph + BFS,Medium,extra,review2,,,
+7,Wed,2026-11-25,987,Vertical Order Traversal of a Binary Tree,BFS/DFS + sort by coords,Hard,extra,review2,,,
+7,Sat,2026-11-28,208,Implement Trie (Prefix Tree),Trie,Medium,NC150,review2,,https://www.youtube.com/watch?v=oobqoCJlHA0,18:55
+7,Sat,2026-11-28,211,Design Add and Search Words Data Structure,Trie + DFS wildcard,Medium,NC150,review2,,https://www.youtube.com/watch?v=BTf05gs_8iU,19:50
+7,Sat,2026-11-28,297,Serialize and Deserialize Binary Tree,Preorder serialization,Hard,NC150,review2,,https://www.youtube.com/watch?v=u4JAi2JJhI8,13:48
+7,Sat,2026-11-28,1268,Search Suggestions System,Trie / sort + binary search,Medium,extra,review2,,,
+8,Mon,2026-11-30,212,Word Search II,Trie + grid backtracking,Hard,NC150,review2,,https://www.youtube.com/watch?v=asbcE9mZz_U,20:54
+8,Mon,2026-11-30,215,Kth Largest Element in an Array,Heap / quickselect,Medium,NC150,review2,Y,https://www.youtube.com/watch?v=XEmy13g1Qxc,18:48
+8,Mon,2026-11-30,355,Design Twitter,Heap merge design,Medium,NC150,review2,,https://www.youtube.com/watch?v=pNichitDD2E,22:47
+8,Mon,2026-11-30,621,Task Scheduler,Heap + greedy,Medium,NC150,review2,,https://www.youtube.com/watch?v=s8p8ukTyA2I,17:06
+8,Mon,2026-11-30,692,Top K Frequent Words,Heap with tie-break,Medium,extra,review2,,,
+8,Mon,2026-11-30,703,Kth Largest Element in a Stream,Min-heap size k,Easy,NC150,review2,,https://www.youtube.com/watch?v=hOjcdrqMoQ8,11:17
+8,Mon,2026-11-30,973,K Closest Points to Origin,Heap top-k,Medium,NC150,review2,,https://www.youtube.com/watch?v=rI2EBUEMfTk,9:28
+8,Mon,2026-11-30,1046,Last Stone Weight,Max-heap,Easy,NC150,review2,,,
+8,Mon,2026-11-30,253,Meeting Rooms II,Heap of end times,Medium,NC150,new,,https://www.youtube.com/watch?v=FdzJmTCVyJU,11:46
+8,Mon,2026-11-30,452,Minimum Number of Arrows to Burst Balloons,Intervals greedy,Medium,extra,new,,,
+8,Mon,2026-11-30,729,My Calendar I,Interval booking design,Medium,extra,new,,,
+8,Mon,2026-11-30,986,Interval List Intersections,Two pointers on intervals,Medium,extra,new,,,
+8,Tue,2026-12-01,56,Merge Intervals,Intervals sort + merge,Medium,NC150,review2,Y,https://www.youtube.com/watch?v=44H3cEC2fFM,10:14
+8,Tue,2026-12-01,57,Insert Interval,Intervals,Medium,NC150,review2,,https://www.youtube.com/watch?v=A8NUOmlwOlM,11:50
+8,Tue,2026-12-01,252,Meeting Rooms,Intervals sort,Easy,NC150,review2,,https://www.youtube.com/watch?v=PaJxqZVPhbg,8:16
+8,Tue,2026-12-01,295,Find Median from Data Stream,Two heaps,Hard,NC150,review2,,https://www.youtube.com/watch?v=itmhHWaHupI,23:35
+8,Tue,2026-12-01,435,Non-overlapping Intervals,Intervals greedy,Medium,NC150,review2,,https://www.youtube.com/watch?v=nONCGxWoUfM,12:52
+8,Tue,2026-12-01,528,Random Pick with Weight,Prefix sum + binary search,Medium,extra,review3,,,
+8,Tue,2026-12-01,767,Reorganize String,Max-heap greedy,Medium,extra,review2,,,
+8,Tue,2026-12-01,1094,Car Pooling,Sweep line / difference array,Medium,extra,review2,,,
+8,Tue,2026-12-01,39,Combination Sum,Backtracking with reuse,Medium,NC150,new,,https://www.youtube.com/watch?v=GBKI9VSKdGg,15:10
+8,Tue,2026-12-01,78,Subsets,Backtracking include/exclude,Medium,NC150,new,Y,https://www.youtube.com/watch?v=REOH22Xwdkk,8:47
+8,Tue,2026-12-01,1851,Minimum Interval to Include Each Query,Sort + heap,Hard,NC150,new,,https://www.youtube.com/watch?v=5hQ5WWW5awQ,26:22
+8,Wed,2026-12-02,11,Container With Most Water,Two pointers greedy,Medium,NC150,review3,,https://www.youtube.com/watch?v=UuiTKBwPgAo,12:36
+8,Wed,2026-12-02,15,3Sum,Sort + two pointers,Medium,NC150,review3,,https://www.youtube.com/watch?v=jzZsG8n2R9A,12:53
+8,Wed,2026-12-02,31,Next Permutation,Array scan from right,Medium,extra,review3,,,
+8,Wed,2026-12-02,75,Sort Colors,Dutch flag three pointers,Medium,extra,review3,,,
+8,Wed,2026-12-02,125,Valid Palindrome,Two pointers,Easy,NC150,review3,Y,https://www.youtube.com/watch?v=jJXJ16kPFWg,
+8,Wed,2026-12-02,167,Two Sum II - Input Array Is Sorted,Two pointers,Medium,NC150,review3,Y,https://www.youtube.com/watch?v=cQ1Oz4ckceM,8:18
+8,Wed,2026-12-02,680,Valid Palindrome II,Two pointers + one skip,Easy,extra,review3,,,
+8,Wed,2026-12-02,977,Squares of a Sorted Array,Two pointers from ends,Easy,extra,review3,,,
+8,Wed,2026-12-02,40,Combination Sum II,Backtracking with duplicates,Medium,NC150,new,,https://www.youtube.com/watch?v=rSA3t6BDDwg,15:33
+8,Wed,2026-12-02,46,Permutations,Backtracking permutations,Medium,NC150,new,,https://www.youtube.com/watch?v=s7AvT7cGdSo,9:43
+8,Wed,2026-12-02,79,Word Search,Grid backtracking,Medium,NC150,new,,https://www.youtube.com/watch?v=pfiQ_PS1g8E,
+8,Wed,2026-12-02,90,Subsets II,Backtracking with duplicates,Medium,NC150,new,,https://www.youtube.com/watch?v=Vn2v6ajA7U0,15:05
+8,Thu,2026-12-03,3,Longest Substring Without Repeating Characters,Sliding window (variable),Medium,NC150,review3,Y,https://www.youtube.com/watch?v=wiGpQwVHdE0,6:45
+8,Thu,2026-12-03,42,Trapping Rain Water,Two pointers / prefix max,Hard,NC150,review3,,https://www.youtube.com/watch?v=ZI2z5pq0TqA,23:21
+8,Thu,2026-12-03,121,Best Time to Buy and Sell Stock,Running min / window,Easy,NC150,review3,Y,https://www.youtube.com/watch?v=1pkOgXD63yU,
+8,Thu,2026-12-03,253,Meeting Rooms II,Heap of end times,Medium,NC150,review1,,https://www.youtube.com/watch?v=FdzJmTCVyJU,11:46
+8,Thu,2026-12-03,424,Longest Repeating Character Replacement,Sliding window + counts,Medium,NC150,review3,,https://www.youtube.com/watch?v=gqXU1UyA8pk,20:44
+8,Thu,2026-12-03,452,Minimum Number of Arrows to Burst Balloons,Intervals greedy,Medium,extra,review1,,,
+8,Thu,2026-12-03,729,My Calendar I,Interval booking design,Medium,extra,review1,,,
+8,Thu,2026-12-03,986,Interval List Intersections,Two pointers on intervals,Medium,extra,review1,,,
+8,Thu,2026-12-03,17,Letter Combinations of a Phone Number,Backtracking product,Medium,NC150,new,,https://www.youtube.com/watch?v=0snEunUacZY,11:14
+8,Thu,2026-12-03,131,Palindrome Partitioning,Backtracking partition,Medium,NC150,new,,https://www.youtube.com/watch?v=3jvWodd7ht0,
+8,Thu,2026-12-03,698,Partition to K Equal Sum Subsets,Backtracking with pruning,Medium,extra,new,,,
+8,Fri,2026-12-04,39,Combination Sum,Backtracking with reuse,Medium,NC150,review1,,https://www.youtube.com/watch?v=GBKI9VSKdGg,15:10
+8,Fri,2026-12-04,78,Subsets,Backtracking include/exclude,Medium,NC150,review1,Y,https://www.youtube.com/watch?v=REOH22Xwdkk,8:47
+8,Fri,2026-12-04,209,Minimum Size Subarray Sum,Sliding window (shrink),Medium,extra,review3,,,
+8,Fri,2026-12-04,438,Find All Anagrams in a String,Sliding window (fixed) + counts,Medium,extra,review3,,,
+8,Fri,2026-12-04,567,Permutation in String,Sliding window (fixed) + counts,Medium,NC150,review3,,https://www.youtube.com/watch?v=UbyhOgBN834,19:40
+8,Fri,2026-12-04,904,Fruit Into Baskets,Sliding window (at most 2 kinds),Medium,extra,review3,,,
+8,Fri,2026-12-04,1004,Max Consecutive Ones III,Sliding window (k flips),Medium,extra,review3,,,
+8,Fri,2026-12-04,1851,Minimum Interval to Include Each Query,Sort + heap,Hard,NC150,review1,,https://www.youtube.com/watch?v=5hQ5WWW5awQ,26:22
+8,Fri,2026-12-04,51,N-Queens,Backtracking with constraint sets,Hard,NC150,new,,https://www.youtube.com/watch?v=Ph95IHmRp5M,17:50
+8,Fri,2026-12-04,200,Number of Islands,Grid DFS/BFS components,Medium,NC150,new,Y,https://www.youtube.com/watch?v=pV2kpPD66nE,11:41
+8,Fri,2026-12-04,695,Max Area of Island,Grid DFS with return,Medium,NC150,new,,https://www.youtube.com/watch?v=iJGr1OtmH0c,11:13
+8,Sat,2026-12-05,40,Combination Sum II,Backtracking with duplicates,Medium,NC150,review1,,https://www.youtube.com/watch?v=rSA3t6BDDwg,15:33
+8,Sat,2026-12-05,46,Permutations,Backtracking permutations,Medium,NC150,review1,,https://www.youtube.com/watch?v=s7AvT7cGdSo,9:43
+8,Sat,2026-12-05,79,Word Search,Grid backtracking,Medium,NC150,review1,,https://www.youtube.com/watch?v=pfiQ_PS1g8E,
+8,Sat,2026-12-05,90,Subsets II,Backtracking with duplicates,Medium,NC150,review1,,https://www.youtube.com/watch?v=Vn2v6ajA7U0,15:05
+8,Sat,2026-12-05,133,Clone Graph,Graph traversal + hash map,Medium,NC150,new,,https://www.youtube.com/watch?v=mQeF6bN8hMk,11:48
+8,Sat,2026-12-05,286,Walls and Gates,Multi-source BFS,Medium,NC150,new,,https://www.youtube.com/watch?v=e69C6xhiSQE,11:47
+9,Mon,2026-12-07,17,Letter Combinations of a Phone Number,Backtracking product,Medium,NC150,review1,,https://www.youtube.com/watch?v=0snEunUacZY,11:14
+9,Mon,2026-12-07,51,N-Queens,Backtracking with constraint sets,Hard,NC150,review1,,https://www.youtube.com/watch?v=Ph95IHmRp5M,17:50
+9,Mon,2026-12-07,76,Minimum Window Substring,Sliding window + need counts,Hard,NC150,review3,,https://www.youtube.com/watch?v=jSto0O4AJbM,25:41
+9,Mon,2026-12-07,131,Palindrome Partitioning,Backtracking partition,Medium,NC150,review1,,https://www.youtube.com/watch?v=3jvWodd7ht0,
+9,Mon,2026-12-07,200,Number of Islands,Grid DFS/BFS components,Medium,NC150,review1,Y,https://www.youtube.com/watch?v=pV2kpPD66nE,11:41
+9,Mon,2026-12-07,695,Max Area of Island,Grid DFS with return,Medium,NC150,review1,,https://www.youtube.com/watch?v=iJGr1OtmH0c,11:13
+9,Mon,2026-12-07,698,Partition to K Equal Sum Subsets,Backtracking with pruning,Medium,extra,review1,,,
+9,Mon,2026-12-07,1423,Maximum Points You Can Obtain from Cards,Fixed window complement,Medium,extra,review3,,,
+9,Mon,2026-12-07,130,Surrounded Regions,Border DFS,Medium,NC150,new,,https://www.youtube.com/watch?v=9z2BunfoZ5Y,14:50
+9,Mon,2026-12-07,417,Pacific Atlantic Water Flow,Reverse multi-source DFS,Medium,NC150,new,,https://www.youtube.com/watch?v=s-VkcjHqkGI,16:27
+9,Mon,2026-12-07,542,01 Matrix,Multi-source BFS,Medium,extra,new,,,
+9,Mon,2026-12-07,994,Rotting Oranges,Multi-source BFS,Medium,NC150,new,,https://www.youtube.com/watch?v=y704fEOx0s0,12:19
+9,Tue,2026-12-08,20,Valid Parentheses,Stack matching,Easy,NC150,review3,Y,https://www.youtube.com/watch?v=WTzjTskDFMg,10:43
+9,Tue,2026-12-08,22,Generate Parentheses,Backtracking with counts,Medium,NC150,review3,,https://www.youtube.com/watch?v=s9fokUqJ76A,13:36
+9,Tue,2026-12-08,133,Clone Graph,Graph traversal + hash map,Medium,NC150,review1,,https://www.youtube.com/watch?v=mQeF6bN8hMk,11:48
+9,Tue,2026-12-08,150,Evaluate Reverse Polish Notation,Stack evaluation,Medium,NC150,review3,,https://www.youtube.com/watch?v=iu0082c4HDE,9:19
+9,Tue,2026-12-08,155,Min Stack,Stack design,Medium,NC150,review3,,https://www.youtube.com/watch?v=qkLl7nAwDPo,8:53
+9,Tue,2026-12-08,239,Sliding Window Maximum,Monotonic deque,Hard,NC150,review3,,https://www.youtube.com/watch?v=DfljaUwZsOk,15:46
+9,Tue,2026-12-08,286,Walls and Gates,Multi-source BFS,Medium,NC150,review1,,https://www.youtube.com/watch?v=e69C6xhiSQE,11:47
+9,Tue,2026-12-08,739,Daily Temperatures,Monotonic stack,Medium,NC150,review3,,https://www.youtube.com/watch?v=cTBiBSnjO3c,11:52
+9,Tue,2026-12-08,752,Open the Lock,BFS on states,Medium,extra,new,,,
+9,Tue,2026-12-08,909,Snakes and Ladders,BFS on board,Medium,extra,new,,,
+9,Tue,2026-12-08,1091,Shortest Path in Binary Matrix,BFS shortest path (8-dir),Medium,extra,new,,,
+9,Wed,2026-12-09,71,Simplify Path,Stack of path parts,Medium,extra,review3,,,
+9,Wed,2026-12-09,227,Basic Calculator II,Stack with operator precedence,Medium,extra,review3,,,
+9,Wed,2026-12-09,394,Decode String,"Stack of (count, string)",Medium,extra,review3,,,
+9,Wed,2026-12-09,503,Next Greater Element II,Monotonic stack circular,Medium,extra,review3,,,
+9,Wed,2026-12-09,735,Asteroid Collision,Stack simulation,Medium,extra,review3,,,
+9,Wed,2026-12-09,853,Car Fleet,Sort + stack,Medium,NC150,review3,,https://www.youtube.com/watch?v=Pr6T-3yB9RM,16:10
+9,Wed,2026-12-09,1047,Remove All Adjacent Duplicates In String,Stack cancel,Easy,extra,review3,,,
+9,Wed,2026-12-09,1249,Minimum Remove to Make Valid Parentheses,Stack of indices,Medium,extra,review3,,,
+9,Wed,2026-12-09,207,Course Schedule,Cycle detection / topo sort,Medium,NC150,new,Y,https://www.youtube.com/watch?v=EgI5nU9etnU,15:46
+9,Wed,2026-12-09,210,Course Schedule II,Topological sort (Kahn),Medium,NC150,new,,https://www.youtube.com/watch?v=Akt3glAwyfY,17:09
+9,Wed,2026-12-09,261,Graph Valid Tree,Union-find / DFS tree check,Medium,NC150,new,,https://www.youtube.com/watch?v=bXsUuownnoQ,14:11
+9,Wed,2026-12-09,323,Number of Connected Components in an Undirected Graph,Union-find,Medium,NC150,new,,https://www.youtube.com/watch?v=8f1XPm4WOUc,15:59
+9,Thu,2026-12-10,130,Surrounded Regions,Border DFS,Medium,NC150,review1,,https://www.youtube.com/watch?v=9z2BunfoZ5Y,14:50
+9,Thu,2026-12-10,253,Meeting Rooms II,Heap of end times,Medium,NC150,review2,,https://www.youtube.com/watch?v=FdzJmTCVyJU,11:46
+9,Thu,2026-12-10,417,Pacific Atlantic Water Flow,Reverse multi-source DFS,Medium,NC150,review1,,https://www.youtube.com/watch?v=s-VkcjHqkGI,16:27
+9,Thu,2026-12-10,452,Minimum Number of Arrows to Burst Balloons,Intervals greedy,Medium,extra,review2,,,
+9,Thu,2026-12-10,542,01 Matrix,Multi-source BFS,Medium,extra,review1,,,
+9,Thu,2026-12-10,729,My Calendar I,Interval booking design,Medium,extra,review2,,,
+9,Thu,2026-12-10,986,Interval List Intersections,Two pointers on intervals,Medium,extra,review2,,,
+9,Thu,2026-12-10,994,Rotting Oranges,Multi-source BFS,Medium,NC150,review1,,https://www.youtube.com/watch?v=y704fEOx0s0,12:19
+9,Thu,2026-12-10,399,Evaluate Division,Weighted graph DFS,Medium,extra,new,,,
+9,Thu,2026-12-10,684,Redundant Connection,Union-find,Medium,NC150,new,,https://www.youtube.com/watch?v=FXWRE67PLL0,16:04
+9,Thu,2026-12-10,721,Accounts Merge,Union-find + hash map,Medium,extra,new,,,
+9,Fri,2026-12-11,39,Combination Sum,Backtracking with reuse,Medium,NC150,review2,,https://www.youtube.com/watch?v=GBKI9VSKdGg,15:10
+9,Fri,2026-12-11,78,Subsets,Backtracking include/exclude,Medium,NC150,review2,Y,https://www.youtube.com/watch?v=REOH22Xwdkk,8:47
+9,Fri,2026-12-11,84,Largest Rectangle in Histogram,Monotonic stack,Hard,NC150,review3,,https://www.youtube.com/watch?v=zx5Sw9130L0,
+9,Fri,2026-12-11,704,Binary Search,Binary search,Easy,NC150,review3,Y,https://www.youtube.com/watch?v=s4DPM8ct1pI,9:39
+9,Fri,2026-12-11,752,Open the Lock,BFS on states,Medium,extra,review1,,,
+9,Fri,2026-12-11,909,Snakes and Ladders,BFS on board,Medium,extra,review1,,,
+9,Fri,2026-12-11,1091,Shortest Path in Binary Matrix,BFS shortest path (8-dir),Medium,extra,review1,,,
+9,Fri,2026-12-11,1851,Minimum Interval to Include Each Query,Sort + heap,Hard,NC150,review2,,https://www.youtube.com/watch?v=5hQ5WWW5awQ,26:22
+9,Fri,2026-12-11,127,Word Ladder,BFS shortest transformation,Hard,NC150,new,,https://www.youtube.com/watch?v=h9iTnkgv05E,17:06
+9,Fri,2026-12-11,743,Network Delay Time,Dijkstra,Medium,NC150,new,,https://www.youtube.com/watch?v=EaphyqKU4PQ,19:47
+9,Fri,2026-12-11,1584,Min Cost to Connect All Points,MST (Prim),Medium,NC150,new,,https://www.youtube.com/watch?v=f7JOBJIC-NA,22:08
+9,Sat,2026-12-12,207,Course Schedule,Cycle detection / topo sort,Medium,NC150,review1,Y,https://www.youtube.com/watch?v=EgI5nU9etnU,15:46
+9,Sat,2026-12-12,210,Course Schedule II,Topological sort (Kahn),Medium,NC150,review1,,https://www.youtube.com/watch?v=Akt3glAwyfY,17:09
+9,Sat,2026-12-12,261,Graph Valid Tree,Union-find / DFS tree check,Medium,NC150,review1,,https://www.youtube.com/watch?v=bXsUuownnoQ,14:11
+9,Sat,2026-12-12,323,Number of Connected Components in an Undirected Graph,Union-find,Medium,NC150,review1,,https://www.youtube.com/watch?v=8f1XPm4WOUc,15:59
+9,Sat,2026-12-12,787,Cheapest Flights Within K Stops,Bellman-Ford / BFS with k,Medium,NC150,new,,https://www.youtube.com/watch?v=5eIK3zUdYmE,20:24
+9,Sat,2026-12-12,1631,Path With Minimum Effort,Dijkstra on grid,Medium,extra,new,,,
+10,Mon,2026-12-14,46,Permutations,Backtracking permutations,Medium,NC150,review2,,https://www.youtube.com/watch?v=s7AvT7cGdSo,9:43
+10,Mon,2026-12-14,90,Subsets II,Backtracking with duplicates,Medium,NC150,review2,,https://www.youtube.com/watch?v=Vn2v6ajA7U0,15:05
+10,Mon,2026-12-14,127,Word Ladder,BFS shortest transformation,Hard,NC150,review1,,https://www.youtube.com/watch?v=h9iTnkgv05E,17:06
+10,Mon,2026-12-14,399,Evaluate Division,Weighted graph DFS,Medium,extra,review1,,,
+10,Mon,2026-12-14,684,Redundant Connection,Union-find,Medium,NC150,review1,,https://www.youtube.com/watch?v=FXWRE67PLL0,16:04
+10,Mon,2026-12-14,721,Accounts Merge,Union-find + hash map,Medium,extra,review1,,,
+10,Mon,2026-12-14,743,Network Delay Time,Dijkstra,Medium,NC150,review1,,https://www.youtube.com/watch?v=EaphyqKU4PQ,19:47
+10,Mon,2026-12-14,1584,Min Cost to Connect All Points,MST (Prim),Medium,NC150,review1,,https://www.youtube.com/watch?v=f7JOBJIC-NA,22:08
+10,Mon,2026-12-14,70,Climbing Stairs,1D DP,Easy,NC150,new,Y,https://www.youtube.com/watch?v=Y0lT9Fck7qI,18:07
+10,Mon,2026-12-14,269,Alien Dictionary,Topological sort from order,Hard,NC150,new,,https://www.youtube.com/watch?v=6kTZYvNNyps,22:05
+10,Mon,2026-12-14,332,Reconstruct Itinerary,Eulerian path DFS,Hard,NC150,new,,https://www.youtube.com/watch?v=ZyB_gQ8vqGA,17:38
+10,Mon,2026-12-14,778,Swim in Rising Water,Dijkstra / binary search + BFS,Hard,NC150,new,,https://www.youtube.com/watch?v=amvrKlMLuGY,16:22
+10,Tue,2026-12-15,17,Letter Combinations of a Phone Number,Backtracking product,Medium,NC150,review2,,https://www.youtube.com/watch?v=0snEunUacZY,11:14
+10,Tue,2026-12-15,40,Combination Sum II,Backtracking with duplicates,Medium,NC150,review2,,https://www.youtube.com/watch?v=rSA3t6BDDwg,15:33
+10,Tue,2026-12-15,51,N-Queens,Backtracking with constraint sets,Hard,NC150,review2,,https://www.youtube.com/watch?v=Ph95IHmRp5M,17:50
+10,Tue,2026-12-15,79,Word Search,Grid backtracking,Medium,NC150,review2,,https://www.youtube.com/watch?v=pfiQ_PS1g8E,
+10,Tue,2026-12-15,131,Palindrome Partitioning,Backtracking partition,Medium,NC150,review2,,https://www.youtube.com/watch?v=3jvWodd7ht0,
+10,Tue,2026-12-15,698,Partition to K Equal Sum Subsets,Backtracking with pruning,Medium,extra,review2,,,
+10,Tue,2026-12-15,787,Cheapest Flights Within K Stops,Bellman-Ford / BFS with k,Medium,NC150,review1,,https://www.youtube.com/watch?v=5eIK3zUdYmE,20:24
+10,Tue,2026-12-15,1631,Path With Minimum Effort,Dijkstra on grid,Medium,extra,review1,,,
+10,Tue,2026-12-15,198,House Robber,1D DP take/skip,Medium,NC150,new,Y,https://www.youtube.com/watch?v=73r3KWiEvyk,10:35
+10,Tue,2026-12-15,213,House Robber II,1D DP circular,Medium,NC150,new,,https://www.youtube.com/watch?v=rWAJCfYYOvM,10:40
+10,Tue,2026-12-15,746,Min Cost Climbing Stairs,1D DP,Easy,NC150,new,,https://www.youtube.com/watch?v=ktmzAZWkEZ0,19:27
+10,Wed,2026-12-16,33,Search in Rotated Sorted Array,Binary search rotated,Medium,NC150,review3,,https://www.youtube.com/watch?v=U8XENwh8Oy8,13:28
+10,Wed,2026-12-16,74,Search a 2D Matrix,Binary search 2D,Medium,NC150,review3,,https://www.youtube.com/watch?v=Ber2pi2C0j0,10:58
+10,Wed,2026-12-16,133,Clone Graph,Graph traversal + hash map,Medium,NC150,review2,,https://www.youtube.com/watch?v=mQeF6bN8hMk,11:48
+10,Wed,2026-12-16,153,Find Minimum in Rotated Sorted Array,Binary search rotated,Medium,NC150,review3,,https://www.youtube.com/watch?v=nIVW4P8b1VA,12:30
+10,Wed,2026-12-16,200,Number of Islands,Grid DFS/BFS components,Medium,NC150,review2,Y,https://www.youtube.com/watch?v=pV2kpPD66nE,11:41
+10,Wed,2026-12-16,286,Walls and Gates,Multi-source BFS,Medium,NC150,review2,,https://www.youtube.com/watch?v=e69C6xhiSQE,11:47
+10,Wed,2026-12-16,695,Max Area of Island,Grid DFS with return,Medium,NC150,review2,,https://www.youtube.com/watch?v=iJGr1OtmH0c,11:13
+10,Wed,2026-12-16,875,Koko Eating Bananas,Binary search on answer,Medium,NC150,review3,,https://www.youtube.com/watch?v=U2SozAs9RzA,15:12
+10,Wed,2026-12-16,5,Longest Palindromic Substring,Expand around center,Medium,NC150,new,,https://www.youtube.com/watch?v=XYQecbcd6_c,8:11
+10,Wed,2026-12-16,91,Decode Ways,1D DP on prefixes,Medium,NC150,new,,https://www.youtube.com/watch?v=6aEyTjOwlJU,15:25
+10,Wed,2026-12-16,322,Coin Change,1D DP unbounded,Medium,NC150,new,,https://www.youtube.com/watch?v=H9bfqozjoqs,19:23
+10,Wed,2026-12-16,647,Palindromic Substrings,Expand around center,Medium,NC150,new,,https://www.youtube.com/watch?v=4RACzI5-du8,15:02
+10,Thu,2026-12-17,70,Climbing Stairs,1D DP,Easy,NC150,review1,Y,https://www.youtube.com/watch?v=Y0lT9Fck7qI,18:07
+10,Thu,2026-12-17,130,Surrounded Regions,Border DFS,Medium,NC150,review2,,https://www.youtube.com/watch?v=9z2BunfoZ5Y,14:50
+10,Thu,2026-12-17,269,Alien Dictionary,Topological sort from order,Hard,NC150,review1,,https://www.youtube.com/watch?v=6kTZYvNNyps,22:05
+10,Thu,2026-12-17,332,Reconstruct Itinerary,Eulerian path DFS,Hard,NC150,review1,,https://www.youtube.com/watch?v=ZyB_gQ8vqGA,17:38
+10,Thu,2026-12-17,417,Pacific Atlantic Water Flow,Reverse multi-source DFS,Medium,NC150,review2,,https://www.youtube.com/watch?v=s-VkcjHqkGI,16:27
+10,Thu,2026-12-17,542,01 Matrix,Multi-source BFS,Medium,extra,review2,,,
+10,Thu,2026-12-17,778,Swim in Rising Water,Dijkstra / binary search + BFS,Hard,NC150,review1,,https://www.youtube.com/watch?v=amvrKlMLuGY,16:22
+10,Thu,2026-12-17,994,Rotting Oranges,Multi-source BFS,Medium,NC150,review2,,https://www.youtube.com/watch?v=y704fEOx0s0,12:19
+10,Thu,2026-12-17,139,Word Break,1D DP on prefixes,Medium,NC150,new,,https://www.youtube.com/watch?v=Sx9NNgInc3A,15:34
+10,Thu,2026-12-17,152,Maximum Product Subarray,1D DP min/max,Medium,NC150,new,,https://www.youtube.com/watch?v=lXVy6YWFcRM,15:30
+10,Thu,2026-12-17,300,Longest Increasing Subsequence,1D DP O(n^2),Medium,NC150,new,,https://www.youtube.com/watch?v=cjWnW0hdF1Y,18:13
+10,Fri,2026-12-18,34,Find First and Last Position of Element in Sorted Array,Binary search bounds,Medium,extra,review3,,,
+10,Fri,2026-12-18,198,House Robber,1D DP take/skip,Medium,NC150,review1,Y,https://www.youtube.com/watch?v=73r3KWiEvyk,10:35
+10,Fri,2026-12-18,213,House Robber II,1D DP circular,Medium,NC150,review1,,https://www.youtube.com/watch?v=rWAJCfYYOvM,10:40
+10,Fri,2026-12-18,746,Min Cost Climbing Stairs,1D DP,Easy,NC150,review1,,https://www.youtube.com/watch?v=ktmzAZWkEZ0,19:27
+10,Fri,2026-12-18,752,Open the Lock,BFS on states,Medium,extra,review2,,,
+10,Fri,2026-12-18,909,Snakes and Ladders,BFS on board,Medium,extra,review2,,,
+10,Fri,2026-12-18,981,Time Based Key-Value Store,Hash map + binary search design,Medium,NC150,review3,,https://www.youtube.com/watch?v=fu2cD_6E8Hw,17:15
+10,Fri,2026-12-18,1091,Shortest Path in Binary Matrix,BFS shortest path (8-dir),Medium,extra,review2,,,
+10,Fri,2026-12-18,53,Maximum Subarray,Kadane,Medium,NC150,new,,https://www.youtube.com/watch?v=5WZl3MMT0Eg,
+10,Fri,2026-12-18,279,Perfect Squares,1D DP unbounded,Medium,extra,new,,,
+10,Fri,2026-12-18,416,Partition Equal Subset Sum,0/1 knapsack,Medium,NC150,new,,https://www.youtube.com/watch?v=IsvocB5BJhw,14:11
+10,Sat,2026-12-19,5,Longest Palindromic Substring,Expand around center,Medium,NC150,review1,,https://www.youtube.com/watch?v=XYQecbcd6_c,8:11
+10,Sat,2026-12-19,91,Decode Ways,1D DP on prefixes,Medium,NC150,review1,,https://www.youtube.com/watch?v=6aEyTjOwlJU,15:25
+10,Sat,2026-12-19,322,Coin Change,1D DP unbounded,Medium,NC150,review1,,https://www.youtube.com/watch?v=H9bfqozjoqs,19:23
+10,Sat,2026-12-19,647,Palindromic Substrings,Expand around center,Medium,NC150,review1,,https://www.youtube.com/watch?v=4RACzI5-du8,15:02
+10,Sat,2026-12-19,45,Jump Game II,Greedy BFS levels,Medium,NC150,new,,https://www.youtube.com/watch?v=dJ7sWiOoK7g,
+10,Sat,2026-12-19,55,Jump Game,Greedy reach,Medium,NC150,new,,https://www.youtube.com/watch?v=Yan0cv2cLy8,16:27
+11,Mon,2026-12-21,53,Maximum Subarray,Kadane,Medium,NC150,review1,,https://www.youtube.com/watch?v=5WZl3MMT0Eg,
+11,Mon,2026-12-21,139,Word Break,1D DP on prefixes,Medium,NC150,review1,,https://www.youtube.com/watch?v=Sx9NNgInc3A,15:34
+11,Mon,2026-12-21,152,Maximum Product Subarray,1D DP min/max,Medium,NC150,review1,,https://www.youtube.com/watch?v=lXVy6YWFcRM,15:30
+11,Mon,2026-12-21,207,Course Schedule,Cycle detection / topo sort,Medium,NC150,review2,Y,https://www.youtube.com/watch?v=EgI5nU9etnU,15:46
+11,Mon,2026-12-21,210,Course Schedule II,Topological sort (Kahn),Medium,NC150,review2,,https://www.youtube.com/watch?v=Akt3glAwyfY,17:09
+11,Mon,2026-12-21,279,Perfect Squares,1D DP unbounded,Medium,extra,review1,,,
+11,Mon,2026-12-21,300,Longest Increasing Subsequence,1D DP O(n^2),Medium,NC150,review1,,https://www.youtube.com/watch?v=cjWnW0hdF1Y,18:13
+11,Mon,2026-12-21,416,Partition Equal Subset Sum,0/1 knapsack,Medium,NC150,review1,,https://www.youtube.com/watch?v=IsvocB5BJhw,14:11
+11,Tue,2026-12-22,45,Jump Game II,Greedy BFS levels,Medium,NC150,review1,,https://www.youtube.com/watch?v=dJ7sWiOoK7g,
+11,Tue,2026-12-22,55,Jump Game,Greedy reach,Medium,NC150,review1,,https://www.youtube.com/watch?v=Yan0cv2cLy8,16:27
+11,Tue,2026-12-22,127,Word Ladder,BFS shortest transformation,Hard,NC150,review2,,https://www.youtube.com/watch?v=h9iTnkgv05E,17:06
+11,Tue,2026-12-22,261,Graph Valid Tree,Union-find / DFS tree check,Medium,NC150,review2,,https://www.youtube.com/watch?v=bXsUuownnoQ,14:11
+11,Tue,2026-12-22,323,Number of Connected Components in an Undirected Graph,Union-find,Medium,NC150,review2,,https://www.youtube.com/watch?v=8f1XPm4WOUc,15:59
+11,Tue,2026-12-22,399,Evaluate Division,Weighted graph DFS,Medium,extra,review2,,,
+11,Tue,2026-12-22,684,Redundant Connection,Union-find,Medium,NC150,review2,,https://www.youtube.com/watch?v=FXWRE67PLL0,16:04
+11,Tue,2026-12-22,721,Accounts Merge,Union-find + hash map,Medium,extra,review2,,,
+11,Wed,2026-12-23,162,Find Peak Element,Binary search on slope,Medium,extra,review3,,,
+11,Wed,2026-12-23,658,Find K Closest Elements,Binary search window,Medium,extra,review3,,,
+11,Wed,2026-12-23,743,Network Delay Time,Dijkstra,Medium,NC150,review2,,https://www.youtube.com/watch?v=EaphyqKU4PQ,19:47
+11,Wed,2026-12-23,787,Cheapest Flights Within K Stops,Bellman-Ford / BFS with k,Medium,NC150,review2,,https://www.youtube.com/watch?v=5eIK3zUdYmE,20:24
+11,Wed,2026-12-23,1011,Capacity To Ship Packages Within D Days,Binary search on answer,Medium,extra,review3,,,
+11,Wed,2026-12-23,1539,Kth Missing Positive Number,Binary search on count,Easy,extra,review3,,,
+11,Wed,2026-12-23,1584,Min Cost to Connect All Points,MST (Prim),Medium,NC150,review2,,https://www.youtube.com/watch?v=f7JOBJIC-NA,22:08
+11,Wed,2026-12-23,1631,Path With Minimum Effort,Dijkstra on grid,Medium,extra,review2,,,
+11,Sat,2026-12-26,70,Climbing Stairs,1D DP,Easy,NC150,review2,Y,https://www.youtube.com/watch?v=Y0lT9Fck7qI,18:07
+11,Sat,2026-12-26,269,Alien Dictionary,Topological sort from order,Hard,NC150,review2,,https://www.youtube.com/watch?v=6kTZYvNNyps,22:05
+11,Sat,2026-12-26,332,Reconstruct Itinerary,Eulerian path DFS,Hard,NC150,review2,,https://www.youtube.com/watch?v=ZyB_gQ8vqGA,17:38
+11,Sat,2026-12-26,778,Swim in Rising Water,Dijkstra / binary search + BFS,Hard,NC150,review2,,https://www.youtube.com/watch?v=amvrKlMLuGY,16:22
+12,Mon,2026-12-28,5,Longest Palindromic Substring,Expand around center,Medium,NC150,review2,,https://www.youtube.com/watch?v=XYQecbcd6_c,8:11
+12,Mon,2026-12-28,91,Decode Ways,1D DP on prefixes,Medium,NC150,review2,,https://www.youtube.com/watch?v=6aEyTjOwlJU,15:25
+12,Mon,2026-12-28,152,Maximum Product Subarray,1D DP min/max,Medium,NC150,review2,,https://www.youtube.com/watch?v=lXVy6YWFcRM,15:30
+12,Mon,2026-12-28,198,House Robber,1D DP take/skip,Medium,NC150,review2,Y,https://www.youtube.com/watch?v=73r3KWiEvyk,10:35
+12,Mon,2026-12-28,213,House Robber II,1D DP circular,Medium,NC150,review2,,https://www.youtube.com/watch?v=rWAJCfYYOvM,10:40
+12,Mon,2026-12-28,322,Coin Change,1D DP unbounded,Medium,NC150,review2,,https://www.youtube.com/watch?v=H9bfqozjoqs,19:23
+12,Mon,2026-12-28,647,Palindromic Substrings,Expand around center,Medium,NC150,review2,,https://www.youtube.com/watch?v=4RACzI5-du8,15:02
+12,Mon,2026-12-28,746,Min Cost Climbing Stairs,1D DP,Easy,NC150,review2,,https://www.youtube.com/watch?v=ktmzAZWkEZ0,19:27
+12,Mon,2026-12-28,134,Gas Station,Greedy running sum,Medium,NC150,new,,https://www.youtube.com/watch?v=lJwbPZGo05A,15:47
+12,Mon,2026-12-28,763,Partition Labels,Greedy last index,Medium,NC150,new,,https://www.youtube.com/watch?v=B7m8UmZE-vw,14:29
+12,Mon,2026-12-28,846,Hand of Straights,Greedy + counts,Medium,NC150,new,,https://www.youtube.com/watch?v=amnrMCVd2YI,15:53
+12,Mon,2026-12-28,1899,Merge Triplets to Form Target Triplet,Greedy filter,Medium,NC150,new,,https://www.youtube.com/watch?v=kShkQLQZ9K4,6:44
+12,Tue,2026-12-29,4,Median of Two Sorted Arrays,Binary search partition,Hard,NC150,review3,,https://www.youtube.com/watch?v=q6IEA26hvXc,22:21
+12,Tue,2026-12-29,45,Jump Game II,Greedy BFS levels,Medium,NC150,review2,,https://www.youtube.com/watch?v=dJ7sWiOoK7g,
+12,Tue,2026-12-29,53,Maximum Subarray,Kadane,Medium,NC150,review2,,https://www.youtube.com/watch?v=5WZl3MMT0Eg,
+12,Tue,2026-12-29,55,Jump Game,Greedy reach,Medium,NC150,review2,,https://www.youtube.com/watch?v=Yan0cv2cLy8,16:27
+12,Tue,2026-12-29,139,Word Break,1D DP on prefixes,Medium,NC150,review2,,https://www.youtube.com/watch?v=Sx9NNgInc3A,15:34
+12,Tue,2026-12-29,279,Perfect Squares,1D DP unbounded,Medium,extra,review2,,,
+12,Tue,2026-12-29,300,Longest Increasing Subsequence,1D DP O(n^2),Medium,NC150,review2,,https://www.youtube.com/watch?v=cjWnW0hdF1Y,18:13
+12,Tue,2026-12-29,416,Partition Equal Subset Sum,0/1 knapsack,Medium,NC150,review2,,https://www.youtube.com/watch?v=IsvocB5BJhw,14:11
+12,Tue,2026-12-29,62,Unique Paths,2D DP grid,Medium,NC150,new,,https://www.youtube.com/watch?v=IlEsdxuD4lY,10:48
+12,Tue,2026-12-29,678,Valid Parenthesis String,Greedy range of opens,Medium,NC150,new,,https://www.youtube.com/watch?v=QhPdNS143Qg,13:43
+12,Tue,2026-12-29,1143,Longest Common Subsequence,2D DP strings,Medium,NC150,new,,https://www.youtube.com/watch?v=Ua0GhsJSlWM,
+12,Wed,2026-12-30,2,Add Two Numbers,Linked list arithmetic,Medium,NC150,review3,,https://www.youtube.com/watch?v=wgFPrzTjm7s,9:33
+12,Wed,2026-12-30,19,Remove Nth Node From End of List,Two-gap pointers,Medium,NC150,review3,,https://www.youtube.com/watch?v=XVuQxVej6y8,7:09
+12,Wed,2026-12-30,21,Merge Two Sorted Lists,Dummy head merge,Easy,NC150,review3,Y,https://www.youtube.com/watch?v=XIdigk956u0,6:16
+12,Wed,2026-12-30,138,Copy List with Random Pointer,Hash map node copy,Medium,NC150,review3,,https://www.youtube.com/watch?v=5Y2EiZST97Y,10:06
+12,Wed,2026-12-30,141,Linked List Cycle,Fast/slow pointers,Easy,NC150,review3,,https://www.youtube.com/watch?v=gBTe7lFR3vc,10:43
+12,Wed,2026-12-30,143,Reorder List,Linked list combo,Medium,NC150,review3,,https://www.youtube.com/watch?v=S5bfdUTrKLM,13:47
+12,Wed,2026-12-30,206,Reverse Linked List,Linked list rewiring,Easy,NC150,review3,Y,https://www.youtube.com/watch?v=G0_I-ZF0S38,11:07
+12,Wed,2026-12-30,287,Find the Duplicate Number,Floyd cycle on array,Medium,NC150,review3,,https://www.youtube.com/watch?v=wjYnzkAhcNk,17:33
+12,Wed,2026-12-30,97,Interleaving String,2D DP strings,Medium,NC150,new,,https://www.youtube.com/watch?v=3Rw3p9LrgvE,18:19
+12,Wed,2026-12-30,309,Best Time to Buy and Sell Stock with Cooldown,State machine DP,Medium,NC150,new,,https://www.youtube.com/watch?v=I7j0F7AHpb8,15:12
+12,Wed,2026-12-30,494,Target Sum,DP over sums,Medium,NC150,new,,https://www.youtube.com/watch?v=g0npyaQtAQM,12:10
+12,Wed,2026-12-30,518,Coin Change II,Unbounded knapsack count,Medium,NC150,new,,https://www.youtube.com/watch?v=Mjy4hd2xgrs,23:19
+12,Thu,2026-12-31,23,Merge k Sorted Lists,Heap merge,Hard,NC150,review3,,https://www.youtube.com/watch?v=q5a5OiGbT6Q,10:34
+12,Thu,2026-12-31,25,Reverse Nodes in k-Group,Linked list rewiring in groups,Hard,NC150,review3,,https://www.youtube.com/watch?v=1UOPsfP85V4,12:20
+12,Thu,2026-12-31,134,Gas Station,Greedy running sum,Medium,NC150,review1,,https://www.youtube.com/watch?v=lJwbPZGo05A,15:47
+12,Thu,2026-12-31,146,LRU Cache,Hash map + doubly linked list design,Medium,NC150,review3,,https://www.youtube.com/watch?v=7ABFKPK2hD4,17:49
+12,Thu,2026-12-31,226,Invert Binary Tree,Tree DFS,Easy,NC150,review3,Y,https://www.youtube.com/watch?v=OnSn2XEQ4MY,3:54
+12,Thu,2026-12-31,763,Partition Labels,Greedy last index,Medium,NC150,review1,,https://www.youtube.com/watch?v=B7m8UmZE-vw,14:29
+12,Thu,2026-12-31,846,Hand of Straights,Greedy + counts,Medium,NC150,review1,,https://www.youtube.com/watch?v=amnrMCVd2YI,15:53
+12,Thu,2026-12-31,1899,Merge Triplets to Form Target Triplet,Greedy filter,Medium,NC150,review1,,https://www.youtube.com/watch?v=kShkQLQZ9K4,6:44
+12,Thu,2026-12-31,64,Minimum Path Sum,2D DP grid,Medium,extra,new,,,
+12,Thu,2026-12-31,221,Maximal Square,2D DP grid,Medium,extra,new,,,
+12,Thu,2026-12-31,329,Longest Increasing Path in a Matrix,DFS + memo on grid,Hard,NC150,new,,https://www.youtube.com/watch?v=wCc_nd-GiEc,17:44
+12,Sat,2027-01-02,62,Unique Paths,2D DP grid,Medium,NC150,review1,,https://www.youtube.com/watch?v=IlEsdxuD4lY,10:48
+12,Sat,2027-01-02,309,Best Time to Buy and Sell Stock with Cooldown,State machine DP,Medium,NC150,review1,,https://www.youtube.com/watch?v=I7j0F7AHpb8,15:12
+12,Sat,2027-01-02,678,Valid Parenthesis String,Greedy range of opens,Medium,NC150,review1,,https://www.youtube.com/watch?v=QhPdNS143Qg,13:43
+12,Sat,2027-01-02,1143,Longest Common Subsequence,2D DP strings,Medium,NC150,review1,,https://www.youtube.com/watch?v=Ua0GhsJSlWM,
+12,Sat,2027-01-02,72,Edit Distance,2D DP strings,Medium,NC150,new,,https://www.youtube.com/watch?v=XYi2-LPrwm4,21:00
+12,Sat,2027-01-02,115,Distinct Subsequences,2D DP strings,Hard,NC150,new,,https://www.youtube.com/watch?v=-RDzMJ33nx8,
+13,Mon,2027-01-04,64,Minimum Path Sum,2D DP grid,Medium,extra,review1,,,
+13,Mon,2027-01-04,97,Interleaving String,2D DP strings,Medium,NC150,review1,,https://www.youtube.com/watch?v=3Rw3p9LrgvE,18:19
+13,Mon,2027-01-04,104,Maximum Depth of Binary Tree,Tree DFS,Easy,NC150,review3,Y,https://www.youtube.com/watch?v=hTM3phVI6YQ,16:43
+13,Mon,2027-01-04,221,Maximal Square,2D DP grid,Medium,extra,review1,,,
+13,Mon,2027-01-04,329,Longest Increasing Path in a Matrix,DFS + memo on grid,Hard,NC150,review1,,https://www.youtube.com/watch?v=wCc_nd-GiEc,17:44
+13,Mon,2027-01-04,494,Target Sum,DP over sums,Medium,NC150,review1,,https://www.youtube.com/watch?v=g0npyaQtAQM,12:10
+13,Mon,2027-01-04,518,Coin Change II,Unbounded knapsack count,Medium,NC150,review1,,https://www.youtube.com/watch?v=Mjy4hd2xgrs,23:19
+13,Mon,2027-01-04,543,Diameter of Binary Tree,Tree DFS return-two-things,Easy,NC150,review3,,https://www.youtube.com/watch?v=K81C31ytOZE,7:25
+13,Mon,2027-01-04,10,Regular Expression Matching,2D DP with wildcard,Hard,NC150,new,,https://www.youtube.com/watch?v=HAA8mgxlov8,27:55
+13,Mon,2027-01-04,312,Burst Balloons,Interval DP,Hard,NC150,new,,https://www.youtube.com/watch?v=VFskby7lUbw,21:20
+13,Tue,2027-01-05,72,Edit Distance,2D DP strings,Medium,NC150,review1,,https://www.youtube.com/watch?v=XYi2-LPrwm4,21:00
+13,Tue,2027-01-05,100,Same Tree,Tree DFS pairwise,Easy,NC150,review3,Y,https://www.youtube.com/watch?v=vRbbcKXCxOw,7:52
+13,Tue,2027-01-05,102,Binary Tree Level Order Traversal,Tree BFS levels,Medium,NC150,review3,Y,https://www.youtube.com/watch?v=6ZnyEApgFYg,9:35
+13,Tue,2027-01-05,110,Balanced Binary Tree,Tree DFS return-two-things,Easy,NC150,review3,,https://www.youtube.com/watch?v=QfJsau0ItOY,13:10
+13,Tue,2027-01-05,115,Distinct Subsequences,2D DP strings,Hard,NC150,review1,,https://www.youtube.com/watch?v=-RDzMJ33nx8,
+13,Tue,2027-01-05,199,Binary Tree Right Side View,Tree BFS levels,Medium,NC150,review3,,https://www.youtube.com/watch?v=d4zLyf32e3I,10:16
+13,Tue,2027-01-05,235,Lowest Common Ancestor of a Binary Search Tree,BST property,Medium,NC150,review3,,https://www.youtube.com/watch?v=gs2LMfuOR9k,
+13,Tue,2027-01-05,572,Subtree of Another Tree,Tree DFS nested,Easy,NC150,review3,,https://www.youtube.com/watch?v=E36O5SWp-LE,14:14
+13,Tue,2027-01-05,48,Rotate Image,Matrix in-place,Medium,NC150,new,,https://www.youtube.com/watch?v=fMSJSS7eO1w,15:46
+13,Tue,2027-01-05,54,Spiral Matrix,Matrix boundaries,Medium,NC150,new,,https://www.youtube.com/watch?v=BJnMZNwUk1M,16:46
+13,Wed,2027-01-06,98,Validate Binary Search Tree,Tree DFS with bounds,Medium,NC150,review3,,https://www.youtube.com/watch?v=s6ATEkipzow,
+13,Wed,2027-01-06,105,Construct Binary Tree from Preorder and Inorder Traversal,Tree construction,Medium,NC150,review3,,https://www.youtube.com/watch?v=ihj4IQGZ2zc,
+13,Wed,2027-01-06,129,Sum Root to Leaf Numbers,Tree DFS with path state,Medium,extra,review3,,,
+13,Wed,2027-01-06,230,Kth Smallest Element in a BST,Inorder traversal,Medium,NC150,review3,,https://www.youtube.com/watch?v=5LUXSvjmGCw,10:55
+13,Wed,2027-01-06,236,Lowest Common Ancestor of a Binary Tree,Tree DFS post-order,Medium,extra,review3,,,
+13,Wed,2027-01-06,437,Path Sum III,Tree DFS + prefix sum,Medium,extra,review3,,,
+13,Wed,2027-01-06,938,Range Sum of BST,BST pruning DFS,Easy,extra,review3,,,
+13,Wed,2027-01-06,1448,Count Good Nodes in Binary Tree,Tree DFS with path state,Medium,NC150,review3,,https://www.youtube.com/watch?v=7cp5imvDzl4,8:18
+13,Wed,2027-01-06,73,Set Matrix Zeroes,Matrix in-place markers,Medium,NC150,new,,https://www.youtube.com/watch?v=T41rL0L3Pnw,18:05
+13,Wed,2027-01-06,202,Happy Number,Cycle detection (set / fast-slow),Easy,NC150,new,,https://www.youtube.com/watch?v=ljz85bxOYJ0,10:59
+13,Thu,2027-01-07,10,Regular Expression Matching,2D DP with wildcard,Hard,NC150,review1,,https://www.youtube.com/watch?v=HAA8mgxlov8,27:55
+13,Thu,2027-01-07,134,Gas Station,Greedy running sum,Medium,NC150,review2,,https://www.youtube.com/watch?v=lJwbPZGo05A,15:47
+13,Thu,2027-01-07,312,Burst Balloons,Interval DP,Hard,NC150,review1,,https://www.youtube.com/watch?v=VFskby7lUbw,21:20
+13,Thu,2027-01-07,763,Partition Labels,Greedy last index,Medium,NC150,review2,,https://www.youtube.com/watch?v=B7m8UmZE-vw,14:29
+13,Thu,2027-01-07,846,Hand of Straights,Greedy + counts,Medium,NC150,review2,,https://www.youtube.com/watch?v=amnrMCVd2YI,15:53
+13,Thu,2027-01-07,863,All Nodes Distance K in Binary Tree,Tree to graph + BFS,Medium,extra,review3,,,
+13,Thu,2027-01-07,987,Vertical Order Traversal of a Binary Tree,BFS/DFS + sort by coords,Hard,extra,review3,,,
+13,Thu,2027-01-07,1899,Merge Triplets to Form Target Triplet,Greedy filter,Medium,NC150,review2,,https://www.youtube.com/watch?v=kShkQLQZ9K4,6:44
+13,Thu,2027-01-07,50,"Pow(x, n)",Fast exponentiation,Medium,NC150,new,,https://www.youtube.com/watch?v=g9YQyYi4IQQ,12:37
+13,Thu,2027-01-07,66,Plus One,Digit carry,Easy,NC150,new,,https://www.youtube.com/watch?v=jIaA8boiG1s,8:30
+13,Fri,2027-01-08,48,Rotate Image,Matrix in-place,Medium,NC150,review1,,https://www.youtube.com/watch?v=fMSJSS7eO1w,15:46
+13,Fri,2027-01-08,54,Spiral Matrix,Matrix boundaries,Medium,NC150,review1,,https://www.youtube.com/watch?v=BJnMZNwUk1M,16:46
+13,Fri,2027-01-08,62,Unique Paths,2D DP grid,Medium,NC150,review2,,https://www.youtube.com/watch?v=IlEsdxuD4lY,10:48
+13,Fri,2027-01-08,124,Binary Tree Maximum Path Sum,Tree DFS return-two-things,Hard,NC150,review3,,https://www.youtube.com/watch?v=Hr5cWUld4vU,15:18
+13,Fri,2027-01-08,208,Implement Trie (Prefix Tree),Trie,Medium,NC150,review3,,https://www.youtube.com/watch?v=oobqoCJlHA0,18:55
+13,Fri,2027-01-08,297,Serialize and Deserialize Binary Tree,Preorder serialization,Hard,NC150,review3,,https://www.youtube.com/watch?v=u4JAi2JJhI8,13:48
+13,Fri,2027-01-08,678,Valid Parenthesis String,Greedy range of opens,Medium,NC150,review2,,https://www.youtube.com/watch?v=QhPdNS143Qg,13:43
+13,Fri,2027-01-08,1143,Longest Common Subsequence,2D DP strings,Medium,NC150,review2,,https://www.youtube.com/watch?v=Ua0GhsJSlWM,
+13,Fri,2027-01-08,43,Multiply Strings,Digit arithmetic,Medium,NC150,new,,https://www.youtube.com/watch?v=1vZswirL8Y8,17:44
+13,Fri,2027-01-08,2013,Detect Squares,Hash map counting design,Medium,NC150,new,,https://www.youtube.com/watch?v=bahebearrDc,11:59
+13,Sat,2027-01-09,73,Set Matrix Zeroes,Matrix in-place markers,Medium,NC150,review1,,https://www.youtube.com/watch?v=T41rL0L3Pnw,18:05
+13,Sat,2027-01-09,202,Happy Number,Cycle detection (set / fast-slow),Easy,NC150,review1,,https://www.youtube.com/watch?v=ljz85bxOYJ0,10:59
+13,Sat,2027-01-09,309,Best Time to Buy and Sell Stock with Cooldown,State machine DP,Medium,NC150,review2,,https://www.youtube.com/watch?v=I7j0F7AHpb8,15:12
+13,Sat,2027-01-09,518,Coin Change II,Unbounded knapsack count,Medium,NC150,review2,,https://www.youtube.com/watch?v=Mjy4hd2xgrs,23:19
+13,Sun,2027-01-10,50,"Pow(x, n)",Fast exponentiation,Medium,NC150,review1,,https://www.youtube.com/watch?v=g9YQyYi4IQQ,12:37
+13,Sun,2027-01-10,66,Plus One,Digit carry,Easy,NC150,review1,,https://www.youtube.com/watch?v=jIaA8boiG1s,8:30
+13,Sun,2027-01-10,97,Interleaving String,2D DP strings,Medium,NC150,review2,,https://www.youtube.com/watch?v=3Rw3p9LrgvE,18:19
+13,Sun,2027-01-10,494,Target Sum,DP over sums,Medium,NC150,review2,,https://www.youtube.com/watch?v=g0npyaQtAQM,12:10
