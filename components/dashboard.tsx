@@ -198,11 +198,9 @@ function DashboardToday() {
           <MiniStat label="Cold reps" value={String(due.length)} sub={due.length ? 'due now' : 'none due'} />
         </dl>
 
-        {lcToday.length > 0 && (
-          <div className="mt-8">
-            <LeetcodeList items={lcToday} />
-          </div>
-        )}
+        <div className="mt-8 empty:hidden">
+          <LeetcodeList day={day} />
+        </div>
 
         <div className="mt-8">
           <RoadToReady />

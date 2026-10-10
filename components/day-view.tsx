@@ -196,11 +196,9 @@ export default function DayView({ date }: { date: string }) {
           })}
         </ol>
 
-        {(day.leetcode?.length ?? 0) > 0 && (
-          <div className="mt-8">
-            <LeetcodeList items={day.leetcode!} heading={day.date === today ? 'On LeetCode today' : 'On LeetCode this day'} />
-          </div>
-        )}
+        <div className="mt-8 empty:hidden">
+          <LeetcodeList day={day} heading={day.date === today ? 'On LeetCode today' : 'On LeetCode this day'} />
+        </div>
       </div>
     </main>
   )

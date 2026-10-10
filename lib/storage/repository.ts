@@ -83,6 +83,13 @@ export class RepsRepository {
   state<V>(key: string): V | undefined {
     return this.engine.get('study_state', key)?.value as V | undefined
   }
+  /** Every stored value whose key starts with `prefix` (solve log entries, mock logs, checklists). */
+  statesWithPrefix<V>(prefix: string): V[] {
+    return this.engine
+      .all('study_state')
+      .filter((r) => r.id.startsWith(prefix) && r.value && Object.keys(r.value as object).length > 0)
+      .map((r) => r.value as V)
+  }
 
   // ── attempts ───────────────────────────────────────────────────────────────
 

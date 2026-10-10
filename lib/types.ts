@@ -158,7 +158,8 @@ export interface LeetcodeItem {
   title: string
   difficulty: string
   pattern: string
-  type: 'new' | 'review1' | 'review2' | 'review3'
+  /** `redo`: a re-solve that needed help, to do again cold on the next working day. */
+  type: 'new' | 'review1' | 'review2' | 'review3' | 'redo'
   /** Only on new problems: watch the walkthrough first, or attempt for 30 minutes first. */
   mode: 'study-first' | 'attempt-first' | null
   video: string | null

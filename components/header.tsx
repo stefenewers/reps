@@ -12,8 +12,11 @@ import type { SyncStatus } from '@/lib/storage/types'
 
 const NAV = [
   { href: '/', label: 'Today', match: (p: string) => p === '/' || p.startsWith('/day') || p.startsWith('/rep') },
+  { href: '/plan', label: 'Plan', match: (p: string) => p.startsWith('/plan') },
   { href: '/skills', label: 'Skills', match: (p: string) => p.startsWith('/skills') },
   { href: '/problems', label: 'Problems', match: (p: string) => p.startsWith('/problems') },
+  { href: '/log', label: 'Log', match: (p: string) => p.startsWith('/log') },
+  { href: '/progress', label: 'Progress', match: (p: string) => p.startsWith('/progress') },
   { href: '/interview', label: 'Interview', match: (p: string) => p.startsWith('/interview') },
 ]
 
@@ -70,7 +73,7 @@ export default function Header() {
           <Mark />
           <span className="hidden sm:inline">Reps</span>
         </Link>
-        <nav aria-label="Main" className="flex min-w-0 items-center gap-0.5">
+        <nav aria-label="Main" className="flex min-w-0 items-center gap-0.5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {NAV.map((n) => {
             const active = n.match(pathname)
             return (
@@ -78,7 +81,7 @@ export default function Header() {
                 key={n.href}
                 href={n.href}
                 aria-current={active ? 'page' : undefined}
-                className={`relative rounded-lg px-2 py-1.5 text-[13.5px] transition-colors sm:px-3 ${
+                className={`relative shrink-0 rounded-lg px-2 py-1.5 text-[13.5px] transition-colors sm:px-3 ${
                   active ? 'bg-surface-2 font-medium text-ink' : 'text-muted hover:bg-surface hover:text-ink'
                 }`}
               >
