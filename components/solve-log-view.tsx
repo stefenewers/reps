@@ -5,7 +5,8 @@ import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { useReps } from '@/components/reps-provider'
 import { lcMeta, useSolveLog } from '@/components/use-solve-log'
-import { DAYS, EXERCISE_BY_ID } from '@/data/curriculum'
+import { EXERCISE_BY_ID } from '@/data/curriculum'
+import { usePacing } from '@/components/use-pacing'
 import { PROBLEM_BY_ID } from '@/data/problems'
 import { shortDate } from '@/lib/dates'
 import { nextReview, redoQueue, resolveQueue, unaidedRate, type SolveEntry, type SolveResult } from '@/lib/solve-log'
@@ -40,6 +41,8 @@ const blank = (today: string) => ({ id: '', lc: '', title: '', date: today, minu
 export default function SolveLogView() {
   const { attempts } = useReps()
   const { entries, save, remove, today } = useSolveLog()
+  // Re-solve dates come from the pace calendar: counted from when each problem was actually solved.
+  const DAYS = usePacing().days
   const editId = useSearchParams().get('edit')
   const editing = entries.find((e) => e.id === editId)
   const [form, setForm] = useState(() => (editing ? fromEntry(editing) : blank(today)))
@@ -93,7 +96,7 @@ export default function SolveLogView() {
         ]
       })
     return [...logged, ...reps].sort((a, b) => b.date.localeCompare(a.date))
-  }, [entries, attempts])
+  }, [entries, attempts, DAYS])
 
   const rate = unaidedRate(entries)
   const queue = resolveQueue(entries, DAYS, today, 10)

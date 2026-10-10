@@ -155,6 +155,8 @@ export interface DayModule {
   planWeek?: number
   /** 90-day plan: estimated real minutes of new work (ladder reps and new LeetCode problems). */
   planMinutes?: number
+  /** 90-day plan: the day's new work in the order it is done (rep ids, `lc:<number>` for new LeetCode problems). */
+  planOrder?: string[]
 }
 
 export interface LeetcodeItem {

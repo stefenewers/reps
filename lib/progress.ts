@@ -91,16 +91,51 @@ export function sectionUnlocked(day: DayModule, index: number, attempts: Attempt
   return ratio >= SECTION_UNLOCK_RATIO && gatesCleared(day, index, attempts) && sectionUnlocked(day, index - 1, attempts)
 }
 
+/** Every required section on the calendar, in order: the order the work is done in, whatever the date. */
+const ORDER: { section: Section; from: number; to: number }[] = []
+const POSITION = new Map<string, number>()
+{
+  let n = 0
+  for (const d of DAYS)
+    for (const s of d.sections) {
+      if (s.optional || !s.exercises.length) continue
+      for (const e of s.exercises) POSITION.set(e.id, n++)
+      ORDER.push({ section: s, from: n - s.exercises.length, to: n - 1 })
+    }
+}
+
 /**
- * The first uncleared mastery check before section `index` of this day: in an
- * earlier day first (a check at the end of a day locks the days after it), then
- * earlier in this one.
+ * The first uncleared mastery check that comes before section `index` of this
+ * day. "Before" means earlier in the order of the work, not earlier on the
+ * calendar: you can be ahead of or behind the dates, and a check still holds
+ * exactly what follows it. For a day with no reps of its own, it is every
+ * check on an earlier date.
  */
 export function blockingGate(day: DayModule, index: number, attempts: Attempt[]): Section | undefined {
   const passed = passedSet(attempts)
   const open = (s: Section) => s.gate && !s.optional && !s.exercises.every((e) => passed.has(e.id))
+  const anchor = day.sections.slice(Math.max(0, index)).find((s) => !s.optional && s.exercises.length)?.exercises[0]
+  const at = anchor ? POSITION.get(anchor.id) : undefined
+  if (at !== undefined) return ORDER.find((o) => o.to < at && open(o.section))?.section
+  // No rep to anchor on (an off day, or past the end of the day): fall back to the calendar.
   const earlier = DAYS.filter((d) => d.date < day.date).flatMap((d) => d.sections)
   return earlier.find(open) ?? day.sections.slice(0, Math.max(0, index)).find(open)
+}
+
+/** The rep after this one in the order of the work, across days; undefined at the very end or for an extra. */
+export function nextInOrder(exerciseId: string): Exercise | undefined {
+  const at = POSITION.get(exerciseId)
+  if (at === undefined) return undefined
+  const o = ORDER.find((x) => x.from <= at + 1 && at + 1 <= x.to)
+  return o?.section.exercises[at + 1 - o.from]
+}
+
+/** The first uncleared mastery check before a given rep, in the order of the work. */
+export function gateBefore(exerciseId: string, attempts: Attempt[]): Section | undefined {
+  const at = POSITION.get(exerciseId)
+  if (at === undefined) return undefined
+  const passed = passedSet(attempts)
+  return ORDER.find((o) => o.to < at && o.section.gate && !o.section.exercises.every((e) => passed.has(e.id)))?.section
 }
 
 function gatesCleared(day: DayModule, index: number, attempts: Attempt[]) {
@@ -111,7 +146,7 @@ function gatesCleared(day: DayModule, index: number, attempts: Attempt[]) {
 export function lockedByGate(day: DayModule, exerciseId: string, attempts: Attempt[]): Section | undefined {
   const si = day.sections.findIndex((s) => s.exercises.some((e) => e.id === exerciseId))
   if (si < 0 || day.sections[si].optional) return undefined
-  return blockingGate(day, si, attempts)
+  return gateBefore(exerciseId, attempts)
 }
 
 export function exerciseUnlocked(day: DayModule, exerciseId: string, attempts: Attempt[]): boolean {

@@ -21,6 +21,8 @@ export interface PlanDay {
   leetcode: PlanLeetcode[]
   /** Estimated real minutes of new work (ladder reps and new LeetCode problems). */
   minutes: number
+  /** The day's new work in the order it is done: rep ids, and `lc:<number>` for new LeetCode problems. */
+  order: string[]
 }
 
 export const PLAN_START = '2026-10-11'
@@ -272,6 +274,13 @@ export const PLAN_UNITS: { name: string; short: string; sections: string[]; chec
 /** A re-solve lands this many days after the first solve (it slides only to miss a Sunday, a day off or a full day). */
 export const RESOLVE_WINDOWS = {"review1": [3, 4], "review2": [10, 12], "review3": [30, 33]} as const
 
+/**
+ * The pace model, shared with the app so it can forecast from where you actually are:
+ * minutes of new work a day's pace allows by phase ([weekday, Saturday]), what a rep and a
+ * LeetCode problem cost in real minutes, and the re-solve gaps.
+ */
+export const PACE = {"budgets": {"off": [0, 0], "soft": [80, 80], "build": [130, 80], "full": [155, 95], "buffer": [100, 100], "final": [100, 100]}, "repsFactor": 2.25, "lcMinutes": {"Easy": 25, "Medium": 40, "Hard": 60}, "studyFirstExtra": 10, "maxNewLeetcode": 2, "resolveGaps": [3, 10, 30], "overfill": 1.1} as const
+
 /** The most re-solves a day may carry, by phase: [weekday, Saturday]. */
 export const RESOLVE_CAPS = {"off": [0, 0], "soft": [2, 2], "build": [3, 2], "full": [5, 3], "buffer": [5, 4], "final": [5, 5]} as const
 
@@ -316,7 +325,15 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/contains-duplicate/"
    }
   ],
-  "minutes": 87
+  "minutes": 87,
+  "order": [
+   "o2-dl-lc-group-anagrams",
+   "o2-anagram-sorted-trace",
+   "o2-anagram-fill",
+   "cap-valid-anagram",
+   "o2-anagram-write-test",
+   "o2-dbg-anagram-length"
+  ]
  },
  {
   "date": "2026-10-12",
@@ -370,7 +387,20 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/first-unique-character-in-a-string/"
    }
   ],
-  "minutes": 87
+  "minutes": 87,
+  "order": [
+   "o2-cap-valid-anagram-explain",
+   "o2-imap-trace",
+   "o2-imap-fill",
+   "o2-dbg-seen-direction",
+   "o2-imap-first-code",
+   "o2-imap-widest",
+   "o2-dbg-closest-repeat",
+   "o2-comp-write",
+   "o2-comp-nested",
+   "o2-comp-set-trace",
+   "o2-comp-set-code"
+  ]
  },
  {
   "date": "2026-10-13",
@@ -411,7 +441,14 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/majority-element/"
    }
   ],
-  "minutes": 40
+  "minutes": 40,
+  "order": [
+   "o2-dbg-comp-inverted",
+   "o2-dbg-comp-self-pair",
+   "o2-ts-trace-full",
+   "o2-ts-find-pair",
+   "o2-ts-modify"
+  ]
  },
  {
   "date": "2026-10-14",
@@ -454,7 +491,13 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/valid-anagram/"
    }
   ],
-  "minutes": 79
+  "minutes": 79,
+  "order": [
+   "cap-two-sum",
+   "o2-ts-write-test",
+   "o2-dbg-ts-store-indent",
+   "o2-cap-two-sum-explain"
+  ]
  },
  {
   "date": "2026-10-15",
@@ -497,7 +540,16 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/contains-duplicate-ii/"
    }
   ],
-  "minutes": 76
+  "minutes": 76,
+  "order": [
+   "o2-ts-pattern-count",
+   "o2-cold-letter-counts",
+   "o2-cold-tally",
+   "o2-cold-first-index",
+   "o2-cold-last-index",
+   "o2-cold-has-repeat",
+   "o2-cold-over-k"
+  ]
  },
  {
   "date": "2026-10-16",
@@ -528,7 +580,12 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/group-anagrams/"
    }
   ],
-  "minutes": 66
+  "minutes": 66,
+  "order": [
+   "o2-cold-anagram",
+   "o2-cold-two-sum",
+   "lc:49"
+  ]
  },
  {
   "date": "2026-10-17",
@@ -578,7 +635,12 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/product-of-array-except-self/"
    }
   ],
-  "minutes": 84
+  "minutes": 84,
+  "order": [
+   "lc:128",
+   "lc:238",
+   "d3-str-trace-index"
+  ]
  },
  {
   "date": "2026-10-18",
@@ -588,7 +650,8 @@ export const PLAN_90 = [
   "short": "",
   "sections": [],
   "leetcode": [],
-  "minutes": 0
+  "minutes": 0,
+  "order": []
  },
  {
   "date": "2026-10-19",
@@ -644,7 +707,20 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/encode-and-decode-strings/"
    }
   ],
-  "minutes": 134
+  "minutes": 134,
+  "order": [
+   "lc:271",
+   "d3-str-count-vowels",
+   "d3-str-same-ends",
+   "d3-str-debug-immutable",
+   "d3-str-first-digit",
+   "d3-str-mirror-pairs",
+   "d3-slice-split-halves",
+   "d3-slice-debug-reverse",
+   "d3-slice-rotate",
+   "d3-slice-debug-middle",
+   "d3-slice-break-last-k"
+  ]
  },
  {
   "date": "2026-10-20",
@@ -710,7 +786,22 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/product-of-array-except-self/"
    }
   ],
-  "minutes": 129
+  "minutes": 129,
+  "order": [
+   "d3-meth-clean",
+   "d3-meth-debug-isalnum",
+   "d3-meth-reverse-words",
+   "d3-meth-word-counts",
+   "d3-meth-clean-mirror",
+   "d3-tp-debug-step",
+   "d3-tp-swap-reverse",
+   "d3-tp-mismatches",
+   "d3-tp-reverse-of",
+   "d3-pu-trace-sorted-sum",
+   "d3-pu-has-pair",
+   "d3-pu-debug-swapped",
+   "d3-pu-count-pairs"
+  ]
  },
  {
   "date": "2026-10-21",
@@ -764,7 +855,17 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/valid-anagram/"
    }
   ],
-  "minutes": 92
+  "minutes": 92,
+  "order": [
+   "d3-pu-skip-spaces",
+   "d3-pu-count-below",
+   "d3-rs-trace-min",
+   "d3-rs-largest",
+   "d3-rs-debug-init",
+   "d3-rs-prefix-mins",
+   "d3-rs-records",
+   "d3-rs-biggest-drop"
+  ]
  },
  {
   "date": "2026-10-22",
@@ -808,7 +909,14 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/first-unique-character-in-a-string/"
    }
   ],
-  "minutes": 112
+  "minutes": 112,
+  "order": [
+   "cap-valid-palindrome",
+   "d3-explain-valid-palindrome",
+   "d3-vp-debug-case",
+   "d3-vp-debug-guard",
+   "d3-vp-one-deletion"
+  ]
  },
  {
   "date": "2026-10-23",
@@ -841,7 +949,13 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/majority-element/"
    }
   ],
-  "minutes": 97
+  "minutes": 97,
+  "order": [
+   "cap-best-time-stock",
+   "d3-explain-stock",
+   "d3-stock-debug-order",
+   "d3-stock-days"
+  ]
  },
  {
   "date": "2026-10-24",
@@ -883,7 +997,12 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/ransom-note/"
    }
   ],
-  "minutes": 74
+  "minutes": 74,
+  "order": [
+   "cap-two-sum-ii",
+   "d3-explain-two-sum-ii",
+   "d3-tsii-debug-positions"
+  ]
  },
  {
   "date": "2026-10-25",
@@ -893,7 +1012,8 @@ export const PLAN_90 = [
   "short": "",
   "sections": [],
   "leetcode": [],
-  "minutes": 0
+  "minutes": 0,
+  "order": []
  },
  {
   "date": "2026-10-26",
@@ -965,7 +1085,16 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/container-with-most-water/"
    }
   ],
-  "minutes": 134
+  "minutes": 134,
+  "order": [
+   "d3-tsii-optimize-diff",
+   "d3-tsii-triplet",
+   "d3-cold-last-k",
+   "d3-cold-pair-exists",
+   "d3-cold-sell-today",
+   "d3-cold-letter-pal",
+   "lc:11"
+  ]
  },
  {
   "date": "2026-10-27",
@@ -1040,7 +1169,19 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/3sum/"
    }
   ],
-  "minutes": 134
+  "minutes": 134,
+  "order": [
+   "lc:15",
+   "d4-win-trace-slices",
+   "d4-win-all-windows",
+   "d4-win-max-sum-k",
+   "d4-win-debug-leaving",
+   "d4-win-max-vowels",
+   "d4-win-trace-variable",
+   "d4-win-longest-under",
+   "d4-win-debug-shrink",
+   "d4-ws-trace-set"
+  ]
  },
  {
   "date": "2026-10-28",
@@ -1077,7 +1218,17 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/product-of-array-except-self/"
    }
   ],
-  "minutes": 128
+  "minutes": 128,
+  "order": [
+   "d4-ws-remove-one",
+   "d4-ws-nearby-dup",
+   "d4-ws-longest-run",
+   "d4-ws-debug-size",
+   "d4-ws-distinct-windows",
+   "d4-ws-debug-no-del",
+   "d4-ws-anagram-window",
+   "d4-ws-flip-zeros"
+  ]
  },
  {
   "date": "2026-10-29",
@@ -1128,7 +1279,14 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/encode-and-decode-strings/"
    }
   ],
-  "minutes": 130
+  "minutes": 130,
+  "order": [
+   "d4-ws-two-kinds",
+   "d4-ws-k-kinds",
+   "cap-longest-substring",
+   "d4-explain-longest-substring",
+   "d4-ls-debug-shrink"
+  ]
  },
  {
   "date": "2026-10-30",
@@ -1170,7 +1328,13 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/longest-repeating-character-replacement/"
    }
   ],
-  "minutes": 85
+  "minutes": 85,
+  "order": [
+   "d4-ls-last-seen",
+   "d4-ls-break-jump",
+   "d4-ls-return-substring",
+   "lc:424"
+  ]
  },
  {
   "date": "2026-10-31",
@@ -1202,7 +1366,13 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/minimum-window-substring/"
    }
   ],
-  "minutes": 87
+  "minutes": 87,
+  "order": [
+   "lc:76",
+   "d4-st-trace",
+   "d4-st-reverse",
+   "d4-st-backspace"
+  ]
  },
  {
   "date": "2026-11-01",
@@ -1212,7 +1382,8 @@ export const PLAN_90 = [
   "short": "",
   "sections": [],
   "leetcode": [],
-  "minutes": 0
+  "minutes": 0,
+  "order": []
  },
  {
   "date": "2026-11-02",
@@ -1280,7 +1451,21 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/valid-palindrome/"
    }
   ],
-  "minutes": 143
+  "minutes": 143,
+  "order": [
+   "d4-st-debug-empty-pop",
+   "d4-st-adjacent-pairs",
+   "d4-st-round-balanced",
+   "d4-st-max-depth",
+   "d4-st-debug-postfix",
+   "d4-st-simplify-path",
+   "d4-st-next-greater",
+   "d4-mp-trace",
+   "d4-mp-one-line-lookup",
+   "d4-mp-closes-top",
+   "d4-mp-first-bad",
+   "d4-mp-pair-positions"
+  ]
  },
  {
   "date": "2026-11-03",
@@ -1344,7 +1529,17 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/"
    }
   ],
-  "minutes": 140
+  "minutes": 140,
+  "order": [
+   "d4-mp-debug-peek",
+   "d4-mp-min-to-fix",
+   "d4-mp-reorder",
+   "cap-valid-parentheses",
+   "d4-explain-valid-parentheses",
+   "d4-vp-fix-bug",
+   "d4-vp-with-text",
+   "d4-vp-debug-map-direction"
+  ]
  },
  {
   "date": "2026-11-04",
@@ -1387,7 +1582,20 @@ export const PLAN_90 = [
    }
   ],
   "leetcode": [],
-  "minutes": 134
+  "minutes": 134,
+  "order": [
+   "d4-cold-longest-unique",
+   "d4-cold-valid",
+   "d4-cold-shortest",
+   "d4-cold-backspace-equal",
+   "d4-cold-avg-window",
+   "d05-while-halve",
+   "d05-while-halvings",
+   "d05-while-dbg-bounds",
+   "d05-while-first-at-least",
+   "d05-bs-trace-found",
+   "d05-bs-body"
+  ]
  },
  {
   "date": "2026-11-05",
@@ -1434,7 +1642,20 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/container-with-most-water/"
    }
   ],
-  "minutes": 140
+  "minutes": 140,
+  "order": [
+   "d05-bs-contains",
+   "d05-bs-dbg-lt",
+   "d05-bs-optimize",
+   "d05-bs-dbg-index",
+   "d05-bs-write-test",
+   "d05-var-insert",
+   "d05-var-first",
+   "d05-var-last",
+   "d05-var-dbg-first",
+   "d05-var-dbg-lower",
+   "d05-var-sqrt"
+  ]
  },
  {
   "date": "2026-11-06",
@@ -1494,7 +1715,14 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/"
    }
   ],
-  "minutes": 132
+  "minutes": 132,
+  "order": [
+   "d05-var-first-true",
+   "cap-binary-search",
+   "d05-explain-bs",
+   "d05-fu-insert-position",
+   "lc:153"
+  ]
  },
  {
   "date": "2026-11-07",
@@ -1529,7 +1757,16 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/search-in-rotated-sorted-array/"
    }
   ],
-  "minutes": 86
+  "minutes": 86,
+  "order": [
+   "lc:33",
+   "d05-ll-walk",
+   "d05-ll-to-array",
+   "d05-ll-alias",
+   "d05-ll-sum",
+   "d05-ll-dbg-max",
+   "d05-ll-translate"
+  ]
  },
  {
   "date": "2026-11-08",
@@ -1539,7 +1776,8 @@ export const PLAN_90 = [
   "short": "",
   "sections": [],
   "leetcode": [],
-  "minutes": 0
+  "minutes": 0,
+  "order": []
  },
  {
   "date": "2026-11-09",
@@ -1617,7 +1855,21 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/longest-repeating-character-replacement/"
    }
   ],
-  "minutes": 120
+  "minutes": 120,
+  "order": [
+   "d05-ll-kth",
+   "d05-ll-last",
+   "d05-ll-middle",
+   "d05-rw-insert-after",
+   "d05-rw-remove-second",
+   "d05-rw-dbg-insert-order",
+   "d05-rw-reverse-trace",
+   "d05-rw-finish-reverse",
+   "d05-rw-dbg-lose-next",
+   "d05-rw-reversed-copy",
+   "d05-rw-dbg-return",
+   "d05-rw-reorder"
+  ]
  },
  {
   "date": "2026-11-10",
@@ -1692,7 +1944,18 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/valid-anagram/"
    }
   ],
-  "minutes": 156
+  "minutes": 156,
+  "order": [
+   "cap-reverse-linked-list",
+   "d05-explain-reverse",
+   "d05-dummy-trace",
+   "d05-dummy-from-values",
+   "d05-dummy-dbg-return",
+   "d05-dummy-evens",
+   "d05-dummy-remove",
+   "d05-dummy-merge-arrays",
+   "d05-dummy-dbg-leftover"
+  ]
  },
  {
   "date": "2026-11-11",
@@ -1735,7 +1998,16 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/first-unique-character-in-a-string/"
    }
   ],
-  "minutes": 153
+  "minutes": 153,
+  "order": [
+   "cap-merge-two-lists",
+   "d05-explain-merge",
+   "d05-cold-index-of",
+   "d05-cold-reverse",
+   "d05-cold-append",
+   "d05-cold-first-at-least",
+   "d05-cold-merge"
+  ]
  },
  {
   "date": "2026-11-12",
@@ -1804,7 +2076,24 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/remove-nth-node-from-end-of-list/"
    }
   ],
-  "minutes": 168
+  "minutes": 168,
+  "order": [
+   "lc:141",
+   "lc:19",
+   "d06-fn-print-vs-return",
+   "d06-fn-tuple",
+   "d06-fn-dbg-return",
+   "d06-fn-params",
+   "d06-fn-helper",
+   "d06-rec-fact-stack",
+   "d06-rec-sum-to",
+   "d06-rec-power",
+   "d06-rec-dbg-base",
+   "d06-rec-dbg-no-return",
+   "d06-rec-index-param",
+   "d06-rec-fib",
+   "d06-rec-reverse-str"
+  ]
  },
  {
   "date": "2026-11-13",
@@ -1897,7 +2186,18 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/merge-k-sorted-lists/"
    }
   ],
-  "minutes": 168
+  "minutes": 168,
+  "order": [
+   "lc:143",
+   "lc:23",
+   "d06-rec-list-len",
+   "d06-rec-translate",
+   "d06-rec-pal",
+   "d06-tn-level-order",
+   "d06-tn-is-leaf",
+   "d06-tn-children-sum",
+   "d06-tn-dbg-none"
+  ]
  },
  {
   "date": "2026-11-14",
@@ -1946,7 +2246,19 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/contains-duplicate-ii/"
    }
   ],
-  "minutes": 104
+  "minutes": 104,
+  "order": [
+   "d06-dfs-pre-trace",
+   "d06-dfs-preorder",
+   "d06-dfs-count",
+   "d06-dfs-modify-count",
+   "d06-dfs-dbg-ignore",
+   "d06-dfs-max",
+   "d06-dfs-leaves",
+   "d06-dfs-dbg-leaf-base",
+   "d06-dfs-contains",
+   "d06-dfs-inorder-return"
+  ]
  },
  {
   "date": "2026-11-15",
@@ -1956,7 +2268,8 @@ export const PLAN_90 = [
   "short": "",
   "sections": [],
   "leetcode": [],
-  "minutes": 0
+  "minutes": 0,
+  "order": []
  },
  {
   "date": "2026-11-16",
@@ -2040,7 +2353,17 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/"
    }
   ],
-  "minutes": 158
+  "minutes": 158,
+  "order": [
+   "d06-dfs-at-depth",
+   "d06-dfs-path-sum",
+   "d06-dfs-dbg-path",
+   "d06-dfs-translate-stack",
+   "d06-dfs-dbg-depth",
+   "cap-max-depth",
+   "d06-explain-depth",
+   "d06-fu-min-depth"
+  ]
  },
  {
   "date": "2026-11-17",
@@ -2134,7 +2457,20 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/product-of-array-except-self/"
    }
   ],
-  "minutes": 163
+  "minutes": 163,
+  "order": [
+   "d06-pair-lists",
+   "d06-pair-dbg-order",
+   "d06-pair-bigger",
+   "d06-pair-dbg-values",
+   "d06-pair-mirror",
+   "cap-same-tree",
+   "d06-explain-same",
+   "d06-mut-swap",
+   "d06-mut-dbg-swap",
+   "d06-mut-add-one",
+   "d06-mut-copy"
+  ]
  },
  {
   "date": "2026-11-18",
@@ -2186,7 +2522,18 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/encode-and-decode-strings/"
    }
   ],
-  "minutes": 146
+  "minutes": 146,
+  "order": [
+   "d06-mut-dbg-mirror",
+   "cap-invert-tree",
+   "d06-explain-invert",
+   "d06-cold-digits",
+   "d06-cold-tree-sum",
+   "d06-cold-postorder",
+   "d06-cold-height",
+   "d06-cold-same",
+   "d06-cold-mirror"
+  ]
  },
  {
   "date": "2026-11-19",
@@ -2252,7 +2599,21 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree/"
    }
   ],
-  "minutes": 170
+  "minutes": 170,
+  "order": [
+   "lc:572",
+   "lc:235",
+   "o7-dq-why-not-pop0",
+   "o7-dq-trace-basic",
+   "o7-dq-drain",
+   "o7-dq-dbg-pop-end",
+   "o7-dq-recent",
+   "o7-dq-rotate-elim",
+   "o7-t-trace-levels",
+   "o7-t-flat",
+   "o7-t-dbg-none-child",
+   "o7-t-depth"
+  ]
  },
  {
   "date": "2026-11-20",
@@ -2315,7 +2676,15 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/kth-smallest-element-in-a-bst/"
    }
   ],
-  "minutes": 170
+  "minutes": 170,
+  "order": [
+   "lc:98",
+   "lc:230",
+   "o7-t-sums",
+   "o7-t-dbg-snapshot",
+   "o7-t-right-view",
+   "o7-t-min-depth"
+  ]
  },
  {
   "date": "2026-11-21",
@@ -2376,7 +2745,11 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/binary-tree-maximum-path-sum/"
    }
   ],
-  "minutes": 100
+  "minutes": 100,
+  "order": [
+   "lc:105",
+   "lc:124"
+  ]
  },
  {
   "date": "2026-11-22",
@@ -2386,7 +2759,8 @@ export const PLAN_90 = [
   "short": "",
   "sections": [],
   "leetcode": [],
-  "minutes": 0
+  "minutes": 0,
+  "order": []
  },
  {
   "date": "2026-11-23",
@@ -2482,7 +2856,29 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/remove-nth-node-from-end-of-list/"
    }
   ],
-  "minutes": 108
+  "minutes": 108,
+  "order": [
+   "o11-speed-count",
+   "o11-speed-first-seen",
+   "o11-speed-last-seen",
+   "o11-speed-deque",
+   "o11-cx-pop-front",
+   "o11-speed-heap-small",
+   "o11-speed-heap-tuples",
+   "o11-speed-sort-key",
+   "o11-speed-slicing",
+   "o11-speed-leaderboard",
+   "o11-speed-neighbors",
+   "o11-bug-get",
+   "o11-bug-dict-direction",
+   "o11-bug-bsearch-hi",
+   "o11-bug-reverse-order",
+   "o11-bug-base-case",
+   "o11-bug-visited-late",
+   "o11-bug-path-copy",
+   "o11-bug-heap-trim",
+   "o11-bug-unsorted"
+  ]
  },
  {
   "date": "2026-11-24",
@@ -2578,7 +2974,22 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/reorder-list/"
    }
   ],
-  "minutes": 106
+  "minutes": 106,
+  "order": [
+   "o11-bug-dummy",
+   "o11-bug-window-left",
+   "o11-wt-profit",
+   "o11-dbg-profit",
+   "o11-wt-bsearch",
+   "o11-edge-bsearch-fix",
+   "o11-dbg-brackets",
+   "o11-edge-second",
+   "o11-dbg-touching",
+   "o11-dbg-empty-grid",
+   "o11-edge-kth-end",
+   "o11-wt-two-sum",
+   "o11-ni-shared"
+  ]
  },
  {
   "date": "2026-11-25",
@@ -2642,7 +3053,17 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/container-with-most-water/"
    }
   ],
-  "minutes": 108
+  "minutes": 108,
+  "order": [
+   "o11-ni-two-hops",
+   "o11-ni-streak",
+   "o11-ni-latest-at-or-before",
+   "o11-mix-nearby-repeat",
+   "o11-opt-common",
+   "o11-mix-sorted-squares",
+   "o11-mix-two-kinds",
+   "o11-mix-first-at-least"
+  ]
  },
  {
   "date": "2026-11-26",
@@ -2652,7 +3073,8 @@ export const PLAN_90 = [
   "short": "",
   "sections": [],
   "leetcode": [],
-  "minutes": 0
+  "minutes": 0,
+  "order": []
  },
  {
   "date": "2026-11-27",
@@ -2662,7 +3084,8 @@ export const PLAN_90 = [
   "short": "",
   "sections": [],
   "leetcode": [],
-  "minutes": 0
+  "minutes": 0,
+  "order": []
  },
  {
   "date": "2026-11-28",
@@ -2730,7 +3153,18 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/invert-binary-tree/"
    }
   ],
-  "minutes": 104
+  "minutes": 104,
+  "order": [
+   "o11-mix-path-sum",
+   "o11-cx-tree-space",
+   "o11-mix-k-closest",
+   "o11-cx-heap-k",
+   "o11-mix-groups",
+   "o11-mix-cheapest-climb",
+   "o11-mix-choose",
+   "o11-mix-fewest-steps",
+   "o11-say-stuck"
+  ]
  },
  {
   "date": "2026-11-29",
@@ -2740,7 +3174,8 @@ export const PLAN_90 = [
   "short": "",
   "sections": [],
   "leetcode": [],
-  "minutes": 0
+  "minutes": 0,
+  "order": []
  },
  {
   "date": "2026-11-30",
@@ -2832,7 +3267,14 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/design-add-and-search-words-data-structure/"
    }
   ],
-  "minutes": 169
+  "minutes": 169,
+  "order": [
+   "lc:208",
+   "lc:211",
+   "cap-level-order",
+   "o7-explain-level-order",
+   "o7-fu-zigzag"
+  ]
  },
  {
   "date": "2026-12-01",
@@ -2921,7 +3363,25 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/minimum-window-substring/"
    }
   ],
-  "minutes": 165
+  "minutes": 165,
+  "order": [
+   "o7-g-trace-dims",
+   "o7-g-count",
+   "o7-g-dbg-dims",
+   "o7-g-find-all",
+   "o7-g-dbg-alias",
+   "o7-g-dbg-strings",
+   "o7-n-trace",
+   "o7-n-list",
+   "o7-n-land",
+   "o7-n-dbg-bounds",
+   "o7-n-dbg-dirs",
+   "o7-n-wt-wrap",
+   "o7-n-perimeter",
+   "o7-v-trace-order",
+   "o7-v-finish",
+   "o7-v-reachable-strings"
+  ]
  },
  {
   "date": "2026-12-02",
@@ -2954,7 +3414,17 @@ export const PLAN_90 = [
    }
   ],
   "leetcode": [],
-  "minutes": 160
+  "minutes": 160,
+  "order": [
+   "o7-v-dbg-late-mark",
+   "o7-v-dbg-tuple",
+   "o7-v-shortest",
+   "o7-v-flood-fill",
+   "o7-v-dfs-stack",
+   "o7-v-multi-source",
+   "o7-i-sink-dfs",
+   "o7-i-sink-iter"
+  ]
  },
  {
   "date": "2026-12-03",
@@ -3026,7 +3496,15 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/valid-parentheses/"
    }
   ],
-  "minutes": 162
+  "minutes": 162,
+  "order": [
+   "cap-number-of-islands",
+   "o7-explain-islands",
+   "o7-i-dbg-count-every",
+   "o7-i-max-area",
+   "o7-c-neighbors",
+   "o7-c-last-level"
+  ]
  },
  {
   "date": "2026-12-04",
@@ -3071,7 +3549,22 @@ export const PLAN_90 = [
    }
   ],
   "leetcode": [],
-  "minutes": 161
+  "minutes": 161,
+  "order": [
+   "o7-c-blobs",
+   "o8-a-trace-build",
+   "o8-a-build-undirected",
+   "o8-a-dbg-one-way",
+   "o8-a-build-directed",
+   "o8-a-dbg-shared-list",
+   "o8-a-in-degree",
+   "o8-a-matrix",
+   "o8-d-trace-recursive",
+   "o8-d-order",
+   "o8-v-fix-bounce",
+   "o8-d-stack",
+   "o8-d-translate"
+  ]
  },
  {
   "date": "2026-12-05",
@@ -3102,7 +3595,15 @@ export const PLAN_90 = [
    }
   ],
   "leetcode": [],
-  "minutes": 94
+  "minutes": 94,
+  "order": [
+   "o8-v-optimize-list",
+   "o8-d-directed-reach",
+   "o8-d-dbg-directed-both",
+   "o8-d-path",
+   "o8-b-order",
+   "o8-b-dbg-pop-end"
+  ]
  },
  {
   "date": "2026-12-06",
@@ -3112,7 +3613,8 @@ export const PLAN_90 = [
   "short": "",
   "sections": [],
   "leetcode": [],
-  "minutes": 0
+  "minutes": 0,
+  "order": []
  },
  {
   "date": "2026-12-07",
@@ -3192,7 +3694,16 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/search-in-rotated-sorted-array/"
    }
   ],
-  "minutes": 148
+  "minutes": 148,
+  "order": [
+   "o8-b-distances",
+   "o8-b-dbg-late-mark",
+   "o8-b-shortest",
+   "cap-path-exists",
+   "o8-explain-path-exists",
+   "o8-fu-fewest-hops",
+   "o8-y-trace-states"
+  ]
  },
  {
   "date": "2026-12-08",
@@ -3216,7 +3727,15 @@ export const PLAN_90 = [
    }
   ],
   "leetcode": [],
-  "minutes": 124
+  "minutes": 124,
+  "order": [
+   "o8-y-has-cycle",
+   "o8-y-dbg-no-visiting",
+   "o8-y-dbg-never-done",
+   "o8-y-wt-diamond",
+   "o8-y-reachable-cycle",
+   "o8-y-kahn-write"
+  ]
  },
  {
   "date": "2026-12-09",
@@ -3247,7 +3766,15 @@ export const PLAN_90 = [
    }
   ],
   "leetcode": [],
-  "minutes": 169
+  "minutes": 169,
+  "order": [
+   "cap-course-schedule",
+   "o8-explain-course-schedule",
+   "o8-cold-build",
+   "o8-cold-components",
+   "o8-cold-cycle",
+   "o8-cold-grid-steps"
+  ]
  },
  {
   "date": "2026-12-10",
@@ -3345,7 +3872,23 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/pacific-atlantic-water-flow/"
    }
   ],
-  "minutes": 168
+  "minutes": 168,
+  "order": [
+   "lc:133",
+   "lc:417",
+   "d9-sort-returns-none",
+   "d9-sort-inplace-desc",
+   "d9-sort-second-largest",
+   "d9-sort-median",
+   "d9-sort-min-gap",
+   "d9-sort-dbg-assign-none",
+   "d9-sort-dbg-discarded",
+   "d9-sort-group-anagrams",
+   "d9-key-len-stable",
+   "d9-sort-tuples",
+   "d9-key-age-desc",
+   "d9-key-len-then-alpha"
+  ]
  },
  {
   "date": "2026-12-11",
@@ -3418,7 +3961,21 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/number-of-connected-components-in-an-undirected-graph/"
    }
   ],
-  "minutes": 169
+  "minutes": 169,
+  "order": [
+   "lc:261",
+   "lc:323",
+   "d9-key-records",
+   "d9-key-distance",
+   "d9-key-dict-by-value",
+   "d9-key-dbg-wrong-index",
+   "d9-key-dbg-reverse-ties",
+   "d9-freq-most-common",
+   "d9-freq-topk-by-sort",
+   "d9-freq-dbg-pairs",
+   "d9-freq-sort-chars",
+   "d9-heap-push-trace"
+  ]
  },
  {
   "date": "2026-12-12",
@@ -3483,7 +4040,18 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/linked-list-cycle/"
    }
   ],
-  "minutes": 87
+  "minutes": 87,
+  "order": [
+   "d9-heap-smallest-k",
+   "d9-heap-sort",
+   "d9-heap-ropes",
+   "d9-heap-run-order",
+   "d9-heap-dbg-slice",
+   "d9-topk-trace",
+   "d9-topk-kth-by-sort",
+   "d9-topk-optimize",
+   "d9-topk-dbg-no-trim"
+  ]
  },
  {
   "date": "2026-12-13",
@@ -3493,7 +4061,8 @@ export const PLAN_90 = [
   "short": "",
   "sections": [],
   "leetcode": [],
-  "minutes": 0
+  "minutes": 0,
+  "order": []
  },
  {
   "date": "2026-12-14",
@@ -3567,7 +4136,14 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/number-of-islands/"
    }
   ],
-  "minutes": 115
+  "minutes": 115,
+  "order": [
+   "d9-topk-closest",
+   "d9-topk-keys-by-count",
+   "d9-topk-dbg-tuple-order",
+   "cap-kth-largest",
+   "d9-explain-kth-largest"
+  ]
  },
  {
   "date": "2026-12-15",
@@ -3624,7 +4200,20 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/reorder-list/"
    }
   ],
-  "minutes": 165
+  "minutes": 165,
+  "order": [
+   "cap-top-k-frequent",
+   "d9-explain-top-k-frequent",
+   "d9-iv-overlaps-line",
+   "d9-iv-intersection",
+   "d9-iv-merge-trace",
+   "d9-iv-merge-sorted",
+   "d9-iv-dbg-overwrite-end",
+   "d9-iv-dbg-strict",
+   "d9-iv-dbg-unsorted",
+   "d9-iv-can-attend",
+   "d9-iv-covered-length"
+  ]
  },
  {
   "date": "2026-12-16",
@@ -3669,7 +4258,18 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/maximum-depth-of-binary-tree/"
    }
   ],
-  "minutes": 153
+  "minutes": 153,
+  "order": [
+   "d9-iv-write-test",
+   "cap-merge-intervals",
+   "d9-explain-merge-intervals",
+   "d9-fu-touching-apart",
+   "d9-cold-sort-second-desc",
+   "d9-cold-kth-smallest",
+   "d9-cold-any-overlap",
+   "d9-cold-top-words",
+   "d9-cold-last-rock"
+  ]
  },
  {
   "date": "2026-12-17",
@@ -3746,7 +4346,22 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/meeting-rooms/"
    }
   ],
-  "minutes": 166
+  "minutes": 166,
+  "order": [
+   "lc:57",
+   "lc:252",
+   "d10-dt-call-order",
+   "d10-dt-include-exclude",
+   "d10-dt-all-sums",
+   "d10-dt-bit-strings",
+   "d10-dt-dbg-base",
+   "d10-dt-can-reach",
+   "d10-dt-signs",
+   "d10-ps-copy-trace",
+   "d10-ps-subsequences-finish",
+   "d10-ps-dice",
+   "d10-ps-dbg-alias"
+  ]
  },
  {
   "date": "2026-12-18",
@@ -3810,7 +4425,16 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/meeting-rooms-ii/"
    }
   ],
-  "minutes": 164
+  "minutes": 164,
+  "order": [
+   "lc:435",
+   "lc:253",
+   "d10-ps-combos",
+   "d10-ps-dbg-no-pop",
+   "d10-ps-letter-combos",
+   "d10-ps-orderings",
+   "d10-ps-dbg-used"
+  ]
  },
  {
   "date": "2026-12-19",
@@ -3870,7 +4494,13 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree/"
    }
   ],
-  "minutes": 63
+  "minutes": 63,
+  "order": [
+   "d10-ps-tree-paths",
+   "d10-sub-loop-style",
+   "d10-sub-target-subsets",
+   "d10-sub-write-test"
+  ]
  },
  {
   "date": "2026-12-20",
@@ -3880,7 +4510,8 @@ export const PLAN_90 = [
   "short": "",
   "sections": [],
   "leetcode": [],
-  "minutes": 0
+  "minutes": 0,
+  "order": []
  },
  {
   "date": "2026-12-21",
@@ -3941,7 +4572,8 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/clone-graph/"
    }
   ],
-  "minutes": 0
+  "minutes": 0,
+  "order": []
  },
  {
   "date": "2026-12-22",
@@ -4002,7 +4634,8 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/validate-binary-search-tree/"
    }
   ],
-  "minutes": 0
+  "minutes": 0,
+  "order": []
  },
  {
   "date": "2026-12-23",
@@ -4043,7 +4676,8 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/binary-tree-maximum-path-sum/"
    }
   ],
-  "minutes": 0
+  "minutes": 0,
+  "order": []
  },
  {
   "date": "2026-12-24",
@@ -4053,7 +4687,8 @@ export const PLAN_90 = [
   "short": "",
   "sections": [],
   "leetcode": [],
-  "minutes": 0
+  "minutes": 0,
+  "order": []
  },
  {
   "date": "2026-12-25",
@@ -4063,7 +4698,8 @@ export const PLAN_90 = [
   "short": "",
   "sections": [],
   "leetcode": [],
-  "minutes": 0
+  "minutes": 0,
+  "order": []
  },
  {
   "date": "2026-12-26",
@@ -4104,7 +4740,8 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/merge-intervals/"
    }
   ],
-  "minutes": 0
+  "minutes": 0,
+  "order": []
  },
  {
   "date": "2026-12-27",
@@ -4114,7 +4751,8 @@ export const PLAN_90 = [
   "short": "",
   "sections": [],
   "leetcode": [],
-  "minutes": 0
+  "minutes": 0,
+  "order": []
  },
  {
   "date": "2026-12-28",
@@ -4205,7 +4843,16 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/word-search/"
    }
   ],
-  "minutes": 169
+  "minutes": 169,
+  "order": [
+   "cap-subsets",
+   "d10-explain-subsets",
+   "lc:39",
+   "lc:79",
+   "d10-rec-fib-calls",
+   "d10-rec-fib-naive",
+   "d10-rec-three-steps"
+  ]
  },
  {
   "date": "2026-12-29",
@@ -4252,7 +4899,24 @@ export const PLAN_90 = [
    }
   ],
   "leetcode": [],
-  "minutes": 155
+  "minutes": 155,
+  "order": [
+   "d10-rec-grid-paths",
+   "d10-rec-dbg-base",
+   "d10-memo-trace",
+   "d10-memo-optimize",
+   "d10-memo-fib",
+   "d10-memo-dbg-inside",
+   "d10-memo-grid",
+   "d10-memo-dbg-key",
+   "d10-memo-cache-ways3",
+   "d10-bu-trace",
+   "d10-bu-translate",
+   "d10-bu-three-steps",
+   "d10-bu-any-steps",
+   "d10-bu-dbg-range",
+   "d10-bu-min-cost"
+  ]
  },
  {
   "date": "2026-12-30",
@@ -4319,7 +4983,20 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/design-add-and-search-words-data-structure/"
    }
   ],
-  "minutes": 140
+  "minutes": 140,
+  "order": [
+   "cap-climbing-stairs",
+   "d10-explain-climbing-stairs",
+   "d10-fu-broken-steps",
+   "d10-roll-trace",
+   "d10-roll-fib",
+   "d10-roll-dbg-two-lines",
+   "d10-roll-trib",
+   "d10-roll-robber-trace",
+   "d10-roll-robber-memo",
+   "d10-roll-robber-table",
+   "d10-roll-dbg-adjacent"
+  ]
  },
  {
   "date": "2026-12-31",
@@ -4391,7 +5068,16 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/house-robber-ii/"
    }
   ],
-  "minutes": 159
+  "minutes": 159,
+  "order": [
+   "cap-house-robber",
+   "d10-explain-house-robber",
+   "d10-cold-letter-subsets",
+   "d10-cold-pick-k",
+   "d10-cold-pieces",
+   "d10-cold-cache-stairs",
+   "lc:213"
+  ]
  },
  {
   "date": "2027-01-01",
@@ -4401,7 +5087,8 @@ export const PLAN_90 = [
   "short": "",
   "sections": [],
   "leetcode": [],
-  "minutes": 0
+  "minutes": 0,
+  "order": []
  },
  {
   "date": "2027-01-02",
@@ -4452,7 +5139,11 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/jump-game/"
    }
   ],
-  "minutes": 80
+  "minutes": 80,
+  "order": [
+   "lc:53",
+   "lc:55"
+  ]
  },
  {
   "date": "2027-01-03",
@@ -4462,7 +5153,8 @@ export const PLAN_90 = [
   "short": "",
   "sections": [],
   "leetcode": [],
-  "minutes": 0
+  "minutes": 0,
+  "order": []
  },
  {
   "date": "2027-01-04",
@@ -4513,7 +5205,11 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/word-break/"
    }
   ],
-  "minutes": 80
+  "minutes": 80,
+  "order": [
+   "lc:322",
+   "lc:139"
+  ]
  },
  {
   "date": "2027-01-05",
@@ -4564,7 +5260,11 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/longest-palindromic-substring/"
    }
   ],
-  "minutes": 80
+  "minutes": 80,
+  "order": [
+   "lc:300",
+   "lc:5"
+  ]
  },
  {
   "date": "2027-01-06",
@@ -4595,7 +5295,11 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/longest-common-subsequence/"
    }
   ],
-  "minutes": 80
+  "minutes": 80,
+  "order": [
+   "lc:62",
+   "lc:1143"
+  ]
  },
  {
   "date": "2027-01-07",
@@ -4676,7 +5380,11 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/rotate-image/"
    }
   ],
-  "minutes": 90
+  "minutes": 90,
+  "order": [
+   "lc:91",
+   "lc:48"
+  ]
  },
  {
   "date": "2027-01-08",
@@ -4737,6 +5445,10 @@ export const PLAN_90 = [
     "url": "https://leetcode.com/problems/set-matrix-zeroes/"
    }
   ],
-  "minutes": 80
+  "minutes": 80,
+  "order": [
+   "lc:54",
+   "lc:73"
+  ]
  }
 ] as PlanDay[]

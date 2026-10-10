@@ -23,7 +23,7 @@ import { movesFor } from '@/data/primers/moves'
 import { BRIEFS } from '@/data/briefs'
 import { walkthroughFor } from '@/data/walkthroughs'
 import { IconArrowRight, IconBug, IconBulb, IconClock, IconDots, IconExternal, IconPlay, IconRotate, IconSpark, IconX } from '@/components/icons'
-import { followingExercise, lockedByGate, missingPrerequisites, passedSet, retrievalTypeFor } from '@/lib/progress'
+import { followingExercise, lockedByGate, missingPrerequisites, nextInOrder, passedSet, retrievalTypeFor } from '@/lib/progress'
 import { getRunner, type RunResult } from '@/lib/python/runner'
 import { buildRepairSet, createSession, findExercise, getSession, newId } from '@/lib/sessions'
 import {
@@ -602,9 +602,12 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
       if (session.returnTo) return `/rep/${session.returnTo}`
       return '/'
     }
+    // The queue just continues: the next rep in the order of the work, whatever day it was first planned for.
+    const inOrder = nextInOrder(fromId ?? ex.id)
+    if (inOrder) return `/rep/${inOrder.id}`
     if (day) {
       const nxt = followingExercise(day, fromId ?? ex.id)
-      return nxt ? `/rep/${nxt.id}` : `/day/${day.date}/summary`
+      if (nxt) return `/rep/${nxt.id}`
     }
     return '/'
   }, [session, ex.id, day, fromId])
@@ -726,8 +729,10 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
   const kind = kindOf(ex)
   const crumbDay = day ? shortDate(day.date) : null
   const crumbTitle = session ? session.title : (section?.title ?? (ex.generated ? 'Generated rep' : 'Rep'))
-  const total = session ? session.exerciseIds.length : dayList.length
-  const index = session ? session.exerciseIds.indexOf(ex.id) + 1 : position + 1
+  // Outside a session, show where you are in the section: days are a gauge now, not a container.
+  const inSection = !session && section ? section.exercises.findIndex((e) => e.id === ex.id) : -1
+  const total = session ? session.exerciseIds.length : inSection >= 0 ? section!.exercises.length : dayList.length
+  const index = session ? session.exerciseIds.indexOf(ex.id) + 1 : inSection >= 0 ? inSection + 1 : position + 1
   const progressPct = total > 0 && index > 0 ? (index / total) * 100 : 0
   const runnable = ex.kind === 'code' || ex.kind === 'reorder'
   const testsPassed = result?.tests.filter((t) => t.passed).length ?? 0
@@ -760,7 +765,7 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
           <div className="hidden items-center gap-3 sm:flex">
             <span className="flex items-baseline gap-1.5">
               <span className="eyebrow text-ink">Rep {index}</span>
-              <span className="num text-[12px] text-faint">of {total}{session ? '' : ' today'}</span>
+              <span className="num text-[12px] text-faint">of {total}{session ? '' : ' in this section'}</span>
             </span>
             <span className="bar bar-thin w-32" aria-hidden="true">
               <span style={{ width: `${progressPct}%`, background: 'var(--accent)' }} />

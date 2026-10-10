@@ -99,28 +99,42 @@ test('a debug rep loads broken code, shows failing tests, and accepts the fix', 
 })
 
 test('a re-solve that needed help is logged, and comes back as a redo on the next working day', async ({ page }) => {
-  // The first day of the plan has one LeetCode re-solve.
-  await page.goto('/day/2026-10-11')
+  // Day 2 of the plan (a Monday). The re-solves from week 1 are waiting on Today.
+  await page.clock.setFixedTime(new Date('2026-10-12T10:00:00-04:00'))
+  await page.goto('/')
   const list = page.getByTestId('leetcode-list')
   await expect(list).toBeVisible()
   await list.getByRole('button', { name: 'Needed help' }).first().click()
-  await expect(list.getByText(/1 of \d logged/)).toBeVisible() // a redo due on this same day adds a second row
+  await expect(list.getByText(/1 of \d logged/)).toBeVisible()
 
-  // It is in the solve log, with the redo as its next review.
+  // It is in the solve log, with a redo queued for the next working day.
   await page.goto('/log')
   await expect(page.getByRole('heading', { name: 'Solve log' })).toBeVisible()
   await expect(page.locator('tbody tr')).toHaveCount(1)
   await expect(page.locator('tbody tr').first()).toContainText('Hinted')
-
-  // A redo is queued for a later working day, never the off day.
+  await expect(page.locator('tbody tr').first()).toContainText('Oct 13')
   await expect(page.getByRole('heading', { name: 'Re-solve queue' })).toBeVisible()
   await expect(page.getByText(/^Redo/).first()).toBeVisible()
+})
+
+test('pacing: a missed week changes the gauge, not the plan', async ({ page }) => {
+  await page.clock.setFixedTime(new Date('2026-10-20T10:00:00-04:00'))
+  await page.goto('/plan')
+  const gauge = page.getByTestId('pace-gauge')
+  await expect(gauge).toHaveAttribute('data-pace', 'behind')
+  await expect(gauge).toContainText(/Behind by \d+ working days/)
+  // Nothing was dropped: the first module is still where you are, and the forecast just runs later.
+  await expect(page.getByText('you are here')).toBeVisible()
+  await expect(gauge).toContainText(/days? after Jan 8/)
+  // A past day is a record, not an unfinished to-do list.
+  await page.goto('/day/2026-10-12')
+  await expect(page.getByTestId('day-kind')).toContainText('A record of what you did')
 })
 
 test('the plan calendar links every day, and unknown reps are a real 404', async ({ page }) => {
   await page.goto('/plan')
   await expect(page.getByRole('heading', { name: 'Plan', exact: true })).toBeVisible()
-  await expect(page.locator('a[href^="/day/2026-"], a[href^="/day/2027-"]')).toHaveCount(90)
+  await expect(page.locator('section[aria-labelledby^="wk-"] a[href^="/day/"]')).toHaveCount(90)
   const res = await page.request.get('/rep/not-a-real-rep')
   expect(res.status()).toBe(404)
 })

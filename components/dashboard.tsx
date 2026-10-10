@@ -11,6 +11,9 @@ import ChallengeMe from '@/components/challenge-me'
 import ProgressIO from '@/components/progress-io'
 import LeetcodeList from '@/components/leetcode-list'
 import TodayBlocks from '@/components/today-blocks'
+import PaceGauge from '@/components/pace-gauge'
+import { usePacing } from '@/components/use-pacing'
+import { nextRep } from '@/lib/pace-calendar'
 import { lcMeta, useSolveLog } from '@/components/use-solve-log'
 import { leetcodeFor } from '@/lib/solve-log'
 import { ScoreBar, StatusLabel } from '@/components/mastery-bits'
@@ -19,7 +22,7 @@ import { BarsPattern, EmptyState, RepsBars } from '@/components/motif'
 import { ConceptGlyph } from '@/components/concept-icons'
 import { IconArrowRight, IconClock, IconSnow, IconSpark } from '@/components/icons'
 import WinstonPerch from '@/components/winston-perch'
-import { ALL_EXERCISES, DAY_BY_DATE, DAY_OF_EXERCISE, DAYS, MODULE_OF_EXERCISE, PLAN_DAYS, PLAN_START, dayExercises, dayLabel } from '@/data/curriculum'
+import { ALL_EXERCISES, DAY_BY_DATE, DAY_OF_EXERCISE, DAYS, EXERCISE_BY_ID, MODULE_OF_EXERCISE, PLAN_DAYS, PLAN_START, dayExercises, dayLabel } from '@/data/curriculum'
 import { PROGRAM_STAGES } from '@/data/program'
 import { skillName } from '@/data/skills'
 import { formatMinutes, localDate, parseLocal } from '@/lib/dates'
@@ -43,7 +46,9 @@ function DashboardToday() {
   const router = useRouter()
   const { repo, attempts, reviews, mastery, today, loaded } = useReps()
   const [busy, setBusy] = useState(false)
-  const day = DAY_BY_DATE[today]
+  // Today is drawn from the queue and the pace, not from a fixed date in the schedule.
+  const pace = usePacing()
+  const day = pace.dayFor(today) ?? DAY_BY_DATE[today]
   const lcToday = day.leetcode ?? []
   const { entries: solves } = useSolveLog()
   const lcItems = leetcodeFor(day, solves, DAYS, lcMeta)
@@ -64,12 +69,9 @@ function DashboardToday() {
   const todayStage = PROGRAM_STAGES.find((s) => s.dayDate === (next ? MODULE_OF_EXERCISE[next.id] : day.modules?.[day.modules.length - 1]))
   const started = stats.completed > 0
   const nextKind = next ? kindOf(next) : null
-  // Done early? The next scheduled rep on a later day, to get ahead.
-  const ahead = next
-    ? undefined
-    : DAYS.filter((d) => d.date > today)
-        .map((d) => nextExercise(d, attempts))
-        .find(Boolean)
+  // Today's stretch finished? The queue simply continues: the next rep, whatever day the forecast puts it on.
+  const upcoming = next ? null : nextRep(pace.queue, passed)
+  const ahead = upcoming ? EXERCISE_BY_ID[upcoming.key] : undefined
 
   const startReview = async () => {
     setBusy(true)
@@ -163,8 +165,8 @@ function DashboardToday() {
                 ) : stats.total === 0 && lcToday.length ? (
                   <EmptyState title="LeetCode day">No ladder reps today. Today’s work is the LeetCode list below.</EmptyState>
                 ) : (
-                  <EmptyState title="Reps complete">
-                    Every required rep for today is done.{lcToday.length ? ' Your LeetCode problems for today are below.' : ' Cold reps are scheduled for tomorrow.'}
+                  <EmptyState title="Today’s stretch is done">
+                    You have covered today’s pace.{lcToday.length ? ' Your LeetCode problems for today are below.' : ''} Stop here, or keep going: the queue just continues.
                   </EmptyState>
                 )}
                 <div className="flex flex-wrap items-center gap-2">
@@ -173,7 +175,7 @@ function DashboardToday() {
                   </Link>
                   {ahead && (
                     <Link href={`/rep/${ahead.id}`} className="btn btn-primary btn-lg">
-                      Get ahead: {ahead.title.replace(/^[A-Za-z]+: /, '')} <IconArrowRight size={15} />
+                      Keep going: {ahead.title.replace(/^[A-Za-z]+: /, '')} <IconArrowRight size={15} />
                     </Link>
                   )}
                 </div>
@@ -205,10 +207,16 @@ function DashboardToday() {
         </section>
 
         <dl className="mt-4 grid grid-cols-2 gap-x-6 gap-y-3 px-2 sm:grid-cols-3">
-          <MiniStat label="Done today" value={`${stats.completed}`} sub={`of ${stats.total} rep${stats.total === 1 ? '' : 's'} · ${stats.percent}%`} />
-          <MiniStat label="Planned" value={formatMinutes(stats.minutesRemaining)} sub="left today" />
+          <MiniStat label="Done today" value={`${stats.completed}`} sub={`rep${stats.completed === 1 ? '' : 's'} · ${stats.total - stats.completed} more in today’s stretch`} />
+          <MiniStat label="Re-solves waiting" value={String(pace.due.length)} sub={pace.due.length ? 'on LeetCode, oldest first' : 'none due'} />
           <MiniStat label="Cold reps" value={String(due.length)} sub={due.length ? 'due now' : 'none due'} />
         </dl>
+
+        {day.planDay && (
+          <div className="mt-8">
+            <PaceGauge pace={pace} planEnd={PLAN_DAYS[PLAN_DAYS.length - 1].date} />
+          </div>
+        )}
 
         <div className="mt-8 empty:hidden">
           <TodayBlocks day={day} resolves={lcItems.filter((x) => x.type !== 'new').length} />

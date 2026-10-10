@@ -72,7 +72,19 @@ A capstone you solve inside Reps **is** that LeetCode problem (Two Sum, Valid Pa
 
 No studying at night.
 
-## 5. Where everything lives
+## 5. Pacing, not daily goals
+
+The 15 modules are one ordered queue: ladder, check, problems, pattern after pattern. **Next up is always the first thing you have not done, whatever the date.** The calendar is a gauge laid over that queue:
+
+- **Pace:** on pace, N working days ahead, or N behind, measured against the original line. Today's own work never counts against you.
+- **Today's stretch:** how far today's pace would take you. A suggestion; the queue continues past it.
+- **Forecast:** every date from today on shows what the current pace reaches by then, and when the queue finishes. Past days are a record of what you did.
+- **Re-solves** fall due 3, 10 and 30 days after you actually solved each problem.
+- **Missing a day** moves the gauge. Nothing is rebuilt and nothing is dropped. The buffer weeks take up the slack first; beyond that the finish date moves later.
+
+The dates in §7 and §8 are the original line the gauge measures against.
+
+## 5b. Where everything lives
 
 - **Reps → Today** shows the day's ladder reps and, under them, the day's LeetCode list with links, walkthroughs and the Unaided / Needed help buttons.
 - **A re-solve you needed help on:** redo it tomorrow before it rejoins the schedule.

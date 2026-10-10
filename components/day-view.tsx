@@ -6,7 +6,8 @@ import ProgressRing from '@/components/progress-ring'
 import { kindOf, compositionText } from '@/components/rep-kind'
 import { IconArrowRight, IconCheck, IconLock } from '@/components/icons'
 import { ConceptGlyph, sectionKind } from '@/components/concept-icons'
-import { DAY_BY_DATE, DAYS, dayExercises, dayLabel } from '@/data/curriculum'
+import { DAYS, dayExercises, dayLabel } from '@/data/curriculum'
+import { usePacing } from '@/components/use-pacing'
 import LeetcodeList from '@/components/leetcode-list'
 import { PROBLEM_BY_ID } from '@/data/problems'
 import { MOCKS } from '@/data/mocks'
@@ -15,14 +16,22 @@ import { attemptedSet, blockingGate, dayStats, exerciseUnlocked, nextExercise, p
 
 export default function DayView({ date }: { date: string }) {
   const { attempts, today } = useReps()
-  const day = DAY_BY_DATE[date]
+  // Inside the plan a day is drawn from progress: a record of the past, today's stretch, or a forecast.
+  const pace = usePacing()
+  const day = pace.dayFor(date)
   if (!day) {
     return (
       <main className="flex-1 bg-canvas">
-        <div className="mx-auto w-full max-w-[880px] px-5 py-16 text-muted">No reps planned for {date}.</div>
+        <div className="mx-auto w-full max-w-[880px] px-5 py-16">
+          <p className="text-[15px] text-ink-2">Nothing is forecast for {shortDate(date)}: at the current pace the queue is finished before then.</p>
+          <Link href="/plan" className="btn mt-4">
+            See the plan
+          </Link>
+        </div>
       </main>
     )
   }
+  const when = !day.planDay ? null : date < today ? 'record' : date === today ? 'today' : 'forecast'
   const stats = dayStats(day, attempts)
   const passed = passedSet(attempts)
   const tried = attemptedSet(attempts)
@@ -30,9 +39,11 @@ export default function DayView({ date }: { date: string }) {
   const currentSection = day.sections.findIndex((s) => !s.optional && s.exercises.some((e) => !passed.has(e.id)))
   const offsets = day.sections.map((_, i) => day.sections.slice(0, i).reduce((c, x) => c + x.exercises.length, 0))
   // The one mastery check (if any) holding this day's reps, and what is left of it.
-  const nextWork = DAYS.find((d) => d.date > day.date && (dayExercises(d).length > 0 || (d.leetcode?.length ?? 0) > 0))
+  const nextWork = pace.days.find((d) => d.date > day.date && (dayExercises(d).length > 0 || (d.leetcode?.length ?? 0) > 0))
   const requiredCount = day.sections.filter((s) => !s.optional).length
-  const gate = requiredCount ? blockingGate(day, requiredCount, attempts) : undefined
+  // Order-based: a check holds what comes after it in the queue, on whatever day that lands.
+  const gate = day.sections.map((sec, i) => (sec.optional ? undefined : blockingGate(day, i, attempts))).find(Boolean)
+  void requiredCount
   const gateLeft = gate ? DAYS.flatMap((d) => d.sections.filter((s) => s.gate && s.id === gate.id).flatMap((s) => s.exercises)).filter((e) => !passed.has(e.id)) : []
 
   return (
@@ -43,6 +54,13 @@ export default function DayView({ date }: { date: string }) {
         {/* Only when it adds something: a one-pattern day would just repeat the heading. */}
         {day.title !== day.short && <p className="mt-1.5 text-[15.5px] text-ink-2">{day.title}</p>}
         <p className="mt-2 max-w-[680px] text-[14px] leading-relaxed text-muted">{day.focus}</p>
+        {when && (
+          <p className="mt-2 max-w-[680px] text-[13px] leading-relaxed text-muted" data-testid="day-kind">
+            {when === 'record' && 'A record of what you did this day.'}
+            {when === 'today' && 'What you have done today, then the stretch today’s pace suggests. It is a gauge, not a goal: the queue continues either way.'}
+            {when === 'forecast' && 'A forecast: what the current pace reaches by this day. It moves as you do.'}
+          </p>
+        )}
 
         {gate && (
           <div role="status" data-testid="gate-banner" className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 rounded-2xl bg-bg px-5 py-4 shadow-[0_0_0_1px_var(--line-strong)]">

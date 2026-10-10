@@ -197,6 +197,7 @@ function buildDays(): DayModule[] {
       planDay,
       planWeek: d.week,
       planMinutes: d.minutes,
+      planOrder: d.order,
     }
   })
   return [...sprint, ...plan]
@@ -222,7 +223,29 @@ export { PLAN_START }
 
 /** "Day 12 of 90" inside the plan; the days before it carry no label, only their date. */
 export function dayLabel(day: DayModule): string {
-  return day.planDay ? `Day ${day.planDay} of ${PLAN_90.length}` : ''
+  if (!day.planDay) return ''
+  // If the pace has slipped past the last planned day, the count simply keeps going.
+  return day.planDay <= PLAN_90.length ? `Day ${day.planDay} of ${PLAN_90.length}` : `Day ${day.planDay}`
+}
+
+/** A plan section's label and whether it is a mastery check, as the generator decided. */
+const PLAN_SECTION_META = new Map<string, { gate: boolean; label: string | null }>()
+for (const d of PLAN_90) for (const s of d.sections) if (!PLAN_SECTION_META.has(s.id) || s.gate) PLAN_SECTION_META.set(s.id, { gate: s.gate, label: s.label })
+
+/** Some reps of an authored section, as a section of their own (for a forecast day or a record of a past one). */
+export function sectionSlice(sectionId: string, repIds: string[]): Section | null {
+  const home = SECTION_HOME.get(sectionId)
+  if (!home) return null
+  const meta = PLAN_SECTION_META.get(sectionId)
+  const exercises = home.section.exercises.filter((e) => repIds.includes(e.id))
+  if (!exercises.length) return null
+  return {
+    ...home.section,
+    title: meta?.label ?? home.section.title,
+    summary: meta?.gate ? 'The mastery check for this pattern: cold reps, passed without opening the solution, before what follows unlocks.' : home.section.summary,
+    exercises,
+    gate: meta?.gate || undefined,
+  }
 }
 
 /** Days in the 90-day plan, in order. */
