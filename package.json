@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "type-check": "tsc --noEmit",
-    "test": "tsx --test \"lib/**/*.test.ts\" \"supabase/*.test.ts\"",
+    "test": "node scripts/run-tests.mjs",
     "test:e2e": "playwright test",
     "verify:content": "tsx scripts/verify-content.ts",
     "verify": "npm run lint && npm run type-check && npm test && npm run verify:content && npm run build",

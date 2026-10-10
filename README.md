@@ -10,8 +10,13 @@ automatically, then asks for the capstone.
 It began as a ten-day sprint (Oct 2–10, 2026) and now runs a **90-day ladder plan**
 (Oct 11, 2026 → Jan 8, 2027): every pattern is a ladder of reps from the ground up, a
 mastery check passed without the solution, then that pattern's LeetCode problems with
-spaced re-solves. The plan, its research basis and its generator are in `planning/`;
-`python3 planning/gen.py` rewrites `data/schedule-90.ts`, which the app reads.
+spaced re-solves. The plan, its research basis and its generator are in `planning/`
+(the canonical plan); `python3 planning/gen.py` rewrites `data/schedule-90.ts`, which
+the app reads.
+
+`archive/first-plan/` keeps the first 90-day plan (`plan.md`), its problem list
+(`problems.csv`, which the generator still reads for metadata and verified video links)
+and the original app-rebuild prompt. They are history, not the plan.
 
 ## Run it
 

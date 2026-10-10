@@ -164,4 +164,4 @@ No studying at night.
 - `planning/gen.py`: regenerates the schedule. Change the pace in one place (`budget`, `review_cap`, `REPS_FACTOR`) and rerun.
 - `planning/reps-sections.json`, `planning/done.json`: the generator's inputs (authored reps; what you had passed on Oct 10).
 - `data/schedule-90.ts`: generated; what the Reps app reads.
-- `plan.md`, `problems.csv`, `rebuild_prompt.md` in the repo root: the first version, left untouched.
+- `archive/first-plan/`: the first version of the plan, its problem list (still the generator's source for metadata and video links) and the app-rebuild prompt.

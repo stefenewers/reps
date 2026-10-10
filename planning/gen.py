@@ -7,7 +7,7 @@ Run from the repo root:
     npx tsx scripts/export-ladders.ts     # refresh planning/reps-sections.json
     python3 planning/gen.py
 
-Inputs : problems.csv                    the original problem list (metadata + verified video links)
+Inputs : archive/first-plan/problems.csv the original problem list (metadata + verified video links)
          planning/reps-sections.json     every authored Reps section and rep
          planning/done.json              rep ids already passed (from Supabase, Oct 10)
 Outputs: data/schedule-90.ts             what the app reads: per day, Reps reps + LeetCode problems
@@ -19,6 +19,8 @@ Sized from measured pace (Oct 2-8): Reps reps take ~2.25-2.5x their authored min
 a LeetCode problem reached through a ladder took ~12 min, one reached cold 45-70 min.
 """
 import csv, datetime as dt, collections, json, re, os
+
+SOURCE_CSV = 'archive/first-plan/problems.csv'   # the first plan's problem list: metadata + verified video links
 
 START = dt.date(2026, 10, 11)
 END = dt.date(2027, 1, 8)
@@ -105,7 +107,7 @@ def slug(title):
     return re.sub(r'-+', '-', s.replace(' ', '-')).strip('-')
 
 def build(more_allowed):
-    src = list(csv.DictReader(open('problems.csv')))
+    src = list(csv.DictReader(open(SOURCE_CSV)))
     meta = {}
     for r in src: meta.setdefault(int(r['lc']), r)
     for lc, (t, p, dff) in SEED_META.items():
@@ -211,7 +213,7 @@ def main():
     cols = ['week', 'day', 'date', 'lc', 'title', 'pattern', 'difficulty', 'source', 'type', 'reps_capstone', 'neetcode_video', 'video_length', 'tier', 'mode']
     with open('planning/problems.csv', 'w', newline='') as f:
         w = csv.DictWriter(f, fieldnames=cols); w.writeheader(); w.writerows(lc_rows)
-    order = list(dict.fromkeys(int(r['lc']) for r in csv.DictReader(open('problems.csv')) if r['type'] == 'new'))
+    order = list(dict.fromkeys(int(r['lc']) for r in csv.DictReader(open(SOURCE_CSV)) if r['type'] == 'new'))
     with open('planning/stretch.csv', 'w', newline='') as f:
         w = csv.writer(f); w.writerow(['lc', 'title', 'pattern', 'difficulty', 'source', 'why_not_scheduled', 'neetcode_video'])
         rank = lambda x: (0 if x in CORE_HARDS_TO_STRETCH else 1 if x in MORE_PRIORITY else 2, MORE_PRIORITY.index(x) if x in MORE_PRIORITY else order.index(x))
