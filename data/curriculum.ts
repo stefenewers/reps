@@ -157,7 +157,7 @@ function buildDays(): DayModule[] {
   // ── the 90-day ladder plan (from Oct 11): each pattern is a ladder, a mastery check, then its LeetCode problems
   const plan: DayModule[] = PLAN_90.map((d, i) => {
     const planDay = i + 1
-    if (d.phase === 'off') return { date: d.date, short: 'Off day', title: 'Off day', focus: 'Rest. Nothing is planned.', sections: leftoversFor(d.date), capstones: [], modules: [], phase: 'off', planDay }
+    if (d.phase === 'off') return { date: d.date, short: 'Off day', title: 'Off day', focus: 'Rest. Nothing is planned.', sections: leftoversFor(d.date), capstones: [], modules: [], phase: 'off', planDay, planWeek: d.week, planMinutes: 0 }
     const modules: string[] = []
     const required: Section[] = d.sections.map((item) => {
       const home = SECTION_HOME.get(item.id)
@@ -195,6 +195,8 @@ function buildDays(): DayModule[] {
       leetcode: d.leetcode,
       phase: d.phase,
       planDay,
+      planWeek: d.week,
+      planMinutes: d.minutes,
     }
   })
   return [...sprint, ...plan]
@@ -218,10 +220,13 @@ export const ALL_EXERCISES: Exercise[] = [
 /** Where the 90-day plan begins. */
 export { PLAN_START }
 
-/** "Day 12 of 90" inside the plan; the sprint days before it are just dated. */
+/** "Day 12 of 90" inside the plan; the days before it carry no label, only their date. */
 export function dayLabel(day: DayModule): string {
-  return day.planDay ? `Day ${day.planDay} of ${PLAN_90.length}` : 'October sprint'
+  return day.planDay ? `Day ${day.planDay} of ${PLAN_90.length}` : ''
 }
+
+/** Days in the 90-day plan, in order. */
+export const PLAN_DAYS: DayModule[] = DAYS.filter((d) => d.planDay)
 
 export const EXERCISE_BY_ID: Record<string, Exercise> = Object.fromEntries(ALL_EXERCISES.map((e) => [e.id, e]))
 

@@ -9,7 +9,7 @@ import Markdown from '@/components/markdown'
 import CodeView from '@/components/code-view'
 import { ChoiceInput, ExplainInput, OutputInput, ReorderInput } from '@/components/rep/answer-inputs'
 import { TestResults } from '@/components/rep/results'
-import { DAY_BY_DATE, DAY_OF_EXERCISE } from '@/data/curriculum'
+import { DAY_BY_DATE, DAY_OF_EXERCISE, DAYS } from '@/data/curriculum'
 import { PROBLEM_BY_ID } from '@/data/problems'
 import { skillName } from '@/data/skills'
 import { firstDifference, hasBlanks, outputMatches } from '@/lib/answers'
@@ -100,14 +100,17 @@ export default function RepWorkspace({ exerciseId, sessionId, fromId, initialMod
   }
   const lockDay = DAY_BY_DATE[DAY_OF_EXERCISE[exercise.id]]
   const gate = !session && lockDay ? lockedByGate(lockDay, exercise.id, attempts) : undefined
-  if (gate) return <GateLock gate={gate} attempts={attempts} />
+  if (gate) return <GateLock gate={gate} attempts={attempts} exercise={exercise} />
   return <Workspace key={exercise.id} exercise={exercise} session={session} fromId={fromId} initialMode={initialMode} router={router} ctx={{ repo, attempts, mastery, today }} />
 }
 
 /** Behind an uncleared mastery check: no way round it, only through it. */
-function GateLock({ gate, attempts }: { gate: Section; attempts: Attempt[] }) {
+function GateLock({ gate, attempts, exercise }: { gate: Section; attempts: Attempt[]; exercise: Exercise }) {
   const passed = passedSet(attempts)
-  const left = gate.exercises.filter((e) => !passed.has(e.id))
+  // A check can span two days: count every part of it.
+  const left = DAYS.flatMap((d) => d.sections.filter((s) => s.gate && s.id === gate.id).flatMap((s) => s.exercises)).filter((e) => !passed.has(e.id))
+  const total = DAYS.flatMap((d) => d.sections.filter((s) => s.gate && s.id === gate.id).flatMap((s) => s.exercises)).length
+  const preview = exercise.repType === 'capstone'
   return (
     <main className="mx-auto w-full max-w-[620px] px-5 py-16">
       <p className="eyebrow text-faint">Locked</p>
@@ -115,7 +118,7 @@ function GateLock({ gate, attempts }: { gate: Section; attempts: Attempt[] }) {
       <p className="mt-3 text-[14.5px] leading-relaxed text-ink-2">
         Everything after it builds on dictionaries. Each rep in the check has to be passed <span className="font-medium text-ink">without opening the solution</span>. Hints and Basics are fine.
       </p>
-      <p className="mt-6 label">Still to clear · {left.length} of {gate.exercises.length}</p>
+      <p className="mt-6 label">Still to clear · {left.length} of {total}</p>
       <ul className="mt-2 flex flex-col gap-1">
         {left.map((e) => (
           <li key={e.id}>
@@ -129,6 +132,28 @@ function GateLock({ gate, attempts }: { gate: Section; attempts: Attempt[] }) {
         <Link href={`/rep/${left[0].id}`} className="btn btn-accent btn-lg mt-6">
           Continue the check <IconArrowRight size={15} />
         </Link>
+      )}
+      {preview && (
+        <section aria-labelledby="preview-h" data-testid="locked-preview" className="mt-10 rounded-2xl bg-bg p-6 shadow-[0_0_0_1px_var(--line)]">
+          <p className="eyebrow text-muted">Preview · where this ladder is heading</p>
+          <h2 id="preview-h" className="h2 mt-1.5">
+            {exercise.title}
+          </h2>
+          <Markdown text={exercise.prompt} className="mt-3 !text-[14.5px]" />
+          {exercise.examples && exercise.examples.length > 0 && (
+            <div className="well mt-4 divide-y divide-line overflow-hidden">
+              {exercise.examples.map((x, i) => (
+                <div key={i} className="grid grid-cols-[34px_1fr] gap-x-3 gap-y-1 px-4 py-3 text-[13px]">
+                  <span className="mono text-muted">in</span>
+                  <span className="mono break-all text-ink-2">{x.input}</span>
+                  <span className="mono text-muted">out</span>
+                  <span className="mono break-all font-medium text-ink">{x.output}</span>
+                </div>
+              ))}
+            </div>
+          )}
+          <p className="mt-4 text-[13px] text-muted">You can read it now. The editor opens when the check is cleared.</p>
+        </section>
       )}
     </main>
   )

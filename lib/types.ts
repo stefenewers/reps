@@ -151,6 +151,10 @@ export interface DayModule {
   phase?: 'soft' | 'build' | 'full' | 'buffer' | 'final' | 'off'
   /** 90-day plan: 1-based day number, Oct 11 = 1. */
   planDay?: number
+  /** 90-day plan: week 1–13. */
+  planWeek?: number
+  /** 90-day plan: estimated real minutes of new work (ladder reps and new LeetCode problems). */
+  planMinutes?: number
 }
 
 export interface LeetcodeItem {

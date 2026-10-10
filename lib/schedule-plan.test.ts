@@ -31,7 +31,7 @@ test('the sprint is recorded as it happened: Oct 2–7 worked, Oct 6 and Oct 8�
   for (const id of ['o2-dict-revision', 'o2-dict-mastery']) assert.ok(required('2026-10-03').find((s) => s.id === id)?.gate, `${id} is a mastery check`)
   assert.deepEqual(required('2026-10-04').map((s) => s.id), ['o2-dict-ladder'])
   for (const date of ['2026-10-06', '2026-10-08', '2026-10-09', '2026-10-10']) assert.equal(dayExercises(DAY_BY_DATE[date]).length, 0, `${date} is an off day`)
-  assert.equal(dayLabel(DAY_BY_DATE['2026-10-03']), 'October sprint')
+  assert.equal(dayLabel(DAY_BY_DATE['2026-10-03']), '', 'days before the plan carry no label')
 })
 
 // ── the 90-day ladder plan ──────────────────────────────────────────────────
