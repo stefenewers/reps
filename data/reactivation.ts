@@ -13,6 +13,8 @@ export const REACTIVATION = {
   /** Also the key it is stored under in the synced study state. */
   id: '2026-10-12',
   from: '2026-10-12',
+  /** Offered through the first week; after that the training planner's own warm-ups take over. */
+  until: '2026-10-18',
   stages: [
     { name: 'Python recall', reps: ['o2-append-line', 'o2-countdown', 'o2-enum-fill', 'o2-count-evens'] },
     { name: 'Dictionary recall', reps: ['o2-dl-add-line', 'o2-dl-price-or', 'o2-dl-sell', 'o2-dl-sum-values', 'o2-dl-dbg-values'] },

@@ -18,7 +18,7 @@ export default function ReactivateCard({ resume }: { resume: { label: string; hr
   const { repo, attempts, today } = useReps()
   const router = useRouter()
   const [busy, setBusy] = useState(false)
-  if (today < REACTIVATION.from) return null
+  if (today < REACTIVATION.from || today > REACTIVATION.until) return null
   const saved = repo.state<ReactivationState>(REACTIVATION_KEY)
   const status = reactivationStatus(saved, attempts)
   // Once finished, the confirmation stays for the rest of that day, then the card is gone for good.

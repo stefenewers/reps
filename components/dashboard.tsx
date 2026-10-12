@@ -11,6 +11,8 @@ import ChallengeMe from '@/components/challenge-me'
 import ProgressIO from '@/components/progress-io'
 import BuildingToward from '@/components/building-toward'
 import ReactivateCard from '@/components/reactivate-card'
+import TrainingCard, { SessionReviewCard } from '@/components/training-card'
+import { useTraining } from '@/components/use-training'
 import LeetcodeList from '@/components/leetcode-list'
 import TodayBlocks from '@/components/today-blocks'
 import PaceGauge from '@/components/pace-gauge'
@@ -52,6 +54,8 @@ function DashboardToday() {
   const pace = usePacing()
   const day = pace.dayFor(today) ?? DAY_BY_DATE[today]
   const lcToday = day.leetcode ?? []
+  // Today's training prescription, laid over today's stretch of the queue.
+  const training = useTraining(day)
   const { entries: solves } = useSolveLog()
   const lcItems = leetcodeFor(day, solves, DAYS, lcMeta)
   // Before the plan begins: how many days until Day 1.
@@ -135,14 +139,22 @@ function DashboardToday() {
           />
         )}
 
-        {/* The anchor: the one thing to do now. */}
+        {/* The primary answer to "what will help me improve right now": the session plan. The queue below is the roadmap. */}
+        {day.planDay && day.phase !== 'off' && (
+          <>
+            <TrainingCard training={training} />
+            <SessionReviewCard training={training} />
+          </>
+        )}
+
+        {/* The roadmap: where the canonical queue stands. */}
         <section aria-labelledby="now" hidden={startsIn !== null && !carry} className="relative mt-9 overflow-hidden rounded-[20px] bg-bg shadow-[0_0_0_1px_var(--hairline),0_2px_4px_rgba(28,24,12,0.04),0_18px_40px_-16px_rgba(28,24,12,0.18)]">
           <BarsPattern className="-right-10 -top-16 text-ink [mask-image:linear-gradient(to_bottom,black,transparent)]" opacity={0.045} />
           <div className="relative flex flex-col gap-6 p-6 sm:p-8">
             <div className="flex items-center gap-2">
               <span aria-hidden="true" className="size-1.5 rounded-full bg-accent" />
               <span className="eyebrow text-ink-2">
-                {carry ? `Finish first · ${carry.title}` : `${day.planDay ? day.title : (todayStage?.title ?? day.short)} · ${next ? (started ? 'Continue' : 'Start here') : 'Done for today'}`}
+                {carry ? `Finish first · ${carry.title}` : `${day.planDay ? `Roadmap · ${day.title}` : (todayStage?.title ?? day.short)} · ${next ? (started ? 'Next in the plan' : 'Starts here') : 'Done for today'}`}
               </span>
             </div>
 
@@ -169,8 +181,8 @@ function DashboardToday() {
                     </p>
                   </div>
                 </div>
-                <Link href={`/rep/${next.id}`} className="btn btn-accent btn-lg shrink-0 self-start lg:self-auto" data-testid="start-today">
-                  {carry ? 'Continue' : started ? 'Continue' : 'Start today’s reps'} <IconArrowRight size={15} />
+                <Link href={`/rep/${next.id}`} className={`btn btn-lg shrink-0 self-start lg:self-auto ${day.planDay ? '' : 'btn-accent'}`} data-testid="start-today">
+                  {carry ? 'Continue' : started ? 'Continue' : day.planDay ? 'Open this rep' : 'Start today’s reps'} <IconArrowRight size={15} />
                 </Link>
               </div>
             ) : (

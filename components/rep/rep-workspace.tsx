@@ -9,7 +9,7 @@ import Markdown from '@/components/markdown'
 import CodeView from '@/components/code-view'
 import { ChoiceInput, ExplainInput, OutputInput, ReorderInput } from '@/components/rep/answer-inputs'
 import { TestResults } from '@/components/rep/results'
-import { DAY_BY_DATE, DAY_OF_EXERCISE, DAYS } from '@/data/curriculum'
+import { ALL_EXERCISES, DAY_BY_DATE, DAY_OF_EXERCISE, DAYS, EXERCISE_BY_ID } from '@/data/curriculum'
 import { PROBLEM_BY_ID } from '@/data/problems'
 import { skillName } from '@/data/skills'
 import { firstDifference, hasBlanks, outputMatches } from '@/lib/answers'
@@ -24,10 +24,12 @@ import { BRIEFS } from '@/data/briefs'
 import { walkthroughFor } from '@/data/walkthroughs'
 import { TARGET_BY_LC, targetOfRep } from '@/data/problem-bridges'
 import { readiness, repairReps } from '@/lib/bridges'
+import { REPAIR_AFTER, nextInSession, planRepair } from '@/lib/session-planner'
+import { REPAIR_LABEL, TRAINING_LABEL, type TrainingState } from '@/lib/training-state'
 import { IconArrowRight, IconBug, IconBulb, IconClock, IconDots, IconExternal, IconPlay, IconRotate, IconSpark, IconX } from '@/components/icons'
 import { followingExercise, lockedByGate, missingPrerequisites, nextInOrder, passedSet, retrievalTypeFor } from '@/lib/progress'
 import { getRunner, type RunResult } from '@/lib/python/runner'
-import { buildRepairSet, createSession, findExercise, getSession, newId } from '@/lib/sessions'
+import { buildRepairSet, createSession, findExercise, getSession, newId, skillDepth } from '@/lib/sessions'
 import {
   CoachError,
   compactMastery,
@@ -83,6 +85,10 @@ function blankStarter(e: Exercise): string {
 }
 
 type Phase = 'idle' | 'running' | 'passed' | 'failed'
+
+/** Where each authored rep sits in the curriculum, for stepping back to something earlier. */
+const ORDER = new Map(ALL_EXERCISES.map((e, i) => [e.id, i] as const))
+const interviewMode = (m: Mode) => m === 'interview'
 
 const DRAFT_KEY = (id: string) => `reps-draft:${id}`
 function localDraft(id: string): string | undefined {
@@ -312,6 +318,10 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
     const block = target.blocks.findIndex((b) => b.reps?.includes(ex.id) || b.evidence?.includes(ex.id))
     return { target, state, block, isTarget: target.exerciseId === ex.id }
   }, [ex.id, attempts])
+  // In a training session: the block this rep belongs to, and why the block is there.
+  const block = session?.training?.blocks.find((b) => b.reps.includes(ex.id))
+  // Failed submissions on this rep, for offering a repair once it keeps failing.
+  const [fails, setFails] = useState(0)
   // Watching the walkthrough of the problem you are solving is seeing its solution: rebuild it afterwards.
   const [watched, setWatched] = useState(false)
   const hints = ex.hints ?? []
@@ -446,6 +456,7 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
           updatedAt: now.toISOString(),
         }
         persist(failed)
+        setFails(failed.attemptsBeforePass)
         setPhase('failed')
       }
     },
@@ -616,8 +627,13 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
   const nextHref = useMemo(() => {
     if (session) {
       const i = session.exerciseIds.indexOf(ex.id)
-      const next = session.exerciseIds[i + 1]
+      // A training session moves faster when the warm-up comes back clean: extras whose skills are already back are skipped.
+      const next = session.training
+        ? nextInSession(session.exerciseIds, ex.id, new Set(session.training.extras), EXERCISE_BY_ID, attempts.filter((a) => (a.completedAt ?? a.startedAt) >= session.createdAt))
+        : session.exerciseIds[i + 1]
       if (next) return `/rep/${next}?s=${session.id}`
+      // A repair set goes straight back to where it was called from.
+      if (session.resume) return session.resume
       if (session.returnTo) return `/rep/${session.returnTo}`
       return '/'
     }
@@ -629,7 +645,7 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
       if (nxt) return `/rep/${nxt.id}`
     }
     return '/'
-  }, [session, ex.id, day, fromId])
+  }, [session, ex.id, day, fromId, attempts])
 
   // ── coach actions ──────────────────────────────────────────────────────────
 
@@ -682,6 +698,26 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
     } finally {
       setCoachBusy(null)
     }
+  }
+
+  // The smallest broken thing: after two failed submissions, a short set that steps back only as far as the failure calls for.
+  const repair = useMemo(() => {
+    if (fails < REPAIR_AFTER || interviewMode(mode) || session?.kind === 'repair') return null
+    const visible = (result?.tests ?? []).filter((t) => !t.hidden && !t.passed).length
+    const hidden = (result?.tests ?? []).filter((t) => t.hidden && !t.passed).length
+    return planRepair(
+      ex,
+      { errors: result?.error ? [result.error] : (result?.tests ?? []).flatMap((t) => (t.error ? [t.error] : [])).slice(-1), visibleFailed: visible, hiddenFailed: hidden, diagnosed: diagnosis?.category },
+      { exercises: EXERCISE_BY_ID, mastery, depth: skillDepth, skillName, target: toward?.target ?? null, order: (id) => ORDER.get(id) ?? Number.MAX_SAFE_INTEGER },
+    )
+  }, [fails, mode, session?.kind, result, diagnosis?.category, ex, mastery, toward])
+
+  const startPlannedRepair = async () => {
+    if (!repair?.reps.length) return
+    // Back to this rep afterwards, inside the session it interrupted.
+    const here = `/rep/${ex.id}${session ? `?s=${session.id}` : ''}`
+    const s = await createSession(repo, 'repair', `Repair Reps · ${ex.title}`, repair.reps, ex.id, { resume: here })
+    router.push(`/rep/${repair.reps[0]}?s=${s.id}`)
   }
 
   const startRepair = async () => {
@@ -900,13 +936,26 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
               </div>
             )}
 
-            {toward && !interview && toward.block >= 0 && !toward.isTarget && toward.target.section && (
+            {!interview && (block || (toward && toward.block >= 0 && !toward.isTarget)) && (
               <p className="rounded-xl bg-surface px-4 py-2.5 text-[12.5px] leading-relaxed text-muted" data-testid="toward">
-                <span className="font-medium text-ink">
-                  Building toward LC {toward.target.lc} · {toward.target.title}
-                </span>
-                <br />
-                Block {toward.block + 1} of {toward.target.blocks.length}: {toward.target.blocks[toward.block].label}
+                {block && (
+                  <>
+                    <span className="eyebrow mr-1.5 text-ink" data-testid="block-kind">
+                      {TRAINING_LABEL[block.kind as TrainingState | 'reactivate'] ?? block.kind}
+                    </span>
+                    {block.why}
+                    {toward && toward.block >= 0 && !toward.isTarget && <br />}
+                  </>
+                )}
+                {toward && toward.block >= 0 && !toward.isTarget && (
+                  <>
+                    <span className="font-medium text-ink">
+                      Building toward LC {toward.target.lc} · {toward.target.title}
+                    </span>
+                    <br />
+                    Why this rep: block {toward.block + 1} of {toward.target.blocks.length}, {toward.target.blocks[toward.block].label}.
+                  </>
+                )}
               </p>
             )}
 
@@ -977,6 +1026,26 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
                   </button>
                 )}
               </section>
+            )}
+
+            {repair && phase === 'failed' && (
+              <div className="rise-in rounded-xl px-4 py-3 shadow-[inset_0_0_0_1px_var(--line)]" data-testid="repair-offer" data-category={repair.category}>
+                <p className="label mb-1">Repair the smallest broken thing</p>
+                {repair.reps.length ? (
+                  <>
+                    <p className="text-[13.5px] leading-relaxed text-ink-2">
+                      {fails} tries in. What is getting in the way looks like <span className="font-medium text-ink">{REPAIR_LABEL[repair.category]}</span>: {repair.reps.length} short rep{repair.reps.length === 1 ? '' : 's'} on <span className="font-medium text-ink">{repair.focus}</span>, then straight back here.
+                    </p>
+                    <button type="button" className="btn btn-sm mt-2.5" onClick={startPlannedRepair} data-testid="repair-start">
+                      Do the repair reps <IconArrowRight size={12} />
+                    </button>
+                  </>
+                ) : (
+                  <p className="text-[13.5px] leading-relaxed text-ink-2">
+                    {fails} tries in, and this is the right level for you: no need to step back. Read the first failing test, change one thing, run it again.
+                  </p>
+                )}
+              </div>
             )}
 
             {diagnosis && (

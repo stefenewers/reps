@@ -280,3 +280,145 @@ test('reactivation: Today offers a warm-up session of existing reps, it runs end
   await expect(done).toContainText('Reactivated. Resume the plan.')
   await expect(done.getByRole('link')).toHaveAttribute('href', /^\/rep\//)
 })
+
+/** What Stefen had passed in the sprint, plus the plan up to (not including) `upTo`, all dated `date`. */
+function progressBundle(upTo: string, date: string) {
+  const order = PLAN_DAYS.flatMap((d) => d.planOrder ?? []).filter((k) => !k.startsWith('lc:'))
+  const sprint = (JSON.parse(readFileSync('planning/done.json', 'utf8')) as string[]).filter((id) => EXERCISE_BY_ID[id])
+  const ids = [...new Set([...sprint, ...order.slice(0, order.indexOf(upTo))])]
+  const stamp = `${date}T15:00:00.000Z`
+  const attempts = ids.map((id, i) => {
+    const e = EXERCISE_BY_ID[id]
+    return { id: `e2e-t${i}`, exerciseId: id, date, skills: e.skills, stage: e.stage, mode: 'learn', passed: true, attemptsBeforePass: 0, hintsUsed: 0, solutionViewed: false, runtimeErrors: [], startedAt: stamp, completedAt: stamp, retrievalType: 'first-exposure', updatedAt: stamp }
+  })
+  return { count: attempts.length, order, file: { name: 'progress.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify({ app: 'reps', version: 1, exportedAt: stamp, attempts, skill_mastery: [], daily_progress: [], review_queue: [], generated_reps: [], study_state: [] })) } }
+}
+
+test('training: briefing → drill → repair and back → combine → the target is ready → prove → the review says what changed', async ({ page }) => {
+  test.setTimeout(300_000)
+  // Two Sum is a few reps away, and yesterday's work is fresh.
+  const seed = progressBundle('o2-dbg-comp-self-pair', '2026-10-20')
+  await page.clock.setFixedTime(new Date('2026-10-21T09:30:00-04:00'))
+  await page.goto('/')
+  await page.getByLabel('Import progress file').setInputFiles(seed.file)
+  await expect(page.getByText(`Imported ${seed.count} new attempts`)).toBeVisible()
+
+  // Today leads with the prescription: a goal, where the last session left off, and blocks with a purpose.
+  const training = page.getByTestId('training')
+  await expect(training.getByTestId('training-goal')).toContainText('Two Sum')
+  await expect(training.getByTestId('training-briefing')).toContainText('Last session (Oct 20)')
+  const kinds = await training.getByTestId('training-blocks').locator('li').evaluateAll((els) => els.map((e) => e.getAttribute('data-kind')))
+  expect(kinds).not.toContain('reactivate') // everything it leans on was produced yesterday
+  expect(kinds.indexOf('drill')).toBeGreaterThanOrEqual(0)
+  expect(kinds.indexOf('prove')).toBeGreaterThan(kinds.indexOf('drill'))
+  await training.getByTestId('training-start').click()
+
+  // The first rep is a drill, and says so.
+  await expect(page).toHaveURL(/\/rep\/o2-dbg-comp-self-pair\?s=/)
+  await expect(page.getByTestId('block-kind')).toHaveText('Drill')
+  const sessionUrl = page.url()
+
+  // It fails twice on syntax: the repair offered is small, on a primitive, and it comes straight back here.
+  for (let i = 0; i < 2; i++) {
+    await page.locator('.cm-content').click()
+    await page.keyboard.press('ControlOrMeta+a')
+    await page.keyboard.press('Backspace')
+    await page.keyboard.insertText('def has_pair(nums, target:\n    return')
+    await page.getByTestId('submit').click()
+    // One failed run shows the error; the offer appears with the second.
+    if (i === 0) await expect(page.getByText(/SyntaxError/).first()).toBeVisible({ timeout: 90_000 })
+  }
+  const offer = page.getByTestId('repair-offer')
+  await expect(offer).toHaveAttribute('data-category', 'syntax', { timeout: 60_000 })
+  await offer.getByTestId('repair-start').click()
+  await page.waitForURL((u) => !u.pathname.endsWith('/o2-dbg-comp-self-pair'))
+  await expect(page.getByRole('navigation', { name: 'Breadcrumb' })).toContainText('Repair Reps')
+  for (let i = 0; i < 4 && page.url() !== sessionUrl; i++) {
+    const id = new URL(page.url()).pathname.split('/').pop()!
+    expect(id).not.toBe('cap-two-sum')
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText(EXERCISE_BY_ID[id].title)
+    await answer(page, EXERCISE_BY_ID[id])
+    await expect(page.getByTestId('rep-complete')).toBeVisible({ timeout: 90_000 })
+    await page.getByTestId('next-rep').click()
+    await page.waitForURL((u) => !u.pathname.endsWith(`/${id}`))
+  }
+  expect(page.url()).toBe(sessionUrl)
+
+  // Carry on through the session to the capstone, noting what each rep is for on the way.
+  const seen: string[] = []
+  for (let i = 0; i < 12; i++) {
+    const id = new URL(page.url()).pathname.split('/').pop()!
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText(EXERCISE_BY_ID[id].title)
+    seen.push((await page.getByTestId('block-kind').innerText()).toLowerCase())
+    if (id === 'cap-two-sum') break
+    await answer(page, EXERCISE_BY_ID[id])
+    await expect(page.getByTestId('rep-complete')).toBeVisible({ timeout: 90_000 })
+    await page.getByTestId('next-rep').click()
+    await page.waitForURL((u) => !u.pathname.endsWith(`/${id}`))
+  }
+  expect(new URL(page.url()).pathname).toBe('/rep/cap-two-sum')
+  expect(seen[0]).toBe('drill')
+  expect(seen).toContain('combine')
+  expect(seen[seen.length - 1]).toBe('prove')
+
+  // By now every building block of Two Sum is in place: it is ready, and only then proven.
+  const other = await page.context().newPage()
+  await other.goto('/problems')
+  await expect(other.getByTestId('target-1').getByTestId('target-status')).toHaveText('Ready to attempt')
+  await other.close()
+  await answer(page, EXERCISE_BY_ID['cap-two-sum'])
+  await expect(page.getByTestId('rep-complete')).toBeVisible({ timeout: 90_000 })
+
+  // Back on Today: the review is about what changed, not a count.
+  await page.goto('/')
+  const review = page.getByTestId('session-review')
+  await expect(review).toContainText('What changed because you trained today')
+  expect(await review.getByTestId('review-came').locator('li').count() + (await review.getByTestId('review-improved').locator('li').count())).toBeGreaterThan(0)
+  await expect(review.getByTestId('review-next')).not.toBeEmpty()
+  await page.goto('/problems')
+  await expect(page.getByTestId('target-1').getByTestId('target-status')).toHaveText('Solved unaided')
+})
+
+test('training: skills learned weeks ago are warmed up first, then the normal queue resumes', async ({ page }) => {
+  test.setTimeout(240_000)
+  // The same progress, but untouched for sixteen days.
+  const seed = progressBundle('o2-dbg-comp-self-pair', '2026-10-20')
+  await page.clock.setFixedTime(new Date('2026-11-05T09:30:00-05:00'))
+  await page.goto('/')
+  await page.getByLabel('Import progress file').setInputFiles(seed.file)
+  await expect(page.getByText(`Imported ${seed.count} new attempts`)).toBeVisible()
+
+  // Nothing was unlearned: Today prescribes a short reactivation, in the planner's own words, before the queue.
+  const training = page.getByTestId('training')
+  const first = training.getByTestId('training-blocks').locator('li').first()
+  await expect(first).toHaveAttribute('data-kind', 'reactivate')
+  await expect(first).toContainText('You already learned')
+  await expect(page.getByTestId('reactivate')).toHaveCount(0) // the one-time Oct 12 session is over
+  await training.getByTestId('training-start').click()
+  await page.waitForURL(/\/rep\//)
+
+  // Reactivation reps are repeats of reps already passed; then the first undone rep of the plan.
+  let reactivated = 0
+  for (let i = 0; i < 8; i++) {
+    const id = new URL(page.url()).pathname.split('/').pop()!
+    if (id === 'o2-dbg-comp-self-pair') break
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText(EXERCISE_BY_ID[id].title)
+    await expect(page.getByTestId('block-kind')).toHaveText('Reactivate')
+    await answer(page, EXERCISE_BY_ID[id])
+    await expect(page.getByTestId('rep-complete')).toBeVisible({ timeout: 90_000 })
+    reactivated++
+    await page.getByTestId('next-rep').click()
+    await page.waitForURL((u) => !u.pathname.endsWith(`/${id}`))
+  }
+  expect(reactivated).toBeGreaterThan(0)
+  expect(reactivated).toBeLessThanOrEqual(6)
+  await expect(page).toHaveURL(/\/rep\/o2-dbg-comp-self-pair\?s=/)
+  await expect(page.getByTestId('block-kind')).not.toHaveText('Reactivate')
+
+  // The repeats added evidence; the plan's own position did not move.
+  await page.goto('/')
+  const again = page.getByTestId('training').getByTestId('training-blocks').locator('li').first()
+  await expect(again).toHaveAttribute('data-kind', 'reactivate')
+  await expect(again).toContainText('done')
+  await expect(page.getByTestId('start-today')).toHaveAttribute('href', '/rep/o2-dbg-comp-self-pair')
+})

@@ -120,6 +120,26 @@ The 15 modules are one ordered queue: ladder, check, then bridge and problem, br
 
 The dates in §7 and §8 are the original line the gauge measures against.
 
+## 5a. Training sessions: the queue is the roadmap, the session is today's prescription
+
+Reps does not open on "the next unfinished thing". It opens on **Today's training**: a goal, where your last session left off, and blocks in order.
+
+| Block | When | What it is |
+|---|---|---|
+| **Reactivate** | Something today's work leans on has not been produced for a while | One small rep per stale skill, ones you have passed before, primitives first. "You already learned this; we are warming it back up." |
+| **Learn** | A move you have never produced | See it once (primer, trace), then type it straight away |
+| **Drill** | Understood, not automatic | Small productions and debugs until the mechanics stop costing attention |
+| **Combine** | The pieces exist, the combination does not | Ladder combines and the problem's bridge |
+| **Prove** | Every building block is in place | The mastery check, the capstone, the LeetCode problem. Offered only then |
+| **Maintain** | Already proven | Cold reps and re-solves that are due. Never ahead of what you are building toward |
+
+- **Mastery and freshness are different things.** Mastery is what you have demonstrated; it never decays. Freshness is whether a skill was *produced* recently enough to rely on today: 3 days after its last productive pass, longer with every clean cold rep behind it (6, 12, 21, 30). Opening the app, watching a video or answering a multiple-choice question does not refresh anything.
+- **A problem shows both:** learned 5 of 5 building blocks, ready today 3 of 5. The two stale ones get a quick rep each before the attempt.
+- **When a rep fails twice,** Reps names the smallest thing that looks broken (syntax, a Python operation, a data-structure operation, how the moves combine, a boundary, an edge case) and offers 1–3 reps on exactly that, then brings you straight back. Plain wrong code at the right level stays where it is: no stepping back.
+- **When it comes back clean,** it moves faster: a warm-up rep is skipped once its skills have come back clean three times in the session.
+- **None of this changes the queue.** Repeats add evidence and freshness; they never undo or duplicate what the plan counts as complete. After a warm-up or a repair you are back at the same place in the queue.
+- **The session review** at the end says what changed: came back clean, improved today, still developing, and what the next session starts with.
+
 ## 5b. Where everything lives
 
 - **Reps → Today** shows the next rep, the problem it is **building toward** with its blocks ticked off, and the day's LeetCode list with links, walkthroughs and the Unaided / Needed help buttons.

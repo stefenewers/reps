@@ -16,6 +16,15 @@ pattern ladder does not cover are taught by the problem's **bridge**, a few reps
 directly before it. Then the problem, then spaced re-solves. When a problem feels
 impossible, Reps can point to the missing block, train it, and ask again.
 
+**Training, not testing.** The queue (`lib/pacing.ts`) is the roadmap: the long-term order,
+and what counts as done. Over it sits a deterministic session planner that answers "what
+will help most right now": Today opens with a goal, where the last session left off, and
+ordered blocks (reactivate → learn → drill → combine → prove → maintain). Mastery is
+history and never decays; **freshness** is separate (was this produced recently enough
+to lean on today?), and a stale prerequisite is warmed up with a rep or two before the
+work that needs it. A rep that keeps failing gets a small repair set aimed at the
+smallest thing that broke, then returns to the session.
+
 The plan, its research basis and its generator are in `planning/` (the canonical plan);
 `npx tsx scripts/export-ladders.ts && python3 planning/gen.py` rewrites
 `data/schedule-90.ts`, which the app reads.
@@ -53,6 +62,9 @@ durable progress across devices. OpenAI adds the on-demand coach.
 | `data/exercises/bridges/` | The bridge packs: new pattern ladders (tries, matrix), six mastery checks and 45 problem bridges, 236 reps (`types.ts` describes a pack) |
 | `data/problem-bridges.ts` | Every target's prerequisite graph: its building blocks and the reps that demonstrate them |
 | `lib/bridges.ts` | Problem readiness, repair after a failed attempt, target conversion |
+| `lib/training-state.ts` | Training state (learn / drill / combine / prove / maintain), freshness, what a rep is for, failure classification. Derived, never stored |
+| `lib/session-planner.ts` | Today's training session: ordered blocks over today's stretch of the queue, repair sets, in-session acceleration, the briefing and the session review |
+| `data/reactivation.ts` | The one-time return session of Oct 12 (existing reps only) |
 | `data/mocks.ts` | Two 45-minute mock interviews |
 | `data/program.ts` | The interview target, the finish line, and the ten Road to Ready stages (copy only; counts come from the curriculum) |
 | `data/curriculum.ts` | Indexes the days |

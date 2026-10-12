@@ -14,8 +14,8 @@ export function newId(): string {
   return typeof crypto !== 'undefined' && 'randomUUID' in crypto ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`
 }
 
-export async function createSession(repo: RepsRepository, kind: SessionKind, title: string, exerciseIds: string[], returnTo?: string): Promise<Session> {
-  const s: Session = { id: newId().slice(0, 8), kind, title, exerciseIds, createdAt: new Date().toISOString(), returnTo }
+export async function createSession(repo: RepsRepository, kind: SessionKind, title: string, exerciseIds: string[], returnTo?: string, extra: Pick<Session, 'resume' | 'training'> = {}): Promise<Session> {
+  const s: Session = { id: newId().slice(0, 8), kind, title, exerciseIds, createdAt: new Date().toISOString(), returnTo, ...extra }
   await repo.setState(`session:${s.id}`, s, { flushDelayMs: 2000 })
   return s
 }

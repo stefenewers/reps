@@ -264,6 +264,10 @@ export interface Session {
   createdAt: string
   /** Where "Retry capstone" points after a repair set. */
   returnTo?: string
+  /** A full path to go back to when the session ends (a repair set returning into the training session it interrupted). */
+  resume?: string
+  /** A training session: its blocks, and which of its reps are repeats outside the canonical queue. */
+  training?: { blocks: { kind: string; title: string; why: string; reps: string[]; minutes?: number; extra?: boolean }[]; extras: string[] }
 }
 
 export interface MockResult {
