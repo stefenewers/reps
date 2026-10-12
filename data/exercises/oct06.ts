@@ -970,7 +970,7 @@ pre(build_tree([1, 2, 3, 4, 5]))`,
           title: 'Follow-up: shallowest leaf',
           style: 'modify',
           skills: ['tree_dfs', 'recursion_base_case', 'recursion_return'],
-          prompt: '**Interviewer follow-up.** Your `max_depth` works. Now return the depth of the **shallowest leaf**: the fewest nodes on any path from the root down to a leaf. A node with only one child is not a leaf. An empty tree has depth 0. Adapt it as `min_depth(root)`, then test the one-child case.',
+          prompt: '**Interviewer follow-up.** Your maximum-depth solution works: it is in the editor, already renamed `min_depth`. Now make it return the depth of the **shallowest leaf**: the fewest nodes on any path from the root down to a leaf. A node with only one child is not a leaf. An empty tree has depth 0. Then test the one-child case.',
           starterCode: `def min_depth(root):
     if root is None:
         return 0

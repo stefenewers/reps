@@ -1625,7 +1625,7 @@ for start, end in intervals[1:]:
     title: 'Follow-up: touching stays apart',
     style: 'modify',
     skills: ['interval_overlap', 'sort_key'],
-    prompt: '**Interviewer follow-up.** Your `merge` combines ranges that only touch (`[1, 4]` and `[4, 6]` become `[1, 6]`). The rule changes: touching ranges now stay **separate**, and only ranges that truly overlap combine. Adapt it as `merge_strict(intervals)`.',
+    prompt: '**Interviewer follow-up.** Your merge-intervals solution is in the editor, already renamed `merge_strict`. It combines ranges that only touch (`[1, 4]` and `[4, 6]` become `[1, 6]`). The rule changes: touching ranges now stay **separate**, and only ranges that truly overlap combine.',
     starterCode: `def merge_strict(intervals):
     merged = []
     for start, end in sorted(intervals, key=lambda iv: iv[0]):

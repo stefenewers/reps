@@ -493,7 +493,7 @@ const AUTHORED: Record<string, Brief> = {
       { name: 'nums', is: 'a list of numbers' },
       { name: 'target', is: 'a number' },
     ],
-    returns: 'the same `True`/`False` as before, using one pass and a set.',
+    returns: '`True` if two numbers at **different positions** add up to `target`, otherwise `False`. The same answer as the slow version shown in the question, found in one pass with a set.',
     catch: 'As you walk, ask: have I already passed the number that would complete this one?',
   },
   'o2-dbg-comp-inverted': {

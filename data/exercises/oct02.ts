@@ -2839,7 +2839,8 @@ pair 9 1`,
     stage: 'combine',
     repType: 'combine',
     difficulty: 3,
-    prompt: 'Rewrite your `pair_exists_slow` as `has_pair(nums, target)`: same answer, one pass with a set, no nested loop.',
+    prompt:
+      'This version checks every pair with two nested loops. It is correct, but slow:\n\n```python\ndef pair_exists_slow(nums, target):\n    for i in range(len(nums)):\n        for j in range(i + 1, len(nums)):\n            if nums[i] + nums[j] == target:\n                return True\n    return False\n```\n\nWrite `has_pair(nums, target)` that gives the same answer in **one pass**: no nested loop, and a set of the numbers seen so far.\n\n`has_pair([1, 4, 6], 10)` → `True` (4 + 6). `has_pair([5], 10)` → `False`: one 5 cannot pair with itself.',
     starterCode: `def has_pair(nums, target):
     pass`,
     solution: `def has_pair(nums, target):

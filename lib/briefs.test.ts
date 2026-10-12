@@ -40,3 +40,14 @@ test('moves: only what the rep is built from, at most three, never the pattern i
   assert.deepEqual(movesFor(['frequency_map', 'index_map', 'complement']), [])
   assert.deepEqual(movesFor(['dict_items', 'conditionals', 'list_append']).map((m) => m.id), ['dict-loop', 'list-collect'])
 })
+
+test('a rep stands on its own: no prompt asks you to reuse code from another rep that is not shown', () => {
+  for (const e of Object.values(EXERCISE_BY_ID)) {
+    const refersBack = /\byour `[a-z_]+`/i.exec(e.prompt) ?? /\b(you just wrote|previous rep|last rep|rep before)\b/i.exec(e.prompt)
+    if (!refersBack) continue
+    // Allowed only when the thing referred to is on the page: in the prompt's own code, the shown code or the starter.
+    const name = /`([a-z_]+)`/i.exec(refersBack[0])?.[1]
+    const shown = `${e.code ?? ''}\n${e.starterCode ?? ''}\n${e.prompt.replace(refersBack[0], '')}`
+    assert.ok(name ? shown.includes(`def ${name}`) || shown.includes(`${name} =`) || shown.includes(`${name}(`) || new RegExp(`\\b${name}\\b`).test(e.starterCode ?? e.code ?? '') : Boolean(e.code), `${e.id}: "${refersBack[0]}" points at something the rep does not show`)
+  }
+})

@@ -1557,7 +1557,7 @@ def level_order(root: Optional[TreeNode]) -> List[List[int]]:
       title: 'Follow-up: zigzag levels',
       style: 'modify',
       skills: ['bfs_levels', 'queue_deque', 'treenode'],
-      prompt: '**Interviewer follow-up.** Your `level_order` reads every level left to right. Now alternate: the first level left to right, the next right to left, and so on. Adapt it as `zigzag(root)`.',
+      prompt: '**Interviewer follow-up.** Your level-order solution is in the editor, already renamed `zigzag`. It reads every level left to right. Now alternate: the first level left to right, the next right to left, and so on.',
       starterCode: `from collections import deque
 
 def zigzag(root):
