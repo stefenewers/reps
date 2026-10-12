@@ -4,9 +4,10 @@ import { HASHING_PRIMERS } from '@/data/primers/hashing'
 import { PYTHON_PRIMERS } from '@/data/primers/python'
 import { PATTERN_PRIMERS } from '@/data/primers/patterns'
 import { MOVES } from '@/data/primers/moves'
+import { PACK_PRIMERS } from '@/data/exercises/bridges'
 
 /** Every primer, and the primer that covers each skill. */
-export const PRIMERS: Primer[] = [...PYTHON_PRIMERS, ...HASHING_PRIMERS, ...PATTERN_PRIMERS]
+export const PRIMERS: Primer[] = [...PYTHON_PRIMERS, ...HASHING_PRIMERS, ...PATTERN_PRIMERS, ...PACK_PRIMERS]
 
 export const PRIMER_BY_SKILL: Record<SkillId, Primer> = Object.fromEntries(PRIMERS.flatMap((p) => p.skills.map((s) => [s, p] as const)))
 

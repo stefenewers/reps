@@ -4,6 +4,7 @@ import { useMemo } from 'react'
 import Link from 'next/link'
 import { useReps } from '@/components/reps-provider'
 import { useSolveLog } from '@/components/use-solve-log'
+import { useTargets } from '@/components/use-targets'
 import { PLAN_DAYS } from '@/data/curriculum'
 import { PROBLEMS } from '@/data/problems'
 import { CHECKPOINTS } from '@/data/program-90day'
@@ -27,6 +28,7 @@ const heat = (min: number, active: boolean) => (min >= 180 ? 4 : min >= 90 ? 3 :
 export default function ProgressView() {
   const { attempts, repo, version, today } = useReps()
   const { entries } = useSolveLog()
+  const { conversion } = useTargets()
   const mocks = useMemo(
     () => repo.statesWithPrefix<MockLogEntry>(MOCKLOG_PREFIX),
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -57,11 +59,12 @@ export default function ProgressView() {
           {started ? 'How the 90 days are going, from what you actually did.' : `The plan starts ${shortDate(PLAN_DAYS[0].date)}. This page fills in as you practice.`}
         </p>
 
-        <dl className="mt-7 grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-4">
+        <dl className="mt-7 grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-3 lg:grid-cols-5">
           <Stat label="Streak" value={`${streak(active, today, PLAN_DAYS)}`} sub="working days in a row" />
           <Stat label="Days practiced" value={`${daysActive}`} sub={`of ${PLAN_DAYS.filter((d) => d.phase !== 'off' && d.date <= today).length} working days so far`} />
           <Stat label="Problems done" value={`${problemsSolved(entries, attempts, CAPSTONE_NUMBER)}`} sub="LeetCode problems, solved at least once" />
           <Stat label="Re-solves unaided" value={rate.rate === null ? '—' : `${Math.round(rate.rate * 100)}%`} sub={rate.total ? `${rate.unaided} of ${rate.total}` : 'none logged yet'} />
+          <Stat label="Target conversion" value={conversion.rate === null ? '—' : `${Math.round(conversion.rate * 100)}%`} sub={conversion.attempted ? `${conversion.converted} of ${conversion.attempted} first solves unaided, after the ladder` : 'first solves unaided, after the ladder'} />
         </dl>
 
         <section aria-labelledby="heat-h" className="panel mt-8 p-6">
@@ -80,7 +83,7 @@ export default function ProgressView() {
           <p className="mt-1 text-[13.5px] text-muted">One square a day, darker for more minutes practiced. Outlined squares are days off.</p>
           <div className="mt-4 overflow-x-auto pb-1">
             <ol className="grid w-max grid-flow-col grid-rows-7 gap-1" aria-label="Practice per day">
-              {/* Week 1 begins on a Sunday: pad so every column runs Monday to Sunday. */}
+              {/* Pad so every column runs Monday to Sunday, whatever weekday Day 1 falls on. */}
               {Array.from({ length: (parseLocal(PLAN_DAYS[0].date).getDay() + 6) % 7 }, (_, i) => (
                 <li key={`pad-${i}`} aria-hidden="true" className="size-[18px]" />
               ))}

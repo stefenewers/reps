@@ -24,6 +24,8 @@ export interface PaceModel {
   budgets: Record<string, readonly number[]>
   repsFactor: number
   lcMinutes: Record<string, number>
+  /** A Reps capstone that is the first solve of a plan problem costs what that problem would, by difficulty. */
+  capstoneMinutes?: Record<string, number>
   studyFirstExtra: number
   maxNewLeetcode: number
   resolveGaps: readonly number[]
@@ -53,13 +55,19 @@ export interface QueueItem {
 /** The whole plan as one ordered queue, in the order the original schedule does the work. */
 export function buildQueue(planDays: DayModule[], pace: PaceModel, capstoneNumber: Record<string, number>): QueueItem[] {
   const out: QueueItem[] = []
+  // The difficulty of each plan problem, read off its LeetCode rows (a capstone's re-solves carry it).
+  const difficulty = new Map(planDays.flatMap((d) => (d.leetcode ?? []).map((x) => [x.lc, x.difficulty] as const)))
+  const repMinutes = (e: { id: string; minutes: number }) => {
+    const asProblem = pace.capstoneMinutes?.[difficulty.get(capstoneNumber[e.id]) ?? '']
+    return asProblem ?? e.minutes * pace.repsFactor
+  }
   for (const d of planDays) {
     const units = d.title.split(' → ')
     const shorts = d.short.split(' → ')
     const required = d.sections.filter((s) => !s.optional)
     // Units in the order the day reaches them; a rep belongs to the last unit started, a problem to the one it finishes.
     const reps: QueueItem[] = required.flatMap((s) =>
-      s.exercises.map((e) => ({ key: e.id, kind: 'rep' as const, sectionId: s.id, gate: Boolean(s.gate), capstoneLc: capstoneNumber[e.id], minutes: e.minutes * pace.repsFactor, unit: d.title, unitShort: d.short, baseline: d.date })),
+      s.exercises.map((e) => ({ key: e.id, kind: 'rep' as const, sectionId: s.id, gate: Boolean(s.gate), capstoneLc: capstoneNumber[e.id], minutes: repMinutes(e), unit: d.title, unitShort: d.short, baseline: d.date })),
     )
     const lcs: QueueItem[] = (d.leetcode ?? [])
       .filter((x) => x.type === 'new')

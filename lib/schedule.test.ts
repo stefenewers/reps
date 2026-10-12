@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { buildReviewSession, dueReviews, scheduleAfterAttempt } from '@/lib/schedule'
+import { buildReviewSession, dueReviews, scheduleAfterAttempt, nextDue, stepDays } from '@/lib/schedule'
 import { attempt, exercise } from '@/lib/test-helpers'
 import { localDate } from '@/lib/dates'
 
@@ -70,4 +70,25 @@ test('dueReviews and buildReviewSession pick production reps for due skills', ()
   const pool = [exercise({ id: 'a', kind: 'choice', stage: 'recognize' }), exercise({ id: 'b' }), exercise({ id: 'c', kind: 'output', stage: 'trace' })]
   const ids = buildReviewSession(due, pool, { a: '2026-10-02', b: '2026-10-02', c: '2026-10-02' }, [], '2026-10-02', later)
   assert.deepEqual(ids, ['b'])
+})
+
+test('inside the 90-day plan a skill spaces out over a month: +1, +3, +7, +14, +30 days', () => {
+  const plan = { lastDay: '2027-01-09', planStart: '2026-10-12' }
+  assert.deepEqual([...stepDays('2026-10-11', plan)], [1, 3, 5], 'the sprint spacing still applies before the plan')
+  assert.deepEqual([...stepDays('2026-10-12', plan)], [1, 3, 7, 14, 30])
+  let now = new Date(2026, 9, 12, 9)
+  let queue = scheduleAfterAttempt(attempt({ date: '2026-10-12' }), exercise(), [], now, plan)
+  const due: string[] = [localDate(new Date(queue[0].dueAt))]
+  while (queue[0].status === 'pending') {
+    now = new Date(new Date(queue[0].dueAt).getTime() + 2 * 3_600_000)
+    queue = scheduleAfterAttempt(attempt({ retrievalType: 'cold' }), exercise(), queue, now, plan)
+    if (queue[0].status === 'pending') due.push(localDate(new Date(queue[0].dueAt)))
+  }
+  assert.deepEqual(due, ['2026-10-13', '2026-10-16', '2026-10-23', '2026-11-06', '2026-12-06'])
+  assert.equal(queue[0].step, 5)
+})
+
+test('a review never lands after the last day of the plan', () => {
+  const plan = { lastDay: '2027-01-09', planStart: '2026-10-12' }
+  assert.equal(localDate(new Date(nextDue(4, new Date(2026, 11, 28, 9), plan)!)), '2027-01-09')
 })

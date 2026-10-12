@@ -109,7 +109,7 @@ export function minutesRemaining(blocks: DayBlock[], nowMinutes: number): number
 }
 
 export const CHECKPOINTS = [
-  { date: '2026-11-09', label: 'Day 30', patterns: 5, problems: 18, unaided: 0.65, mocks: 5 },
-  { date: '2026-12-09', label: 'Day 60', patterns: 9, problems: 38, unaided: 0.75, mocks: 12 },
-  { date: '2027-01-08', label: 'Day 90', patterns: 15, problems: 67, unaided: 0.8, mocks: 22 },
+  { date: '2026-11-10', label: 'Day 30', patterns: 5, problems: 18, unaided: 0.65, mocks: 5 },
+  { date: '2026-12-10', label: 'Day 60', patterns: 10, problems: 34, unaided: 0.75, mocks: 12 },
+  { date: '2027-01-09', label: 'Day 90', patterns: 15, problems: 52, unaided: 0.8, mocks: 22 },
 ] as const

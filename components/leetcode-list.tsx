@@ -1,17 +1,27 @@
 'use client'
 
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+import { learnAdvice } from '@/components/building-toward'
+import { useReps } from '@/components/reps-provider'
+import { useTargets, type TargetState } from '@/components/use-targets'
 import { lcMeta, useSolveLog } from '@/components/use-solve-log'
 import { IconCheck, IconExternal, IconPlay } from '@/components/icons'
-import { DAYS } from '@/data/curriculum'
+import { DAYS, EXERCISE_BY_ID } from '@/data/curriculum'
+import { repairReps } from '@/lib/bridges'
+import { createSession } from '@/lib/sessions'
 import { leetcodeFor, unaidedRate, type SolveResult } from '@/lib/solve-log'
 import type { DayModule, LeetcodeItem } from '@/lib/types'
 
 /**
- * The day's LeetCode problems: new ones for the pattern just laddered, spaced
- * re-solves of earlier ones, and any redo that is due. They are solved on
- * LeetCode; here you get the links, how to approach each, and a one-tap record
- * of how it went, which feeds the solve log.
+ * The day's LeetCode problems: new ones (each reached through its bridge),
+ * spaced re-solves of earlier ones, and any redo that is due. They are solved
+ * on LeetCode; here you get the links, whether the problem's building blocks
+ * are in place, how to approach it, and a one-tap record of how it went.
+ *
+ * A first solve that needed help does not end there: rebuild it from a blank
+ * editor, and go back down the ladder to the block that broke.
  */
 
 const ROUND = { review1: '1 of 3', review2: '2 of 3 (about 10 days on)', review3: '3 of 3 (about a month on)' } as const
@@ -19,11 +29,16 @@ const ROUND = { review1: '1 of 3', review2: '2 of 3 (about 10 days on)', review3
 function how(item: LeetcodeItem) {
   if (item.type === 'redo') return 'Redo · you needed help last time · cold, about 15 min'
   if (item.type !== 'new') return `Re-solve ${ROUND[item.type]} · cold, about 15 min`
-  return item.mode === 'study-first' ? 'New · watch the walkthrough first, then write it from blank' : 'New · attempt for up to 30 min, then study'
+  if (item.mode === 'study-first') return 'New · watch the explanation first, then write it from blank'
+  return item.mode === 'bridge-first' ? 'New · bridge first, then attempt for up to 30 min' : 'New · attempt for up to 30 min, then study'
 }
 
 export default function LeetcodeList({ day, heading = 'On LeetCode today' }: { day: DayModule; heading?: string }) {
   const { entries, save, remove, today } = useSolveLog()
+  const { repo } = useReps()
+  const router = useRouter()
+  const { byLc, passed } = useTargets()
+  const [busy, setBusy] = useState(false)
   const items = leetcodeFor(day, entries, DAYS, lcMeta)
   if (!items.length) return null
   const byId = new Map(entries.map((e) => [e.id, e]))
@@ -34,6 +49,14 @@ export default function LeetcodeList({ day, heading = 'On LeetCode today' }: { d
     if (prev?.result === result) return void remove(i.solveId)
     // Keep any details already added in the solve log; only the result changes.
     void save({ ...(prev ?? { id: i.solveId, lc: i.lc, title: i.title, kind: i.type, date: today }), result })
+  }
+  // Down the ladder: redo the reps of one building block, cold, then come back to the problem.
+  const repair = async (state: TargetState, block: number) => {
+    const { reps } = repairReps(state.target, passed, block)
+    if (!reps.length || busy) return
+    setBusy(true)
+    const s = await createSession(repo, 'repair', `Repair Reps · ${state.target.title}`, reps)
+    router.push(`/rep/${reps[0]}?s=${s.id}`)
   }
 
   return (
@@ -52,9 +75,13 @@ export default function LeetcodeList({ day, heading = 'On LeetCode today' }: { d
       </p>
       <ul className="mt-4 flex flex-col divide-y divide-line">
         {items.map((i) => {
-          const r = byId.get(i.solveId)?.result
+          const entry = byId.get(i.solveId)
+          const r = entry?.result
+          const state = i.type === 'new' ? byLc.get(i.lc) : undefined
+          const nextRep = state && !r && state.nextRep ? EXERCISE_BY_ID[state.nextRep] : undefined
+          const helped = r === 'hinted' || r === 'failed'
           return (
-            <li key={i.solveId} className="flex flex-wrap items-center gap-x-4 gap-y-2 py-3">
+            <li key={i.solveId} className="flex flex-wrap items-center gap-x-4 gap-y-2 py-3" data-testid={`lc-${i.lc}`}>
               <span aria-hidden="true" className={`grid size-[22px] shrink-0 place-items-center rounded-md ${r ? (r === 'unaided' ? 'text-pass' : 'text-amber') : 'text-faint shadow-[inset_0_0_0_1px_var(--line-strong)]'}`}>
                 {r && <IconCheck size={12} strokeWidth={2.2} />}
               </span>
@@ -67,10 +94,33 @@ export default function LeetcodeList({ day, heading = 'On LeetCode today' }: { d
                 <p className="mt-0.5 text-[12.5px] text-muted">
                   {how(i)} · {i.difficulty} · {i.pattern}
                 </p>
+                {state && !r && (
+                  <p className="mt-1 text-[12.5px]" data-testid="lc-readiness">
+                    {state.ready ? (
+                      <span className="inline-flex items-center gap-1 font-medium text-ink-2">
+                        <IconCheck size={11} strokeWidth={2.2} className="text-pass" /> Ready: all {state.total} building blocks in place
+                      </span>
+                    ) : (
+                      <>
+                        <span className="num font-medium text-ink">
+                          {state.readyCount} of {state.total} building blocks ready
+                        </span>
+                        {nextRep && (
+                          <>
+                            <span className="text-muted"> · first: </span>
+                            <Link href={`/rep/${nextRep.id}`} className="font-medium text-ink underline decoration-line-strong underline-offset-4 hover:decoration-ink">
+                              {nextRep.title}
+                            </Link>
+                          </>
+                        )}
+                      </>
+                    )}
+                  </p>
+                )}
               </div>
               <div className="flex shrink-0 flex-wrap items-center gap-1.5">
                 {i.video && (
-                  <a href={i.video} target="_blank" rel="noreferrer" className="btn btn-ghost btn-sm">
+                  <a href={i.video} target="_blank" rel="noreferrer" className="btn btn-ghost btn-sm" title={state ? learnAdvice(state.target, state.ready) : 'Only after a real attempt from a blank editor.'}>
                     <IconPlay size={10} /> Walkthrough
                   </a>
                 )}
@@ -86,6 +136,25 @@ export default function LeetcodeList({ day, heading = 'On LeetCode today' }: { d
                   </Link>
                 )}
               </div>
+              {state && helped && entry && (
+                <div className="w-full rounded-xl bg-surface px-3.5 py-3 text-[13px]" data-testid="lc-rebuild">
+                  <p className="font-medium text-ink">Not finished yet: rebuild it, then go back down the ladder.</p>
+                  <p className="mt-1 leading-relaxed text-muted">
+                    Close the walkthrough and write the solution again from a blank editor, without looking. It comes back cold in 3 days: that is the solve that counts.
+                  </p>
+                  <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
+                    <button type="button" aria-pressed={Boolean(entry.rebuilt)} className={`btn btn-sm ${entry.rebuilt ? 'btn-primary' : ''}`} onClick={() => void save({ ...entry, rebuilt: !entry.rebuilt })}>
+                      {entry.rebuilt ? 'Rebuilt from blank' : 'I rebuilt it from blank'}
+                    </button>
+                    <span className="ml-1 text-muted">Which move broke?</span>
+                    {state.blocks.map((b, k) => (
+                      <button key={k} type="button" className="btn btn-ghost btn-sm" disabled={busy} onClick={() => void repair(state, k)}>
+                        {b.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </li>
           )
         })}

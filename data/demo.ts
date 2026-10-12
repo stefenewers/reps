@@ -14,7 +14,7 @@ export const DEMO_REPS: { id: string; rung: string; why: string }[] = [
 export const DEMO_METHOD: { title: string; body: string }[] = [
   { title: 'Ladder', body: 'Each pattern is learned from the ground up in small reps: trace it, write it, break it, fix it. Writing code is the main activity, not reading about it.' },
   { title: 'Mastery check', body: 'Cold reps from a blank editor, passed without opening the solution, before the next pattern unlocks.' },
-  { title: 'LeetCode problems', body: 'Only then the real problems for that pattern. By this point they are applications, not first contact.' },
+  { title: 'Bridge, then the problem', body: 'Each problem lists the moves it needs. The ones the ladder did not teach get a few reps of their own, placed right before it. Then the problem is those moves assembled.' },
   { title: 'Spaced re-solves', body: 'Every problem comes back cold 3, 10 and 30 days after you first solve it. Needing help brings it back the next day.' },
 ]
 

@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useMemo, useState, useSyncExternalStore, type ReactNode } from 'react'
 import { SKILLS } from '@/data/skills'
-import { DAY_BY_DATE, FIRST_DAY, LAST_DAY, REQUIRED_MODULES } from '@/data/curriculum'
+import { DAY_BY_DATE, FIRST_DAY, LAST_DAY, PLAN_START, REQUIRED_MODULES } from '@/data/curriculum'
 import { MOCKS } from '@/data/mocks'
 import { PROGRAM_STAGES, type ProgramStage } from '@/data/program'
 import { currentProgramStage, mockProgress, programStageProgress, remainingProgramStages, type StageProgress } from '@/lib/progress'
@@ -52,7 +52,7 @@ function createRepository(): RepsRepository {
   const engine = new SyncEngine(createLocalStore(), sb ? new SupabaseRemoteStore(sb) : null, {
     flushDelayMs: { attempts: 300, study_state: 15_000 },
   })
-  return new RepsRepository(engine, { skillIds: SKILL_IDS, dayFor: (d) => DAY_BY_DATE[d], lastDay: LAST_DAY })
+  return new RepsRepository(engine, { skillIds: SKILL_IDS, dayFor: (d) => DAY_BY_DATE[d], lastDay: LAST_DAY, planStart: PLAN_START })
 }
 
 let singleton: RepsRepository | null = null

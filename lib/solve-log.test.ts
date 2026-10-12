@@ -12,7 +12,7 @@ test('next working day skips Sundays and days off', () => {
   assert.equal(nextWorkingDay('2026-10-17', DAYS), '2026-10-19') // Saturday → Monday (Sunday is off)
   assert.equal(nextWorkingDay('2026-11-25', DAYS), '2026-11-28') // Wed → Sat (Thanksgiving Thu + Fri off)
   assert.equal(nextWorkingDay('2026-12-31', DAYS), '2027-01-02') // Jan 1 off
-  assert.equal(nextWorkingDay('2027-01-08', DAYS), null) // nothing after the plan
+  assert.equal(nextWorkingDay('2027-01-09', DAYS), null) // nothing after the plan
 })
 
 test('a re-solve that needed help comes back on the next working day', () => {
@@ -58,11 +58,11 @@ test('next review: the pending redo if there is one, otherwise the next planned 
 })
 
 test('the re-solve queue lists redos and unlogged planned re-solves, soonest first', () => {
-  const q = resolveQueue([], DAYS, '2026-10-11', 5)
+  const q = resolveQueue([], DAYS, '2026-10-12', 5)
   assert.equal(q.length, 5)
   assert.deepEqual(q.map((x) => x.date), [...q.map((x) => x.date)].sort())
-  assert.equal(q[0].date, '2026-10-11')
-  const logged = entry({ id: planSolveId({ lc: q[0].lc, type: q[0].type }), lc: q[0].lc, date: '2026-10-11' })
-  assert.ok(!resolveQueue([logged], DAYS, '2026-10-11', 5).some((x) => x.lc === q[0].lc && x.date === '2026-10-11'))
-  assert.ok(resolveQueue([], DAYS, '2026-10-14', 3)[0].overdue, 'unlogged past re-solves are flagged overdue')
+  assert.equal(q[0].date, '2026-10-12')
+  const logged = entry({ id: planSolveId({ lc: q[0].lc, type: q[0].type }), lc: q[0].lc, date: '2026-10-12' })
+  assert.ok(!resolveQueue([logged], DAYS, '2026-10-12', 5).some((x) => x.lc === q[0].lc && x.date === '2026-10-12'))
+  assert.ok(resolveQueue([], DAYS, '2026-10-15', 3)[0].overdue, 'unlogged past re-solves are flagged overdue')
 })

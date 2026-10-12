@@ -1,4 +1,19 @@
 lc,title,pattern,difficulty,source,why_not_scheduled,neetcode_video
+139,Word Break,1D DP on prefixes,Medium,NC150,bridge ready: first in when ahead,https://www.youtube.com/watch?v=Sx9NNgInc3A
+73,Set Matrix Zeroes,Matrix in-place markers,Medium,NC150,bridge ready: first in when ahead,https://www.youtube.com/watch?v=T41rL0L3Pnw
+435,Non-overlapping Intervals,Intervals greedy,Medium,NC150,bridge ready: first in when ahead,https://www.youtube.com/watch?v=nONCGxWoUfM
+79,Word Search,Grid backtracking,Medium,NC150,bridge ready: first in when ahead,https://www.youtube.com/watch?v=pfiQ_PS1g8E
+5,Longest Palindromic Substring,Expand around center,Medium,NC150,bridge ready: first in when ahead,https://www.youtube.com/watch?v=XYQecbcd6_c
+143,Reorder List,Linked list combo,Medium,NC150,bridge ready: first in when ahead,https://www.youtube.com/watch?v=S5bfdUTrKLM
+261,Graph Valid Tree,Union-find / DFS tree check,Medium,NC150,bridge ready: first in when ahead,https://www.youtube.com/watch?v=bXsUuownnoQ
+1143,Longest Common Subsequence,2D DP strings,Medium,NC150,bridge ready: first in when ahead,https://www.youtube.com/watch?v=Ua0GhsJSlWM
+105,Construct Binary Tree from Preorder and Inorder Traversal,Tree construction,Medium,NC150,bridge ready: first in when ahead,https://www.youtube.com/watch?v=ihj4IQGZ2zc
+417,Pacific Atlantic Water Flow,Reverse multi-source DFS,Medium,NC150,bridge ready: first in when ahead,https://www.youtube.com/watch?v=s-VkcjHqkGI
+271,Encode and Decode Strings,String encoding,Medium,NC150,bridge ready: first in when ahead,https://www.youtube.com/watch?v=B1k_sxOSgv8
+23,Merge k Sorted Lists,Heap merge,Hard,NC150,bridge ready: first in when ahead,https://www.youtube.com/watch?v=q5a5OiGbT6Q
+124,Binary Tree Maximum Path Sum,Tree DFS return-two-things,Hard,NC150,bridge ready: first in when ahead,https://www.youtube.com/watch?v=Hr5cWUld4vU
+76,Minimum Window Substring,Sliding window + need counts,Hard,NC150,bridge ready: first in when ahead,https://www.youtube.com/watch?v=jSto0O4AJbM
+91,Decode Ways,1D DP on prefixes,Medium,NC150,bridge ready: first in when ahead,https://www.youtube.com/watch?v=6aEyTjOwlJU
 297,Serialize and Deserialize Binary Tree,Preorder serialization,Hard,NC150,core Hard: do when ahead,https://www.youtube.com/watch?v=u4JAi2JJhI8
 212,Word Search II,Trie + grid backtracking,Hard,NC150,core Hard: do when ahead,https://www.youtube.com/watch?v=asbcE9mZz_U
 295,Find Median from Data Stream,Two heaps,Hard,NC150,core Hard: do when ahead,https://www.youtube.com/watch?v=itmhHWaHupI

@@ -9,6 +9,7 @@ import { InterviewTargetCompact } from '@/components/interview-target'
 import LearningPath from '@/components/learning-path'
 import ChallengeMe from '@/components/challenge-me'
 import ProgressIO from '@/components/progress-io'
+import BuildingToward from '@/components/building-toward'
 import LeetcodeList from '@/components/leetcode-list'
 import TodayBlocks from '@/components/today-blocks'
 import PaceGauge from '@/components/pace-gauge'
@@ -205,6 +206,13 @@ function DashboardToday() {
             )}
           </div>
         </section>
+
+        {/* Why this rep: the problem it builds toward, and which of its building blocks are in place. */}
+        {day.planDay && day.phase !== 'off' && (
+          <div className="mt-4 empty:hidden">
+            <BuildingToward repId={carry ? undefined : (next?.id ?? ahead?.id)} />
+          </div>
+        )}
 
         <dl className="mt-4 grid grid-cols-2 gap-x-6 gap-y-3 px-2 sm:grid-cols-3">
           <MiniStat label="Done today" value={`${stats.completed}`} sub={`rep${stats.completed === 1 ? '' : 's'} · ${stats.total - stats.completed} more in today’s stretch`} />

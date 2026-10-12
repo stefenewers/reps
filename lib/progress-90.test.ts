@@ -57,7 +57,7 @@ test('problems done counts each LeetCode number once, from the log or a Reps cap
 
 test('checkpoints report actual against target and whether each is met', () => {
   const first = dayExercises(PLAN_DAYS[0])
-  const st = checkpointStatus(CHECKPOINTS, '2026-10-20', { units: PLAN_UNITS, planDays: PLAN_DAYS, attempts: first.map((e) => attempt({ exerciseId: e.id, date: '2026-10-11' })), solves: [solve({ id: 'lc:1:review1', lc: 1, kind: 'review1' })], mocks: [], inAppMocks: ['2026-10-19'], capstoneNumber: {} })
+  const st = checkpointStatus(CHECKPOINTS, '2026-10-20', { units: PLAN_UNITS, planDays: PLAN_DAYS, attempts: first.map((e) => attempt({ exerciseId: e.id, date: '2026-10-12' })), solves: [solve({ id: 'lc:1:review1', lc: 1, kind: 'review1' })], mocks: [], inAppMocks: ['2026-10-19'], capstoneNumber: {} })
   assert.deepEqual(st.map((c) => c.label), ['Day 30', 'Day 60', 'Day 90'])
   assert.equal(st[0].reached, false)
   const row = (name: string) => st[0].rows.find((r) => r.name === name)!

@@ -74,7 +74,7 @@ export interface Example {
 }
 
 export interface ReviewMeta {
-  /** Important concepts are resurfaced as cold reps (next day, ~3 days, before Oct 11). */
+  /** Important concepts are resurfaced as cold reps (spaced over days, then weeks). */
   important: boolean
 }
 
@@ -149,7 +149,7 @@ export interface DayModule {
   leetcode?: LeetcodeItem[]
   /** 90-day plan: soft start, build, full, buffer week, final week, or an off day. */
   phase?: 'soft' | 'build' | 'full' | 'buffer' | 'final' | 'off'
-  /** 90-day plan: 1-based day number, Oct 11 = 1. */
+  /** 90-day plan: 1-based day number, Oct 12 = 1. */
   planDay?: number
   /** 90-day plan: week 1–13. */
   planWeek?: number
@@ -166,8 +166,8 @@ export interface LeetcodeItem {
   pattern: string
   /** `redo`: a re-solve that needed help, to do again cold on the next working day. */
   type: 'new' | 'review1' | 'review2' | 'review3' | 'redo'
-  /** Only on new problems: watch the walkthrough first, or attempt for 30 minutes first. */
-  mode: 'study-first' | 'attempt-first' | null
+  /** Only on new problems: do its bridge then attempt, study the walkthrough as part of the sequence, or attempt straight away. */
+  mode: 'bridge-first' | 'study-first' | 'attempt-first' | null
   video: string | null
   url: string
 }

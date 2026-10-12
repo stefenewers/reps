@@ -1,7 +1,11 @@
 import { test, expect, type Page } from '@playwright/test'
+import { readFileSync } from 'node:fs'
 import { DAYS, DAY_BY_DATE, EXERCISE_BY_ID, FIRST_DAY, LAST_DAY, dayExercises } from '@/data/curriculum'
 import { DEMO_REPS } from '@/data/demo'
 import { PLAN_UNITS } from '@/data/schedule-90'
+import { TARGET_BY_LC } from '@/data/problem-bridges'
+import { readiness } from '@/lib/bridges'
+import { PLAN_DAYS } from '@/data/curriculum'
 import { clampDate, localDate } from '@/lib/dates'
 import type { Exercise } from '@/lib/types'
 import { blockingGate } from '@/lib/progress'
@@ -101,7 +105,7 @@ test('a debug rep loads broken code, shows failing tests, and accepts the fix', 
 })
 
 test('a re-solve that needed help is logged, and comes back as a redo on the next working day', async ({ page }) => {
-  // Day 2 of the plan (a Monday). The re-solves from week 1 are waiting on Today.
+  // Day 1 of the plan (a Monday). The seeded re-solves are waiting on Today.
   await page.clock.setFixedTime(new Date('2026-10-12T10:00:00-04:00'))
   await page.goto('/')
   const list = page.getByTestId('leetcode-list')
@@ -127,7 +131,7 @@ test('pacing: a missed week changes the gauge, not the plan', async ({ page }) =
   await expect(gauge).toContainText(/Behind by \d+ working days/)
   // Nothing was dropped: the first module is still where you are, and the forecast just runs later.
   await expect(page.getByText('you are here')).toBeVisible()
-  await expect(gauge).toContainText(/days? after Jan 8/)
+  await expect(gauge).toContainText(/days? after Jan 9/)
   // A past day is a record, not an unfinished to-do list.
   await page.goto('/day/2026-10-12')
   await expect(page.getByTestId('day-kind')).toContainText('A record of what you did')
@@ -158,4 +162,69 @@ test('the public demo: no app chrome, a rep runs against its tests, the base pla
   await expect(page.getByTestId('demo-plan').locator('details')).toHaveCount(PLAN_UNITS.length)
   // Nothing is stored: the demo leaves no drafts or progress behind.
   expect(await page.evaluate(() => Object.keys(localStorage).filter((k) => /draft|attempt|solve/.test(k)).length)).toBe(0)
+})
+
+test('a problem is reached through its bridge: last block rep → ready → attempt logged → rebuild and repair → the re-solve is queued', async ({ page }) => {
+  // LC 128, Longest Consecutive Sequence: everything before the last rep of its bridge is done.
+  const target = TARGET_BY_LC.get(128)!
+  const order = PLAN_DAYS.flatMap((d) => d.planOrder ?? [])
+  const bridge = target.blocks.flatMap((b) => b.reps ?? [])
+  const last = bridge[bridge.length - 1]
+  // What Stefen had already passed before the plan began (the sprint, with its dictionary checks), then the plan up to here.
+  const sprint = (JSON.parse(readFileSync('planning/done.json', 'utf8')) as string[]).filter((id) => EXERCISE_BY_ID[id])
+  const before = [...new Set([...sprint, ...order.slice(0, order.indexOf(last)).filter((k) => !k.startsWith('lc:')), ...target.blocks.flatMap((b) => b.evidence ?? [])])]
+  const day = PLAN_DAYS.find((d) => d.planOrder?.includes('lc:128'))!.date
+  const stamp = `${PLAN_DAYS[0].date}T15:00:00.000Z`
+  const attempts = before.map((id, i) => {
+    const e = EXERCISE_BY_ID[id]
+    return { id: `e2e-${i}`, exerciseId: id, date: PLAN_DAYS[0].date, skills: e.skills, stage: e.stage, mode: 'learn', passed: true, attemptsBeforePass: 0, hintsUsed: 0, solutionViewed: false, runtimeErrors: [], startedAt: stamp, completedAt: stamp, retrievalType: 'first-exposure', updatedAt: stamp }
+  })
+  const state = readiness(target, new Set(before))
+  expect(state.ready).toBe(false)
+  expect(state.nextRep).toBe(last)
+
+  await page.clock.setFixedTime(new Date(`${day}T10:00:00-04:00`))
+  await page.goto('/')
+  await page.getByLabel('Import progress file').setInputFiles({ name: 'progress.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify({ app: 'reps', version: 1, exportedAt: stamp, attempts, skill_mastery: [], daily_progress: [], review_queue: [], generated_reps: [], study_state: [] })) })
+  await expect(page.getByText(`Imported ${attempts.length} new attempts`)).toBeVisible()
+
+  // The problem is a destination: its building blocks are listed, and exactly one is still open.
+  await page.goto('/problems')
+  const card = page.getByTestId('target-128')
+  await expect(card.getByTestId('target-status')).toHaveText(`${state.readyCount} of ${state.total} blocks ready`)
+  await expect(card.getByTestId('blocks').locator('li')).toHaveCount(target.blocks.length)
+
+  // The last bridge rep says what it builds toward. Passing it makes the target ready.
+  await page.goto(`/rep/${last}`)
+  await expect(page.getByTestId('toward')).toContainText('Building toward LC 128')
+  await answer(page, EXERCISE_BY_ID[last])
+  await expect(page.getByTestId('rep-complete')).toBeVisible({ timeout: 90_000 })
+  await page.goto('/problems')
+  await expect(page.getByTestId('target-128').getByTestId('target-status')).toHaveText('Ready to attempt')
+
+  // The next working day: the problem is on Today, ready, and its walkthrough is one click away (for after a real attempt).
+  const next = PLAN_DAYS.find((d) => d.date > day && d.phase !== 'off')!.date
+  await page.clock.setFixedTime(new Date(`${next}T10:00:00-04:00`))
+  await page.goto('/')
+  const item = page.getByTestId('lc-128')
+  await expect(item.getByTestId('lc-readiness')).toContainText(`Ready: all ${state.total} building blocks in place`)
+  await expect(item.getByRole('link', { name: 'Walkthrough' })).toHaveAttribute('href', /youtube\.com\/watch/)
+
+  // The attempt needed help: that is not the end. Rebuild it, then go back down the ladder to the block that broke.
+  await item.getByRole('button', { name: 'Needed help' }).click()
+  const rebuild = item.getByTestId('lc-rebuild')
+  await expect(rebuild).toContainText('rebuild it')
+  await rebuild.getByRole('button', { name: 'I rebuilt it from blank' }).click()
+  await expect(rebuild.getByRole('button', { name: 'Rebuilt from blank' })).toHaveAttribute('aria-pressed', 'true')
+  const broke = target.blocks.findLast((b) => b.reps?.length)!
+  await rebuild.getByRole('button', { name: broke.label }).click()
+  await expect(page).toHaveURL(new RegExp(`/rep/${broke.reps![0]}\\?s=`))
+
+  // The first solve is on the record, and the problem comes back cold: its re-solve is in the queue.
+  await page.goto('/problems')
+  const solved = page.getByTestId('target-128')
+  await expect(solved.getByTestId('target-status')).toHaveText('Solved with help')
+  await expect(solved).toContainText(/Re-solves 0 of 3 · next /)
+  await page.goto('/log')
+  await expect(page.locator('tbody tr').filter({ hasText: 'Longest Consecutive Sequence' })).toHaveCount(1)
 })

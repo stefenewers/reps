@@ -5,6 +5,8 @@
  * A brief explains the question, never the answer: no code from the
  * solution, and the catch is a pointer (often a question), not a fix.
  */
+import { PACK_BRIEFS } from '@/data/exercises/bridges'
+
 export interface Brief {
   /** For reps where the job itself needs saying (traces, fills, debugs). */
   task?: string
@@ -18,7 +20,7 @@ export interface Brief {
 
 const PREDICT = 'Read the code top to bottom and write exactly what it prints.'
 
-export const BRIEFS: Record<string, Brief> = {
+const AUTHORED: Record<string, Brief> = {
   // ── Dictionaries ───────────────────────────────────────────────────────────
   'o2-dict-assign-trace': {
     task: PREDICT,
@@ -513,3 +515,6 @@ export const BRIEFS: Record<string, Brief> = {
     catch: 'Trace `has_pair([5], 10)`. A single 5 cannot pair with itself.',
   },
 }
+
+/** Every brief: the ones above, and the ones written with the bridge packs. */
+export const BRIEFS: Record<string, Brief> = { ...AUTHORED, ...PACK_BRIEFS }

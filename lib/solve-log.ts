@@ -25,6 +25,8 @@ export interface SolveEntry {
   approach?: string
   complexity?: string
   mistake?: string
+  /** A first solve that needed help, written again from a blank editor afterwards. */
+  rebuilt?: boolean
   /** ISO timestamp of the last edit. */
   at: string
 }

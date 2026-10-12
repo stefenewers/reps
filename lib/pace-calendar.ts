@@ -75,10 +75,17 @@ export function buildCalendar(input: CalendarInput): PaceCalendar {
     if (lc && !anchors.has(lc)) anchors.set(lc, d.date)
   }
   const firstInPlan = new Set(queue.flatMap((q) => (q.kind === 'lc' ? [q.lc!.lc] : q.capstoneLc ? [q.capstoneLc] : [])))
-  for (const d of planDays) for (const x of d.leetcode ?? []) if (x.type === 'review1' && !firstInPlan.has(x.lc) && !anchors.has(x.lc)) anchors.set(x.lc, addDays(d.date, -pace.resolveGaps[0]))
+  // A problem solved before the plan began (in the sprint) is re-solved from its week-1 slot, not from that old date:
+  // otherwise its rounds would all be overdue at once on Day 1.
+  for (const d of planDays)
+    for (const x of d.leetcode ?? [])
+      if (x.type === 'review1' && !firstInPlan.has(x.lc) && (!anchors.has(x.lc) || anchors.get(x.lc)! < start)) anchors.set(x.lc, addDays(d.date, -pace.resolveGaps[0]))
   const resolves = resolvesFor(anchors, entries, planDays, pace.resolveGaps)
   const open = resolves.filter((r) => !r.doneOn)
-  const due = open.filter((r) => r.due <= today)
+  // One round of a problem at a time: a later round is not due while an earlier one is still open.
+  const firstOpen = new Map<number, number>()
+  for (const r of open) if (!firstOpen.has(r.lc) || r.round < firstOpen.get(r.lc)!) firstOpen.set(r.lc, r.round)
+  const due = open.filter((r) => r.due <= today && firstOpen.get(r.lc) === r.round)
 
   const item = (lc: number, type: LeetcodeItem['type'], mode: LeetcodeItem['mode'] = null): LeetcodeItem | null => {
     const m = input.lcMeta(lc)

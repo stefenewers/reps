@@ -6,8 +6,13 @@ graphs, not the teaching material. Every day module builds the bridge from singl
 Python primitives to the capstone, then takes the scaffolding away.
 
 The learner: understands programming concepts, but Python syntax retrieval is not yet
-automatic. Target: Google SWE internship technical interview, Oct 12 2026. ~8 hours a
-day of study. Python only.
+automatic. Target: full-time SWE I (new-grad) interview loops, prepared over the 90-day
+plan (Oct 12, 2026 → Jan 9, 2027). Python only.
+
+**A LeetCode problem is the final integration test of a prerequisite graph.** Nothing is
+scheduled as "learn the pattern, then hope it transfers": every pattern has a primer, a
+ladder and a cold mastery check, and every target problem has a bridge (see
+"Problem bridges" below).
 
 ## Files
 
@@ -48,7 +53,7 @@ trace reps are short on-ramps, never the bulk.
 `npm run audit:curriculum -- <date>` reports each day's mix. The guardrails (enforced
 by tests) are:
 
-- At least 75% of estimated time overall, and 65% per day (70% on Oct 11), is
+- At least 75% of estimated time overall, and 65% per module (70% for the interview module), is
   **active** coding: write, debug, capstone. Measured on authored minutes *and* on a
   modeled estimate, so inflating minutes doesn't help.
 - At most 3 passive reps (choice, trace, explain, tiny blank) in a row.
@@ -150,6 +155,45 @@ Rules:
   Blanks in `fill` reps are written `____`.
 - Avoid nondeterminism: no `input()`, randomness, time, or printing sets (print
   `sorted(s)` or `len(s)` instead).
+
+## Problem bridges
+
+The pattern ladder teaches the pattern. A target problem usually needs one or two moves
+the ladder never trained (prefix and suffix passes for Product of Array Except Self,
+which half is sorted for a rotated search, return-one-thing-record-another for Maximum
+Path Sum). Those moves are taught by the problem's **bridge**, placed in the plan
+immediately before the problem.
+
+Bridges live in `data/exercises/bridges/<area>.ts`. Each file exports a `Pack`
+(`data/exercises/bridges/types.ts`):
+
+- `sections`: bridge sections (`br-<lc>`, title `Toward <Problem>`), plus any new
+  pattern ladder (`tr-…`, `mx-…`) or mastery check (`gate: true`). Each names the topic
+  `module` it belongs to.
+- `bridges`: one entry per target: its `blocks` (named moves, in the order they are
+  built), each with the bridge `reps` that teach it and/or `evidence` (existing ladder
+  reps that already demonstrate it), `prerequisiteSkills`, and a `mode`.
+- `units`: new ladders and checks, by plan unit.
+- `briefs` (every code rep) and `primers` (every new skill).
+
+Rules:
+
+- Length follows the gap, not a quota: 1–2 transfer reps when the moves are already
+  laddered, 3–6 for a new Medium move, 5–8 for a hard new sub-pattern.
+- The Dictionary Ladder shape: at most one trace, then write the primitive, a variation
+  of a different shape, a debug of the classic mistake, a combine, and last a
+  **miniature analogue** from a bare signature. The analogue is never the target itself.
+- A block is a move you can name in plain words ("spot where a run starts"). Every
+  bridge rep sits in exactly one block.
+- Evidence must be something the plan schedules before the target (or already passed).
+  `lib/schedule-plan.test.ts` enforces that, and that no bridge depends on a later one.
+- A mastery check is cold, from-signature code only: no choice, no trace.
+- A new skill is added to `data/skills.ts` only when a scheduled problem needs it and
+  it is something demonstrable in code; it needs a primer and a from-scratch rep.
+
+`npx tsx scripts/verify-pack.ts <area>` verifies one pack on its own. After changing
+packs: `npx tsx scripts/export-ladders.ts && python3 planning/gen.py`, then inspect the
+plan (`npm run audit:curriculum`).
 
 ## Verify
 

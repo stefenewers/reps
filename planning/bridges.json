@@ -1,0 +1,529 @@
+{
+ "units": {
+  "Sliding window": {
+   "check": "d4w-check"
+  },
+  "Binary search": {
+   "check": "d05s-check"
+  },
+  "Tries": {
+   "ladder": [
+    "tr-node",
+    "tr-insert",
+    "tr-search",
+    "tr-prefix"
+   ],
+   "check": "tr-check"
+  },
+  "Sorting + heaps": {
+   "check": "d9h-check"
+  },
+  "Backtracking": {
+   "check": "d10b-check"
+  },
+  "Matrix": {
+   "ladder": [
+    "mx-transform",
+    "mx-layers",
+    "mx-marking"
+   ],
+   "check": "mx-check"
+  }
+ },
+ "bridges": [
+  {
+   "lc": 49,
+   "title": "Group Anagrams",
+   "unit": "Hashing",
+   "section": "br-49",
+   "mode": "attempt-first",
+   "evidence": [
+    "o2-dl-group-len",
+    "o2-dl-lc-group-anagrams"
+   ]
+  },
+  {
+   "lc": 128,
+   "title": "Longest Consecutive Sequence",
+   "unit": "Hashing",
+   "section": "br-128",
+   "mode": "bridge-first",
+   "evidence": [
+    "o2-comp-set-code"
+   ]
+  },
+  {
+   "lc": 238,
+   "title": "Product of Array Except Self",
+   "unit": "Hashing",
+   "section": "br-238",
+   "mode": "bridge-first",
+   "evidence": [
+    "o2-dl-sum-values"
+   ]
+  },
+  {
+   "lc": 271,
+   "title": "Encode and Decode Strings",
+   "unit": "Hashing",
+   "section": "br-271",
+   "mode": "bridge-first",
+   "evidence": []
+  },
+  {
+   "lc": 11,
+   "title": "Container With Most Water",
+   "unit": "Strings + two pointers",
+   "section": "br-11",
+   "mode": "bridge-first",
+   "evidence": [
+    "cap-two-sum-ii",
+    "d3-pu-has-pair",
+    "cap-best-time-stock"
+   ]
+  },
+  {
+   "lc": 15,
+   "title": "3Sum",
+   "unit": "Strings + two pointers",
+   "section": "br-15",
+   "mode": "bridge-first",
+   "evidence": [
+    "cap-two-sum-ii",
+    "d3-tsii-triplet"
+   ]
+  },
+  {
+   "lc": 424,
+   "title": "Longest Repeating Character Replacement",
+   "unit": "Sliding window",
+   "section": "br-424",
+   "mode": "bridge-first",
+   "evidence": [
+    "d4-ws-two-kinds",
+    "d4-ws-k-kinds"
+   ]
+  },
+  {
+   "lc": 76,
+   "title": "Minimum Window Substring",
+   "unit": "Sliding window",
+   "section": "br-76",
+   "mode": "bridge-first",
+   "evidence": [
+    "d4-ws-anagram-window",
+    "d4w-ck-shortest-reaching",
+    "d4-win-debug-shrink"
+   ]
+  },
+  {
+   "lc": 153,
+   "title": "Find Minimum in Rotated Sorted Array",
+   "unit": "Binary search",
+   "section": "br-153",
+   "mode": "bridge-first",
+   "evidence": [
+    "cap-binary-search",
+    "d05s-ck-page-of",
+    "d05-var-dbg-lower"
+   ]
+  },
+  {
+   "lc": 33,
+   "title": "Search in Rotated Sorted Array",
+   "unit": "Binary search",
+   "section": "br-33",
+   "mode": "bridge-first",
+   "evidence": [
+    "cap-binary-search",
+    "d05s-ck-page-of",
+    "b153-narrow",
+    "b153-peak-mini"
+   ]
+  },
+  {
+   "lc": 141,
+   "title": "Linked List Cycle",
+   "unit": "Linked lists",
+   "section": "br-141",
+   "mode": "bridge-first",
+   "evidence": [
+    "d05-ll-middle",
+    "d05-ll-last"
+   ]
+  },
+  {
+   "lc": 19,
+   "title": "Remove Nth Node From End of List",
+   "unit": "Linked lists",
+   "section": "br-19",
+   "mode": "bridge-first",
+   "evidence": [
+    "d05-dummy-remove"
+   ]
+  },
+  {
+   "lc": 143,
+   "title": "Reorder List",
+   "unit": "Linked lists",
+   "section": "br-143",
+   "mode": "bridge-first",
+   "evidence": [
+    "cap-reverse-linked-list"
+   ]
+  },
+  {
+   "lc": 23,
+   "title": "Merge k Sorted Lists",
+   "unit": "Linked lists",
+   "section": "br-23",
+   "mode": "bridge-first",
+   "evidence": [
+    "cap-merge-two-lists"
+   ]
+  },
+  {
+   "lc": 208,
+   "title": "Implement Trie (Prefix Tree)",
+   "unit": "Tries",
+   "section": "br-208",
+   "mode": "bridge-first",
+   "evidence": [
+    "tr-node-class",
+    "tr-build-trie",
+    "tr-insert",
+    "tr-has-word",
+    "tr-any-starts-with"
+   ]
+  },
+  {
+   "lc": 211,
+   "title": "Design Add and Search Words Data Structure",
+   "unit": "Tries",
+   "section": "br-211",
+   "mode": "bridge-first",
+   "evidence": [
+    "b208-word-set"
+   ]
+  },
+  {
+   "lc": 572,
+   "title": "Subtree of Another Tree",
+   "unit": "Recursion + trees",
+   "section": "br-572",
+   "mode": "bridge-first",
+   "evidence": [
+    "cap-same-tree",
+    "d06-pair-mirror",
+    "d06-dfs-contains"
+   ]
+  },
+  {
+   "lc": 235,
+   "title": "Lowest Common Ancestor of a Binary Search Tree",
+   "unit": "Recursion + trees",
+   "section": "br-235",
+   "mode": "bridge-first",
+   "evidence": [
+    "d06-dfs-contains"
+   ]
+  },
+  {
+   "lc": 98,
+   "title": "Validate Binary Search Tree",
+   "unit": "Recursion + trees",
+   "section": "br-98",
+   "mode": "bridge-first",
+   "evidence": [
+    "d06-pair-bigger",
+    "cap-same-tree"
+   ]
+  },
+  {
+   "lc": 230,
+   "title": "Kth Smallest Element in a BST",
+   "unit": "Recursion + trees",
+   "section": "br-230",
+   "mode": "bridge-first",
+   "evidence": [
+    "d06-dfs-inorder-return"
+   ]
+  },
+  {
+   "lc": 105,
+   "title": "Construct Binary Tree from Preorder and Inorder Traversal",
+   "unit": "Recursion + trees",
+   "section": "br-105",
+   "mode": "bridge-first",
+   "evidence": []
+  },
+  {
+   "lc": 124,
+   "title": "Binary Tree Maximum Path Sum",
+   "unit": "Recursion + trees",
+   "section": "br-124",
+   "mode": "bridge-first",
+   "evidence": [
+    "cap-max-depth"
+   ]
+  },
+  {
+   "lc": 133,
+   "title": "Clone Graph",
+   "unit": "Graphs",
+   "section": "br-133",
+   "mode": "bridge-first",
+   "evidence": [
+    "o8-d-order",
+    "cap-path-exists"
+   ]
+  },
+  {
+   "lc": 417,
+   "title": "Pacific Atlantic Water Flow",
+   "unit": "Graphs",
+   "section": "br-417",
+   "mode": "bridge-first",
+   "evidence": [
+    "o7-v-flood-fill",
+    "cap-number-of-islands"
+   ]
+  },
+  {
+   "lc": 323,
+   "title": "Number of Connected Components in an Undirected Graph",
+   "unit": "Graphs",
+   "section": "br-323",
+   "mode": "bridge-first",
+   "evidence": [
+    "o8-a-build-undirected",
+    "o8-d-stack",
+    "o8-d-order"
+   ]
+  },
+  {
+   "lc": 261,
+   "title": "Graph Valid Tree",
+   "unit": "Graphs",
+   "section": "br-261",
+   "mode": "bridge-first",
+   "evidence": [
+    "o8-a-build-undirected",
+    "o8-d-stack"
+   ]
+  },
+  {
+   "lc": 252,
+   "title": "Meeting Rooms",
+   "unit": "Intervals",
+   "section": "br-252",
+   "mode": "attempt-first",
+   "evidence": [
+    "cap-merge-intervals",
+    "d9-iv-can-attend"
+   ]
+  },
+  {
+   "lc": 57,
+   "title": "Insert Interval",
+   "unit": "Intervals",
+   "section": "br-57",
+   "mode": "bridge-first",
+   "evidence": [
+    "d9-iv-merge-sorted",
+    "cap-merge-intervals"
+   ]
+  },
+  {
+   "lc": 435,
+   "title": "Non-overlapping Intervals",
+   "unit": "Intervals",
+   "section": "br-435",
+   "mode": "bridge-first",
+   "evidence": [
+    "d9-key-records"
+   ]
+  },
+  {
+   "lc": 253,
+   "title": "Meeting Rooms II",
+   "unit": "Intervals",
+   "section": "br-253",
+   "mode": "bridge-first",
+   "evidence": [
+    "d9-heap-ropes",
+    "cap-kth-largest",
+    "d9-iv-can-attend"
+   ]
+  },
+  {
+   "lc": 39,
+   "title": "Combination Sum",
+   "unit": "Backtracking",
+   "section": "br-39",
+   "mode": "bridge-first",
+   "evidence": [
+    "cap-subsets",
+    "d10b-step-plans",
+    "d10-ps-combos",
+    "d10-sub-loop-style"
+   ]
+  },
+  {
+   "lc": 79,
+   "title": "Word Search",
+   "unit": "Backtracking",
+   "section": "br-79",
+   "mode": "bridge-first",
+   "evidence": [
+    "o7-n-list",
+    "o7-i-sink-dfs"
+   ]
+  },
+  {
+   "lc": 48,
+   "title": "Rotate Image",
+   "unit": "Matrix",
+   "section": "br-48",
+   "mode": "bridge-first",
+   "evidence": [
+    "mx-t-transpose",
+    "mx-c-swap-axes",
+    "mx-t-reverse-rows",
+    "mx-t-flip-rows"
+   ]
+  },
+  {
+   "lc": 54,
+   "title": "Spiral Matrix",
+   "unit": "Matrix",
+   "section": "br-54",
+   "mode": "bridge-first",
+   "evidence": [
+    "mx-l-bottom-edge",
+    "mx-l-left-edge",
+    "mx-l-dbg-single-row",
+    "mx-c-frame"
+   ]
+  },
+  {
+   "lc": 73,
+   "title": "Set Matrix Zeroes",
+   "unit": "Matrix",
+   "section": "br-73",
+   "mode": "bridge-first",
+   "evidence": [
+    "mx-m-lines-with",
+    "mx-c-warm-up"
+   ]
+  },
+  {
+   "lc": 213,
+   "title": "House Robber II",
+   "unit": "Dynamic programming",
+   "section": "br-213",
+   "mode": "bridge-first",
+   "evidence": [
+    "cap-house-robber",
+    "d10-roll-robber-table"
+   ]
+  },
+  {
+   "lc": 53,
+   "title": "Maximum Subarray",
+   "unit": "Dynamic programming",
+   "section": "br-53",
+   "mode": "bridge-first",
+   "evidence": [
+    "cap-best-time-stock",
+    "d3-rs-largest"
+   ]
+  },
+  {
+   "lc": 55,
+   "title": "Jump Game",
+   "unit": "Dynamic programming",
+   "section": "br-55",
+   "mode": "bridge-first",
+   "evidence": [
+    "cap-best-time-stock"
+   ]
+  },
+  {
+   "lc": 322,
+   "title": "Coin Change",
+   "unit": "Dynamic programming",
+   "section": "br-322",
+   "mode": "bridge-first",
+   "evidence": [
+    "d10-bu-any-steps",
+    "cap-climbing-stairs"
+   ]
+  },
+  {
+   "lc": 139,
+   "title": "Word Break",
+   "unit": "Dynamic programming",
+   "section": "br-139",
+   "mode": "bridge-first",
+   "evidence": [
+    "d10-bu-any-steps"
+   ]
+  },
+  {
+   "lc": 300,
+   "title": "Longest Increasing Subsequence",
+   "unit": "Dynamic programming",
+   "section": "br-300",
+   "mode": "bridge-first",
+   "evidence": [
+    "d10-roll-robber-table"
+   ]
+  },
+  {
+   "lc": 5,
+   "title": "Longest Palindromic Substring",
+   "unit": "Dynamic programming",
+   "section": "br-5",
+   "mode": "bridge-first",
+   "evidence": [
+    "cap-valid-palindrome",
+    "d3-tp-palindrome-plain"
+   ]
+  },
+  {
+   "lc": 62,
+   "title": "Unique Paths",
+   "unit": "Dynamic programming",
+   "section": "br-62",
+   "mode": "bridge-first",
+   "evidence": [
+    "d10-rec-grid-paths",
+    "d10-memo-grid"
+   ]
+  },
+  {
+   "lc": 1143,
+   "title": "Longest Common Subsequence",
+   "unit": "Dynamic programming",
+   "section": "br-1143",
+   "mode": "bridge-first",
+   "evidence": [
+    "b62-fill-inside",
+    "b62-cheapest-walk"
+   ]
+  },
+  {
+   "lc": 91,
+   "title": "Decode Ways",
+   "unit": "Dynamic programming",
+   "section": "br-91",
+   "mode": "bridge-first",
+   "evidence": [
+    "b139-count-splits",
+    "b139-prefix-table",
+    "cap-climbing-stairs"
+   ]
+  }
+ ]
+}

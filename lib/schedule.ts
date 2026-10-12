@@ -3,24 +3,38 @@ import { attemptQuality } from '@/lib/mastery'
 import { addDays, localDate, parseLocal } from '@/lib/dates'
 
 /**
- * Deterministic spaced retrieval, compressed into the ten-day window.
+ * Deterministic spaced retrieval of skills: "can I still produce the move?"
+ * (Whole LeetCode problems are re-solved on their own +3 / +10 / +30 schedule,
+ * see lib/pacing.ts: "can I still solve the whole problem?")
+ *
+ * The spacing depends on the phase the attempt falls in:
+ * - the October sprint (before the 90-day plan): compressed, +1, +3, +5 days;
+ * - the 90-day plan: +1, +3, +7, +14, +30 days.
  *
  * - A skill is scheduled the first time it is produced (not merely recognised):
  *   next day.
- * - Each clean cold rep advances it: +1 day, +3 days, then once more before the
- *   final day. After that it is done.
+ * - Each clean cold rep advances it one step. After the last step it is done.
  * - A shaky pass (hints, solution, many retries) brings it back later the same day.
  * - A failure brings it back within the hour.
  * - Nothing important is ever scheduled past the last study day.
  * - Capstones and other important exercises get their own cold re-solve item.
  */
 
-export const STEP_DAYS = [1, 3, 5]
+/** Days until the next cold rep after each clean one, by phase. */
+export const SPRINT_STEP_DAYS = [1, 3, 5] as const
+export const PLAN_STEP_DAYS = [1, 3, 7, 14, 30] as const
 const RECOGNITION: Stage[] = ['recognize', 'trace']
 const MORNING_HOUR = 7
 
 export interface ScheduleOptions {
   lastDay: string // YYYY-MM-DD, nothing scheduled after this morning
+  /** First day of the 90-day plan. From this date on the longer spacing applies. */
+  planStart?: string
+}
+
+/** The spacing in force on a local date. */
+export function stepDays(today: string, opts: ScheduleOptions): readonly number[] {
+  return opts.planStart && today >= opts.planStart ? PLAN_STEP_DAYS : SPRINT_STEP_DAYS
 }
 
 function atMorning(date: string): string {
@@ -39,9 +53,10 @@ function capDue(iso: string, opts: ScheduleOptions): string {
 }
 
 export function nextDue(step: number, now: Date, opts: ScheduleOptions): string | null {
-  if (step >= STEP_DAYS.length) return null
   const today = localDate(now)
-  const target = atMorning(addDays(today, STEP_DAYS[step]))
+  const steps = stepDays(today, opts)
+  if (step >= steps.length) return null
+  const target = atMorning(addDays(today, steps[step]))
   // Before the final day, the last step lands on the final day at the latest.
   if (today < opts.lastDay) return capDue(target, opts)
   return null

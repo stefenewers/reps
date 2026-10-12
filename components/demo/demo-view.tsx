@@ -136,7 +136,7 @@ export default function DemoView() {
             A base plan for software engineering interviews
           </h2>
           <p className="mt-2 max-w-[700px] text-[15px] leading-relaxed text-ink-2">
-            Thirteen weeks for new-grad and entry-level loops, in Python. Fifteen patterns in the order they build on each other, each with its ladder, its check and its problems. Open a pattern to see what it covers.
+            Thirteen weeks for new-grad and entry-level loops, in Python. Fifteen patterns in the order they build on each other, each with its ladder, its check and its problems, and each problem reached through a short bridge of the moves it needs. Open a pattern to see what it covers.
           </p>
 
           <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -159,7 +159,7 @@ export default function DemoView() {
                     <span className="min-w-0">
                       <span className="font-medium text-ink">{m.name}</span>
                       <span className="ml-2 hidden text-[12.5px] text-muted sm:inline">
-                        {m.reps ? `${m.reps} ladder reps` : 'study-first, no ladder'}
+                        {m.reps} ladder reps
                         {m.check ? ' · mastery check' : ''} · {m.problems.length} problem{m.problems.length === 1 ? '' : 's'}
                       </span>
                     </span>

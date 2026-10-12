@@ -17,6 +17,8 @@ export interface RepositoryConfig {
   skillIds: SkillId[]
   dayFor: (date: string) => DayModule | undefined
   lastDay: string
+  /** First day of the 90-day plan: skill reviews space out further from here. */
+  planStart?: string
   now?: () => Date
 }
 
@@ -109,7 +111,7 @@ export class RepsRepository {
     const writes: Promise<void>[] = [this.engine.save('attempts', [row])]
 
     if (row.completedAt && !existing?.completedAt) {
-      const updates = scheduleAfterAttempt(row, exercise, this.reviews(), now, { lastDay: this.config.lastDay })
+      const updates = scheduleAfterAttempt(row, exercise, this.reviews(), now, { lastDay: this.config.lastDay, planStart: this.config.planStart })
       if (updates.length) writes.push(this.engine.save('review_queue', updates))
     }
     writes.push(this.refreshDerived(row.skills, [row.date]))

@@ -8,14 +8,20 @@ trains the Python primitives and patterns underneath them until they come out
 automatically, then asks for the capstone.
 
 It began as a ten-day sprint (Oct 2–10, 2026) and now runs a **90-day ladder plan**
-(Oct 11, 2026 → Jan 8, 2027): every pattern is a ladder of reps from the ground up, a
-mastery check passed without the solution, then that pattern's LeetCode problems with
-spaced re-solves. The plan, its research basis and its generator are in `planning/`
-(the canonical plan); `python3 planning/gen.py` rewrites `data/schedule-90.ts`, which
-the app reads.
+(Mon Oct 12, 2026 → Sat Jan 9, 2027). The doctrine: **a LeetCode problem is the final
+integration test of a prerequisite graph.** Every pattern has a primer, a ladder of reps
+from the ground up and a cold mastery check passed without the solution. Every target
+problem lists its building blocks (named moves, each demonstrated by reps); the ones its
+pattern ladder does not cover are taught by the problem's **bridge**, a few reps placed
+directly before it. Then the problem, then spaced re-solves. When a problem feels
+impossible, Reps can point to the missing block, train it, and ask again.
 
-Pages: **Today** (the day's blocks, ladder reps and LeetCode list), **Plan** (all 13
-weeks), **Skills**, **Problems**, **Log** (every solve, the re-solve queue, a form for
+The plan, its research basis and its generator are in `planning/` (the canonical plan);
+`npx tsx scripts/export-ladders.ts && python3 planning/gen.py` rewrites
+`data/schedule-90.ts`, which the app reads.
+
+Pages: **Today** (the next rep, the problem it builds toward, the day's blocks and LeetCode list), **Plan** (all 13
+weeks), **Skills**, **Problems** (each target's building blocks, readiness, first solve and re-solves), **Log** (every solve, the re-solve queue, a form for
 outside problems), **Progress** (heatmap, time against plan, pattern readiness,
 checkpoints) and **Interview** (mocks, a mock log, the design track and the stories
 checklist). CI (`.github/workflows/ci.yml`) runs lint, tests, content verification and
@@ -43,7 +49,10 @@ durable progress across devices. OpenAI adds the on-demand coach.
 |---|---|
 | `data/skills.ts` | The skill graph (granular skills + prerequisites) |
 | `data/problems.ts` | Canonical LeetCode targets (links only, no copied statements) |
-| `data/exercises/oct02.ts` … `oct11.ts` | The ten day modules, 635 reps, code-first |
+| `data/exercises/oct02.ts` … `oct11.ts` | The ten topic modules, 689 reps, code-first |
+| `data/exercises/bridges/` | The bridge packs: new pattern ladders (tries, matrix), six mastery checks and 45 problem bridges, 236 reps (`types.ts` describes a pack) |
+| `data/problem-bridges.ts` | Every target's prerequisite graph: its building blocks and the reps that demonstrate them |
+| `lib/bridges.ts` | Problem readiness, repair after a failed attempt, target conversion |
 | `data/mocks.ts` | Two 45-minute mock interviews |
 | `data/program.ts` | The interview target, the finish line, and the ten Road to Ready stages (copy only; counts come from the curriculum) |
 | `data/curriculum.ts` | Indexes the days |
@@ -52,7 +61,7 @@ durable progress across devices. OpenAI adds the on-demand coach.
 | `public/python/harness.py` | The test harness, shared by the browser and the content verifier |
 | `public/python/worker.js` | Pyodide in a module Web Worker |
 | `lib/mastery.ts` | Deterministic mastery heuristic |
-| `lib/schedule.ts` | Spaced cold reps, compressed into Oct 2–11 |
+| `lib/schedule.ts` | Spaced cold reps of skills: +1/+3/+5 days in the sprint, +1/+3/+7/+14/+30 in the 90-day plan |
 | `lib/progress.ts` | Progression, unlocking, readiness, end-of-day summary |
 | `lib/storage/` | Persistence: `types`, `local` (IndexedDB), `remote` (Supabase), `sync`, `repository` |
 | `lib/coach/` | Adaptive coach: schemas, verification, cache, dedupe, client |
@@ -150,8 +159,8 @@ independent time model so estimates can't be padded. Tests enforce: ≥ 75% acti
 overall, ≥ 65% per day, no more than 3 passive reps in a row, ≥ 4 Debug Reps per day,
 and a from-scratch rep for every skill.
 
-Current mix: 635 reps, 91% of planned time active (93% modeled), 80% of reps active,
-127 Debug Reps, longest passive run 2.
+Current mix: 925 reps, 93% of planned time active (94% modeled), 83% of reps active,
+182 Debug Reps, longest passive run 2.
 
 ## Mastery
 

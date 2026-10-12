@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { MODULES as DAYS } from '@/data/curriculum'
+import { BRIDGE_SECTION_IDS, MODULES as DAYS } from '@/data/curriculum'
 import { auditDays, bucketOf, engagementOf, GUARDRAILS, guardrailViolations, inflated, isFromScratch, productionLines } from '@/lib/curriculum-audit'
 import { choice, code, debug, fill, output, write, t } from '@/data/exercises/build'
 
@@ -20,7 +20,8 @@ test('overall and per-day active coding time clear the thresholds', () => {
 test('every authored topic module carries roughly 5.5–6.5 hours of content', () => {
   // The foundation module also carries the dictionary reinforcement added Oct 3: the two checks and the ladder.
   const REINFORCEMENT = ['o2-dict-revision', 'o2-dict-mastery', 'o2-dict-ladder']
-  const gate = (date: string) => DAYS.find((d) => d.date === date)!.sections.filter((s) => REINFORCEMENT.includes(s.id)).reduce((n, s) => n + s.exercises.reduce((m, e) => m + e.minutes, 0), 0)
+  // The bridge packs (new ladders, checks and problem bridges) sit on top of the original modules.
+  const gate = (date: string) => DAYS.find((d) => d.date === date)!.sections.filter((s) => REINFORCEMENT.includes(s.id) || BRIDGE_SECTION_IDS.has(s.id)).reduce((n, s) => n + s.exercises.reduce((m, e) => m + e.minutes, 0), 0)
   for (const d of auditDays(DAYS).days) assert.ok(d.minutes >= 330 && d.minutes <= 400 + gate(d.date), `${d.date}: ${d.minutes} min`)
 })
 

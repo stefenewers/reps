@@ -1,14 +1,20 @@
-"""Builds the 90-day ladder plan: every pattern is learned the way dictionaries were.
+"""Builds the 90-day ladder plan: every pattern, and every problem, is learned the way dictionaries were.
 
-    unit = ladder in Reps (ground up) -> mastery check (cold reps, no solution)
-           -> that pattern's LeetCode problems -> spaced re-solves (+3 / +10 / +30 days)
+    unit    = primer + ladder in Reps (ground up) -> mastery check (cold reps, no solution)
+              -> for each target problem: its bridge (the moves the ladder did not teach) -> the problem
+              -> spaced re-solves (+3 / +10 / +30 days)
+
+A LeetCode problem is the final integration test of a prerequisite graph. No problem is scheduled
+without one: a target needs a bridge in data/exercises/bridges (or is a Reps capstone, whose ladder
+sections are its graph).
 
 Run from the repo root:
-    npx tsx scripts/export-ladders.ts     # refresh planning/reps-sections.json
+    npx tsx scripts/export-ladders.ts     # refresh planning/reps-sections.json and planning/bridges.json
     python3 planning/gen.py
 
 Inputs : archive/first-plan/problems.csv the original problem list (metadata + verified video links)
          planning/reps-sections.json     every authored Reps section and rep
+         planning/bridges.json           each target's bridge section and mode; ladders and checks added by the packs
          planning/done.json              rep ids already passed (from Supabase, Oct 10)
 Outputs: data/schedule-90.ts             what the app reads: per day, Reps reps + LeetCode problems
          planning/problems.csv           the LeetCode side, day by day
@@ -22,8 +28,8 @@ import csv, datetime as dt, collections, json, re, os
 
 SOURCE_CSV = 'archive/first-plan/problems.csv'   # the first plan's problem list: metadata + verified video links
 
-START = dt.date(2026, 10, 11)
-END = dt.date(2027, 1, 8)
+START = dt.date(2026, 10, 12)             # Day 1 (a Monday)
+END = dt.date(2027, 1, 9)                # Day 90
 OFF = {dt.date(2026, 11, 26), dt.date(2026, 11, 27), dt.date(2026, 12, 24), dt.date(2026, 12, 25), dt.date(2027, 1, 1)}
 BUFFER = [(dt.date(2026, 11, 23), dt.date(2026, 11, 28)), (dt.date(2026, 12, 21), dt.date(2026, 12, 26))]
 SOFT_END = dt.date(2026, 10, 17)
@@ -36,8 +42,21 @@ REVIEW_CAPS = {'off': (0, 0), 'soft': (2, 2), 'build': (3, 2), 'full': (5, 3), '
 
 REPS_FACTOR = 2.25                      # real minutes per authored Reps minute (measured 2.5 on dictionaries; later ladders reuse earlier moves)
 LC_COST = {'Easy': 25, 'Medium': 40, 'Hard': 60}
-STUDY_FIRST_EXTRA = 10                  # the walkthrough comes first on a pattern's first problem
+STUDY_FIRST_EXTRA = 10                  # a study-first problem: the walkthrough is part of the sequence
 MAX_NEW_LC = 2                          # new LeetCode problems in one day, whatever the minute budget says
+# A Reps capstone is a problem reached through its ladder: it costs what a LeetCode problem of its difficulty costs
+# (measured: ladder-reached solves took 3-13 min), not its authored minutes times the rep factor.
+# The ladders and bridges together are more than 90 days hold at this pace, so the plan is trimmed in this order:
+#   1. redundant low-value reps leave the pattern ladders (they stay in the app as extras): explain reps (the solve
+#      log and the mocks train explanation) and variations beyond each section's spine (SPINE_EARLY / SPINE_LATE);
+#   2. the lowest-value target problems wait in the "when ahead" list with their bridges intact (DEMOTE, in order).
+# The building-block method itself is never trimmed: no problem is scheduled without its bridge.
+# Most reps of each kind a pattern-ladder section keeps. Ladders get shorter after the first month: by then the
+# Python underneath is owned and each new pattern reuses earlier moves (EARLY = the units that start in days 1-30).
+SPINE_EARLY = {'output': 1, 'choice': 1, 'reorder': 1, 'write': 2, 'scratch': 4, 'debug': 2, 'explain': 0}
+SPINE_LATE = {'output': 1, 'choice': 1, 'reorder': 1, 'write': 1, 'scratch': 3, 'debug': 2, 'explain': 0}
+EARLY_UNITS = 5
+DEMOTE = [76, 124, 23, 271, 417, 105, 1143, 211, 261, 143, 5, 79, 435, 73, 139, 33, 230, 57, 300, 62]
 
 BLIND75 = {1,121,217,238,53,152,153,33,15,11,371,191,338,268,190,70,322,300,1143,139,39,198,213,91,62,55,133,207,417,200,128,269,261,323,57,56,435,252,253,206,141,21,23,19,143,73,54,48,79,3,424,76,242,49,20,125,5,647,271,104,100,226,124,102,297,572,105,98,230,235,208,211,212,347,295}
 CORE_HARDS_TO_STRETCH = {269, 212, 297, 295}
@@ -51,6 +70,7 @@ CAPSTONE_OF = {1: 'cap-two-sum', 242: 'cap-valid-anagram', 125: 'cap-valid-palin
                70: 'cap-climbing-stairs', 198: 'cap-house-robber'}
 
 # Units, in order. ladder = Reps sections; check = the mastery check; core/more = LeetCode numbers (more = tier 2, added only if they fit).
+# planning/bridges.json adds the ladders and checks authored with the bridge packs (see apply_packs).
 UNITS = [
     dict(name='Hashing', short='Hashing', ladder=['o2-dict-ladder', 'o2-valid-anagram', 'o2-index-maps', 'o2-complements', 'o2-two-sum'], check='o2-cold',
          core=[49, 128, 238, 271], more=[560, 36]),
@@ -92,7 +112,7 @@ SEED_META = {387: ('First Unique Character in a String', 'Frequency map + second
              383: ('Ransom Note', 'Frequency map as a budget', 'Easy'), 219: ('Contains Duplicate II', 'Value -> last index map', 'Easy')}
 
 def is_buffer(d): return any(a <= d <= b for a, b in BUFFER)
-def is_study(d): return d == START or (START <= d <= END and d.weekday() != 6 and d not in OFF)
+def is_study(d): return START <= d <= END and d.weekday() != 6 and d not in OFF
 def phase(d):
     if not is_study(d): return 'off'
     if d <= SOFT_END: return 'soft'
@@ -107,12 +127,46 @@ def budget(d):
 def review_cap(d):
     weekday, saturday = REVIEW_CAPS[phase(d)]
     return saturday if d.weekday() == 5 else weekday
-def week_of(d): return 1 if d <= SOFT_END else (d - dt.date(2026, 10, 12)).days // 7 + 1
+def week_of(d): return (d - START).days // 7 + 1
 def slug(title):
     s = re.sub(r"[^a-z0-9 -]", '', title.lower())
     return re.sub(r'-+', '-', s.replace(' ', '-')).strip('-')
 
-def build(more_allowed):
+def spine(reps, caps, evidence=frozenset()):
+    """The reps of a pattern-ladder section the plan keeps: capstones and any rep a bridge cites as evidence, always;
+    of each kind, at most caps[kind] (cited reps count toward it), spread from the first (most scaffolded) to the last (least)."""
+    kind = lambda r: 'scratch' if r['bucket'] == 'write' and r['scratch'] else r['bucket']
+    by, cited = collections.OrderedDict(), collections.Counter()
+    keep = set()
+    for i, r in enumerate(reps):
+        if r['capstone']: keep.add(i)
+        elif r['id'] in evidence: keep.add(i); cited[kind(r)] += 1
+        else: by.setdefault(kind(r), []).append(i)
+    for k, idx in by.items():
+        n = max(0, caps.get(k, len(idx) + cited[k]) - cited[k])
+        if n >= len(idx): keep |= set(idx)
+        elif n == 1: keep.add(idx[0])
+        elif n > 1: keep |= {idx[round(j * (len(idx) - 1) / (n - 1))] for j in range(n)}
+    return [r for i, r in enumerate(reps) if i in keep]
+
+def load_bridges():
+    b = json.load(open('planning/bridges.json'))
+    return {int(x['lc']): x for x in b['bridges']}, b['units']
+
+PACK_SECTIONS = set()
+
+def apply_packs(pack_units):
+    """Ladders and mastery checks authored with the bridge packs join their unit."""
+    for u in UNITS:
+        extra = pack_units.get(u['name'], {})
+        PACK_SECTIONS.update(extra.get('ladder', []))
+        for sid in extra.get('ladder', []):
+            if sid not in u['ladder']: u['ladder'].append(sid)
+        if extra.get('check'):
+            assert not u['check'] or u['check'] == extra['check'], f"{u['name']} already has a check"
+            u['check'] = extra['check']
+
+def build(more_allowed, demoted=frozenset()):
     src = list(csv.DictReader(open(SOURCE_CSV)))
     meta = {}
     for r in src: meta.setdefault(int(r['lc']), r)
@@ -121,28 +175,34 @@ def build(more_allowed):
     sections = {s['id']: s for s in json.load(open('planning/reps-sections.json'))}
     done = set(json.load(open('planning/done.json')))
     cap_to_lc = {v: k for k, v in CAPSTONE_OF.items()}
+    bridges, _ = load_bridges()
+    cited = frozenset(e for lc, x in bridges.items() if lc not in demoted for e in x['evidence'])
 
     # ---- the ordered work queue
     queue = []                           # dicts: kind rep|lc, unit, cost, ...
     for ui, u in enumerate(UNITS):
         for sid in u['ladder'] + ([u['check']] if u['check'] else []):
-            for rep in sections[sid]['reps']:
+            # Sections authored with the packs (new ladders, checks) are already minimal; the older pattern ladders keep their spine.
+            authored = sections[sid]['reps'] if sid in PACK_SECTIONS or sid == u['check'] else spine(sections[sid]['reps'], SPINE_EARLY if ui < EARLY_UNITS else SPINE_LATE, cited)
+            for rep in authored:
                 if rep['id'] in done: continue
-                queue.append(dict(kind='rep', unit=ui, section=sid, id=rep['id'], gate=(sid == u['check']), cost=rep['minutes'] * REPS_FACTOR,
-                                  lc=cap_to_lc.get(rep['id'])))
-        first = True
-        for lc in u['core'] + [x for x in u['more'] if x in more_allowed]:
+                lc = cap_to_lc.get(rep['id'])
+                queue.append(dict(kind='rep', unit=ui, section=sid, id=rep['id'], gate=(sid == u['check']),
+                                  cost=LC_COST[meta[lc]['difficulty']] if lc else rep['minutes'] * REPS_FACTOR, lc=lc))
+        for lc in [x for x in u['core'] if x not in demoted] + [x for x in u['more'] if x in more_allowed]:
             m = meta[lc]
-            study = first and not u['ladder']    # no ladder for this pattern (tries, matrix): the walkthrough is the ladder
-            first = False
-            queue.append(dict(kind='lc', unit=ui, lc=lc, mode='study-first' if study else 'attempt-first',
-                              cost=LC_COST[m['difficulty']] + (STUDY_FIRST_EXTRA if study else 0), tier=1 if lc in u['core'] else 2))
+            br = bridges[lc]                     # every target has a bridge: the reps that teach what its ladder did not
+            for rep in sections[br['section']]['reps']:
+                if rep['id'] in done: continue
+                queue.append(dict(kind='rep', unit=ui, section=br['section'], id=rep['id'], gate=False, cost=rep['minutes'] * REPS_FACTOR, lc=None))
+            queue.append(dict(kind='lc', unit=ui, lc=lc, mode=br['mode'],
+                              cost=LC_COST[m['difficulty']] + (STUDY_FIRST_EXTRA if br['mode'] == 'study-first' else 0), tier=1 if lc in u['core'] else 2))
     iq = [dict(kind='rep', unit=-1, section=sid, id=rep['id'], gate=False, cost=rep['minutes'] * REPS_FACTOR, lc=None)
           for sid in INTERVIEW_QUEUE for rep in sections[sid]['reps'] if rep['id'] not in done]
 
     days = [START + dt.timedelta(n) for n in range((END - START).days + 1)]
     plan, reviews, lc_rows = [], [], []
-    seeds = dict(SEEDS)
+    seeds = sorted(SEEDS)                # a seed due before the plan starts, or on a day off or a full day, rolls forward: never dropped
     def lc_row(d, lc, kind, mode='', tier=''):
         m = meta[lc]
         lc_rows.append(dict(week=week_of(d), day=d.strftime('%a'), date=d.isoformat(), lc=lc, title=m['title'], pattern=m['pattern'], difficulty=m['difficulty'],
@@ -164,9 +224,10 @@ def build(more_allowed):
         if ph == 'off':
             continue
         used_rev = 0
-        if d in seeds:                    # problems already solved inside Reps: first cold re-solve on LeetCode
-            day['leetcode'].append(lc_row(d, seeds[d], 'review1', tier='seed'))
-            after(d, seeds[d], start=2)
+        while seeds and seeds[0][0] <= d and used_rev < review_cap(d):   # problems already solved inside Reps: first cold re-solve on LeetCode
+            _, lc = seeds.pop(0)
+            day['leetcode'].append(lc_row(d, lc, 'review1', tier='seed'))
+            after(d, lc, start=2)
             used_rev += 1
         # Most urgent first: the re-solve whose window closes soonest. One that cannot fit before its window closes is a bug in the plan.
         for q in reviews:
@@ -228,16 +289,31 @@ def build(more_allowed):
         names = [UNITS[u]['name'] for u in units] or (['Interview practice'] if day['sections'] else (['Re-solves'] if day['leetcode'] else []))
         day['unit'] = ' → '.join(names)
         day['short'] = ' → '.join([UNITS[u]['short'] for u in units]) or ('Interview' if day['sections'] else 'Re-solves')
-    reviews = [q for q in reviews]
+    assert not seeds, f'seed re-solves never placed: {seeds}'
     return plan, lc_rows, queue, iq, reviews, meta
 
 def main():
-    # Add tier-2 problems, best first, for as long as everything still fits before the end.
-    allowed = set()
+    bridges, pack_units = load_bridges()
+    apply_packs(pack_units)
+    for u in UNITS:
+        assert u['ladder'] and u['check'], f"{u['name']}: every pattern needs a ladder and a mastery check"
+        for lc in u['core']: assert lc in bridges, f"LC {lc} ({u['name']}) has no bridge"
+    # Add tier-2 problems (only ones with a bridge), best first, for as long as everything still fits before the end.
+    allowed, demoted = set(), set()
     plan, lc_rows, left, iq_left, reviews, meta = build(allowed)
+    for lc in DEMOTE:                    # too much for 90 days: the lowest-value targets wait in the "when ahead" list
+        if not left: break
+        demoted.add(lc)
+        plan, lc_rows, left, iq_left, reviews, meta = build(allowed, frozenset(demoted))
     assert not left, f'core does not fit: {len(left)} items left; trim a ladder or raise the budgets'
+    for lc in [x for x in reversed(DEMOTE) if x in demoted]:   # a cheaper one set aside earlier may still fit: most valuable first
+        trial = build(allowed, frozenset(demoted - {lc}))
+        if not trial[2]:
+            demoted.discard(lc)
+            plan, lc_rows, left, iq_left, reviews, meta = trial
     for lc in MORE_PRIORITY:
-        trial = build(allowed | {lc})
+        if lc not in bridges or demoted: continue
+        trial = build(allowed | {lc}, frozenset(demoted))
         if trial[2]:
             break
         allowed.add(lc)
@@ -250,28 +326,36 @@ def main():
     order = list(dict.fromkeys(int(r['lc']) for r in csv.DictReader(open(SOURCE_CSV)) if r['type'] == 'new'))
     with open('planning/stretch.csv', 'w', newline='') as f:
         w = csv.writer(f); w.writerow(['lc', 'title', 'pattern', 'difficulty', 'source', 'why_not_scheduled', 'neetcode_video'])
-        rank = lambda x: (0 if x in CORE_HARDS_TO_STRETCH else 1 if x in MORE_PRIORITY else 2, MORE_PRIORITY.index(x) if x in MORE_PRIORITY else order.index(x))
+        # Problems that already have a bridge come first, most valuable first (the reverse of the order they were set aside in).
+        rank = lambda x: (0, -DEMOTE.index(x)) if x in DEMOTE else (1, 0) if x in bridges else (2 if x in CORE_HARDS_TO_STRETCH else 3 if x in MORE_PRIORITY else 4, MORE_PRIORITY.index(x) if x in MORE_PRIORITY else order.index(x))
         for lc in sorted([x for x in order if x not in scheduled_lc], key=rank):
             m = meta[lc]
-            why = 'core Hard: do when ahead' if lc in CORE_HARDS_TO_STRETCH else ('next in when ahead' if lc in MORE_PRIORITY else 'extra depth')
+            why = 'bridge ready: first in when ahead' if lc in bridges else 'core Hard: do when ahead' if lc in CORE_HARDS_TO_STRETCH else ('next in when ahead' if lc in MORE_PRIORITY else 'extra depth')
             w.writerow([lc, m['title'], m['pattern'], m['difficulty'], m['source'], why, m['neetcode_video']])
 
     body = json.dumps([{k: v for k, v in d.items()} for d in plan], indent=1, ensure_ascii=False)
     open('data/schedule-90.ts', 'w').write(
         "// Generated by planning/gen.py. Do not edit by hand: change the generator and rerun it.\n"
-        "export interface PlanLeetcode {\n  lc: number\n  title: string\n  difficulty: string\n  pattern: string\n  type: 'new' | 'review1' | 'review2' | 'review3'\n  mode: 'study-first' | 'attempt-first' | null\n  video: string | null\n  url: string\n}\n"
+        "export interface PlanLeetcode {\n  lc: number\n  title: string\n  difficulty: string\n  pattern: string\n  type: 'new' | 'review1' | 'review2' | 'review3'\n  mode: 'bridge-first' | 'study-first' | 'attempt-first' | null\n  video: string | null\n  url: string\n}\n"
         "export interface PlanDay {\n  date: string\n  week: number\n  phase: 'soft' | 'build' | 'full' | 'buffer' | 'final' | 'off'\n  /** The pattern(s) this day works on. */\n  unit: string\n  short: string\n  /** Reps reps for the day, grouped by their section. `gate` marks a mastery check. */\n  sections: { id: string; reps: string[]; gate: boolean; label: string | null }[]\n  leetcode: PlanLeetcode[]\n  /** Estimated real minutes of new work (ladder reps and new LeetCode problems). */\n  minutes: number\n  /** The day's new work in the order it is done: rep ids, and `lc:<number>` for new LeetCode problems. */\n  order: string[]\n}\n\n"
         f"export const PLAN_START = '{START.isoformat()}'\nexport const PLAN_END = '{END.isoformat()}'\n\n"
-        "/** The fifteen patterns, in order: each one's ladder sections, its mastery check, and its LeetCode problems. */\n"
-        "export const PLAN_UNITS: { name: string; short: string; sections: string[]; check: string | null; leetcode: number[] }[] = "
+        "/** The fifteen patterns, in order: each one's ladder sections, its mastery check, and its LeetCode problems (each reached through its bridge). */\n"
+        "export const PLAN_UNITS: { name: string; short: string; sections: string[]; check: string; leetcode: number[] }[] = "
         + json.dumps([dict(name=u['name'], short=u['short'], sections=u['ladder'], check=u['check'],
                            leetcode=[lc for lc in u['core'] + u['more'] if lc in {r['lc'] for r in lc_rows if r['type'] == 'new'}]) for u in UNITS], indent=1) + "\n\n"
+        "/** LeetCode problems whose first solve is a Reps capstone: number -> exercise id. */\n"
+        f"export const PLAN_CAPSTONES: Record<number, string> = {json.dumps({str(k): v for k, v in CAPSTONE_OF.items()})}\n\n"
+        "/** Targets with a bridge that 90 days do not hold at the plan's pace: next in when you are ahead, most valuable first. */\n"
+        "export const PLAN_WHEN_AHEAD: { lc: number; title: string; difficulty: string; pattern: string; unit: string; video: string | null; url: string }[] = "
+        + json.dumps([dict(lc=lc, title=meta[lc]['title'], difficulty=meta[lc]['difficulty'], pattern=meta[lc]['pattern'], unit=bridges[lc]['unit'],
+                           video=meta[lc]['neetcode_video'] or None, url=f"https://leetcode.com/problems/{slug(meta[lc]['title'])}/")
+                      for lc in sorted([x for x in bridges if x not in scheduled_lc], key=lambda x: -DEMOTE.index(x) if x in DEMOTE else 1)], indent=1) + "\n\n"
         "/** A re-solve lands this many days after the first solve (it slides only to miss a Sunday, a day off or a full day). */\n"
         f"export const RESOLVE_WINDOWS = {json.dumps({f'review{k}': list(v) for k, v in WINDOWS.items()})} as const\n\n"
         "/**\n * The pace model, shared with the app so it can forecast from where you actually are:\n"
         " * minutes of new work a day's pace allows by phase ([weekday, Saturday]), what a rep and a\n"
         " * LeetCode problem cost in real minutes, and the re-solve gaps.\n */\n"
-        f"export const PACE = {json.dumps(dict(budgets={k: list(v) for k, v in BUDGETS.items()}, repsFactor=REPS_FACTOR, lcMinutes=LC_COST, studyFirstExtra=STUDY_FIRST_EXTRA, maxNewLeetcode=MAX_NEW_LC, resolveGaps=STEPS, overfill=1.1))} as const\n\n"
+        f"export const PACE = {json.dumps(dict(budgets={k: list(v) for k, v in BUDGETS.items()}, repsFactor=REPS_FACTOR, lcMinutes=LC_COST, capstoneMinutes=LC_COST, studyFirstExtra=STUDY_FIRST_EXTRA, maxNewLeetcode=MAX_NEW_LC, resolveGaps=STEPS, overfill=1.1))} as const\n\n"
         "/** The most re-solves a day may carry, by phase: [weekday, Saturday]. */\n"
         f"export const RESOLVE_CAPS = {json.dumps({k: list(v) for k, v in REVIEW_CAPS.items()})} as const\n\n"
         f"export const PLAN_90 = {body} as PlanDay[]\n")
@@ -295,6 +379,7 @@ def main():
 
     new_lc = [r for r in lc_rows if r['type'] == 'new']
     reps_total = sum(len(s['reps']) for d in plan for s in d['sections'])
+    print('set aside for when ahead:', sorted(demoted), '| tier 2 added:', sorted(allowed))
     print(f"Reps reps scheduled: {reps_total} | new LeetCode: {len(new_lc)} (core {sum(1 for r in new_lc if r['tier'] == 1)}, tier 2 {sum(1 for r in new_lc if r['tier'] == 2)}) + {len(CAPSTONE_OF)} as Reps capstones")
     print(f"LeetCode re-solves scheduled: {len(lc_rows) - len(new_lc)} | left for maintenance: {len(reviews)} | interview reps left over: {len(iq_left)}")
     last_new = max(d['date'] for d in plan if any(s['id'][:3] != 'o11' for s in d['sections']) or any(x['type'] == 'new' for x in d['leetcode']))

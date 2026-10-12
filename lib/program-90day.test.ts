@@ -4,7 +4,8 @@ import { DAY_BY_DATE, PLAN_DAYS } from '@/data/curriculum'
 import { blockAt, blocksFor, clock12, minutesRemaining } from '@/data/program-90day'
 
 test('a plan day lays out as blocks in clock order, sized by the plan', () => {
-  const d = DAY_BY_DATE['2026-11-10'] // a Tuesday in the full phase
+  // A Tuesday in the full phase that carries re-solves.
+  const d = PLAN_DAYS.find((x) => x.phase === 'full' && new Date(`${x.date}T12:00:00`).getDay() === 2 && (x.leetcode ?? []).some((i) => i.type !== 'new'))!
   const blocks = blocksFor(d)
   assert.deepEqual(blocks.map((b) => b.id), ['A', 'B', 'C', 'D'])
   assert.equal(blocks[0].start, '09:00')

@@ -22,6 +22,8 @@ import { primersFor } from '@/data/primers'
 import { movesFor } from '@/data/primers/moves'
 import { BRIEFS } from '@/data/briefs'
 import { walkthroughFor } from '@/data/walkthroughs'
+import { TARGET_BY_LC, targetOfRep } from '@/data/problem-bridges'
+import { readiness, repairReps } from '@/lib/bridges'
 import { IconArrowRight, IconBug, IconBulb, IconClock, IconDots, IconExternal, IconPlay, IconRotate, IconSpark, IconX } from '@/components/icons'
 import { followingExercise, lockedByGate, missingPrerequisites, nextInOrder, passedSet, retrievalTypeFor } from '@/lib/progress'
 import { getRunner, type RunResult } from '@/lib/python/runner'
@@ -302,6 +304,16 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
   const primers = useMemo(() => primersFor(ex.skills), [ex.skills])
   const moves = useMemo(() => movesFor(ex.skills), [ex.skills])
   const walk = walkthroughFor(ex, section?.id)
+  // The problem this rep builds toward, and where this rep sits among its building blocks.
+  const toward = useMemo(() => {
+    const target = targetOfRep(ex.id)
+    if (!target) return null
+    const state = readiness(target, passedSet(attempts))
+    const block = target.blocks.findIndex((b) => b.reps?.includes(ex.id) || b.evidence?.includes(ex.id))
+    return { target, state, block, isTarget: target.exerciseId === ex.id }
+  }, [ex.id, attempts])
+  // Watching the walkthrough of the problem you are solving is seeing its solution: rebuild it afterwards.
+  const [watched, setWatched] = useState(false)
   const hints = ex.hints ?? []
   const allHints = [...hints.slice(0, hintsShown), ...aiHints]
 
@@ -559,6 +571,13 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
     }
   }
 
+  const watchWalkthrough = () => {
+    if (ex.repType !== 'capstone') return
+    setWatched(true)
+    const a = ensureAttempt()
+    persist({ ...a, solutionViewed: true, updatedAt: new Date().toISOString() })
+  }
+
   const viewSolution = () => {
     setSolutionShown(true)
     setMoreOpen(false)
@@ -667,6 +686,16 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
 
   const startRepair = async () => {
     setMoreOpen(false)
+    // A target problem goes back down its own ladder first: the first building block not in place, else the last one (where the moves combine).
+    const target = toward?.isTarget ? toward.target : ex.problemId ? TARGET_BY_LC.get(PROBLEM_BY_ID[ex.problemId]?.number ?? -1) : undefined
+    if (target && !diagnosis?.repairSkills?.length) {
+      const down = repairReps(target, passedSet(attempts)).reps.filter((id) => id !== ex.id)
+      if (down.length) {
+        const s = await createSession(repo, 'repair', `Repair Reps · ${ex.title}`, down, ex.id)
+        router.push(`/rep/${down[0]}?s=${s.id}`)
+        return
+      }
+    }
     // Deterministic: primitives from the diagnosis if we have one, otherwise the weakest skills involved.
     const fromDiagnosis = diagnosis?.repairSkills ?? []
     const weakest = [...ex.skills, ...ex.prerequisites].sort((a, b) => (mastery[a]?.score ?? 0) - (mastery[b]?.score ?? 0)).slice(0, 4)
@@ -871,11 +900,22 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
               </div>
             )}
 
+            {toward && !interview && toward.block >= 0 && !toward.isTarget && toward.target.section && (
+              <p className="rounded-xl bg-surface px-4 py-2.5 text-[12.5px] leading-relaxed text-muted" data-testid="toward">
+                <span className="font-medium text-ink">
+                  Building toward LC {toward.target.lc} · {toward.target.title}
+                </span>
+                <br />
+                Block {toward.block + 1} of {toward.target.blocks.length}: {toward.target.blocks[toward.block].label}
+              </p>
+            )}
+
             {walk && !interview && (
               <a
                 href={walk.url}
                 target="_blank"
                 rel="noreferrer"
+                onClick={watchWalkthrough}
                 data-testid="walkthrough"
                 className="group flex items-start gap-3 rounded-xl bg-surface px-4 py-3 shadow-[inset_0_0_0_1px_var(--line)] transition-colors hover:bg-surface-2"
               >
@@ -892,6 +932,18 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
                   </span>
                 </span>
               </a>
+            )}
+
+            {watched && !interview && ex.kind === 'code' && (
+              <div className="rise-in rounded-xl px-4 py-3 shadow-[inset_0_0_0_1px_var(--line)]" data-testid="rebuild">
+                <p className="text-[13.5px] font-medium text-ink">Rebuild it</p>
+                <p className="mt-0.5 text-[12.5px] leading-relaxed text-muted">
+                  Watching is not the end of it. Close the video and write the solution from the bare signature, without looking. This pass earns partial credit; the cold re-solve in 3 days is the one that counts.
+                </p>
+                <button type="button" className="btn btn-sm mt-2.5" onClick={() => setCode(blankStarter(ex))}>
+                  <IconRotate size={12} /> Clear the editor and rebuild
+                </button>
+              </div>
             )}
 
             {showBasics && <BasicsPanel brief={BRIEFS[ex.id]} moves={moves} primers={primers} onClose={() => setShowBasics(false)} />}

@@ -9,6 +9,7 @@ import { day as oct08 } from '@/data/exercises/oct08'
 import { day as oct09 } from '@/data/exercises/oct09'
 import { day as oct10 } from '@/data/exercises/oct10'
 import { day as oct11 } from '@/data/exercises/oct11'
+import { PACK_SECTIONS } from '@/data/exercises/bridges'
 import { MOCK_EXERCISES } from '@/data/mocks'
 import { OPTIONAL_SECTIONS, PICKS, REQUIRED_COLD_CAPSTONES, SCHEDULE, TRIM_FROM } from '@/data/schedule'
 import { PLAN_90, PLAN_START } from '@/data/schedule-90'
@@ -17,8 +18,9 @@ import { PROGRAM_STAGES } from '@/data/program'
 /**
  * Two views of the same content:
  *
- * - MODULES: the ten authored topic modules (data/exercises/*). Content checks,
- *   guardrails and Road to Ready measure these.
+ * - MODULES: the ten authored topic modules (data/exercises/*), each with the
+ *   bridge sections (data/exercises/bridges/*) that belong to its topic.
+ *   Content checks, guardrails and Road to Ready measure these.
  * - DAYS: the calendar, assembled from MODULES by data/schedule.ts. Today, the
  *   day pages, the progress rail and review scheduling use these.
  *
@@ -26,7 +28,13 @@ import { PROGRAM_STAGES } from '@/data/program'
  * exercise itself: extras simply sit in sections marked `optional`.
  */
 
-export const MODULES: DayModule[] = [oct02, oct03, oct04, oct05, oct06, oct07, oct08, oct09, oct10, oct11]
+/** Sections added by the bridge packs: new pattern ladders, mastery checks and problem bridges. */
+export const BRIDGE_SECTION_IDS = new Set(PACK_SECTIONS.map((s) => s.id))
+
+export const MODULES: DayModule[] = [oct02, oct03, oct04, oct05, oct06, oct07, oct08, oct09, oct10, oct11].map((m) => ({
+  ...m,
+  sections: [...m.sections, ...PACK_SECTIONS.filter((s) => s.module === m.date).map((s): Section => ({ id: s.id, title: s.title, summary: s.summary, exercises: s.exercises, gate: s.gate }))],
+}))
 
 export const INTERVIEW_DATE = '2026-10-12'
 
@@ -154,7 +162,7 @@ function buildDays(): DayModule[] {
     }
   })
 
-  // ── the 90-day ladder plan (from Oct 11): each pattern is a ladder, a mastery check, then its LeetCode problems
+  // ── the 90-day ladder plan: each pattern is a ladder and a mastery check, then each problem's bridge and the problem
   const plan: DayModule[] = PLAN_90.map((d, i) => {
     const planDay = i + 1
     if (d.phase === 'off') return { date: d.date, short: 'Off day', title: 'Off day', focus: 'Rest. Nothing is planned.', sections: leftoversFor(d.date), capstones: [], modules: [], phase: 'off', planDay, planWeek: d.week, planMinutes: 0 }
@@ -203,7 +211,7 @@ function buildDays(): DayModule[] {
   return [...sprint, ...plan]
 }
 
-/** The calendar: the October sprint (Oct 2–10) followed by the 90-day ladder plan (Oct 11 → Jan 8). */
+/** The calendar: the October sprint (Oct 2–11) followed by the 90-day ladder plan (Oct 12 → Jan 9). */
 export const DAYS: DayModule[] = buildDays()
 
 export const FIRST_DAY = DAYS[0].date
