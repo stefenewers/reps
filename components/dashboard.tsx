@@ -10,6 +10,7 @@ import LearningPath from '@/components/learning-path'
 import ChallengeMe from '@/components/challenge-me'
 import ProgressIO from '@/components/progress-io'
 import BuildingToward from '@/components/building-toward'
+import ReactivateCard from '@/components/reactivate-card'
 import LeetcodeList from '@/components/leetcode-list'
 import TodayBlocks from '@/components/today-blocks'
 import PaceGauge from '@/components/pace-gauge'
@@ -120,6 +121,19 @@ function DashboardToday() {
 
         {/* Before Day 1, unless an earlier mastery check is still open: that comes first. */}
         {startsIn !== null && !carry && <PlanPreview first={PLAN_DAYS[0]} startsIn={startsIn} />}
+
+        {/* After days away: a short warm-up session comes before the queue. The plan below is what follows it. */}
+        {day.planDay && (
+          <ReactivateCard
+            resume={
+              next && section
+                ? { label: `${section.title} · ${next.title}`, href: `/rep/${next.id}` }
+                : ahead
+                  ? { label: ahead.title, href: `/rep/${ahead.id}` }
+                  : null
+            }
+          />
+        )}
 
         {/* The anchor: the one thing to do now. */}
         <section aria-labelledby="now" hidden={startsIn !== null && !carry} className="relative mt-9 overflow-hidden rounded-[20px] bg-bg shadow-[0_0_0_1px_var(--hairline),0_2px_4px_rgba(28,24,12,0.04),0_18px_40px_-16px_rgba(28,24,12,0.18)]">

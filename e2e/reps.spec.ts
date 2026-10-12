@@ -6,6 +6,7 @@ import { PLAN_UNITS } from '@/data/schedule-90'
 import { TARGET_BY_LC } from '@/data/problem-bridges'
 import { readiness } from '@/lib/bridges'
 import { PLAN_DAYS } from '@/data/curriculum'
+import { REACTIVATION_REPS } from '@/data/reactivation'
 import { clampDate, localDate } from '@/lib/dates'
 import type { Exercise } from '@/lib/types'
 import { blockingGate } from '@/lib/progress'
@@ -227,4 +228,55 @@ test('a problem is reached through its bridge: last block rep → ready → atte
   await expect(solved).toContainText(/Re-solves 0 of 3 · next /)
   await page.goto('/log')
   await expect(page.locator('tbody tr').filter({ hasText: 'Longest Consecutive Sequence' })).toHaveCount(1)
+})
+
+test('reactivation: Today offers a warm-up session of existing reps, it runs end to end, and then the plan resumes', async ({ page }) => {
+  test.setTimeout(300_000)
+  // Monday Oct 12, with what Stefen had passed in the sprint (so the session really is a repeat).
+  const sprint = (JSON.parse(readFileSync('planning/done.json', 'utf8')) as string[]).filter((id) => EXERCISE_BY_ID[id])
+  const stamp = '2026-10-04T15:00:00.000Z'
+  const attempts = sprint.map((id, i) => {
+    const e = EXERCISE_BY_ID[id]
+    return { id: `e2e-r${i}`, exerciseId: id, date: '2026-10-04', skills: e.skills, stage: e.stage, mode: 'learn', passed: true, attemptsBeforePass: 0, hintsUsed: 0, solutionViewed: false, runtimeErrors: [], startedAt: stamp, completedAt: stamp, retrievalType: 'first-exposure', updatedAt: stamp }
+  })
+  await page.clock.setFixedTime(new Date('2026-10-12T09:30:00-04:00'))
+  await page.goto('/')
+  await page.getByLabel('Import progress file').setInputFiles({ name: 'progress.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify({ app: 'reps', version: 1, exportedAt: stamp, attempts, skill_mastery: [], daily_progress: [], review_queue: [], generated_reps: [], study_state: [] })) })
+  await expect(page.getByText(`Imported ${attempts.length} new attempts`)).toBeVisible()
+
+  // The card sits above the normal queue, and says where the plan resumes afterwards.
+  const card = page.getByTestId('reactivate')
+  await expect(card).toHaveAttribute('data-state', 'offer')
+  await expect(card).toContainText("You've been away from coding practice")
+  await expect(card).toContainText(`${REACTIVATION_REPS.length} reps`)
+  await expect(card).toContainText('After this · Resume:')
+  await expect(page.getByTestId('start-today')).toBeVisible()
+  // Last time's answer is still saved as a draft on this device: starting the session must not hand it back.
+  await page.evaluate(([id, code]) => window.localStorage.setItem(`reps-draft:${id}`, code), [REACTIVATION_REPS[0], EXERCISE_BY_ID[REACTIVATION_REPS[0]].solution!])
+  await card.getByTestId('reactivate-start').click()
+
+  // Every rep in order, each starting from its bare starter (never last time's answer), each run against its tests.
+  for (const [i, id] of REACTIVATION_REPS.entries()) {
+    await expect(page).toHaveURL(new RegExp(`/rep/${id}\\?s=`))
+    const e = EXERCISE_BY_ID[id]
+    // A line of the answer that the starter does not already have (debug reps share most lines with their fix).
+    const tell = e.solution!.split('\n').map((l) => l.trim()).find((l) => l.length > 6 && !(e.starterCode ?? '').includes(l))
+    await expect(page.locator('.cm-content')).toBeVisible()
+    if (tell) await expect(page.locator('.cm-content')).not.toContainText(tell)
+    await answer(page, e)
+    await expect(page.getByTestId('rep-complete')).toBeVisible({ timeout: 90_000 })
+    if (i === 3) {
+      // Part-way through, Today offers to continue where the session stands.
+      await page.goto('/')
+      await expect(page.getByTestId('reactivate')).toContainText(`4 of ${REACTIVATION_REPS.length} done`)
+      await page.getByTestId('reactivate-start').click()
+    } else await page.getByTestId('next-rep').click()
+  }
+
+  // Finished cleanly: back on Today, pointed at the next normal item. LeetCode is not opened.
+  await expect(page).toHaveURL(/\/$/)
+  const done = page.getByTestId('reactivate')
+  await expect(done).toHaveAttribute('data-state', 'done')
+  await expect(done).toContainText('Reactivated. Resume the plan.')
+  await expect(done.getByRole('link')).toHaveAttribute('href', /^\/rep\//)
 })
