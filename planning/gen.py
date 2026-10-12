@@ -56,6 +56,12 @@ MAX_NEW_LC = 2                          # new LeetCode problems in one day, what
 SPINE_EARLY = {'output': 1, 'choice': 1, 'reorder': 1, 'write': 2, 'scratch': 4, 'debug': 2, 'explain': 0}
 SPINE_LATE = {'output': 1, 'choice': 1, 'reorder': 1, 'write': 1, 'scratch': 3, 'debug': 2, 'explain': 0}
 EARLY_UNITS = 5
+# LeetCode Premium problems: locked without a subscription, so the link goes to the same problem on NeetCode, which is free.
+# (Checked Oct 12, 2026 against LeetCode's isPaidOnly flag and NeetCode's sitemap.)
+FREE_URL = {252: 'https://neetcode.io/problems/meeting-schedule/question', 253: 'https://neetcode.io/problems/meeting-schedule-ii/question',
+            323: 'https://neetcode.io/problems/count-connected-components/question', 261: 'https://neetcode.io/problems/valid-tree/question',
+            271: 'https://neetcode.io/problems/string-encode-and-decode/question'}
+def problem_url(lc, title): return FREE_URL.get(lc) or f"https://leetcode.com/problems/{slug(title)}/"
 DEMOTE = [76, 124, 23, 271, 417, 105, 1143, 211, 261, 143, 5, 79, 435, 73, 139, 33, 230, 57, 300, 62]
 
 BLIND75 = {1,121,217,238,53,152,153,33,15,11,371,191,338,268,190,70,322,300,1143,139,39,198,213,91,62,55,133,207,417,200,128,269,261,323,57,56,435,252,253,206,141,21,23,19,143,73,54,48,79,3,424,76,242,49,20,125,5,647,271,104,100,226,124,102,297,572,105,98,230,235,208,211,212,347,295}
@@ -209,7 +215,7 @@ def build(more_allowed, demoted=frozenset()):
                             source=m['source'], type=kind, reps_capstone='Y' if lc in CAPSTONE_OF or m['source'] == 'reps' else '',
                             neetcode_video=m['neetcode_video'], video_length=m['video_length'], tier=tier, mode=mode))
         return dict(lc=lc, title=m['title'], difficulty=m['difficulty'], pattern=m['pattern'], type=kind, mode=mode or None, video=m['neetcode_video'] or None,
-                    url=f"https://leetcode.com/problems/{slug(m['title'])}/")
+                    url=problem_url(lc, m['title']))
     def after(d, lc, start=1):
         for i in range(start, len(STEPS) + 1):
             reviews.append((i, d, lc))          # (round, first-solve date, problem)
@@ -348,7 +354,7 @@ def main():
         "/** Targets with a bridge that 90 days do not hold at the plan's pace: next in when you are ahead, most valuable first. */\n"
         "export const PLAN_WHEN_AHEAD: { lc: number; title: string; difficulty: string; pattern: string; unit: string; video: string | null; url: string }[] = "
         + json.dumps([dict(lc=lc, title=meta[lc]['title'], difficulty=meta[lc]['difficulty'], pattern=meta[lc]['pattern'], unit=bridges[lc]['unit'],
-                           video=meta[lc]['neetcode_video'] or None, url=f"https://leetcode.com/problems/{slug(meta[lc]['title'])}/")
+                           video=meta[lc]['neetcode_video'] or None, url=problem_url(lc, meta[lc]['title']))
                       for lc in sorted([x for x in bridges if x not in scheduled_lc], key=lambda x: -DEMOTE.index(x) if x in DEMOTE else 1)], indent=1) + "\n\n"
         "/** A re-solve lands this many days after the first solve (it slides only to miss a Sunday, a day off or a full day). */\n"
         f"export const RESOLVE_WINDOWS = {json.dumps({f'review{k}': list(v) for k, v in WINDOWS.items()})} as const\n\n"

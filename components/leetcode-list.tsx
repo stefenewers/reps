@@ -93,6 +93,7 @@ export default function LeetcodeList({ day, heading = 'On LeetCode today' }: { d
                 </a>
                 <p className="mt-0.5 text-[12.5px] text-muted">
                   {how(i)} · {i.difficulty} · {i.pattern}
+                  {i.url.includes('neetcode.io') && ' · free version on NeetCode (Premium on LeetCode)'}
                 </p>
                 {state && !r && (
                   <p className="mt-1 text-[12.5px]" data-testid="lc-readiness">

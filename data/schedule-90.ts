@@ -331,7 +331,7 @@ export const PLAN_WHEN_AHEAD: { lc: number; title: string; difficulty: string; p
   "pattern": "Union-find / DFS tree check",
   "unit": "Graphs",
   "video": "https://www.youtube.com/watch?v=bXsUuownnoQ",
-  "url": "https://leetcode.com/problems/graph-valid-tree/"
+  "url": "https://neetcode.io/problems/valid-tree/question"
  },
  {
   "lc": 1143,
@@ -367,7 +367,7 @@ export const PLAN_WHEN_AHEAD: { lc: number; title: string; difficulty: string; p
   "pattern": "String encoding",
   "unit": "Hashing",
   "video": "https://www.youtube.com/watch?v=B1k_sxOSgv8",
-  "url": "https://leetcode.com/problems/encode-and-decode-strings/"
+  "url": "https://neetcode.io/problems/string-encode-and-decode/question"
  },
  {
   "lc": 23,
@@ -4022,7 +4022,7 @@ export const PLAN_90 = [
     "type": "new",
     "mode": "bridge-first",
     "video": "https://www.youtube.com/watch?v=8f1XPm4WOUc",
-    "url": "https://leetcode.com/problems/number-of-connected-components-in-an-undirected-graph/"
+    "url": "https://neetcode.io/problems/count-connected-components/question"
    }
   ],
   "minutes": 170,
@@ -4259,7 +4259,7 @@ export const PLAN_90 = [
     "type": "review1",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=8f1XPm4WOUc",
-    "url": "https://leetcode.com/problems/number-of-connected-components-in-an-undirected-graph/"
+    "url": "https://neetcode.io/problems/count-connected-components/question"
    },
    {
     "lc": 200,
@@ -4523,7 +4523,7 @@ export const PLAN_90 = [
     "type": "new",
     "mode": "attempt-first",
     "video": "https://www.youtube.com/watch?v=PaJxqZVPhbg",
-    "url": "https://leetcode.com/problems/meeting-rooms/"
+    "url": "https://neetcode.io/problems/meeting-schedule/question"
    },
    {
     "lc": 253,
@@ -4533,7 +4533,7 @@ export const PLAN_90 = [
     "type": "new",
     "mode": "bridge-first",
     "video": "https://www.youtube.com/watch?v=FdzJmTCVyJU",
-    "url": "https://leetcode.com/problems/meeting-rooms-ii/"
+    "url": "https://neetcode.io/problems/meeting-schedule-ii/question"
    }
   ],
   "minutes": 170,
@@ -4736,7 +4736,7 @@ export const PLAN_90 = [
     "type": "review1",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=PaJxqZVPhbg",
-    "url": "https://leetcode.com/problems/meeting-rooms/"
+    "url": "https://neetcode.io/problems/meeting-schedule/question"
    },
    {
     "lc": 253,
@@ -4746,7 +4746,7 @@ export const PLAN_90 = [
     "type": "review1",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=FdzJmTCVyJU",
-    "url": "https://leetcode.com/problems/meeting-rooms-ii/"
+    "url": "https://neetcode.io/problems/meeting-schedule-ii/question"
    },
    {
     "lc": 133,
@@ -4804,7 +4804,7 @@ export const PLAN_90 = [
     "type": "review2",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=8f1XPm4WOUc",
-    "url": "https://leetcode.com/problems/number-of-connected-components-in-an-undirected-graph/"
+    "url": "https://neetcode.io/problems/count-connected-components/question"
    },
    {
     "lc": 78,
@@ -4951,7 +4951,7 @@ export const PLAN_90 = [
     "type": "review2",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=PaJxqZVPhbg",
-    "url": "https://leetcode.com/problems/meeting-rooms/"
+    "url": "https://neetcode.io/problems/meeting-schedule/question"
    },
    {
     "lc": 253,
@@ -4961,7 +4961,7 @@ export const PLAN_90 = [
     "type": "review2",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=FdzJmTCVyJU",
-    "url": "https://leetcode.com/problems/meeting-rooms-ii/"
+    "url": "https://neetcode.io/problems/meeting-schedule-ii/question"
    }
   ],
   "minutes": 0,
@@ -5684,7 +5684,7 @@ export const PLAN_90 = [
     "type": "review3",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=8f1XPm4WOUc",
-    "url": "https://leetcode.com/problems/number-of-connected-components-in-an-undirected-graph/"
+    "url": "https://neetcode.io/problems/count-connected-components/question"
    },
    {
     "lc": 48,

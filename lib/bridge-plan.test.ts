@@ -185,3 +185,13 @@ test('bridges are code-first and end on a miniature analogue written from a sign
     assert.ok(reps.every((e) => !e.problemId && bucketOf(e) !== 'capstone'), `LC ${b.lc}: the bridge is not the target`)
   }
 })
+
+test('LeetCode Premium problems link to their free version, so no problem link is a locked page', () => {
+  const PREMIUM = [252, 253, 261, 271, 323]
+  const all = [...PLAN_90.flatMap((d) => d.leetcode), ...PLAN_WHEN_AHEAD]
+  for (const x of all) {
+    if (PREMIUM.includes(x.lc)) assert.match(x.url, /^https:\/\/neetcode\.io\/problems\/[a-z-]+\/question$/, `LC ${x.lc}`)
+    else assert.match(x.url, /^https:\/\/leetcode\.com\/problems\/[a-z0-9-]+\/$/, `LC ${x.lc}`)
+  }
+  for (const lc of PREMIUM) assert.ok(all.some((x) => x.lc === lc), `LC ${lc} is in the plan or waiting`)
+})
