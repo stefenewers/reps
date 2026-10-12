@@ -2,7 +2,7 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { isStrong, type Target } from '@/lib/bridges'
 import { computeAllMastery } from '@/lib/mastery'
-import { REPAIR_AFTER, lastSession, nextInSession, planRepair, planTrainingSession, sessionReview, type PlannerInput } from '@/lib/session-planner'
+import { REPAIR_AFTER, lastSession, nextInSession, planRepair, planTrainingSession, sessionReview, shakyReps, type PlannerInput } from '@/lib/session-planner'
 import { classifyFailure, freshnessOf, practiceBySkill, repPurpose, skillTrainingState, targetTraining, type TrainingContext } from '@/lib/training-state'
 import { attempt, exercise } from '@/lib/test-helpers'
 import type { Attempt, Exercise } from '@/lib/types'
@@ -179,7 +179,10 @@ test('a problem on LeetCode is offered only once its building blocks are in plac
 })
 
 test('an unrelated overdue review never blocks the target; a relevant one comes before it', () => {
-  const history = [...did('enum-a', '2026-11-19'), ...did('dict-a', '2026-11-19'), ...did('sort-a', '2026-11-19'), ...did('ptr-a', '2026-11-19')]
+  const history = [...did('enum-a', '2026-11-18'), ...did('dict-a', '2026-11-18'), ...did('sort-a', '2026-11-18'), ...did('ptr-a', '2026-11-18')]
+  // Produced only yesterday, a due prerequisite is not what stands in the way: it waits with the rest.
+  const yesterday = plan([...did('enum-a', '2026-11-19'), ...did('dict-a', '2026-11-19')], { stretch: [rep('imap-a', 'Index maps')], dueSkills: ['enumerate'] })
+  assert.deepEqual(kinds(yesterday), ['drill', 'maintain'])
   const p = plan(history, { stretch: [rep('imap-a', 'Index maps'), rep('imap-b', 'Index maps')], dueSkills: ['sorting', 'two_pointer', 'enumerate'], dueResolves: 2 })
   assert.deepEqual(kinds(p), ['reactivate', 'drill', 'maintain'])
   assert.deepEqual(p.blocks[0].reps, ['enum-a'], 'enumerate is a prerequisite of index maps: it is retrieved first')
@@ -284,4 +287,27 @@ test('repeating an old rep adds evidence and freshness; what was complete stays 
   // A failed repeat does not undo the earlier pass either.
   const failed = [...before, ...did('imap-a', TODAY, 1, { passed: false, completedAt: undefined, attemptsBeforePass: 2 })]
   assert.ok(new Set(failed.filter((a) => a.passed).map((a) => a.exerciseId)).has('imap-a'))
+})
+
+test('what only just held last session comes back cold first: the solution or several hints is not owning it', () => {
+  const day = '2026-11-19'
+  const last = [
+    ...did('enum-a', day), // clean
+    ...did('get-a', day, 1, { hintsUsed: 2 }), // a couple of hints: fine
+    ...did('comp-a', day, 1, { solutionViewed: true, completedAt: `${day}T14:00:00.000Z` }),
+    ...did('pair-mini', day, 1, { hintsUsed: 4, completedAt: `${day}T15:00:00.000Z` }),
+    // Typed again straight after, clean, the same day: that is short-term memory, it does not settle it.
+    ...did('pair-mini', day, 1, { id: 'rerun', completedAt: `${day}T15:05:00.000Z` }),
+  ]
+  assert.deepEqual(shakyReps(last, TODAY, EX, 3), ['comp-a', 'pair-mini'])
+  const p = plan(last, { stretch: [rep('imap-a', 'Index maps')] })
+  assert.deepEqual(kinds(p), ['drill', 'drill'])
+  assert.deepEqual(p.blocks[0].reps, ['comp-a', 'pair-mini'])
+  assert.ok(p.blocks[0].extra, 'repeats, outside the queue')
+  assert.match(p.blocks[0].why, /again from blank/)
+  // Done again today, clean: settled, and not asked for a third time.
+  const settled = [...last, ...did('comp-a', TODAY), ...did('pair-mini', TODAY)]
+  assert.deepEqual(shakyReps(settled, TODAY, EX, 3), [])
+  // Never more than the limit, worst first.
+  assert.deepEqual(shakyReps(last, TODAY, EX, 1), ['comp-a'])
 })

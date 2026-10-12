@@ -1,4 +1,5 @@
 import type { Target } from '@/lib/bridges'
+import { daysBetween } from '@/lib/dates'
 import type { SkillMastery } from '@/lib/mastery'
 import { countsAsEvidence } from '@/lib/mastery'
 import { REPAIR_SHAPE, classifyFailure, freshnessOf, phaseEmphasis, practiceBySkill, repPurpose, targetTraining, type Failure, type RepairCategory, type TargetTraining, type TrainingContext, type TrainingState } from '@/lib/training-state'
@@ -104,6 +105,30 @@ export function pickRepeats(skills: SkillId[], input: Pick<PlannerInput, 'exerci
   return picked
 }
 
+/**
+ * Reps from the last session that were passed only with the solution open or on three or more hints, worst first,
+ * returned in the order they were done. A clean pass on a later day (today included) settles a rep.
+ */
+export function shakyReps(attempts: Attempt[], today: string, exercises: Record<string, Exercise>, limit: number): string[] {
+  const last = [...new Set(attempts.filter((a) => a.date < today && a.completedAt).map((a) => a.date))].sort().pop()
+  if (!last) return []
+  const settled = new Set(attempts.filter((a) => a.date > last && a.passed && a.completedAt && !a.solutionViewed && a.hintsUsed === 0).map((a) => a.exerciseId))
+  const worst = new Map<string, { score: number; at: string }>()
+  for (const a of attempts) {
+    const e = exercises[a.exerciseId]
+    if (a.date !== last || !a.passed || !a.completedAt || !e || e.kind !== 'code' || e.generated || settled.has(a.exerciseId)) continue
+    const score = (a.solutionViewed ? 10 : 0) + a.hintsUsed
+    if (score < 3) continue
+    const prev = worst.get(a.exerciseId)
+    if (!prev || score > prev.score) worst.set(a.exerciseId, { score, at: prev?.at ?? a.completedAt })
+  }
+  return [...worst.entries()]
+    .sort((a, b) => b[1].score - a[1].score || a[1].at.localeCompare(b[1].at))
+    .slice(0, limit)
+    .sort((a, b) => a[1].at.localeCompare(b[1].at))
+    .map(([id]) => id)
+}
+
 export function planTrainingSession(input: PlannerInput): SessionPlan {
   const { exercises, today } = input
   const passed = new Set(input.attempts.filter((a) => a.passed && a.completedAt).map((a) => a.exerciseId))
@@ -119,8 +144,11 @@ export function planTrainingSession(input: PlannerInput): SessionPlan {
   for (const r of input.stretch) for (const s of [...(exercises[r.id]?.prerequisites ?? []), ...(exercises[r.id]?.skills ?? [])]) relies.add(s)
   for (const s of training?.staleSkills ?? []) relies.add(s)
   const learned = (s: SkillId) => (practice.get(s)?.productive ?? 0) > 0
-  const dueRelevant = input.dueSkills.filter((s) => relies.has(s) && learned(s))
-  const dueOther = input.dueSkills.filter((s) => !relies.has(s) && learned(s))
+  // A due review that today's work relies on comes first, unless the skill was produced in the last day anyway:
+  // then it is not what stands between you and today's work, and it waits with the other retrieval.
+  const justDone = (s: SkillId) => daysBetween(practice.get(s)?.last ?? '2000-01-01', today) <= 1
+  const dueRelevant = input.dueSkills.filter((s) => relies.has(s) && learned(s) && !justDone(s))
+  const dueOther = input.dueSkills.filter((s) => learned(s) && !dueRelevant.includes(s))
   const stale = [...relies].filter((s) => learned(s) && freshnessOf(practice.get(s), today) === 'stale')
 
   // ── 1. reactivate: you already learned this; it is being warmed back up
@@ -140,6 +168,21 @@ export function planTrainingSession(input: PlannerInput): SessionPlan {
         extra: true,
       })
     }
+  }
+
+  // ── 1b. what only just held last session: passed, but with the solution open or on several hints. Written again
+  // cold before anything is built on it. (Passing it again straight after, the same day, does not settle it.)
+  const taken = new Set([...inStretch, ...blocks.flatMap((b) => b.reps)])
+  const redo = input.pending ? [] : shakyReps(input.attempts, today, exercises, 3).filter((id) => !taken.has(id))
+  if (redo.length) {
+    blocks.push({
+      kind: 'drill',
+      title: 'Again, cold: what needed help last session',
+      reps: redo,
+      minutes: minutes(redo, exercises),
+      why: `You got through ${redo.length === 1 ? 'this' : 'these'} with the solution or several hints. Write ${redo.length === 1 ? 'it' : 'them'} again from blank before building on ${redo.length === 1 ? 'it' : 'them'}.`,
+      extra: true,
+    })
   }
 
   // ── 2. the stretch, in queue order, grouped by what each rep is for
