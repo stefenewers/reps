@@ -56,8 +56,12 @@ function DashboardToday() {
   const lcToday = day.leetcode ?? []
   // Today's training prescription, laid over today's stretch of the queue.
   const training = useTraining(day)
+  // A working day of the plan: Today leads with what to do next. (Days off and days outside the plan keep the simple view.)
+  const live = Boolean(day.planDay) && day.phase !== 'off'
   const { entries: solves } = useSolveLog()
   const lcItems = leetcodeFor(day, solves, DAYS, lcMeta)
+  // Re-solves and redos due today: done on LeetCode, logged in the list.
+  const resolves = lcItems.filter((x) => x.type !== 'new')
   // Before the plan begins: how many days until Day 1.
   const startsIn = day.planDay ? null : Math.round((parseLocal(PLAN_START).getTime() - parseLocal(today).getTime()) / 86_400_000)
   const stats = dayStats(day, attempts)
@@ -139,14 +143,29 @@ function DashboardToday() {
           />
         )}
 
-        {/* The primary answer to "what will help me improve right now": the session plan. The queue below is the roadmap. */}
-        {day.planDay && day.phase !== 'off' && (
+        {live ? (
           <>
-            <TrainingCard training={training} />
+            {/* What to do next, and today's steps in order. Everything under it is reference. */}
+            <TrainingCard
+              training={training}
+              roadmap={next && section ? { label: `${section.title} · ${next.title}`, href: `/rep/${next.id}` } : ahead ? { label: ahead.title, href: `/rep/${ahead.id}` } : null}
+              leetcode={{ total: resolves.length, logged: resolves.filter((x) => solves.some((e) => e.id === x.solveId)).length, next: resolves.find((x) => !solves.some((e) => e.id === x.solveId))?.title ?? null }}
+            />
+        <div id="leetcode" className="mt-8 scroll-mt-6 empty:hidden">
+          <LeetcodeList day={day} />
+        </div>
             <SessionReviewCard training={training} />
-          </>
+        {day.planDay && (
+          <div className="mt-8">
+            <PaceGauge pace={pace} planEnd={PLAN_DAYS[PLAN_DAYS.length - 1].date} />
+          </div>
         )}
 
+            <details className="group mt-10" data-testid="more">
+              <summary className="flex cursor-pointer list-none items-center gap-2 px-2 text-[13.5px] font-medium text-ink-2 hover:text-ink [&::-webkit-details-marker]:hidden">
+                <span aria-hidden="true" className="inline-block transition-transform group-open:rotate-90">›</span>
+                More: where you are in the plan, building blocks, the day by the clock, skills
+              </summary>
         {/* The roadmap: where the canonical queue stands. */}
         <section aria-labelledby="now" hidden={startsIn !== null && !carry} className="relative mt-9 overflow-hidden rounded-[20px] bg-bg shadow-[0_0_0_1px_var(--hairline),0_2px_4px_rgba(28,24,12,0.04),0_18px_40px_-16px_rgba(28,24,12,0.18)]">
           <BarsPattern className="-right-10 -top-16 text-ink [mask-image:linear-gradient(to_bottom,black,transparent)]" opacity={0.045} />
@@ -181,7 +200,7 @@ function DashboardToday() {
                     </p>
                   </div>
                 </div>
-                <Link href={`/rep/${next.id}`} className={`btn btn-lg shrink-0 self-start lg:self-auto ${day.planDay ? '' : 'btn-accent'}`} data-testid="start-today">
+                <Link href={`/rep/${next.id}`} className={`btn btn-lg shrink-0 self-start lg:self-auto ${day.planDay ? '' : 'btn-accent'}`} data-testid={live ? 'roadmap-start' : 'start-today'}>
                   {carry ? 'Continue' : started ? 'Continue' : day.planDay ? 'Open this rep' : 'Start today’s reps'} <IconArrowRight size={15} />
                 </Link>
               </div>
@@ -246,6 +265,192 @@ function DashboardToday() {
           <MiniStat label="Cold reps" value={String(due.length)} sub={due.length ? 'due now' : 'none due'} />
         </dl>
 
+        <div className="mt-8 empty:hidden">
+          <TodayBlocks day={day} resolves={lcItems.filter((x) => x.type !== 'new').length} />
+        </div>
+
+        <div className="mt-8">
+          <RoadToReady />
+        </div>
+
+        <div className="mt-8 grid gap-6 lg:grid-cols-[1.35fr_1fr]">
+          <section aria-labelledby="path" className="panel p-6">
+            <div className="mb-5 flex items-start justify-between gap-4">
+              <div>
+                <h2 id="path" className="h2 flex items-center gap-2">
+                  <RepsBars width={16} bar={2.5} gap={2} className="text-ink" /> Today&apos;s path
+                </h2>
+                <p className="mt-1.5 max-w-[520px] text-[13.5px] leading-relaxed text-muted">{day.focus}</p>
+              </div>
+              <Link href={`/day/${today}`} className="shrink-0 text-[13px] text-muted hover:text-ink">
+                All reps →
+              </Link>
+            </div>
+            <LearningPath day={day} attempts={attempts} reviews={reviews} />
+          </section>
+
+          <div className="flex flex-col gap-4">
+            <section aria-labelledby="reviews" className="card p-5">
+              <h2 id="reviews" className="sr-only">
+                Review Reps
+              </h2>
+              {due.length ? (
+                <div className="flex items-center gap-4">
+                  <span className="relative grid size-11 shrink-0 place-items-center rounded-xl bg-ink text-white">
+                    <IconSnow size={19} />
+                    <span aria-hidden="true" className="absolute -right-0.5 -top-0.5 size-2.5 rounded-full bg-accent shadow-[0_0_0_2px_var(--bg)]" />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[14px] font-medium text-ink">
+                      {due.length} cold rep{due.length === 1 ? '' : 's'} ready
+                    </p>
+                    <p className="mt-0.5 text-[13px] text-muted">Recall it before it fades.</p>
+                  </div>
+                  <button type="button" className="btn btn-primary btn-sm shrink-0" onClick={startReview} disabled={busy}>
+                    Start
+                  </button>
+                </div>
+              ) : (
+                <EmptyState title="All clear." glyph={<IconSnow size={19} />}>
+                  No cold reps due yet. They come back a day after you write something.
+                </EmptyState>
+              )}
+            </section>
+
+            <section aria-labelledby="weakest" className="card p-5">
+              <div className="flex items-baseline justify-between">
+                <h2 id="weakest" className="h3 flex items-center gap-2">
+                  <IconSpark size={14} className="text-muted" /> Weakest skills
+                </h2>
+                {weakest.length > 0 && (
+                  <button type="button" className="text-[13px] text-muted hover:text-ink" onClick={startWeakest} disabled={busy}>
+                    Do reps →
+                  </button>
+                )}
+              </div>
+              {weakest.length === 0 ? (
+                <div className="mt-3">{loaded && <EmptyState title="Clean slate.">Weak spots will show up as you work.</EmptyState>}</div>
+              ) : (
+                <ul className="mt-3 flex flex-col">
+                  {weakest.map((m) => (
+                    <li key={m.skillId}>
+                      <Link href={`/skills/${m.skillId}`} className="-mx-2 grid grid-cols-[1fr_64px_24px] items-center gap-3 rounded-lg px-2 py-2 text-[13.5px] hover:bg-surface">
+                        <span className="truncate">
+                          {skillName(m.skillId)}
+                          <span className="ml-2">
+                            <StatusLabel status={m.status} compact />
+                          </span>
+                        </span>
+                        <ScoreBar score={m.score} status={m.status} className="!w-16" />
+                        <span className="num text-right text-ink-2">{m.score}</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </section>
+
+            <section className="rounded-2xl bg-ink p-5 text-white shadow-[var(--shadow-md)]">
+              <ChallengeMe dark />
+            </section>
+          </div>
+        </div>
+            </details>
+          </>
+        ) : (
+          <>
+        {/* The roadmap: where the canonical queue stands. */}
+        <section aria-labelledby="now" hidden={startsIn !== null && !carry} className="relative mt-9 overflow-hidden rounded-[20px] bg-bg shadow-[0_0_0_1px_var(--hairline),0_2px_4px_rgba(28,24,12,0.04),0_18px_40px_-16px_rgba(28,24,12,0.18)]">
+          <BarsPattern className="-right-10 -top-16 text-ink [mask-image:linear-gradient(to_bottom,black,transparent)]" opacity={0.045} />
+          <div className="relative flex flex-col gap-6 p-6 sm:p-8">
+            <div className="flex items-center gap-2">
+              <span aria-hidden="true" className="size-1.5 rounded-full bg-accent" />
+              <span className="eyebrow text-ink-2">
+                {carry ? `Finish first · ${carry.title}` : `${day.planDay ? `Roadmap · ${day.title}` : (todayStage?.title ?? day.short)} · ${next ? (started ? 'Next in the plan' : 'Starts here') : 'Done for today'}`}
+              </span>
+            </div>
+
+            {next && section ? (
+              <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+                <div className="flex min-w-0 items-start gap-4">
+                  <span className="grid size-12 shrink-0 place-items-center rounded-xl bg-ink text-white shadow-[0_6px_14px_-6px_rgba(13,13,14,0.5)]">
+                    <ConceptGlyph name={section?.title ?? day.short} size={22} />
+                  </span>
+                  <div className="min-w-0">
+                    <h2 id="now" className="text-[28px] font-semibold leading-tight tracking-tight">
+                      {section.title}
+                    </h2>
+                    <p className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[14px] text-muted">
+                      <span className="num font-medium text-ink-2">
+                        {carry ? `Carried over · ${carry.exercises.filter((e) => !passed.has(e.id)).length} left to clear` : `Rep ${nextIndex} of ${all.length}`}
+                      </span>
+                      <span aria-hidden="true">·</span>
+                      {nextKind && (
+                        <span className="inline-flex items-center gap-1.5 text-ink-2">
+                          <nextKind.Icon size={13} className="text-muted" /> {next.title}
+                        </span>
+                      )}
+                    </p>
+                  </div>
+                </div>
+                <Link href={`/rep/${next.id}`} className={`btn btn-lg shrink-0 self-start lg:self-auto ${day.planDay ? '' : 'btn-accent'}`} data-testid={live ? 'roadmap-start' : 'start-today'}>
+                  {carry ? 'Continue' : started ? 'Continue' : day.planDay ? 'Open this rep' : 'Start today’s reps'} <IconArrowRight size={15} />
+                </Link>
+              </div>
+            ) : (
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                {day.phase === 'off' || (stats.total === 0 && !lcToday.length) ? (
+                  <EmptyState title="Rest day">Nothing is planned today. Rest is part of the plan.</EmptyState>
+                ) : stats.total === 0 && lcToday.length ? (
+                  <EmptyState title="LeetCode day">No ladder reps today. Today’s work is the LeetCode list below.</EmptyState>
+                ) : (
+                  <EmptyState title="Today’s stretch is done">
+                    You have covered today’s pace.{lcToday.length ? ' Your LeetCode problems for today are below.' : ''} Stop here, or keep going: the queue just continues.
+                  </EmptyState>
+                )}
+                <div className="flex flex-wrap items-center gap-2">
+                  <Link href={`/day/${today}/summary`} className="btn btn-lg">
+                    Review the day
+                  </Link>
+                  {ahead && (
+                    <Link href={`/rep/${ahead.id}`} className="btn btn-primary btn-lg">
+                      Keep going: {ahead.title.replace(/^[A-Za-z]+: /, '')} <IconArrowRight size={15} />
+                    </Link>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {next && section && (
+              <div className="flex flex-col gap-2">
+                {/* One bar per rep in this section: the motif as progress. */}
+                <div className="flex gap-1" aria-hidden="true">
+                  {section.exercises.map((e) => (
+                    <span
+                      key={e.id}
+                      className={`h-[6px] flex-1 rounded-full transition-colors duration-500 ${passed.has(e.id) ? 'bg-accent' : e.id === next.id ? 'bg-accent/35' : 'bg-ink/[0.07]'}`}
+                    />
+                  ))}
+                </div>
+                <p className="flex flex-wrap items-center justify-between gap-2 text-[12.5px] text-muted">
+                  <span className="num">
+                    {section.exercises.filter((e) => passed.has(e.id)).length} of {section.exercises.length} in {section.title}
+                  </span>
+                  <span className="inline-flex items-center gap-1.5">
+                    <IconClock size={13} /> {formatMinutes(sectionLeft)} left in this section
+                  </span>
+                </p>
+              </div>
+            )}
+          </div>
+        </section>
+
+        <dl className="mt-4 grid grid-cols-2 gap-x-6 gap-y-3 px-2 sm:grid-cols-3">
+          <MiniStat label="Done today" value={`${stats.completed}`} sub={`rep${stats.completed === 1 ? '' : 's'} · ${stats.total - stats.completed} more in today’s stretch`} />
+          <MiniStat label="Re-solves waiting" value={String(pace.due.length)} sub={pace.due.length ? 'on LeetCode, oldest first' : 'none due'} />
+          <MiniStat label="Cold reps" value={String(due.length)} sub={due.length ? 'due now' : 'none due'} />
+        </dl>
+
         {day.planDay && (
           <div className="mt-8">
             <PaceGauge pace={pace} planEnd={PLAN_DAYS[PLAN_DAYS.length - 1].date} />
@@ -256,7 +461,7 @@ function DashboardToday() {
           <TodayBlocks day={day} resolves={lcItems.filter((x) => x.type !== 'new').length} />
         </div>
 
-        <div className="mt-8 empty:hidden">
+        <div id="leetcode" className="mt-8 scroll-mt-6 empty:hidden">
           <LeetcodeList day={day} />
         </div>
 
@@ -346,8 +551,8 @@ function DashboardToday() {
             </section>
           </div>
         </div>
-
-
+          </>
+        )}
 
         <footer className="mt-12">
           <WinstonPerch className="mx-2" />

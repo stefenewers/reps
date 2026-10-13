@@ -36,6 +36,10 @@ test('today → first rep → correct answer → mastery updates → reload → 
   await expect(chip).toContainText('SWE I')
   await expect(chip).not.toContainText(/Oct|October|days?\b/)
   await expect(chip).toHaveAttribute('href', '/interview')
+  // Today leads with what is next; the roadmap and the rest are one click away, not in the way.
+  await expect(page.getByTestId('next-up')).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Road to Ready' })).toBeHidden()
+  await page.getByTestId('more').locator('summary').click()
   await expect(page.getByRole('heading', { name: 'Road to Ready' })).toBeVisible()
   const rail = page.getByRole('progressbar', { name: /Overall Reps curriculum progress/ })
   await expect(rail).toHaveAttribute('aria-valuenow', '0')
@@ -61,6 +65,7 @@ test('today → first rep → correct answer → mastery updates → reload → 
   await expect(rail).toHaveAttribute('aria-valuenow', '1')
   await expect(page.locator('.pp')).toHaveAttribute('data-advancing', 'false')
   await page.goto('/')
+  await page.getByTestId('more').locator('summary').click()
   await expect(page.getByText(blockingGate(today, 0, []) ? /Carried over · \d+ left to clear/ : /Rep 2 of \d+/)).toBeVisible()
   // The next rep is now the starting point.
   await page.getByTestId('start-today').click()
@@ -303,14 +308,17 @@ test('training: briefing → drill → repair and back → combine → the targe
   await page.getByLabel('Import progress file').setInputFiles(seed.file)
   await expect(page.getByText(`Imported ${seed.count} new attempts`)).toBeVisible()
 
-  // Today leads with the prescription: a goal, where the last session left off, and blocks with a purpose.
+  // Today leads with one thing to do next, then today's steps in order, the goal and where the last session left off.
   const training = page.getByTestId('training')
+  await expect(training.getByTestId('next-up')).toHaveText(EXERCISE_BY_ID['o2-dbg-comp-self-pair'].title)
+  await expect(training.getByTestId('next-up-step')).toContainText("Step 1 of")
   await expect(training.getByTestId('training-goal')).toContainText('Two Sum')
   await expect(training.getByTestId('training-briefing')).toContainText('Last session (Oct 20)')
-  const kinds = await training.getByTestId('training-blocks').locator('li').evaluateAll((els) => els.map((e) => e.getAttribute('data-kind')))
-  expect(kinds).not.toContain('reactivate') // everything it leans on was produced yesterday
-  expect(kinds.indexOf('drill')).toBeGreaterThanOrEqual(0)
-  expect(kinds.indexOf('prove')).toBeGreaterThan(kinds.indexOf('drill'))
+  const steps = await training.getByTestId('training-steps').locator('li').evaluateAll((els) => els.map((e) => `${e.getAttribute('data-step')}:${e.getAttribute('data-state')}`))
+  expect(steps[0]).toBe('plan:now') // everything it leans on was produced yesterday: no warm-up
+  expect(steps.filter((x) => x.endsWith(':now'))).toHaveLength(1)
+  // Everything that is not "what next" is folded away.
+  await expect(page.getByTestId('more')).not.toHaveAttribute('open', '')
   await training.getByTestId('training-start').click()
 
   // The first rep is a drill, and says so.
@@ -390,9 +398,11 @@ test('training: skills learned weeks ago are warmed up first, then the normal qu
 
   // Nothing was unlearned: Today prescribes a short reactivation, in the planner's own words, before the queue.
   const training = page.getByTestId('training')
-  const first = training.getByTestId('training-blocks').locator('li').first()
-  await expect(first).toHaveAttribute('data-kind', 'reactivate')
+  const first = training.getByTestId('training-steps').locator('li').first()
+  await expect(first).toHaveAttribute('data-step', 'warm')
+  await expect(first).toHaveAttribute('data-state', 'now')
   await expect(first).toContainText('You already learned')
+  await expect(training.getByTestId('next-up-step')).toContainText('Step 1 of')
   await expect(page.getByTestId('reactivate')).toHaveCount(0) // the one-time Oct 12 session is over
   await training.getByTestId('training-start').click()
   await page.waitForURL(/\/rep\//)
@@ -417,8 +427,11 @@ test('training: skills learned weeks ago are warmed up first, then the normal qu
 
   // The repeats added evidence; the plan's own position did not move.
   await page.goto('/')
-  const again = page.getByTestId('training').getByTestId('training-blocks').locator('li').first()
-  await expect(again).toHaveAttribute('data-kind', 'reactivate')
-  await expect(again).toContainText('done')
+  const again = page.getByTestId('training').getByTestId('training-steps').locator('li').first()
+  await expect(again).toHaveAttribute('data-step', 'warm')
+  await expect(again).toHaveAttribute('data-state', 'done')
+  // Next up is now the plan itself: the same rep the 90-day plan was waiting on.
+  await expect(page.getByTestId('next-up')).toHaveText(EXERCISE_BY_ID['o2-dbg-comp-self-pair'].title)
+  await expect(page.getByTestId('training-start')).toHaveAttribute('href', /\/rep\/o2-dbg-comp-self-pair\?s=/)
   await expect(page.getByTestId('start-today')).toHaveAttribute('href', '/rep/o2-dbg-comp-self-pair')
 })

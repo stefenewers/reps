@@ -27,31 +27,74 @@ const real = (b: SessionBlock) => {
   return Math.max(5, Math.round(m / 5) * 5)
 }
 
-/** "reactivate → drill → combine → prove Two Sum": the shape of the session in one line. */
-function path(blocks: SessionBlock[]): string {
-  const steps: string[] = []
-  for (const b of blocks) {
-    const step = b.kind === 'prove' ? `prove ${b.title}` : TRAINING_LABEL[b.kind].toLowerCase()
-    if (steps[steps.length - 1] !== step) steps.push(step)
-  }
-  return steps.slice(0, 6).join(' → ')
+interface Step {
+  key: 'warm' | 'redo' | 'plan' | 'problem' | 'leetcode'
+  label: string
+  detail: string
+  /** Shown only while this is the step you are on. */
+  why: string
+  reps: string[]
+  minutes: number
+  done: boolean
+  /** A step done outside the editor (LeetCode): where its link goes. */
+  href?: string
+  external?: boolean
+  onlyIf?: string
 }
 
 /**
- * Today's training prescription: the goal, where the last session left off,
- * and the ordered blocks (reactivate, learn, drill, combine, prove, maintain).
- * The queue underneath is the roadmap; this is what to do with today.
+ * Today, as a short flat list of steps in the order they are done:
+ * warm up → again, cold → today's plan → the problem → LeetCode re-solves.
+ * The plan's reps are one step, whatever mix of drilling, combining and
+ * proving they are: each rep says what it is for when you are on it.
  */
-export default function TrainingCard({ training }: { training: Training }) {
+function stepsFrom(blocks: SessionBlock[], done: (id: string) => boolean, leetcode: { total: number; logged: number }, pending: boolean, url: (lc: number) => string | undefined, solved: (lc: number) => boolean): Step[] {
+  const steps: Step[] = []
+  const all = (reps: string[]) => reps.length > 0 && reps.every(done)
+  for (const b of blocks) {
+    if (b.kind === 'maintain') continue
+    if (b.kind === 'reactivate') steps.push({ key: 'warm', label: pending ? 'Reactivation session' : 'Warm up', detail: b.title, why: b.why, reps: pending ? [] : b.reps, minutes: real(b), done: !pending && all(b.reps) })
+    else if (b.extra) steps.push({ key: 'redo', label: 'Again, cold', detail: `${b.reps.length} rep${b.reps.length === 1 ? '' : 's'} that needed help last session`, why: b.why, reps: b.reps, minutes: real(b), done: all(b.reps) })
+    else if (b.lc) steps.push({ key: 'problem', label: `Attempt LC ${b.lc}`, detail: b.title, why: b.why, reps: [], minutes: real(b), done: solved(b.lc), href: url(b.lc), external: true, onlyIf: b.onlyIf })
+    else {
+      const last = steps[steps.length - 1]
+      if (last?.key === 'plan') {
+        last.reps.push(...b.reps)
+        last.minutes += real(b)
+        last.done = all(last.reps)
+        const titles = [...new Set([...last.detail.split(' → '), ...b.title.split(' → ')])]
+        last.detail = titles.length > 2 ? `${titles[0]} → ${titles[titles.length - 1]}` : titles.join(' → ')
+      } else steps.push({ key: 'plan', label: "Today's plan", detail: b.title, why: 'The next reps of the plan, in order. Each one says what it is for when you open it.', reps: [...b.reps], minutes: real(b), done: all(b.reps) })
+    }
+  }
+  if (leetcode.total)
+    steps.push({
+      key: 'leetcode',
+      label: 'LeetCode re-solves',
+      detail: `${leetcode.total} problem${leetcode.total === 1 ? '' : 's'} you have solved before, cold`,
+      why: 'Solve each on LeetCode from a blank editor, then log how it went in the list below.',
+      reps: [],
+      minutes: leetcode.total * 15,
+      done: leetcode.logged >= leetcode.total,
+      href: '#leetcode',
+    })
+  return steps
+}
+
+/**
+ * The top of Today: the one thing to do next, and today's steps in order.
+ * Everything else on the page is reference.
+ */
+export default function TrainingCard({ training, roadmap, leetcode }: { training: Training; roadmap: { label: string; href: string } | null; leetcode: { total: number; logged: number; next: string | null } }) {
   const { repo, today } = useReps()
   const { byLc } = useTargets()
   const router = useRouter()
   const [busy, setBusy] = useState(false)
   const { plan, pending, session, doneInSession, nextInSession, last } = training
-  if (!plan.blocks.length) return null
 
-  // What a session started now would hold: everything typed in the Reps editor, in block order (the one-time reactivation runs from its own card).
-  const blocks = plan.blocks.filter((b) => !(pending && b.kind === 'reactivate'))
+  // What a session started now would hold: the reps typed in the Reps editor, in step order. The one-time reactivation
+  // runs from its own card; optional cold reps stay under "More".
+  const blocks = plan.blocks.filter((b) => !(pending && b.kind === 'reactivate') && b.kind !== 'maintain')
   const ids = [...new Set(blocks.flatMap((b) => b.reps))]
   const start = async () => {
     if (busy || !ids.length) return
@@ -71,105 +114,105 @@ export default function TrainingCard({ training }: { training: Training }) {
     router.push(`/rep/${ids[0]}?s=${s.id}`)
   }
 
-  // Once today's session is under way, its own blocks are what Today shows (with progress): the prescription does not
-  // shift under you. Problems on LeetCode and re-solves, which are done outside the editor, still come from the live plan.
+  // Once today's session is under way, its own blocks are what Today shows: the list does not shift under you.
   const shown: SessionBlock[] = session?.training
-    ? [...session.training.blocks.map((b) => ({ ...b, kind: b.kind as SessionBlock['kind'], minutes: b.minutes ?? 0 })), ...plan.blocks.filter((b) => b.lc || (b.kind === 'maintain' && !session.training!.blocks.some((x) => x.kind === 'maintain'))).map((b) => (b.lc ? b : { ...b, reps: [] }))]
+    ? [...session.training.blocks.map((b) => ({ ...b, kind: b.kind as SessionBlock['kind'], minutes: b.minutes ?? 0 })), ...plan.blocks.filter((b) => b.lc)]
     : plan.blocks
-  const t = plan.target && plan.training ? { ...plan.target, ...plan.training, state: byLc.get(plan.target.lc) } : null
-  const total = session?.exerciseIds.length ?? 0
-  const done = session ? session.exerciseIds.filter((id) => doneInSession.has(id)).length : 0
-  const finished = Boolean(session) && !nextInSession
+  const steps = stepsFrom(shown, (id) => Boolean(session) && doneInSession.has(id), leetcode, pending, (lc) => byLc.get(lc)?.url, (lc) => byLc.get(lc)?.first !== null && byLc.get(lc)?.first !== undefined)
+  const at = steps.findIndex((s) => !s.done)
+  const now = at >= 0 ? steps[at] : null
+  const nextRep = session ? nextInSession : (ids[0] ?? null)
+  const repHref = nextRep ? (session ? `/rep/${nextRep}?s=${session.id}` : null) : null
+  const inStep = now && nextRep ? now.reps.indexOf(nextRep) : -1
+
+  // The one thing to do next, in words.
+  const next = pending
+    ? { title: 'Finish the reactivation session above', sub: 'The rest of today follows it.' }
+    : nextRep && now && now.reps.length
+      ? { title: EXERCISE_BY_ID[nextRep]?.title ?? 'Next rep', sub: `Step ${at + 1} of ${steps.length} · ${now.label}${inStep >= 0 ? ` · rep ${inStep + 1} of ${now.reps.length}` : ''}` }
+      : now?.key === 'problem'
+        ? { title: `${now.label} · ${now.detail}`, sub: `Step ${at + 1} of ${steps.length} · on LeetCode${now.onlyIf ? ` · ${now.onlyIf}` : ''}. Log how it went in the list below.` }
+        : now?.key === 'leetcode'
+          ? { title: leetcode.next ? `Re-solve ${leetcode.next} on LeetCode` : 'Your LeetCode re-solves', sub: `Step ${at + 1} of ${steps.length} · ${leetcode.total - leetcode.logged} left · cold, about 15 minutes each. Log each one in the list below.` }
+          : { title: steps.length ? 'Done for today.' : 'Nothing is scheduled today.', sub: steps.length ? 'Every step is finished. Stop here, or keep going with the plan.' : 'Rest is part of the plan.' }
 
   return (
     <section aria-labelledby="training-h" className="mt-9 rounded-[20px] bg-bg p-6 shadow-[0_0_0_1px_var(--hairline),0_2px_4px_rgba(28,24,12,0.04),0_18px_40px_-16px_rgba(28,24,12,0.18)] sm:p-8" data-testid="training">
-      <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+      <p className="eyebrow flex items-center gap-2 text-ink-2">
+        <span aria-hidden="true" className="size-1.5 rounded-full bg-accent" /> Next up
+      </p>
+      <div className="mt-2 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div className="min-w-0">
-          <p className="eyebrow flex items-center gap-2 text-ink-2">
-            <span aria-hidden="true" className="size-1.5 rounded-full bg-accent" /> Today&apos;s training
-          </p>
-          <h2 id="training-h" className="mt-2 max-w-[620px] text-[24px] font-semibold leading-snug tracking-tight" data-testid="training-goal">
-            {plan.goal}
+          <h2 id="training-h" className="text-[26px] font-semibold leading-tight tracking-tight" data-testid="next-up">
+            {next.title}
           </h2>
-          <p className="mt-2 max-w-[620px] text-[13.5px] leading-relaxed text-muted" data-testid="training-briefing">
-            {last ? `Last session (${shortDate(last.date)}) you were working on ${last.on.join(' and ') || 'the plan'}.` : 'This is your first session.'}{' '}
-            {blocks.length > 0 && `Today: ${path(shown)}.`}
-            {t && t.state?.first === null && t.learned < t.total && ` If those come back cleanly, you continue toward ${t.title}.`}
+          <p className="num mt-1.5 text-[14px] text-ink-2" data-testid="next-up-step">
+            {next.sub}
           </p>
         </div>
-        {pending ? (
-          <p className="shrink-0 self-start rounded-xl bg-surface px-3.5 py-2.5 text-[12.5px] text-muted lg:max-w-[220px]">Starts with the reactivation above. The rest follows it.</p>
-        ) : session && nextInSession ? (
-          <Link href={`/rep/${nextInSession}?s=${session.id}`} className="btn btn-accent btn-lg shrink-0 self-start" data-testid="training-start">
-            Continue training <IconArrowRight size={15} />
+        {pending ? null : repHref ? (
+          <Link href={repHref} className="btn btn-accent btn-lg shrink-0 self-start lg:self-auto" data-testid="training-start">
+            Continue <IconArrowRight size={15} />
           </Link>
-        ) : finished ? (
-          <span className="inline-flex shrink-0 items-center gap-1.5 self-start rounded-xl bg-surface px-3.5 py-2.5 text-[13px] font-medium text-ink">
-            <IconCheck size={13} strokeWidth={2.4} className="text-pass" /> Session done
-          </span>
-        ) : ids.length ? (
-          <button type="button" className="btn btn-accent btn-lg shrink-0 self-start" onClick={start} disabled={busy} data-testid="training-start">
-            Start training <IconArrowRight size={15} />
+        ) : nextRep ? (
+          <button type="button" className="btn btn-accent btn-lg shrink-0 self-start lg:self-auto" onClick={start} disabled={busy} data-testid="training-start">
+            Start <IconArrowRight size={15} />
           </button>
+        ) : now?.href ? (
+          <a href={now.href} {...(now.external ? { target: '_blank', rel: 'noreferrer' } : {})} className="btn btn-accent btn-lg shrink-0 self-start lg:self-auto" data-testid="training-start">
+            {now.external ? 'Open on LeetCode' : 'Go to the list'} {now.external ? <IconExternal size={14} /> : <IconArrowRight size={15} />}
+          </a>
+        ) : !now && roadmap ? (
+          <Link href={roadmap.href} className="btn btn-lg shrink-0 self-start lg:self-auto">
+            Keep going <IconArrowRight size={15} />
+          </Link>
         ) : null}
       </div>
 
-      <ol className="mt-6 flex flex-col divide-y divide-line" data-testid="training-blocks">
-        {shown.map((b, i) => {
-          const repsDone = b.reps.filter((id) => (session ? doneInSession.has(id) : false)).length
-          const complete = b.reps.length > 0 && repsDone === b.reps.length
-          const first = b.reps.find((id) => !doneInSession.has(id)) ?? b.reps[0]
-          return (
-            <li key={i} className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-x-4 gap-y-1 py-3 sm:grid-cols-[92px_minmax(0,1fr)_auto]" data-kind={b.kind}>
-              <span className={`eyebrow col-span-2 mt-0.5 sm:col-span-1 ${b.kind === 'prove' ? 'text-accent' : complete ? 'text-muted' : 'text-ink'}`}>{TRAINING_LABEL[b.kind]}</span>
-              <div className="min-w-0">
-                <p className={`text-[14.5px] font-medium ${complete ? 'text-muted' : 'text-ink'}`}>
-                  {b.lc ? (
-                    <a href={byLc.get(b.lc)?.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 hover:underline">
-                      <span className="num text-muted">LC {b.lc}</span> {b.title} <IconExternal size={11} className="text-muted" />
-                    </a>
-                  ) : session && first && !(pending && b.kind === 'reactivate') ? (
-                    <Link href={`/rep/${first}?s=${session.id}`} className="hover:underline">
-                      {b.title}
-                    </Link>
-                  ) : (
-                    b.title
-                  )}
-                  {b.onlyIf && <span className="ml-2 font-normal text-muted">{b.onlyIf}</span>}
-                </p>
-                <p className="mt-0.5 text-[12.5px] leading-relaxed text-muted">{b.why}</p>
-              </div>
-              <span className="num mt-0.5 whitespace-nowrap text-right text-[12.5px] text-muted">
-                {complete ? (
-                  <span className="inline-flex items-center gap-1 text-ink-2">
-                    <IconCheck size={11} strokeWidth={2.4} className="text-pass" /> done
+      {steps.length > 0 && (
+        <>
+          <p className="label mb-1 mt-7">Today, in order</p>
+          <ol className="flex flex-col" data-testid="training-steps">
+            {steps.map((s, i) => {
+              const current = i === at && !pending
+              const repsDone = s.reps.filter((id) => Boolean(session) && doneInSession.has(id)).length
+              return (
+                <li key={`${s.key}-${i}`} className={`grid grid-cols-[28px_minmax(0,1fr)_auto] items-start gap-x-3 rounded-xl px-2 py-2.5 ${current ? 'bg-surface' : ''}`} data-step={s.key} data-state={s.done ? 'done' : current ? 'now' : 'later'}>
+                  <span aria-hidden="true" className={`num mt-px grid size-[22px] place-items-center rounded-full text-[12px] font-medium ${s.done ? 'bg-ink text-white' : current ? 'bg-accent text-white' : 'text-muted shadow-[inset_0_0_0_1.5px_var(--line-strong)]'}`}>
+                    {s.done ? <IconCheck size={11} strokeWidth={2.6} /> : i + 1}
                   </span>
-                ) : (
-                  <>
-                    {b.reps.length > 0 && `${session && repsDone ? `${repsDone}/` : ''}${b.reps.length} rep${b.reps.length === 1 ? '' : 's'} · `}~{formatMinutes(real(b))}
-                  </>
-                )}
-              </span>
-            </li>
-          )
-        })}
-      </ol>
-
-      {t && t.state && t.state.first === null && (
-        <p className="mt-4 rounded-xl bg-surface px-3.5 py-2.5 text-[12.5px] leading-relaxed text-muted" data-testid="training-target">
-          <span className="font-medium text-ink">
-            {t.title}: learned {t.learned} of {t.total} building blocks
-          </span>
-          {t.learned > 0 && (
-            <>
-              {' '}
-              · <span className={t.readyToday < t.learned ? 'font-medium text-ink' : ''}>ready today {t.readyToday} of {t.learned}</span>
-            </>
-          )}
-          {t.staleSkills.length > 0 && ` · you already learned ${t.staleSkills.slice(0, 3).map(skillName).join(', ')}; ${t.staleSkills.length === 1 ? 'it is' : 'they are'} being warmed back up.`}
-          {session && total > 0 && !finished && <span className="num"> · session {done} of {total}</span>}
-        </p>
+                  <div className="min-w-0">
+                    <p className={`text-[14.5px] ${s.done ? 'text-muted' : 'text-ink'}`}>
+                      <span className="font-medium">{s.label}</span>
+                      <span className={s.done ? '' : 'text-ink-2'}> · {s.detail}</span>
+                      <span className="sr-only">{s.done ? ' (done)' : current ? ' (you are here)' : ''}</span>
+                    </p>
+                    {current && <p className="mt-0.5 text-[12.5px] leading-relaxed text-muted">{s.onlyIf ? `${s.why} Open it ${s.onlyIf}.` : s.why}</p>}
+                  </div>
+                  <span className="num mt-0.5 whitespace-nowrap text-right text-[12.5px] text-muted">
+                    {s.done ? 'done' : `${s.reps.length ? `${repsDone ? `${repsDone}/` : ''}${s.reps.length} rep${s.reps.length === 1 ? '' : 's'} · ` : ''}~${formatMinutes(s.minutes)}`}
+                  </span>
+                </li>
+              )
+            })}
+          </ol>
+        </>
       )}
+
+      <div className="mt-5 flex flex-col gap-1.5 pt-4 text-[12.5px] leading-relaxed text-muted" style={{ boxShadow: '0 -1px 0 var(--line)' }}>
+        <p data-testid="training-goal">
+          <span className="font-medium text-ink-2">Goal today:</span> {plan.goal}
+        </p>
+        <p data-testid="training-briefing">{last ? `Last session (${shortDate(last.date)}) you were working on ${last.on.join(' and ') || 'the plan'}.` : 'This is your first session.'}</p>
+        {roadmap && (
+          <p>
+            <span className="font-medium text-ink-2">Where you are in the 90-day plan:</span>{' '}
+            <Link href={roadmap.href} className="text-ink underline decoration-line-strong underline-offset-4 hover:decoration-ink" data-testid="start-today">
+              {roadmap.label}
+            </Link>
+          </p>
+        )}
+      </div>
     </section>
   )
 }
