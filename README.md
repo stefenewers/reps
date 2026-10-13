@@ -16,6 +16,8 @@ pattern ladder does not cover are taught by the problem's **bridge**, a few reps
 directly before it. Then the problem, then spaced re-solves. When a problem feels
 impossible, Reps can point to the missing block, train it, and ask again.
 
+**Teach first, then remove the scaffolding.** A concept is explained the first time it is met (concept, mental model, a small example, then the rep), drilled with shorter and shorter prompts, combined, tested once without its label (a `transfer` rep), and only then met as a LeetCode-style problem. Cold and maintenance reps are terse on purpose. `docs/authoring.md` is the operating standard; `lib/pedagogy.test.ts` enforces its shape.
+
 **Training, not testing.** The queue (`lib/pacing.ts`) is the roadmap: the long-term order,
 and what counts as done. Over it sits a deterministic session planner that answers "what
 will help most right now": Today opens with a goal, where the last session left off, and
@@ -64,6 +66,9 @@ durable progress across devices. OpenAI adds the on-demand coach.
 | `lib/bridges.ts` | Problem readiness, repair after a failed attempt, target conversion |
 | `lib/training-state.ts` | Training state (learn / drill / combine / prove / maintain), freshness, what a rep is for, failure classification. Derived, never stored |
 | `lib/session-planner.ts` | Today's training session: ordered blocks over today's stretch of the queue, repair sets, in-session acceleration, the briefing and the session review |
+| `data/briefs.ts`, `data/briefs/` | "This question, in plain English" for every scheduled teaching rep: what each input is, what to return, the one thing to watch |
+| `data/vocabulary.ts`, `data/pattern-words.ts` | The terms Reps introduces (each defined by a primer), and the words that name a technique (kept out of transfer reps) |
+| `lib/coach/guidance.ts` | How generated reps are scaffolded by purpose: foundation teaches, cold is terse, pattern does not name itself |
 | `data/reactivation.ts` | The one-time return session of Oct 12 (existing reps only) |
 | `data/mocks.ts` | Two 45-minute mock interviews |
 | `data/program.ts` | The interview target, the finish line, and the ten Road to Ready stages (copy only; counts come from the curriculum) |

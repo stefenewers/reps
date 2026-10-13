@@ -15,6 +15,7 @@ const cloneGraph = [
   write({
     id: 'b133-copy-lists',
     title: 'Copy an adjacency dict',
+    note: 'Copying a dict does not copy the lists inside it: both dicts would hold the **same** list, so an append through one shows up in the other. `list(x)` builds a new list with the same items.',
     skills: ['graph_clone', 'graph_adjacency', 'dict_assign'],
     prompt:
       '`graph` is an adjacency dict: node → list of neighbours.\n\nWrite `copy_graph(graph)` that returns a **new** dict with a **new** list for every node, so changing the copy never changes the original.\n\n`copy_graph({1: [2], 2: [1]})` → `{1: [2], 2: [1]}` (equal, but none of the lists are shared)',
@@ -90,6 +91,7 @@ assert c[0] is not g[0] and c[1] is not g[1]`, true),
   write({
     id: 'b133-twins-wire',
     title: 'Twins first, wires second',
+    note: 'A `Node` is a small object, like a `ListNode`, but instead of one `.next` it has `.neighbors`: a list of the nodes it is linked to.\n\nAn object can be a dict key. `twin[node]` looks up that exact object, so two nodes with the same `val` are still two different keys.',
     skills: ['graph_clone', 'dict_assign', 'dict_lookup'],
     stage: 'combine',
     repType: 'combine',
@@ -154,7 +156,7 @@ assert out[0].neighbors == [out[0]]`, true),
     skills: ['graph_clone', 'graph_dfs', 'recursion_base_case'],
     difficulty: 3,
     prompt:
-      '`clone_graph(node)` gets one `Node` of a connected graph and should return its copy: same values, same shape, built only from new nodes. It works for a single node with no neighbours. Fix it for everything else.',
+      '`clone_graph(node)` gets one `Node` of a connected graph (every node can be reached from every other by following `.neighbors`) and should return its copy: a new `Node` with the same `val`, whose neighbours are new nodes too, linked the way the originals are. It works for a single node with no neighbours. Fix it for everything else.',
     brokenCode: `${NODE}
 
 def clone(node, copies):
@@ -229,8 +231,9 @@ assert c is not a and c.neighbors == [c]`, true),
     repType: 'pattern',
     difficulty: 3,
     important: true,
+    transfer: true,
     prompt:
-      '`head` is a `ListNode` chain (or `None`). Unlike a normal list, the last node’s `next` may point **back at an earlier node**, so the chain can loop.\n\nWrite `copy_chain(head)` that returns the head of a full copy made of new `ListNode`s, with the same values and the same loop (if any).\n\n1 → 2 → 3 → back to 1 gives a new ring 1 → 2 → 3 → back to the new 1.',
+      '`head` is the first `ListNode` of a chain (each node has `.val` and `.next`), or `None` for an empty chain. Unlike a normal list, the last node’s `next` may point **back at an earlier node**, so the chain can loop.\n\nWrite `copy_chain(head)` that returns the head of a full copy made of new `ListNode`s, with the same values and the same loop (if any).\n\n1 → 2 → 3 → back to 1 gives a new ring 1 → 2 → 3 → back to the new 1.',
     starterCode: `def copy_chain(head):
     pass`,
     solution: `def copy_chain(head):
@@ -317,7 +320,7 @@ const waterFlow = [
     skills: ['border_reach', 'visited_set', 'grid_neighbors', 'recursion_base_case'],
     difficulty: 3,
     prompt:
-      'Ints grid: `0` is open, `1` is a wall. `starts` is a list of open `(r, c)` cells.\n\nWrite `open_reach(grid, starts)` that returns **how many** open cells can be reached from at least one start (4 directions, the starts count too). Use one walk function and **one** visited set shared by all the starts.\n\nWith `grid = [[0, 1, 0], [0, 1, 0], [1, 1, 0]]`: `open_reach(grid, [(0, 0)])` → `2`, `open_reach(grid, [(0, 0), (0, 2)])` → `5`',
+      '`grid` is a list of rows of ints: `0` is open, `1` is a wall. `starts` is a list of open `(r, c)` cells; it may be empty.\n\nWrite `open_reach(grid, starts)` that returns **how many** open cells can be reached from at least one start (moving up, down, left or right; the starts count too). Use one walk function and **one** visited set shared by all the starts.\n\nWith `grid = [[0, 1, 0], [0, 1, 0], [1, 1, 0]]`: `open_reach(grid, [(0, 0)])` → `2`, `open_reach(grid, [(0, 0), (0, 2)])` → `5`',
     starterCode: `def open_reach(grid, starts):
     pass`,
     solution: `def open_reach(grid, starts):
@@ -358,7 +361,7 @@ const waterFlow = [
     title: 'Which neighbours are uphill?',
     skills: ['border_reach', 'grid_neighbors', 'conditionals'],
     prompt:
-      '`heights` is a grid of numbers. Write `higher_neighbors(heights, r, c)` that returns the in-bounds neighbours of `(r, c)`, in the order up, down, left, right, whose height is **greater than or equal to** the height at `(r, c)`.\n\nWith `heights = [[1, 2, 2], [3, 2, 1], [0, 5, 2]]`: `higher_neighbors(heights, 1, 1)` → `[(0, 1), (2, 1), (1, 0)]`',
+      '`heights` is a grid of numbers. Write `higher_neighbors(heights, r, c)` that returns the in-bounds neighbours of `(r, c)` as `(row, col)` tuples, in the order up, down, left, right, whose height is **greater than or equal to** the height at `(r, c)`.\n\nWith `heights = [[1, 2, 2], [3, 2, 1], [0, 5, 2]]`: `higher_neighbors(heights, 1, 1)` → `[(0, 1), (2, 1), (1, 0)]`',
     starterCode: `def higher_neighbors(heights, r, c):
     pass`,
     solution: `def higher_neighbors(heights, r, c):
@@ -384,10 +387,11 @@ const waterFlow = [
   debug({
     id: 'b417-dbg-downhill',
     title: 'Debug: which cells drain left?',
+    note: 'Two set tools for grid work. `sorted([r, c] for r, c in seen)` turns a set of `(r, c)` tuples into a sorted list of `[r, c]` pairs.\n\n`a & b` builds a new set holding only the items that are in **both** sets: `{1, 2, 3} & {2, 3, 4}` is `{2, 3}`.',
     skills: ['border_reach', 'visited_set', 'grid_neighbors'],
     difficulty: 3,
     prompt:
-      'Rain on a cell runs to any neighbour that is **equal or lower**, and off the grid once it is in the left column. `drains_left(heights)` should return every cell whose water can run off the left side, as a sorted list of `[r, c]`. It starts from the left column and works inward.\n\n`drains_left([[1, 2, 3]])` should be `[[0, 0], [0, 1], [0, 2]]`. Fix it.',
+      '`heights` is a grid of numbers. Rain on a cell runs to any neighbour (up, down, left, right) that is **equal or lower**, and off the grid once it is in the left column. `drains_left(heights)` should return every cell whose water can run off the left side, as a sorted list of `[r, c]`. It starts from the left column and works inward.\n\n`drains_left([[1, 2, 3]])` should be `[[0, 0], [0, 1], [0, 2]]`. Fix it.',
     brokenCode: `def drains_left(heights):
     rows, cols = len(heights), len(heights[0])
     seen = set()
@@ -440,8 +444,9 @@ const waterFlow = [
     repType: 'pattern',
     difficulty: 4,
     important: true,
+    transfer: true,
     prompt:
-      '`field` is a grid of heights. Rain on a plot runs to any neighbour that is equal or lower. It leaves the field to the **north** from row `0` and to the **south** from the last row.\n\nWrite `drains_both(field)` that returns the plots whose water can leave **both** ways, as a sorted list of `[r, c]`.\n\n`drains_both([[1], [2], [1]])` → `[[1, 0]]` (only the ridge in the middle runs both ways)',
+      '`field` is a grid of heights: a list of rows of numbers, at least one row and one column. Each cell is a plot. Rain on a plot runs to any neighbour (up, down, left, right) that is equal or lower. It leaves the field to the **north** from row `0` and to the **south** from the last row.\n\nWrite `drains_both(field)` that returns the plots whose water can leave **both** ways, as a sorted list of `[r, c]`.\n\n`drains_both([[1], [2], [1]])` → `[[1, 0]]` (only the ridge in the middle runs both ways)',
     starterCode: `def drains_both(field):
     pass`,
     solution: `def drains_both(field):
@@ -528,6 +533,7 @@ const components = [
   debug({
     id: 'b323-dbg-isolated',
     title: 'Debug: the missing teams',
+    note: '`graph.get(a, []) + [b]` reads the neighbour list stored for `a` (an empty list if `a` has no key yet) and builds a new list with `b` added at the end.',
     skills: ['connected_components', 'graph_adjacency', 'dict_get'],
     difficulty: 3,
     prompt:
@@ -593,8 +599,9 @@ const components = [
     repType: 'pattern',
     difficulty: 3,
     important: true,
+    transfer: true,
     prompt:
-      'People are numbered `0` to `n - 1`, and each `[a, b]` in `links` says `a` and `b` are friends. A circle is everyone connected through friends; someone with no friends is a circle of one.\n\nWrite `circle_sizes(n, links)` that returns the size of every circle, smallest first.\n\n`circle_sizes(6, [[0, 1], [1, 2], [4, 5]])` → `[1, 2, 3]`',
+      'People are numbered `0` to `n - 1`, and each `[a, b]` in `links` says `a` and `b` are friends. The same friendship may be listed more than once. A circle is everyone connected through friends; someone with no friends is a circle of one.\n\nWrite `circle_sizes(n, links)` that returns the size of every circle, smallest first.\n\n`circle_sizes(6, [[0, 1], [1, 2], [4, 5]])` → `[1, 2, 3]`',
     starterCode: `def circle_sizes(n, links):
     pass`,
     solution: `def circle_sizes(n, links):
@@ -728,8 +735,9 @@ def is_tree(n, edges):
     repType: 'pattern',
     difficulty: 3,
     important: true,
+    transfer: true,
     prompt:
-      'An office has computers `0` to `n - 1` (`n` is at least 1) and a list of `cables`, each an `[a, b]` pair. No cable is listed twice.\n\nWrite `spare_cables(n, cables)`. If some computer cannot be reached from computer `0`, return `-1`. Otherwise return how many cables could be unplugged while everyone stays connected.\n\n`spare_cables(3, [[0, 1], [1, 2], [2, 0]])` → `1`, `spare_cables(4, [[0, 1], [1, 2], [2, 0]])` → `-1`',
+      'An office has computers `0` to `n - 1` (`n` is at least 1) and a list of `cables`, each an `[a, b]` pair joining two computers in both directions. No cable is listed twice.\n\nWrite `spare_cables(n, cables)`. If some computer cannot be reached from computer `0`, return `-1`. Otherwise return how many cables could be unplugged while everyone stays connected.\n\n`spare_cables(3, [[0, 1], [1, 2], [2, 0]])` → `1`, `spare_cables(4, [[0, 1], [1, 2], [2, 0]])` → `-1`',
     starterCode: `def spare_cables(n, cables):
     pass`,
     solution: `def spare_cables(n, cables):
@@ -825,13 +833,13 @@ const heapCheck = [
   }),
   write({
     id: 'd9h-c-under-limit',
-    title: 'Pop while it is small',
+    title: 'Under the limit, smallest first',
     skills: ['heap_push_pop', 'while_loop', 'list_append'],
     stage: 'retrieval',
     repType: 'cold',
     difficulty: 3,
     prompt:
-      'Write `under_limit(nums, limit)` that returns every value **smaller than** `limit`, in ascending order. Use a heap from `heapq` and stop popping as soon as the smallest remaining value is too big. No `sorted` or `.sort()`. Nothing is pre-imported, and `nums` must not change.\n\n`under_limit([8, 3, 5, 1, 9], 6)` → `[1, 3, 5]`',
+      'Write `under_limit(nums, limit)` that returns every value **smaller than** `limit`, in ascending order. Do not sort: no `sorted`, no `.sort()`. Take values out smallest first and stop as soon as the smallest one left is too big. Nothing is pre-imported, and `nums` must not change.\n\n`under_limit([8, 3, 5, 1, 9], 6)` → `[1, 3, 5]`',
     starterCode: `def under_limit(nums, limit):
     pass`,
     solution: `import heapq
@@ -968,6 +976,7 @@ const meetingRooms = [
     stage: 'pattern',
     repType: 'pattern',
     important: true,
+    transfer: true,
     prompt:
       '`bakes` is a list of `(start, minutes)` tuples: when a tray goes in and how long it stays. The oven holds one tray. A tray may go in at the very minute the previous one comes out.\n\nWrite `one_oven(bakes)` that returns `True` if a single oven can do every bake.\n\n`one_oven([(10, 30), (0, 15), (20, 5)])` → `False` (the tray from minute 0 is still in at minute 10)',
     starterCode: `def one_oven(bakes):
@@ -1117,6 +1126,7 @@ assert n == [4, 8]`, true),
     repType: 'pattern',
     difficulty: 3,
     important: true,
+    transfer: true,
     prompt:
       'A print job is a sorted list of page `ranges` like `[[1, 2], [6, 8]]`: whole page numbers, each range `[first, last]`, with a gap between any two. `new` is one more range.\n\nWrite `add_pages(ranges, new)` that returns the new sorted list. Ranges that overlap **or sit right next to each other** (one ends on page 2, the next begins on page 3) become one range.\n\n`add_pages([[1, 2], [6, 8]], [3, 4])` → `[[1, 4], [6, 8]]`',
     starterCode: `def add_pages(ranges, new):
@@ -1264,6 +1274,7 @@ const nonOverlapping = [
     repType: 'pattern',
     difficulty: 3,
     important: true,
+    transfer: true,
     prompt:
       'A tennis court gets `requests` as `(start, hours)` tuples: the hour play begins and how long it lasts. A game may begin the moment the previous one finishes.\n\nWrite `refused(requests)` that returns the **fewest** requests that must be turned down so that the rest never overlap.\n\n`refused([(1, 9), (2, 1), (4, 1)])` → `1` (turn down the nine-hour one)',
     starterCode: `def refused(requests):
@@ -1317,7 +1328,7 @@ for start, end in sorted(meetings):
     print(start, ends[0], len(ends))
 `,
     expectedOutput: '0 30 1\n5 10 2\n15 20 2',
-    note: 'The heap holds one end time per room in use. `ends[0]` is the room that frees up first: if even that one is still busy, every room is.',
+    note: 'The heap holds one end time per room in use. `ends[0]` is the room that frees up first: if even that one is still busy, every room is. `sorted(meetings)` puts the `[start, end]` pairs in start order.',
     explanation: 'At 5 the earliest end is 30, so a second room opens. At 15 the room that ended at 10 is free: its end is popped and replaced by 20, and the size stays 2.',
     signature: 'trace:min-rooms-heap',
     minutes: 3,
@@ -1327,7 +1338,7 @@ for start, end in sorted(meetings):
     title: 'Book one meeting',
     skills: ['min_rooms', 'heap_push_pop', 'conditionals'],
     prompt:
-      '`ends` is a min-heap (a list managed by `heapq`) holding the end time of every room in use. A meeting from `start` to `end` arrives. A room that ends at 10 is free for a meeting starting at 10.\n\nWrite `book(ends, start, end)`: if the room that frees up **earliest** is free by `start`, reuse it (remove its end time); either way record the new end time. Return the number of rooms now in use. Nothing is pre-imported.\n\n`book([10, 30], 12, 20)` → `2`, `book([10, 30], 5, 8)` → `3`',
+      '`ends` is a min-heap (a list managed by `heapq`) holding the end time of every room in use. A meeting from `start` to `end` arrives. A room that ends at 10 is free for a meeting starting at 10.\n\nWrite `book(ends, start, end)`: if the room that frees up **earliest** is free by `start`, reuse it (remove its end time); either way record the new end time. Change `ends` itself, do not build a new list. Return the number of rooms now in use. Nothing is pre-imported.\n\n`book([10, 30], 12, 20)` → `2`, `book([10, 30], 5, 8)` → `3`',
     starterCode: `def book(ends, start, end):
     pass`,
     solution: `import heapq
@@ -1429,11 +1440,13 @@ def reuses(meetings):
   write({
     id: 'b253-platforms-mini',
     title: 'Platforms at a station',
+    note: '`zip(a, b)` pairs up two lists position by position: `list(zip([1, 2], [5, 6]))` is `[(1, 5), (2, 6)]`. Use it when one thing is described by two parallel lists.',
     skills: ['min_rooms', 'heap_push_pop', 'sorting', 'interval_overlap'],
     stage: 'pattern',
     repType: 'pattern',
     difficulty: 3,
     important: true,
+    transfer: true,
     prompt:
       'Train `i` arrives at minute `arrivals[i]` and leaves at minute `departures[i]`. The two lists have the same length and are in no particular order. A platform can take a train arriving in the very minute the previous train leaves.\n\nWrite `platforms(arrivals, departures)` that returns the smallest number of platforms the station needs.\n\n`platforms([900, 940, 950], [910, 1200, 1120])` → `2`',
     starterCode: `def platforms(arrivals, departures):
@@ -1918,7 +1931,7 @@ True`,
         { code: 'for c in range(cols):\n    walk(0, c, seen)', note: 'Every cell of the top row is a start.' },
         { code: 'for r in range(rows):\n    walk(r, cols - 1, seen)', note: 'Every cell of the right column.' },
         { code: 'if h[nr][nc] >= h[r][c]:', note: 'Reversed rule: water runs down, so the walk goes up.' },
-        { code: 'both = first & second', note: 'Cells that are in both visited sets.' },
+        { code: 'both = first & second', note: '`a & b` is a new set of the items found in both sets. Here: the cells both walks reached.' },
         { code: 'sorted([r, c] for r, c in both)', note: 'A set of tuples as a sorted list of pairs.' },
       ],
       example: {
@@ -2036,7 +2049,7 @@ print(new)`,
       id: 'interval-greedy',
       title: 'Greedy by end time',
       skills: ['interval_greedy'],
-      what: 'To fit the **most** non-overlapping intervals into one resource, sort them by **end** and take each one that starts at or after the end of the last one taken. The interval that finishes first leaves the most room for the rest, so taking it can never cost you. "Fewest to remove" is the same question: total minus the most you can keep.',
+      what: 'A **greedy** method makes the choice that looks best right now and never takes it back. To fit the **most** non-overlapping intervals into one resource, sort them by **end** and take each one that starts at or after the end of the last one taken. The interval that finishes first leaves the most room for the rest, so taking it can never cost you. "Fewest to remove" is the same question: total minus the most you can keep.',
       model: 'At a buffet with one plate, always take the dish that is ready soonest; it never blocks more than any other choice would.',
       syntax: [
         { code: 'ivs.sort(key=lambda iv: iv[1])', note: 'By END, not by start.' },

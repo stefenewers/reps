@@ -6,6 +6,16 @@
  * solution, and the catch is a pointer (often a question), not a fix.
  */
 import { PACK_BRIEFS } from '@/data/exercises/bridges'
+import { briefs as oct02 } from '@/data/briefs/oct02'
+import { briefs as oct03 } from '@/data/briefs/oct03'
+import { briefs as oct04 } from '@/data/briefs/oct04'
+import { briefs as oct05 } from '@/data/briefs/oct05'
+import { briefs as oct06 } from '@/data/briefs/oct06'
+import { briefs as oct07 } from '@/data/briefs/oct07'
+import { briefs as oct08 } from '@/data/briefs/oct08'
+import { briefs as oct09 } from '@/data/briefs/oct09'
+import { briefs as oct10 } from '@/data/briefs/oct10'
+import { briefs as oct11 } from '@/data/briefs/oct11'
 
 export interface Brief {
   /** For reps where the job itself needs saying (traces, fills, debugs). */
@@ -431,7 +441,7 @@ const AUTHORED: Record<string, Brief> = {
   'o2-dl-lc-group-anagrams': {
     inputs: [{ name: 'words', is: 'a list of lowercase words' }],
     returns: 'a **list of groups** (lists of words that are anagrams of each other), each in original order, groups ordered by first appearance.',
-    catch: 'Anagrams share something you can compute. That shared thing is the key.',
+    catch: 'Two words belong together when they use exactly the same letters. What could you work out from a word that comes out identical for every word in its group?',
   },
 
   // ── Index maps ─────────────────────────────────────────────────────────────
@@ -516,5 +526,5 @@ const AUTHORED: Record<string, Brief> = {
   },
 }
 
-/** Every brief: the ones above, and the ones written with the bridge packs. */
-export const BRIEFS: Record<string, Brief> = { ...AUTHORED, ...PACK_BRIEFS }
+/** Every brief: the dictionary stretch above, the per-module files (data/briefs/), and the ones written with the bridge packs. */
+export const BRIEFS: Record<string, Brief> = { ...AUTHORED, ...oct02, ...oct03, ...oct04, ...oct05, ...oct06, ...oct07, ...oct08, ...oct09, ...oct10, ...oct11, ...PACK_BRIEFS }

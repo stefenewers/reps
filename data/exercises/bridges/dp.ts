@@ -16,6 +16,7 @@ const br213 = [
     title: 'Cut a ring into two lines',
     skills: ['circular_split', 'slicing', 'tuples'],
     prompt: '`ring` is a list that loops round: its first and last items sit next to each other.\n\nWrite `two_lines(ring)` that returns a tuple of two lists: the ring **without its first** item, then the ring **without its last** item.\n\n`two_lines([4, 5, 6, 7])` → `([5, 6, 7], [4, 5, 6])`',
+    note: 'A ring (a circular list) has no real ends: its first and last items are neighbours. When a rule says neighbours cannot both be used, no answer uses both of them, so a ring can be handled as two ordinary rows: one without the first item, one without the last.',
     starterCode: `def two_lines(ring):
     pass`,
     solution: `def two_lines(ring):
@@ -37,7 +38,7 @@ const br213 = [
     id: 'b213-dbg-single',
     title: 'Debug: a ring of one',
     skills: ['circular_split', 'slicing', 'edge_cases'],
-    prompt: 'Tables are set in a circle, so the first and last are neighbours. `ring_best(tips)` should return the largest total of tips from tables that are **not** neighbours. `line_best` solves a straight row and is already correct. Make every test pass.',
+    prompt: '`tips` is a list of non-negative numbers, one per table. The tables are set in a circle, so the first and last are neighbours. `ring_best(tips)` should return the largest total you can collect when no two of the tables you pick are neighbours (no tables at all gives `0`). `line_best` solves a straight row and is already correct. Make every test pass.',
     brokenCode: `def line_best(row):
     prev2, prev1 = 0, 0
     for x in row:
@@ -77,8 +78,9 @@ def ring_best(tips):
     stage: 'pattern',
     repType: 'pattern',
     important: true,
+    transfer: true,
     difficulty: 3,
-    prompt: 'Fields lie in a ring around a pond; `yields[i]` is what field `i` would give (never negative). Two fields that touch cannot both be harvested, and the first and last fields touch.\n\nWrite `ring_harvest(yields)` returning the largest total harvest.\n\n`ring_harvest([6, 1, 2, 7, 3])` → `13` (fields 0 and 3)',
+    prompt: 'Fields lie in a ring around a pond; `yields` is a list of numbers and `yields[i]` is what field `i` would give (never negative). Two fields that touch cannot both be harvested, and the first and last fields touch.\n\nWrite `ring_harvest(yields)` returning the largest total harvest. A single field can be harvested on its own, and no fields gives `0`.\n\n`ring_harvest([6, 1, 2, 7, 3])` → `13` (fields 0 and 3)',
     starterCode: `def ring_harvest(yields):
     pass`,
     solution: `def ring_harvest(yields):
@@ -132,7 +134,7 @@ for x in nums[1:]:
 3
 5
 4`,
-    note: '`here` is the best sum of a run that **ends at this number**. Each step it either extends the run so far (`here + x`) or starts fresh at `x`.',
+    note: 'A **run** is a stretch of numbers that sit next to each other in the list, with no gaps (interviewers call it a **subarray**). `here` is the best sum of a run that **ends at this number**. Each step it either extends the run so far (`here + x`) or starts fresh at `x`.',
     explanation: 'At 3 the run so far is worth -2, so extending gives 1 and starting fresh gives 3: start fresh. After that, extending wins.',
     signature: 'trace:kadane-ending-here',
     minutes: 2,
@@ -141,7 +143,7 @@ for x in nums[1:]:
     id: 'b53-ending-sums',
     title: 'Best sum ending at each index',
     skills: ['kadane', 'list_append', 'state_tracking'],
-    prompt: 'Write `ending_sums(nums)` that returns a list the same length as `nums`: entry `i` is the largest sum of a run of neighbours that **ends exactly at index `i`** (the run must include `nums[i]`).\n\n`ending_sums([4, -6, 3, 2, -1])` → `[4, -2, 3, 5, 4]`',
+    prompt: '`nums` is a list of numbers, and some can be negative. Write `ending_sums(nums)` that returns a list the same length as `nums`: entry `i` is the largest sum of a run of neighbours that **ends exactly at index `i`** (the run must include `nums[i]`).\n\n`ending_sums([4, -6, 3, 2, -1])` → `[4, -2, 3, 5, 4]`',
     starterCode: `def ending_sums(nums):
     pass`,
     solution: `def ending_sums(nums):
@@ -204,8 +206,9 @@ for x in nums[1:]:
     stage: 'pattern',
     repType: 'pattern',
     important: true,
+    transfer: true,
     difficulty: 3,
-    prompt: '`changes` is a non-empty list of hourly temperature changes. Write `deepest_dip(changes)` returning the **lowest** total of any stretch of one or more hours in a row.\n\n`deepest_dip([3, -4, 2, -5, 6])` → `-7` (the stretch `-4, 2, -5`)',
+    prompt: '`changes` is a non-empty list of hourly temperature changes (numbers, positive or negative). Write `deepest_dip(changes)` returning the **lowest** total of any stretch of one or more hours in a row.\n\n`deepest_dip([3, -4, 2, -5, 6])` → `-7` (the stretch `-4, 2, -5`)',
     starterCode: `def deepest_dip(changes):
     pass`,
     solution: `def deepest_dip(changes):
@@ -240,7 +243,8 @@ const br55 = [
     id: 'b55-farthest',
     title: 'The farthest landing',
     skills: ['greedy_reach', 'enumerate', 'state_tracking'],
-    prompt: 'Lily pads sit in a row. From pad `i` a frog can hop forward up to `pads[i]` pads, so the farthest it can land from there is index `i + pads[i]`.\n\nWrite `farthest_landing(pads)` returning the largest landing index over **every** pad (pretend the frog can stand on all of them). An empty row gives `0`.\n\n`farthest_landing([1, 5, 0, 0])` → `6`',
+    prompt: 'Lily pads sit in a row, and `pads` is a list of whole numbers (0 or more), one per pad. From pad `i` a frog can hop forward up to `pads[i]` pads, so the farthest it can land from there is index `i + pads[i]`.\n\nWrite `farthest_landing(pads)` returning the largest landing index over **every** pad (pretend the frog can stand on all of them). An empty row gives `0`.\n\n`farthest_landing([1, 5, 0, 0])` → `6`',
+    note: 'One number can sum up a whole left-to-right scan: the farthest index any pad seen so far could send the frog to. This rep builds only that number. The next reps add the other half: can the frog stand on this pad at all?',
     starterCode: `def farthest_landing(pads):
     pass`,
     solution: `def farthest_landing(pads):
@@ -265,7 +269,7 @@ const br55 = [
     id: 'b55-dbg-no-stop',
     title: 'Debug: hopping from pads you never reached',
     skills: ['greedy_reach', 'enumerate', 'early_return'],
-    prompt: 'The frog starts on pad 0 of a non-empty row and can hop forward up to `pads[i]` pads from pad `i`. `last_reachable(pads)` should return the highest index the frog can actually get to. Make every test pass.',
+    prompt: '`pads` is a non-empty list of whole numbers (0 or more), one per lily pad in a row. The frog starts on pad 0 and can hop forward up to `pads[i]` pads from pad `i`. `last_reachable(pads)` should return the highest index the frog can actually get to. Make every test pass.',
     brokenCode: `def last_reachable(pads):
     farthest = 0
     for i, hop in enumerate(pads):
@@ -298,8 +302,9 @@ const br55 = [
     stage: 'pattern',
     repType: 'pattern',
     important: true,
+    transfer: true,
     difficulty: 3,
-    prompt: 'Same row of pads: the frog starts on pad 0 and from pad `i` hops forward up to `pads[i]` pads.\n\nWrite `first_unreachable(pads)` returning the index of the **first pad the frog can never stand on**, or `-1` if it can stand on every pad.\n\n`first_unreachable([1, 0, 0, 5])` → `2`',
+    prompt: '`pads` is a list of whole numbers (0 or more), one per lily pad in a row. A frog starts on pad 0, and from pad `i` it can hop forward up to `pads[i]` pads.\n\nWrite `first_unreachable(pads)` returning the index of the **first pad the frog can never stand on**, or `-1` if it can stand on every pad. An empty row gives `-1`.\n\n`first_unreachable([1, 0, 0, 5])` → `2`',
     starterCode: `def first_unreachable(pads):
     pass`,
     solution: `def first_unreachable(pads):
@@ -331,7 +336,8 @@ const br322 = [
     id: 'b322-makeable',
     title: 'Can this amount be made?',
     skills: ['dp_min_choice', 'dp_table', 'recurrence'],
-    prompt: 'You have scoops of the sizes in `scoops` (positive whole litres) and may use each as many times as you like.\n\nWrite `can_fill(total, scoops)` returning `True` if exactly `total` litres can be measured out, else `False`. Use a table where `dp[a]` says whether amount `a` can be made. Zero litres can always be made.\n\n`can_fill(11, [3, 5])` → `True` (3 + 3 + 5), `can_fill(7, [3, 5])` → `False`',
+    prompt: 'You have scoops of the sizes in `scoops` (positive whole litres) and may use each as many times as you like.\n\n`total` is a whole number, 0 or more. Write `can_fill(total, scoops)` returning `True` if exactly `total` litres can be measured out, else `False`. Use a table (a list called `dp`) where `dp[a]` says whether amount `a` can be made. Zero litres can always be made.\n\n`can_fill(11, [3, 5])` → `True` (3 + 3 + 5), `can_fill(7, [3, 5])` → `False`',
+    note: 'Here the index of the list is an **amount**, not a position in an input: `dp[a]` is the answer for amount `a`. Each entry is worked out from the entries for smaller amounts, so fill it from small to large.',
     starterCode: `def can_fill(total, scoops):
     pass`,
     solution: `def can_fill(total, scoops):
@@ -380,7 +386,7 @@ print(dp)`,
     id: 'b322-fewest-each',
     title: 'Fewest scoops for every amount',
     skills: ['dp_min_choice', 'dp_table', 'range'],
-    prompt: 'Change the question from "can it be made" to "with how few". Write `fewest_table(total, scoops)` returning the whole table: entry `a` is the fewest scoops that measure exactly `a` litres, and `float("inf")` where `a` cannot be measured.\n\n`fewest_table(4, [1, 3])` → `[0, 1, 2, 1, 2]`',
+    prompt: 'Change the question from "can it be made" to "with how few". `total` is a whole number (0 or more) and `scoops` is a list of positive scoop sizes, each usable any number of times.\n\nWrite `fewest_table(total, scoops)` returning the whole table: entry `a` is the fewest scoops that measure exactly `a` litres, and `float("inf")` where `a` cannot be measured.\n\n`fewest_table(4, [1, 3])` → `[0, 1, 2, 1, 2]`',
     starterCode: `def fewest_table(total, scoops):
     pass`,
     solution: `def fewest_table(total, scoops):
@@ -408,7 +414,8 @@ print(dp)`,
     id: 'b322-dbg-zero-fill',
     title: 'Debug: every answer is zero',
     skills: ['dp_min_choice', 'dp_table', 'edge_cases'],
-    prompt: '`fewest_stamps(total, stamps)` should return the smallest number of stamps (each value may be used many times) whose values add up to exactly `total`, or `-1` when no combination does. Make every test pass.',
+    prompt: '`total` is a whole number (0 or more) and `stamps` is a list of positive stamp values. `fewest_stamps(total, stamps)` should return the smallest number of stamps (each value may be used many times) whose values add up to exactly `total`, or `-1` when no combination does. Make every test pass.',
+    note: '`dp[a]` should end up as the fewest stamps whose values add up to exactly `a`.',
     brokenCode: `def fewest_stamps(total, stamps):
     dp = [0] * (total + 1)
     for a in range(1, total + 1):
@@ -449,8 +456,9 @@ print(dp)`,
     stage: 'pattern',
     repType: 'pattern',
     important: true,
+    transfer: true,
     difficulty: 3,
-    prompt: 'A shop sells bolts only in packs. `packs` is a list of `(size, price)` tuples and any pack can be bought many times.\n\nWrite `cheapest_exact(total, packs)` returning the lowest price for **exactly** `total` bolts, or `-1` if no mix of packs gives exactly that many.\n\n`cheapest_exact(6, [(1, 3), (4, 8)])` → `14` (one pack of 4, two packs of 1)',
+    prompt: 'A shop sells bolts only in packs. `packs` is a list of `(size, price)` tuples (positive whole numbers) and any pack can be bought many times.\n\nWrite `cheapest_exact(total, packs)` returning the lowest price for **exactly** `total` bolts, or `-1` if no mix of packs gives exactly that many. `total` is a whole number, 0 or more, and zero bolts cost `0`.\n\n`cheapest_exact(6, [(1, 3), (4, 8)])` → `14` (one pack of 4, two packs of 1)',
     starterCode: `def cheapest_exact(total, packs):
     pass`,
     solution: `def cheapest_exact(total, packs):
@@ -525,7 +533,7 @@ for i in range(1, len(s) + 1):
             dp[i] = True
 print(dp)`,
     expectedOutput: `[True, False, True, True, False, True]`,
-    note: '`dp[i]` answers for the **first i characters**. It is True when some earlier `dp[j]` is True and the piece `s[j:i]` is a word. `dp[0]` is the empty prefix: nothing left to split, so True.',
+    note: '`dp[i]` answers for the **first i characters** of `s`, which is the **prefix** `s[:i]`. It is True when some earlier `dp[j]` is True and the piece `s[j:i]` is a word. `dp[0]` is the empty prefix: nothing left to split, so True.',
     explanation: 'dp[4] ("abca") is False: none of "a", "ca", "bca", "abca" is a word. dp[5] is True from dp[3] plus the piece "ab".',
     signature: 'trace:dp-prefix-bool',
     minutes: 2.5,
@@ -534,7 +542,7 @@ print(dp)`,
     id: 'b139-prefix-table',
     title: 'The table of splittable prefixes',
     skills: ['dp_prefix_words', 'dp_table', 'slicing', 'set_create'],
-    prompt: '`words` is a **list** of allowed pieces. Write `prefix_table(s, words)` returning a list of `len(s) + 1` booleans: entry `i` is `True` when the first `i` characters of `s` can be cut into allowed pieces (a piece may be used more than once).\n\n`prefix_table("inkpen", ["ink", "pen", "in"])` → `[True, False, True, True, False, False, True]`',
+    prompt: '`s` is a string and `words` is a **list** of allowed pieces (strings). Write `prefix_table(s, words)` returning a list of `len(s) + 1` booleans: entry `i` is `True` when the first `i` characters of `s` can be cut into allowed pieces (a piece may be used more than once).\n\n`prefix_table("inkpen", ["ink", "pen", "in"])` → `[True, False, True, True, False, False, True]`',
     starterCode: `def prefix_table(s, words):
     pass`,
     solution: `def prefix_table(s, words):
@@ -563,7 +571,8 @@ print(dp)`,
     id: 'b139-dbg-no-base',
     title: 'Debug: nothing ever splits',
     skills: ['dp_prefix_words', 'dp_table', 'edge_cases'],
-    prompt: '`clean_prefix(s, words)` should return the length of the **longest prefix** of `s` that can be cut entirely into pieces from the list `words` (0 if not even one piece fits at the front). Make every test pass.',
+    prompt: '`clean_prefix(s, words)` should return the length of the **longest prefix** of the string `s` (a prefix is its first so-many characters) that can be cut entirely into pieces from the list `words` (0 if not even one piece fits at the front). Make every test pass.',
+    note: '`dp[i]` should be `True` when the first `i` characters of `s` can be cut entirely into pieces from `words`.',
     brokenCode: `def clean_prefix(s, words):
     word_set = set(words)
     dp = [False] * (len(s) + 1)
@@ -609,8 +618,9 @@ print(dp)`,
     stage: 'pattern',
     repType: 'pattern',
     important: true,
+    transfer: true,
     difficulty: 3,
-    prompt: 'Write `count_splits(s, words)` returning **how many different ways** `s` can be cut into pieces that are all in the list `words` (pieces may repeat). The empty string can be cut in exactly one way: no pieces.\n\n`count_splits("aaa", ["a", "aa"])` → `3` (`a|a|a`, `a|aa`, `aa|a`)',
+    prompt: '`s` is a string and `words` is a list of strings. Write `count_splits(s, words)` returning **how many different ways** `s` can be cut into pieces that are all in the list `words` (pieces may repeat). The empty string can be cut in exactly one way: no pieces. A word listed twice in `words` is still one word.\n\n`count_splits("aaa", ["a", "aa"])` → `3` (`a|a|a`, `a|aa`, `aa|a`)',
     starterCode: `def count_splits(s, words):
     pass`,
     solution: `def count_splits(s, words):
@@ -649,7 +659,8 @@ const br300 = [
     id: 'b300-best-before',
     title: 'The best earlier chain to join',
     skills: ['dp_lookback', 'range', 'state_tracking'],
-    prompt: '`nums` is a list of numbers. `dp[j]` is already filled in for every index `j` below `i`: the length of the longest rising chain that ends at `nums[j]`.\n\nWrite `best_before(nums, dp, i)` returning the largest `dp[j]` among the earlier indexes whose number is **strictly smaller** than `nums[i]`, or `0` if there is none.\n\n`best_before([3, 1, 2, 5], [1, 1, 2, 0], 3)` → `2`',
+    prompt: 'A **rising chain** picks numbers from a list left to right (skipping is fine), each strictly bigger than the one before.\n\n`nums` is a list of numbers and `dp` is a list of the same length. `dp[j]` is already filled in for every index `j` below `i`: the length of the longest rising chain that ends at `nums[j]`. Entries from index `i` on are not filled in yet, so ignore them.\n\nWrite `best_before(nums, dp, i)` returning the largest `dp[j]` among the earlier indexes whose number is **strictly smaller** than `nums[i]`, or `0` if there is none.\n\n`best_before([3, 1, 2, 5], [1, 1, 2, 0], 3)` → `2`',
+    note: 'Interviewers call a pick like this a **subsequence**: keep the order, skipping allowed. A **subarray** (in a string, a **substring**) allows no skipping: its items sit next to each other.',
     starterCode: `def best_before(nums, dp, i):
     pass`,
     solution: `def best_before(nums, dp, i):
@@ -703,7 +714,8 @@ const br300 = [
     id: 'b300-dbg-last-entry',
     title: 'Debug: the longest slide',
     skills: ['dp_lookback', 'dp_table', 'edge_cases'],
-    prompt: '`longest_slide(prices)` should return the length of the longest **falling** chain in `prices`: prices picked from left to right (skipping is fine), each strictly lower than the one before. Make every test pass.',
+    prompt: '`prices` is a list of numbers. `longest_slide(prices)` should return the length of the longest **falling** chain in `prices`: prices picked from left to right (skipping is fine), each strictly lower than the one before. An empty list gives `0`. Make every test pass.',
+    note: '`dp[i]` is the length of the longest falling chain that **ends at** `prices[i]`.',
     brokenCode: `def longest_slide(prices):
     if not prices:
         return 0
@@ -743,6 +755,7 @@ const br300 = [
     stage: 'pattern',
     repType: 'pattern',
     important: true,
+    transfer: true,
     difficulty: 3,
     prompt: '`nums` is a list of positive numbers. Pick numbers from left to right (skipping is fine) so each is strictly bigger than the one before.\n\nWrite `best_rising_sum(nums)` returning the **largest total** such a pick can have. An empty list gives `0`.\n\n`best_rising_sum([1, 101, 2, 3, 100])` → `106` (1 + 2 + 3 + 100)',
     starterCode: `def best_rising_sum(nums):
@@ -784,7 +797,8 @@ const br5 = [
     id: 'b5-spread',
     title: 'Grow outward while the ends match',
     skills: ['expand_center', 'two_pointer', 'while_loop', 'slicing'],
-    prompt: 'Write `spread(s, left, right)`. Starting from the two given indexes, keep stepping `left` down and `right` up for as long as both are inside `s` and the two characters are equal. Return the mirrored piece that was covered (the empty string if the starting characters already differ).\n\n`spread("racecar", 3, 3)` → `"racecar"`, `spread("xabbay", 2, 3)` → `"abba"`, `spread("abc", 0, 1)` → `""`',
+    prompt: '`s` is a string. `left` and `right` are indexes into it: either the same index, or `right` is `left + 1`.\n\nWrite `spread(s, left, right)`. Starting from the two given indexes, keep stepping `left` down and `right` up for as long as both are inside `s` and the two characters are equal. Return the piece of `s` covered by the pairs that matched (the empty string if the starting characters already differ).\n\n`spread("racecar", 3, 3)` → `"racecar"`, `spread("xabbay", 2, 3)` → `"abba"`, `spread("abc", 0, 1)` → `""`',
+    note: 'A palindrome (a piece that reads the same both ways) is symmetric about its middle. So start two indexes at the middle and step them **apart** while the characters match. It is the two-index walk you know, run outward instead of inward.',
     starterCode: `def spread(s, left, right):
     pass`,
     solution: `def spread(s, left, right):
@@ -811,7 +825,7 @@ const br5 = [
     id: 'b5-dbg-slice',
     title: 'Debug: one character too wide',
     skills: ['expand_center', 'slicing', 'while_loop'],
-    prompt: '`widest_at(s, i)` should return the longest piece of `s` that reads the same both ways and has `s[i]` as its exact middle character. Make every test pass.',
+    prompt: '`s` is a non-empty string and `i` is an index into it. `widest_at(s, i)` should return the longest piece of `s` that reads the same both ways and has `s[i]` as its exact middle character. Make every test pass.',
     brokenCode: `def widest_at(s, i):
     left, right = i, i
     while left >= 0 and right < len(s) and s[left] == s[right]:
@@ -844,7 +858,7 @@ const br5 = [
     stage: 'combine',
     repType: 'combine',
     difficulty: 3,
-    prompt: 'A mirrored piece has either one middle character (`"aba"`) or a middle gap between two equal characters (`"abba"`).\n\nWrite `longer_at(s, i)` returning the longer of: the widest mirrored piece whose middle is `s[i]`, and the widest one whose middle gap is between index `i` and `i + 1`. On a tie return the first.\n\n`longer_at("xabbay", 2)` → `"abba"`, `longer_at("racecar", 3)` → `"racecar"`',
+    prompt: 'A mirrored piece (a palindrome: it reads the same both ways) has either one middle character (`"aba"`) or a middle gap between two equal characters (`"abba"`).\n\n`s` is a non-empty string and `i` is an index into it. Write `longer_at(s, i)` returning the longer of: the widest mirrored piece whose middle is `s[i]`, and the widest one whose middle gap is between index `i` and `i + 1`. On a tie return the first. If `i` is the last index there is no such gap, and the second kind counts as empty.\n\n`longer_at("xabbay", 2)` → `"abba"`, `longer_at("racecar", 3)` → `"racecar"`',
     starterCode: `def longer_at(s, i):
     pass`,
     solution: `def longer_at(s, i):
@@ -880,8 +894,9 @@ const br5 = [
     stage: 'pattern',
     repType: 'pattern',
     important: true,
+    transfer: true,
     difficulty: 3,
-    prompt: 'Write `count_mirrors(s)` returning how many pieces of `s` (runs of neighbouring characters, at least one long) read the same both ways. Pieces at different positions count separately even if they look alike.\n\n`count_mirrors("aba")` → `4` (`a`, `b`, `a`, `aba`), `count_mirrors("aaa")` → `6`',
+    prompt: '`s` is a string. Write `count_mirrors(s)` returning how many substrings of `s` (pieces made of neighbouring characters, at least one long) read the same both ways. Pieces at different positions count separately even if they look alike. The empty string gives `0`.\n\n`count_mirrors("aba")` → `4` (`a`, `b`, `a`, `aba`), `count_mirrors("aaa")` → `6`',
     starterCode: `def count_mirrors(s):
     pass`,
     solution: `def count_mirrors(s):
@@ -920,6 +935,7 @@ const br62 = [
     title: 'A table with its edges filled',
     skills: ['dp_grid', 'grid_nested', 'list_comprehension', 'range'],
     prompt: 'Write `border_ones(rows, cols)` (both at least 1) returning a table of `rows` rows and `cols` columns that holds `1` everywhere in the first row and the first column, and `0` everywhere else. Each row must be its own list.\n\n`border_ones(2, 3)` → `[[1, 1, 1], [1, 0, 0]]`',
+    note: 'A 2-D table is a list of rows, and each row is a list: `table[r][c]` is row `r`, column `c`. Build it with `[[0] * cols for _ in range(rows)]`, which makes a new row list each time round (`_` is a loop variable you never read).',
     starterCode: `def border_ones(rows, cols):
     pass`,
     solution: `def border_ones(rows, cols):
@@ -975,7 +991,7 @@ const br62 = [
     id: 'b62-fill-inside',
     title: 'Each cell from above and from the left',
     skills: ['dp_grid', 'grid_nested', 'range'],
-    prompt: '`table` is a grid whose first row and first column are already filled in. Write `fill_inside(table)` that sets every other cell to the cell **above** it plus the cell to its **left**, working row by row, and returns the table.\n\n`fill_inside([[1, 1, 1], [1, 0, 0], [1, 0, 0]])` → `[[1, 1, 1], [1, 2, 3], [1, 3, 6]]`',
+    prompt: '`table` is a non-empty grid (a list of rows, all the same length) whose first row and first column are already filled in. Write `fill_inside(table)` that sets every other cell to the cell **above** it plus the cell to its **left**, working row by row, and returns the table.\n\n`fill_inside([[1, 1, 1], [1, 0, 0], [1, 0, 0]])` → `[[1, 1, 1], [1, 2, 3], [1, 3, 6]]`',
     starterCode: `def fill_inside(table):
     pass`,
     solution: `def fill_inside(table):
@@ -1003,8 +1019,9 @@ const br62 = [
     stage: 'pattern',
     repType: 'pattern',
     important: true,
+    transfer: true,
     difficulty: 3,
-    prompt: '`costs` is a non-empty grid of non-negative numbers. You start on the top-left cell, finish on the bottom-right cell, and may only step right or down. You pay the cost of every cell you stand on, including the first and the last.\n\nWrite `cheapest_walk(costs)` returning the lowest total.\n\n`cheapest_walk([[1, 3, 1], [1, 5, 1], [4, 2, 1]])` → `7` (1, 3, 1, 1, 1)',
+    prompt: '`costs` is a non-empty grid (a list of rows, all the same length) of non-negative numbers. You start on the top-left cell, finish on the bottom-right cell, and may only step right or down. You pay the cost of every cell you stand on, including the first and the last.\n\nWrite `cheapest_walk(costs)` returning the lowest total.\n\n`cheapest_walk([[1, 3, 1], [1, 5, 1], [4, 2, 1]])` → `7` (1, 3, 1, 1, 1)',
     starterCode: `def cheapest_walk(costs):
     pass`,
     solution: `def cheapest_walk(costs):
@@ -1046,7 +1063,8 @@ const br1143 = [
     id: 'b1143-padded-table',
     title: 'One extra row, one extra column',
     skills: ['dp_two_sequences', 'grid_nested', 'list_comprehension', 'len'],
-    prompt: 'A table that compares two strings has a row for every **prefix length** of `a` (0 up to `len(a)`) and a column for every prefix length of `b`.\n\nWrite `padded_table(a, b)` returning that table filled with zeros. Each row must be its own list.\n\n`padded_table("ab", "xyz")` → 3 rows of `[0, 0, 0, 0]`',
+    prompt: '`a` and `b` are strings, and either can be empty. A **prefix** is the first so-many characters of a string.\n\nA table that compares two strings has a row for every **prefix length** of `a` (0 up to `len(a)`) and a column for every prefix length of `b`.\n\nWrite `padded_table(a, b)` returning that table filled with zeros. Each row must be its own list.\n\n`padded_table("ab", "xyz")` → 3 rows of `[0, 0, 0, 0]`',
+    note: 'Row 0 and column 0 stand for "none of this string yet", which is why the table is one bigger than the strings in each direction. They stay `0` and give every real cell a neighbour above and to its left, so no edge checks are needed later.',
     starterCode: `def padded_table(a, b):
     pass`,
     solution: `def padded_table(a, b):
@@ -1069,7 +1087,7 @@ const br1143 = [
     id: 'b1143-match-cells',
     title: 'Mark where the characters match',
     skills: ['dp_two_sequences', 'grid_nested', 'string_index', 'range'],
-    prompt: 'Write `match_table(a, b)` returning the padded table (`len(a) + 1` rows, `len(b) + 1` columns) where the cell in row `i`, column `j` is `1` when the **i-th character of `a`** and the **j-th character of `b`** (counting from 1) are the same, and `0` otherwise. Row 0 and column 0 stay all zeros.\n\n`match_table("ab", "ba")` → `[[0, 0, 0], [0, 0, 1], [0, 1, 0]]`',
+    prompt: '`a` and `b` are strings. Write `match_table(a, b)` returning the padded table (`len(a) + 1` rows, `len(b) + 1` columns) where the cell in row `i`, column `j` is `1` when the **i-th character of `a`** and the **j-th character of `b`** (counting from 1) are the same, and `0` otherwise. Row 0 and column 0 stay all zeros.\n\n`match_table("ab", "ba")` → `[[0, 0, 0], [0, 0, 1], [0, 1, 0]]`',
     starterCode: `def match_table(a, b):
     pass`,
     solution: `def match_table(a, b):
@@ -1099,7 +1117,7 @@ const br1143 = [
     stage: 'combine',
     repType: 'combine',
     difficulty: 3,
-    prompt: 'Write `longest_shared_run(a, b)` returning the length of the longest stretch of **neighbouring** characters that appears in both strings.\n\nLet the cell in row `i`, column `j` be the length of the shared run that ends with the i-th character of `a` and the j-th character of `b`.\n\n`longest_shared_run("sunday", "monday")` → `4` (`nday`)',
+    prompt: '`a` and `b` are strings. Write `longest_shared_run(a, b)` returning the length of the longest stretch of **neighbouring** characters that appears in both strings (`0` if they share nothing).\n\nUse a padded table (`len(a) + 1` rows, `len(b) + 1` columns) and let the cell in row `i`, column `j` be the length of the shared run that ends with the i-th character of `a` and the j-th character of `b`.\n\n`longest_shared_run("sunday", "monday")` → `4` (`nday`)',
     starterCode: `def longest_shared_run(a, b):
     pass`,
     solution: `def longest_shared_run(a, b):
@@ -1130,7 +1148,8 @@ const br1143 = [
     id: 'b1143-dbg-index',
     title: 'Debug: two playlists',
     skills: ['dp_two_sequences', 'dp_grid', 'list_index'],
-    prompt: '`a` and `b` are two playlists (lists). `kept_in_order(a, b)` should return the size of the largest set of songs that appear in **both** playlists in the same relative order (other songs may sit in between). Make every test pass.',
+    prompt: '`a` and `b` are two playlists (lists). `kept_in_order(a, b)` should return the largest number of songs that appear in **both** playlists in the same order (other songs may sit in between; interviewers call this the longest common **subsequence**). Make every test pass.',
+    note: '`dp[i][j]` is the answer for the first `i` songs of `a` and the first `j` songs of `b`. Row 0 and column 0 mean "no songs yet".',
     brokenCode: `def kept_in_order(a, b):
     dp = [[0] * (len(b) + 1) for _ in range(len(a) + 1)]
     for i in range(1, len(a) + 1):
@@ -1170,8 +1189,9 @@ const br1143 = [
     stage: 'pattern',
     repType: 'pattern',
     important: true,
+    transfer: true,
     difficulty: 4,
-    prompt: 'You may delete any characters from either word. Write `deletions_to_match(a, b)` returning the **fewest deletions in total** that leave the two words identical (both empty counts as identical).\n\n`deletions_to_match("sea", "eat")` → `2` (drop `s` and `t`, leaving `ea`)',
+    prompt: '`a` and `b` are words (strings), and either can be empty. You may delete any characters from either word. Write `deletions_to_match(a, b)` returning the **fewest deletions in total** that leave the two words identical (both empty counts as identical).\n\n`deletions_to_match("sea", "eat")` → `2` (drop `s` and `t`, leaving `ea`)',
     starterCode: `def deletions_to_match(a, b):
     pass`,
     solution: `def deletions_to_match(a, b):
@@ -1213,6 +1233,7 @@ const br91 = [
     title: 'Is this piece a letter number?',
     skills: ['dp_prefix_words', 'string_index', 'conditionals'],
     prompt: 'Letters are numbered 1 to 26. `piece` is a string of one or two digits.\n\nWrite `is_code(piece)` returning `True` when the piece is a letter number written without a leading zero, else `False`.\n\n`is_code("7")` → `True`, `is_code("26")` → `True`, `is_code("06")` → `False`, `is_code("27")` → `False`',
+    note: '`int(text)` turns a string of digits into a number: `int("26")` is `26`. A string of digits and the number it stands for are different things, and some questions can only be asked of one of them.',
     starterCode: `def is_code(piece):
     pass`,
     solution: `def is_code(piece):
@@ -1240,6 +1261,7 @@ const br91 = [
     title: 'Debug: month numbers',
     skills: ['dp_prefix_words', 'dp_table', 'slicing', 'edge_cases'],
     prompt: 'A string of digits was made by writing month numbers (1 to 12, never with a leading zero) one after another with no gaps. `month_ways(digits)` should return how many different lists of months could have produced it. The empty string counts as one way. Make every test pass.',
+    note: '`dp[i]` is the number of ways to read the **first i digits**. `digits[i - 1]` is the last of those digits and the slice `digits[i - 2:i]` is the last two, as text. `int(...)` turns that text into a number.',
     brokenCode: `def month_ways(digits):
     n = len(digits)
     dp = [0] * (n + 1)
@@ -1283,8 +1305,9 @@ const br91 = [
     stage: 'pattern',
     repType: 'pattern',
     important: true,
+    transfer: true,
     difficulty: 3,
-    prompt: 'A city numbers its bus routes 1 to 35, never with a leading zero. Someone wrote down the routes they rode with no gaps between the numbers.\n\nWrite `route_ways(digits)` returning how many different lists of routes that string of digits could stand for. The empty string counts as one way.\n\n`route_ways("123")` → `3` (`1|2|3`, `12|3`, `1|23`), `route_ways("305")` → `1`, `route_ways("40")` → `0`',
+    prompt: 'A city numbers its bus routes 1 to 35, never with a leading zero. Someone wrote down the routes they rode with no gaps between the numbers, which left one string of digit characters, `digits`.\n\nWrite `route_ways(digits)` returning how many different lists of routes that string of digits could stand for. The empty string counts as one way.\n\n`route_ways("123")` → `3` (`1|2|3`, `12|3`, `1|23`), `route_ways("305")` → `1`, `route_ways("40")` → `0`',
     starterCode: `def route_ways(digits):
     pass`,
     solution: `def route_ways(digits):

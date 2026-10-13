@@ -64,7 +64,7 @@ export default function BasicsPanel({ brief, moves, primers, onClose }: { brief?
 }
 
 /** The question, decoded: what each input is, what you hand back, what to watch. */
-function BriefView({ brief }: { brief: Brief }) {
+export function BriefView({ brief }: { brief: Brief }) {
   return (
     <div>
       <p className="label mb-2">This question, in plain English</p>

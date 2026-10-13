@@ -17,7 +17,7 @@ import { localDate, shortDate } from '@/lib/dates'
 import { KIND_VERB } from '@/lib/labels'
 import { kindOf } from '@/components/rep-kind'
 import { RepsBars } from '@/components/motif'
-import BasicsPanel from '@/components/rep/basics-panel'
+import BasicsPanel, { BriefView } from '@/components/rep/basics-panel'
 import { primersFor } from '@/data/primers'
 import { movesFor } from '@/data/primers/moves'
 import { BRIEFS } from '@/data/briefs'
@@ -25,7 +25,7 @@ import { walkthroughFor } from '@/data/walkthroughs'
 import { TARGET_BY_LC, targetOfRep } from '@/data/problem-bridges'
 import { readiness, repairReps } from '@/lib/bridges'
 import { REPAIR_AFTER, nextInSession, planRepair } from '@/lib/session-planner'
-import { REPAIR_LABEL, TRAINING_LABEL, type TrainingState } from '@/lib/training-state'
+import { REPAIR_LABEL, TRAINING_LABEL, firstExposure, practiceBySkill, type TrainingState } from '@/lib/training-state'
 import { IconArrowRight, IconBug, IconBulb, IconClock, IconDots, IconExternal, IconPlay, IconRotate, IconSpark, IconX } from '@/components/icons'
 import { followingExercise, lockedByGate, missingPrerequisites, nextInOrder, passedSet, retrievalTypeFor } from '@/lib/progress'
 import { getRunner, type RunResult } from '@/lib/python/runner'
@@ -125,7 +125,7 @@ export default function RepWorkspace({ exerciseId, sessionId, fromId, initialMod
   const lockDay = DAY_BY_DATE[DAY_OF_EXERCISE[exercise.id]]
   const gate = !session && lockDay ? lockedByGate(lockDay, exercise.id, attempts) : undefined
   if (gate) return <GateLock gate={gate} attempts={attempts} exercise={exercise} />
-  return <Workspace key={exercise.id} exercise={exercise} session={session} fromId={fromId} initialMode={initialMode} router={router} ctx={{ repo, attempts, mastery, today }} />
+  return <Workspace key={exercise.id} exercise={exercise} session={session} fromId={fromId} initialMode={initialMode} router={router} ctx={{ repo, attempts, mastery, today, loaded }} />
 }
 
 /** Behind an uncleared mastery check: no way round it, only through it. */
@@ -189,11 +189,11 @@ interface WorkspaceProps {
   fromId?: string
   initialMode?: Mode
   router: ReturnType<typeof useRouter>
-  ctx: Pick<ReturnType<typeof useReps>, 'repo' | 'attempts' | 'mastery' | 'today'>
+  ctx: Pick<ReturnType<typeof useReps>, 'repo' | 'attempts' | 'mastery' | 'today' | 'loaded'>
 }
 
 function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: WorkspaceProps) {
-  const { repo, attempts, mastery, today } = ctx
+  const { repo, attempts, mastery, today, loaded } = ctx
   const dayDate = DAY_OF_EXERCISE[fromId ?? ex.id] ?? today
   const day = DAY_BY_DATE[dayDate]
   const dayList = useMemo(() => day?.sections.filter((s) => !s.optional).flatMap((s) => s.exercises.map((e) => ({ e, s }))) ?? [], [day])
@@ -309,6 +309,15 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
   const isCode = ex.kind === 'code'
   const primers = useMemo(() => primersFor(ex.skills), [ex.skills])
   const moves = useMemo(() => movesFor(ex.skills), [ex.skills])
+  // First exposure: the skills of this rep never produced before. Their concept is shown before the question,
+  // not behind a button. Fixed when the rep opens, so it does not vanish the moment the first run passes.
+  const teach = useMemo(() => {
+    if (!loaded) return null
+    const fresh = firstExposure(ex, practiceBySkill(attempts))
+    const lessons = primersFor(fresh).slice(0, 2)
+    return fresh.length && (lessons.length || ex.teaching || ex.note) ? { skills: fresh, lessons } : null
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ex.id, loaded])
   const walk = walkthroughFor(ex, section?.id)
   // The problem this rep builds toward, and where this rep sits among its building blocks.
   const toward = useMemo(() => {
@@ -781,6 +790,8 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
   // ── render ─────────────────────────────────────────────────────────────────
 
   const passed = phase === 'passed'
+  // An unlabeled transfer rep, a mastery check or a capstone does not say which technique to use: the page does not either, until it is passed.
+  const unlabeled = (Boolean(ex.transfer) || Boolean(ex.cleanPass) || ex.repType === 'capstone') && !passed
   // Suggest a call to the rep's own function, e.g. `two_sum(...)`.
   const customPlaceholder = `${/def\s+([A-Za-z_]\w*)\s*\(/.exec(code)?.[1] ?? 'my_function'}(...)`
   /** A check rep passed with the solution open: it does not count until it is run back clean. */
@@ -916,8 +927,70 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
               </p>
             )}
 
+            {teach && !interview && (
+              <section aria-label="The idea behind this rep" className="flex flex-col gap-3 rounded-xl bg-surface px-4 py-3.5 shadow-[inset_2px_0_0_var(--accent)]" data-testid="teach">
+                <p className="label !text-ink-2">New here · read this first</p>
+                {ex.teaching && (
+                  <div>
+                    <Markdown text={ex.teaching.concept} className="!text-[14px] !leading-relaxed" />
+                    {ex.teaching.example && <div className="mt-2"><CodeView code={ex.teaching.example} /></div>}
+                  </div>
+                )}
+                {/* One idea, kept short: what it is, the rule to hold on to, the two or three lines you will type. */}
+                {teach.lessons.slice(0, 1).map((p) => (
+                  <div key={p.id} data-primer={p.id}>
+                    <p className="text-[13.5px] font-semibold text-ink">{p.title}</p>
+                    <Markdown text={p.what} className="mt-1 !text-[14px] !leading-relaxed" />
+                    <p className="mt-1.5 text-[13.5px] leading-relaxed text-ink-2">
+                      <span className="font-medium text-ink">Hold on to: </span>
+                      {p.model}
+                    </p>
+                    <div className="mt-2.5">
+                      <p className="label mb-1">Example</p>
+                      <ul className="well divide-y divide-line overflow-hidden">
+                        {p.syntax.slice(0, 3).map((x, k) => (
+                          <li key={k} className="grid gap-x-4 gap-y-0.5 px-3.5 py-2 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+                            <code className="mono whitespace-pre-wrap text-[12.5px] text-ink">{x.code}</code>
+                            <span className="text-[12.5px] leading-relaxed text-muted">
+                              <Markdown text={x.note} inline className="!text-[12.5px]" />
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                      <details className="group mt-1.5">
+                        <summary className="cursor-pointer list-none text-[12.5px] text-muted underline decoration-line-strong underline-offset-4 hover:text-ink [&::-webkit-details-marker]:hidden">A full worked example</summary>
+                        <div className="mt-2">
+                          <CodeView code={p.example.code} />
+                          <p className="mono mt-1.5 whitespace-pre-wrap text-[12.5px] text-muted">prints: {p.example.output}</p>
+                        </div>
+                      </details>
+                    </div>
+                  </div>
+                ))}
+                {teach.lessons.slice(1).map((p) => (
+                  <p key={p.id} className="text-[13px] leading-relaxed text-ink-2" data-primer={p.id}>
+                    <span className="font-medium text-ink">Also new here, {p.title.toLowerCase()}: </span>
+                    {p.model} <span className="text-muted">(More behind Basics.)</span>
+                  </p>
+                ))}
+                {ex.note && (
+                  <div>
+                    <p className="label mb-1">For this rep</p>
+                    <Markdown text={ex.note} className="!text-[13.5px]" />
+                  </div>
+                )}
+              </section>
+            )}
+            {teach && !interview && <p className="label -mb-2">Your rep</p>}
+
             <Markdown text={ex.prompt} />
             {ex.code && ex.kind !== 'code' && <CodeView code={ex.code} />}
+            {/* On first exposure the plain-English contract is on the page too, not behind Basics. */}
+            {teach && !interview && BRIEFS[ex.id] && !showBasics && (
+              <div className="rounded-xl px-4 py-3 shadow-[inset_0_0_0_1px_var(--line)]" data-testid="teach-brief">
+                <BriefView brief={BRIEFS[ex.id]} />
+              </div>
+            )}
 
             {ex.examples && ex.examples.length > 0 && (
               <div className="flex flex-col gap-2">
@@ -943,7 +1016,7 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
                     <span className="eyebrow mr-1.5 text-ink" data-testid="block-kind">
                       {TRAINING_LABEL[block.kind as TrainingState | 'reactivate'] ?? block.kind}
                     </span>
-                    {block.why}
+                    {ex.transfer && !passed ? 'The pattern is not named for you here. Work out which of your moves applies.' : block.why}
                     {toward && toward.block >= 0 && !toward.isTarget && <br />}
                   </>
                 )}
@@ -953,7 +1026,7 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
                       Building toward LC {toward.target.lc} · {toward.target.title}
                     </span>
                     <br />
-                    Why this rep: block {toward.block + 1} of {toward.target.blocks.length}, {toward.target.blocks[toward.block].label}.
+                    {ex.transfer && !passed ? 'The last step before the problem itself. Nothing here names the technique.' : `Why this rep: block ${toward.block + 1} of ${toward.target.blocks.length}, ${toward.target.blocks[toward.block].label}.`}
                   </>
                 )}
               </p>
@@ -997,7 +1070,7 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
 
             {showBasics && <BasicsPanel brief={BRIEFS[ex.id]} moves={moves} primers={primers} onClose={() => setShowBasics(false)} />}
 
-            {ex.note && !interview && (mode === 'learn' || showNote) && (
+            {ex.note && !interview && !teach && (mode === 'learn' || showNote) && (
               <div className="rise-in rounded-xl bg-surface px-4 py-3 shadow-[inset_2px_0_0_var(--ink)]">
                 <p className="label mb-1 !text-ink-2">Reminder</p>
                 <Markdown text={ex.note} className="!text-[13.5px]" />
@@ -1108,14 +1181,20 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
 
             {!interview && (
               <footer className="mt-auto flex flex-col gap-3 pt-2">
-                <div className="flex flex-wrap items-center gap-1.5" aria-label="Skills this rep trains">
-                  <span className="mr-1 text-[12px] text-faint">Trains</span>
-                  {ex.skills.map((s) => (
-                    <Link key={s} href={`/skills/${s}`} className="chip">
-                      {skillName(s)}
-                    </Link>
-                  ))}
-                </div>
+                {unlabeled ? (
+                  <p className="text-[12px] text-faint" data-testid="unlabeled">
+                    {ex.transfer ? 'An unlabeled problem: working out which of your moves applies is part of the rep.' : 'No labels here: choosing the approach is part of what this tests.'} The skills it trains show once you pass.
+                  </p>
+                ) : (
+                  <div className="flex flex-wrap items-center gap-1.5" aria-label="Skills this rep trains">
+                    <span className="mr-1 text-[12px] text-faint">Trains</span>
+                    {ex.skills.map((s) => (
+                      <Link key={s} href={`/skills/${s}`} className="chip">
+                        {skillName(s)}
+                      </Link>
+                    ))}
+                  </div>
+                )}
                 {problem && (
                   <a href={problem.leetcode} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 self-start text-[13px] text-muted hover:text-ink">
                     LeetCode {problem.number}: {problem.title} <IconExternal size={13} />

@@ -20,6 +20,8 @@ export const generatedRepSchema = z
     format: z.enum(['code', 'output']),
     difficulty: z.number().int().min(1).max(5),
     skills: z.array(z.string()).min(1).max(6),
+    /** First-exposure teaching, for foundation reps: what the idea is, and a tiny example that is not the answer. */
+    teaching: z.object({ concept: z.string().max(800), example: z.string().max(800).optional().nullable() }).optional().nullable(),
     prompt: z.string().min(10).max(1500),
     starterCode: z.string().max(1500).optional().nullable(),
     code: z.string().max(1500).optional().nullable(),
@@ -175,6 +177,9 @@ export function toExercise(rep: GeneratedRep, id: string, key: string, createdAt
     minutes: rep.format === 'output' ? 2 : rep.type === 'pattern' ? 10 : 5,
     review: { important: false },
     generated: { key, createdAt, used: true },
+    // Only a foundation rep carries teaching; anything else is shown without it.
+    ...(rep.type === 'foundation' && rep.teaching?.concept ? { teaching: { concept: rep.teaching.concept, example: rep.teaching.example ?? undefined } } : {}),
+    ...(rep.type === 'pattern' ? { transfer: true } : {}),
   }
   if (rep.format === 'output') return { ...base, kind: 'output', code: rep.code ?? '', expectedOutput: rep.expectedOutput ?? '' }
   return { ...base, kind: 'code', starterCode: rep.starterCode ?? undefined, solution: rep.canonicalSolution, tests }

@@ -27,7 +27,7 @@ const sections: PackSection[] = [
         repType: 'cold',
         difficulty: 3,
         minutes: 10,
-        prompt: 'You climb `n` steps, taking 1 or 2 at a time. Write `step_plans(n)` returning every plan as a list of step sizes, in any order.\n\n`step_plans(3)` gives `[[1, 1, 1], [1, 2], [2, 1]]`. `[1, 2]` and `[2, 1]` are different plans.',
+        prompt: 'You climb `n` steps, taking 1 or 2 at a time. Write `step_plans(n)` returning every plan as a list of step sizes, in any order.\n\n`step_plans(3)` gives `[[1, 1, 1], [1, 2], [2, 1]]`. `[1, 2]` and `[2, 1]` are different plans. `n` can be 0: then there is one plan, the empty one, so the answer is `[[]]`.',
         starterCode: `def step_plans(n):
     pass`,
         solution: `def step_plans(n):
@@ -96,7 +96,7 @@ const sections: PackSection[] = [
         repType: 'cold',
         difficulty: 3,
         minutes: 10,
-        prompt: "Write `seatings(names)` returning every order in which the people in `names` (distinct strings) can sit along a bench. Each order is a list using every name once.\n\n`seatings(['ann', 'bo'])` gives `[['ann', 'bo'], ['bo', 'ann']]` (any order of orders).",
+        prompt: "Write `seatings(names)` returning every order in which the people in `names` (distinct strings) can sit along a bench. Each order is a list using every name once.\n\n`seatings(['ann', 'bo'])` gives `[['ann', 'bo'], ['bo', 'ann']]` (any order of orders). With no names there is one order, the empty one: `[[]]`.",
         starterCode: `def seatings(names):
     pass`,
         solution: `def seatings(names):
@@ -131,7 +131,7 @@ const sections: PackSection[] = [
         repType: 'cold',
         difficulty: 3,
         minutes: 11,
-        prompt: "Write `quiet_codes(n)` returning every string of `'0'` and `'1'` of length `n` that never has two `'1'`s next to each other, in any order.\n\n`quiet_codes(2)` gives `['00', '01', '10']` (`'11'` is left out).",
+        prompt: "Write `quiet_codes(n)` returning every string of `'0'` and `'1'` of length `n` that never has two `'1'`s next to each other, in any order.\n\n`quiet_codes(2)` gives `['00', '01', '10']` (`'11'` is left out). `quiet_codes(0)` gives `['']`: the one code of length 0.",
         starterCode: `def quiet_codes(n):
     pass`,
         solution: `def quiet_codes(n):
@@ -203,7 +203,7 @@ dfs(0)`,
         skills: ['combination_start', 'backtracking_state', 'range'],
         difficulty: 3,
         minutes: 9,
-        prompt: "Write `scoops(flavors, k)` returning every bowl of exactly `k` scoops. A flavor may be scooped more than once, and the order of scoops does not matter, so each bowl is listed once.\n\n`scoops(['van', 'choc'], 2)` gives `[['van', 'van'], ['van', 'choc'], ['choc', 'choc']]`.",
+        prompt: "`flavors` is a list of distinct strings and `k` is a whole number, 0 or more. Write `scoops(flavors, k)` returning every bowl of exactly `k` scoops, each bowl as a list of flavors. A flavor may be scooped more than once, and the order of scoops does not matter, so each bowl is listed once. The bowls may come in any order.\n\n`scoops(['van', 'choc'], 2)` gives `[['van', 'van'], ['van', 'choc'], ['choc', 'choc']]`. With `k = 0` there is one bowl, the empty one: `[[]]`.",
         starterCode: `def scoops(flavors, k):
     pass`,
         solution: `def scoops(flavors, k):
@@ -241,7 +241,7 @@ dfs(0)`,
         repType: 'combine',
         difficulty: 3,
         minutes: 11,
-        prompt: 'Write `exact_loads(weights, limit)` returning every group of crates whose weights add up to exactly `limit`. Each crate can be used **once**. Weights are distinct positive whole numbers.\n\nCarry the weight still allowed down the recursion, and give up on a branch as soon as it has gone over.\n\n`exact_loads([2, 3, 5, 7], 10)` gives `[[2, 3, 5], [3, 7]]`.',
+        prompt: 'Write `exact_loads(weights, limit)` returning every group of crates whose weights add up to exactly `limit`. Each crate can be used **once**. Weights are distinct positive whole numbers.\n\nCarry the weight still allowed down the recursion, and give up on a branch as soon as it has gone over.\n\n`exact_loads([2, 3, 5, 7], 10)` gives `[[2, 3, 5], [3, 7]]`. Each group is a list of weights, the groups may come in any order, and when no group fits the answer is `[]`.',
         starterCode: `def exact_loads(weights, limit):
     pass`,
         solution: `def exact_loads(weights, limit):
@@ -280,7 +280,7 @@ dfs(0)`,
         skills: ['combination_start', 'backtracking_state'],
         difficulty: 3,
         minutes: 6,
-        prompt: 'A shop sells packs of the given `sizes` and has plenty of each. `bundles(sizes, total)` should list every bundle of packs holding exactly `total` items. A size may be used several times. A bundle is a bag of packs: `[2, 3]` and `[3, 2]` are the same bundle and must be listed once.\n\n`bundles([2, 3], 5)` should give `[[2, 3]]`. Fix it.',
+        prompt: 'A shop sells packs of the given `sizes` and has plenty of each. `bundles(sizes, total)` should list every bundle of packs holding exactly `total` items. A size may be used several times. A bundle is a bag of packs: `[2, 3]` and `[3, 2]` are the same bundle and must be listed once.\n\n`bundles([2, 3], 5)` should give `[[2, 3]]`. The bundles may come in any order. Fix it.',
         brokenCode: `def bundles(sizes, total):
     res = []
     path = []
@@ -332,9 +332,10 @@ dfs(0)`,
         stage: 'pattern',
         repType: 'pattern',
         important: true,
+        transfer: true,
         difficulty: 3,
         minutes: 10,
-        prompt: 'Write `count_ways(coins, amount)` returning **how many** different handfuls of coins add up to exactly `amount`. `coins` holds distinct positive coin values, and you have as many of each as you like. A handful has no order: with coins 1 and 2, the amount 3 can be paid 2 ways (`1+1+1` and `1+2`).\n\nNo list of handfuls is needed, only the count.',
+        prompt: 'Write `count_ways(coins, amount)` returning **how many** different handfuls of coins add up to exactly `amount`. `coins` holds distinct positive coin values, and you have as many of each as you like. A handful has no order: with coins 1 and 2, the amount 3 can be paid 2 ways (`1+1+1` and `1+2`).\n\nNo list of handfuls is needed, only the count. `amount` is 0 or more: paying 0 can be done in exactly 1 way (take no coins), and an amount that cannot be made gives 0.',
         starterCode: `def count_ways(coins, amount):
     pass`,
         solution: `def count_ways(coins, amount):
@@ -496,6 +497,7 @@ dfs(0)`,
         repType: 'combine',
         difficulty: 4,
         minutes: 12,
+        note: 'To **mark** a cell is to put its `(r, c)` in a set while the walk stands on it: `used.add((r, c))`. To **unmark** it is to take it out again, `used.remove((r, c))`, so that a different walk may step there later.',
         prompt: "`grid` is a list of equal-length strings: `'.'` is open floor, `'#'` is a wall. Write `longest_trail(grid, r, c)` returning the largest number of cells a walk can cover starting on `(r, c)`, moving up, down, left or right, staying on open floor and never stepping on a cell twice.\n\n`longest_trail(['.#.', '...'], 0, 0)` is `5`. A start on a wall or off the grid gives `0`.",
         starterCode: `def longest_trail(grid, r, c):
     pass`,
@@ -538,6 +540,7 @@ dfs(0)`,
         stage: 'pattern',
         repType: 'pattern',
         important: true,
+        transfer: true,
         difficulty: 4,
         minutes: 15,
         prompt: "`grid` is a list of equal-length strings, one colour letter per cell. A **snake** is a chain of different cells, each next to the one before (up, down, left or right), all of the same colour. Write `has_snake(grid, k)` returning `True` if the grid contains a snake of `k` cells. It may start anywhere. `k` is at least 1.\n\n`has_snake(['RG', 'RR'], 3)` is `True`. `has_snake(['RR', 'RR'], 5)` is `False`: there are only four cells.",
@@ -602,7 +605,8 @@ dfs(0)`,
         skills: ['matrix_transform', 'grid_nested', 'tuples'],
         difficulty: 1,
         minutes: 2,
-        prompt: 'Write `swap_cells(m, r1, c1, r2, c2)` that exchanges the values at `(r1, c1)` and `(r2, c2)` inside `m`. It changes `m` itself and returns nothing.\n\nWith `m = [[1, 2], [3, 4]]`, after `swap_cells(m, 0, 1, 1, 0)` the matrix is `[[1, 3], [2, 4]]`.',
+        note: 'A **matrix** is a grid of values held as a list of rows, every row a list of the same length. `m[r]` is a whole row and `m[r][c]` is one cell: row `r` counting down from 0, then column `c` counting across.\nChanging the matrix you were handed, and building no new one, is called working **in place**.\nPython swaps two slots in one line: `a[i], a[j] = a[j], a[i]`.',
+        prompt: '`m` is a matrix (a list of rows, each row a list) and `(r, c)` names the cell in row `r`, column `c`. Write `swap_cells(m, r1, c1, r2, c2)` that exchanges the values at `(r1, c1)` and `(r2, c2)` inside `m`. It changes `m` itself and returns nothing.\n\nWith `m = [[1, 2], [3, 4]]`, after `swap_cells(m, 0, 1, 1, 0)` the matrix is `[[1, 3], [2, 4]]`.',
         starterCode: `def swap_cells(m, r1, c1, r2, c2):
     pass`,
         solution: `def swap_cells(m, r1, c1, r2, c2):
@@ -622,7 +626,8 @@ dfs(0)`,
         skills: ['matrix_transform', 'grid_nested', 'range'],
         difficulty: 2,
         minutes: 6,
-        prompt: 'Write `transpose(m)` for a **square** matrix: the value at row `r`, column `c` trades places with the value at row `c`, column `r`. Rows become columns. Change `m` itself and return nothing.\n\n`[[1, 2], [3, 4]]` becomes `[[1, 3], [2, 4]]`. The diagonal (`1` and `4`) stays put.',
+        note: 'This move is called the **transpose**. The **diagonal** is the line of cells from the top-left corner to the bottom-right corner: the cells where the row number equals the column number. A **square** matrix has as many rows as columns.',
+        prompt: 'Write `transpose(m)` for a **square** matrix (as many rows as columns): the value at row `r`, column `c` trades places with the value at row `c`, column `r`. Rows become columns. Change `m` itself and return nothing.\n\n`[[1, 2], [3, 4]]` becomes `[[1, 3], [2, 4]]`. The diagonal (`1` and `4`) stays put.',
         starterCode: `def transpose(m):
     pass`,
         solution: `def transpose(m):
@@ -676,6 +681,7 @@ dfs(0)`,
         skills: ['matrix_transform', 'list_iterate'],
         difficulty: 2,
         minutes: 3.5,
+        note: 'Two ways to reverse a list `xs`, and they are not the same. `xs.reverse()` reverses the list itself (in place) and returns `None`. `xs[::-1]` builds a new reversed list and leaves `xs` as it was.',
         prompt: 'Write `mirror(m)` that reverses every row of `m` in place, like a mirror standing at the side. Return nothing. The matrix does not have to be square.\n\n`[[1, 2, 3], [4, 5, 6]]` becomes `[[3, 2, 1], [6, 5, 4]]`.',
         starterCode: `def mirror(m):
     pass`,
@@ -744,7 +750,7 @@ print(out)
 print(top, bottom, left, right)`,
         expectedOutput: `[1, 2, 3, 6, 9]
 1 2 0 1`,
-        note: 'After an edge is read, its bound moves one step inward.',
+        note: '`top`, `bottom`, `left` and `right` are **bounds**: the first and last row, and the first and last column, of the part not read yet, all four included. An **edge** is one side of that rectangle.\nAfter an edge is read, its bound moves one step inward.',
         explanation: 'The top row is read, then `top` moves down, so the right column starts at the 6 and the corner 3 is not read twice.',
         minutes: 2.5,
       }),
@@ -754,7 +760,7 @@ print(top, bottom, left, right)`,
         skills: ['matrix_layers', 'grid_nested', 'range'],
         difficulty: 2,
         minutes: 4,
-        prompt: 'Write `top_edge(m, top, left, right)` returning the values of row `top` from column `left` to column `right`, both included, left to right.\n\nWith `m = [[1, 2, 3], [4, 5, 6]]`, `top_edge(m, 1, 0, 1)` is `[4, 5]`.',
+        prompt: 'Write `top_edge(m, top, left, right)` returning the values of row `top` from column `left` to column `right`, both included, left to right.\n\nWith `m = [[1, 2, 3], [4, 5, 6]]`, `top_edge(m, 1, 0, 1)` is `[4, 5]`. If `left` is past `right` there is nothing to read: return `[]`.',
         starterCode: `def top_edge(m, top, left, right):
     pass`,
         solution: `def top_edge(m, top, left, right):
@@ -778,7 +784,7 @@ print(top, bottom, left, right)`,
         skills: ['matrix_layers', 'grid_nested', 'range'],
         difficulty: 2,
         minutes: 4.5,
-        prompt: 'Write `bottom_edge(m, bottom, left, right)` returning the values of row `bottom` from column `right` back to column `left`, both included, **right to left**.\n\nWith `m = [[1, 2, 3], [4, 5, 6]]`, `bottom_edge(m, 1, 0, 2)` is `[6, 5, 4]`.',
+        prompt: 'Write `bottom_edge(m, bottom, left, right)` returning the values of row `bottom` from column `right` back to column `left`, both included, **right to left**.\n\nWith `m = [[1, 2, 3], [4, 5, 6]]`, `bottom_edge(m, 1, 0, 2)` is `[6, 5, 4]`. If `left` is past `right` there is nothing to read: return `[]`.',
         starterCode: `def bottom_edge(m, bottom, left, right):
     pass`,
         solution: `def bottom_edge(m, bottom, left, right):
@@ -802,7 +808,7 @@ print(top, bottom, left, right)`,
         skills: ['matrix_layers', 'grid_nested', 'range'],
         difficulty: 2,
         minutes: 4.5,
-        prompt: 'Write `left_edge(m, left, top, bottom)` returning the values of column `left` from row `bottom` up to row `top`, both included, **bottom to top**.\n\nWith `m = [[1, 2], [3, 4], [5, 6]]`, `left_edge(m, 0, 0, 2)` is `[5, 3, 1]`.',
+        prompt: 'Write `left_edge(m, left, top, bottom)` returning the values of column `left` from row `bottom` up to row `top`, both included, **bottom to top**.\n\nWith `m = [[1, 2], [3, 4], [5, 6]]`, `left_edge(m, 0, 0, 2)` is `[5, 3, 1]`. If `top` is past `bottom` there is nothing to read: return `[]`.',
         starterCode: `def left_edge(m, left, top, bottom):
     pass`,
         solution: `def left_edge(m, left, top, bottom):
@@ -826,7 +832,7 @@ print(top, bottom, left, right)`,
         skills: ['matrix_layers', 'grid_nested', 'edge_cases'],
         difficulty: 3,
         minutes: 6,
-        prompt: '`border(m)` should return the outside ring of a matrix, clockwise from the top-left cell, each cell once. For `[[1, 2, 3], [4, 5, 6], [7, 8, 9]]` that is `[1, 2, 3, 6, 9, 8, 7, 4]`, and for the single row `[[1, 2, 3]]` it is `[1, 2, 3]`. Fix it.',
+        prompt: '`m` is a matrix with at least one row and one column. `border(m)` should return its outside **ring**, meaning the cells on the outer edge, as a list: clockwise from the top-left cell, each cell once. For `[[1, 2, 3], [4, 5, 6], [7, 8, 9]]` that is `[1, 2, 3, 6, 9, 8, 7, 4]`, and for the single row `[[1, 2, 3]]` it is `[1, 2, 3]`. Fix it.',
         brokenCode: `def border(m):
     top, bottom = 0, len(m) - 1
     left, right = 0, len(m[0]) - 1
@@ -892,7 +898,7 @@ print(top, bottom, left, right)`,
         skills: ['matrix_marking', 'set_add', 'grid_nested'],
         difficulty: 2,
         minutes: 6.5,
-        prompt: 'Write `lines_with(m, x)` returning two sets: the row numbers that contain the value `x` somewhere, and the column numbers that do.\n\n`lines_with([[1, 0], [1, 1]], 0)` is `({0}, {1})`: the only `0` sits in row 0, column 1.',
+        prompt: 'Write `lines_with(m, x)` returning a pair of sets `(rows, cols)`: the row numbers that contain the value `x` somewhere, and the column numbers that do.\n\n`lines_with([[1, 0], [1, 1]], 0)` is `({0}, {1})`: the only `0` sits in row 0, column 1.',
         starterCode: `def lines_with(m, x):
     pass`,
         solution: `def lines_with(m, x):
@@ -1190,9 +1196,10 @@ for row in m:
         stage: 'pattern',
         repType: 'pattern',
         important: true,
+        transfer: true,
         difficulty: 3,
         minutes: 8,
-        prompt: 'Write `turn_left(m)` that rotates a square matrix a quarter turn **anticlockwise** in place, using no second matrix. Return nothing.\n\n`[[1, 2], [3, 4]]` becomes `[[2, 4], [1, 3]]`: the old top row now runs **up** the left-hand side.\n\nWork it out on paper with the two flips first: after the transpose, which reversal puts `2` in the top-left corner?',
+        prompt: 'Write `turn_left(m)` that rotates a square matrix (as many rows as columns) a quarter turn **anticlockwise**. Change `m` itself, build no second matrix, and return nothing.\n\n`[[1, 2], [3, 4]]` becomes `[[2, 4], [1, 3]]`: the old top row now runs **up** the left-hand side, so `2` lands in the top-left corner. A 1 x 1 matrix stays as it is.',
         starterCode: `def turn_left(m):
     pass`,
         solution: `def turn_left(m):
@@ -1232,7 +1239,7 @@ for row in m:
         skills: ['matrix_layers', 'while_loop', 'accumulator'],
         difficulty: 3,
         minutes: 5,
-        prompt: '`ring_sums(m)` should return the total of each ring of a matrix, from the outside ring inward. For `[[1, 2, 3], [4, 5, 6], [7, 8, 9]]` the outside ring adds up to 40 and the middle cell is a ring of its own, so the answer is `[40, 5]`. Fix it.',
+        prompt: '`m` is a matrix of numbers with at least one row and one column. A **ring** is the outer edge of what is left once the rings outside it have been taken away. `ring_sums(m)` should return the total of each ring as a list, from the outside ring inward. A single cell, row or column left in the middle is a ring too. For `[[1, 2, 3], [4, 5, 6], [7, 8, 9]]` the outside ring adds up to 40 and the middle cell is a ring of its own, so the answer is `[40, 5]`. Fix it.',
         brokenCode: `def ring_sums(m):
     top, bottom = 0, len(m) - 1
     left, right = 0, len(m[0]) - 1
@@ -1299,9 +1306,10 @@ for row in m:
         stage: 'pattern',
         repType: 'pattern',
         important: true,
+        transfer: true,
         difficulty: 4,
         minutes: 15,
-        prompt: 'Write `spiral_fill(rows, cols)` that builds a new `rows` x `cols` matrix and writes the numbers 1, 2, 3, ... into it along a clockwise spiral that starts at the top-left cell and winds inward.\n\n`spiral_fill(3, 3)` is `[[1, 2, 3], [8, 9, 4], [7, 6, 5]]` and `spiral_fill(1, 3)` is `[[1, 2, 3]]`. `rows` and `cols` are at least 1.',
+        prompt: 'Write `spiral_fill(rows, cols)` that builds a new matrix with `rows` rows and `cols` columns (a list of rows, each row a list) and writes the numbers 1, 2, 3, ... into it along a clockwise spiral that starts at the top-left cell and winds inward.\n\n`spiral_fill(3, 3)` is `[[1, 2, 3], [8, 9, 4], [7, 6, 5]]` and `spiral_fill(1, 3)` is `[[1, 2, 3]]`. `rows` and `cols` are at least 1.',
         starterCode: `def spiral_fill(rows, cols):
     pass`,
         solution: `def spiral_fill(rows, cols):
@@ -1456,14 +1464,15 @@ for row in m:
       }),
       write({
         id: 'b73-blackout',
-        title: 'Blackout, with no notepad',
+        title: 'Blackout with no extra memory',
         skills: ['matrix_marking', 'grid_nested', 'state_tracking', 'edge_cases'],
         stage: 'pattern',
         repType: 'pattern',
         important: true,
+        transfer: true,
         difficulty: 4,
         minutes: 15,
-        prompt: 'A wall of lamps is a matrix of booleans: `True` is lit, `False` is a blown lamp. A blown lamp takes out its whole row and its whole column. Write `blackout(lights)` that switches off (`False`) every lamp in a row or column that had a blown lamp to begin with, in place. Return nothing.\n\n`[[True, True], [True, False]]` becomes `[[True, False], [False, False]]`.\n\nDo it without any sets or extra lists: only the matrix itself and a couple of single variables.',
+        prompt: 'A wall of lamps is a matrix of booleans (at least one row and one column): `True` is lit, `False` is a blown lamp. A blown lamp takes out its whole row and its whole column. Write `blackout(lights)` that switches off (`False`) every lamp in a row or column that had a blown lamp to begin with, in place. Return nothing.\n\n`[[True, True], [True, False]]` becomes `[[True, False], [False, False]]`.\n\nDo it without any sets or extra lists: only the matrix itself and a couple of single variables.',
         starterCode: `def blackout(lights):
     pass`,
         solution: `def blackout(lights):
@@ -1831,7 +1840,7 @@ export const pack: Pack = {
     'b48-turn-left': {
       inputs: [{ name: 'm', is: 'a square matrix' }],
       returns: 'nothing. Afterwards `m` itself is turned a quarter turn anticlockwise: the old top row runs up the left side.',
-      catch: 'The trace before this one turned the matrix the other way. Exactly one of its two moves has to change.',
+      catch: 'A quarter turn the other way gives a different matrix. Check your result on the 2 x 2: which value must land in the top-left corner?',
     },
     // ── LC 54 ──
     'b54-dbg-centre': {

@@ -115,7 +115,7 @@ export async function getAnotherRep(repo: RepsRepository, mastery: Record<SkillI
     const { reps } = await post<{ reps: unknown[] }>('/api/coach/generate', failure ? { ...request, count: 1, previousFailure: failure } : request)
     const rows: GeneratedRepRow[] = []
     for (const raw of reps) {
-      const v = await verifyGeneratedRep(raw, run, o.skills)
+      const v = await verifyGeneratedRep(raw, run, o.skills, { hidePattern: o.hidePattern })
       if (!v.ok || !v.rep) {
         failure = v.reason
         if (v.reason?.startsWith('python unavailable')) throw new CoachError('Python could not load to check the generated rep.')

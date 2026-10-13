@@ -31,7 +31,7 @@ const pythonRecall = section('o2-python-recall', 'Python recall', 'List literals
     prompt: 'Which line creates a **list** holding 4, 7 and 9?',
     options: ['nums = [4, 7, 9]', 'nums = (4, 7, 9)', 'nums = {4, 7, 9}', 'nums = list(4, 7, 9)'],
     answer: 0,
-    note: 'Square brackets make a list: `[]` is empty, `[4, 7]` has two items.',
+    note: "A **list** is an ordered row of values. Square brackets make one: `[]` is empty, `[4, 7]` has two items.",
     explanation: 'Parentheses make a tuple, braces with bare values make a set, and `list(4, 7, 9)` is a TypeError because `list()` takes one iterable.',
     signature: 'recognize:list-literal',
     minutes: 0.5,
@@ -52,7 +52,7 @@ print(len(nums))`,
 6
 2
 4`,
-    note: 'Indexes start at 0. `nums[-1]` is the last item, `nums[-2]` the one before. `len(nums)` is the count of items.',
+    note: "Each item of a list has a position, its **index**, starting at 0. `nums[-1]` is the last item, `nums[-2]` the one before. `len(nums)` is how many items there are.",
     explanation: 'Index 2 is the third item. The last valid index is `len(nums) - 1`, which `-1` reaches directly.',
     signature: 'trace:list-index',
     minutes: 1.5,
@@ -61,7 +61,8 @@ print(len(nums))`,
     id: 'o2-bookends',
     title: 'Write: first and last',
     skills: ['list_create', 'list_index', 'len', 'conditionals'],
-    prompt: 'Write `bookends(nums)` that returns a new list `[first, last]` holding the first and last items of `nums`. For an empty list return `[]`. A one-item list gives that item twice.',
+    prompt: "`nums` is a list. It may be empty.\n\nWrite `bookends(nums)` that returns a **new list** of two items, `[first, last]`: the first and the last item of `nums`.\n\n`bookends([4, 7, 9])` → `[4, 9]`\n\nA one-item list gives that item twice: `bookends([5])` → `[5, 5]`. An empty list has no first item, so return `[]`.",
+    note: "`def name(inputs):` starts a function and `return value` hands the answer back. `if condition:` runs its indented block only when the condition is true. Indexing an empty list crashes, so decide what to do about emptiness before you index.",
     starterCode: `def bookends(nums):
     pass`,
     solution: `def bookends(nums):
@@ -94,7 +95,8 @@ print(len(nums))`,
     id: 'o2-append-line',
     title: 'Write: append in a loop',
     skills: ['list_append', 'for_loop', 'functions'],
-    prompt: 'Write `add_all(nums, extra)` that appends every item of `extra` to the end of `nums` (changing `nums` in place) and returns `nums`. Do not use `+` or `.extend`.',
+    prompt: "`nums` and `extra` are both lists.\n\nWrite `add_all(nums, extra)` that adds every item of `extra` onto the end of `nums`, one at a time, then returns `nums`. Change `nums` itself (this is called changing it **in place**) instead of building a new list. Do not use `+` or `.extend`.\n\n`add_all([3, 8], [5])` → `[3, 8, 5]`\n\nIf `extra` is empty, `nums` comes back unchanged.",
+    note: "`for x in extra:` runs its indented body once per item, with `x` set to each item in turn. `nums.append(x)` adds one item to the end of that same list (that is what \"in place\" means). It returns `None`, so it stands alone on its line.",
     starterCode: `def add_all(nums, extra):
     pass`,
     solution: `def add_all(nums, extra):
@@ -116,7 +118,7 @@ print(len(nums))`,
     id: 'o2-dbg-append-none',
     title: 'Debug: building a doubled list',
     skills: ['list_append', 'list_create', 'for_loop'],
-    prompt: '`doubled(nums)` should return a new list with every number doubled, in order.',
+    prompt: "`nums` is a list of numbers. `doubled(nums)` should return a **new** list with every number doubled, in the same order: `doubled([1, 2, 3])` → `[2, 4, 6]`. It crashes. Fix it.",
     brokenCode: `def doubled(nums):
     out = []
     for num in nums:
@@ -189,7 +191,8 @@ for num in nums:
     id: 'o2-dbg-for-of',
     title: 'Debug: total length of words',
     skills: ['for_loop', 'accumulator', 'len'],
-    prompt: '`total_length(words)` should return the sum of the lengths of all words.',
+    prompt: "`words` is a list of strings. `total_length(words)` should return the lengths of all the words added together, and `0` for an empty list.\n\n`total_length(['ab', 'cde'])` → `5`\n\nIt does not run at all. Read the error, then fix it.",
+    note: "An **accumulator** is a variable you set up before a loop and update on every pass: `total = 0` first, then `total += n` inside (short for `total = total + n`). It lives outside the loop so it survives from one pass to the next.",
     brokenCode: `def total_length(words):
     total = 0
     for word of words:
@@ -229,7 +232,7 @@ print(list(range(5, 0, -1)))`,
     id: 'o2-countdown',
     title: 'Write: count down with range',
     skills: ['range', 'list_append'],
-    prompt: 'Write `countdown(n)` that returns `[n, n-1, ..., 1]` using a `for` loop over a `range`. For `n = 0` return `[]`.',
+    prompt: "`n` is a whole number, 0 or more.\n\nWrite `countdown(n)` that returns the list `[n, n-1, ..., 1]`, using a `for` loop over a `range`.\n\n`countdown(3)` → `[3, 2, 1]`. For `n = 0` return `[]`.",
     starterCode: `def countdown(n):
     pass`,
     solution: `def countdown(n):
@@ -248,7 +251,7 @@ print(list(range(5, 0, -1)))`,
     id: 'o2-dbg-squares-range',
     title: 'Debug: squares up to n',
     skills: ['range', 'list_append'],
-    prompt: '`squares(n)` should return `[1, 4, 9, ..., n*n]`, the squares of 1 through n.',
+    prompt: "`n` is a whole number, 0 or more. `squares(n)` should return the squares of 1 through `n` as a list: `squares(3)` → `[1, 4, 9]`. It runs, but the list is wrong.",
     brokenCode: `def squares(n):
     out = []
     for i in range(1, n):
@@ -269,7 +272,7 @@ print(list(range(5, 0, -1)))`,
     id: 'o2-sum-fill',
     title: 'Write: sum with an accumulator',
     skills: ['accumulator', 'for_loop', 'list_iterate'],
-    prompt: 'Write `total(nums)` that returns the sum of the numbers, without calling `sum()`.',
+    prompt: "`nums` is a list of numbers.\n\nWrite `total(nums)` that returns all of them added together, without calling `sum()`. An empty list totals `0`.\n\n`total([1, 2, 3])` → `6`",
     starterCode: `def total(nums):
     pass`,
     solution: `def total(nums):
@@ -289,7 +292,8 @@ print(list(range(5, 0, -1)))`,
     skills: ['accumulator', 'conditionals', 'for_loop'],
     stage: 'combine',
     repType: 'combine',
-    prompt: 'Write `count_evens(nums)` that returns how many numbers in `nums` are even.',
+    prompt: "`nums` is a list of whole numbers.\n\nWrite `count_evens(nums)` that returns how many of them are even. `0` and negative even numbers count too.\n\n`count_evens([1, 2, 4])` → `2`",
+    note: "`a % b` is the remainder after dividing `a` by `b`: `7 % 2` is `1`, `8 % 2` is `0`. A whole number is even exactly when its remainder by 2 is 0.",
     starterCode: `def count_evens(nums):
     pass`,
     solution: `def count_evens(nums):
@@ -310,7 +314,7 @@ print(list(range(5, 0, -1)))`,
     skills: ['accumulator', 'conditionals', 'list_index'],
     stage: 'combine',
     repType: 'combine',
-    prompt: 'Write `largest(nums)` that returns the biggest number in a **non-empty** list, without calling `max()`.',
+    prompt: "`nums` is a **non-empty** list of numbers.\n\nWrite `largest(nums)` that returns the biggest of them, without calling `max()`. The numbers may all be negative.\n\n`largest([-4, -1, -8])` → `-1`",
     starterCode: `def largest(nums):
     pass`,
     solution: `def largest(nums):
@@ -329,7 +333,7 @@ print(list(range(5, 0, -1)))`,
     id: 'o2-dbg-smallest-zero',
     title: 'Debug: smallest number',
     skills: ['accumulator', 'conditionals'],
-    prompt: '`smallest(nums)` should return the smallest number in a non-empty list, without calling `min()`.',
+    prompt: "`nums` is a non-empty list of numbers. `smallest(nums)` should return the smallest of them, without calling `min()`: `smallest([4, 2, 9])` → `2`. It gives the wrong answer on some lists.",
     brokenCode: `def smallest(nums):
     best = 0
     for num in nums:
@@ -377,7 +381,7 @@ None`,
     id: 'o2-contains-loop',
     title: 'Write: contains with early return',
     skills: ['early_return', 'for_loop', 'conditionals'],
-    prompt: 'Write `contains(nums, target)` that returns `True` if target is in nums and `False` otherwise. Use a loop, not the `in` operator on the list.',
+    prompt: "`nums` is a list and `target` is a value to look for.\n\nWrite `contains(nums, target)` that returns `True` if `target` is one of the items of `nums`, and `False` if it is not (so an empty list gives `False`). Use a loop, not the `in` operator on the list.\n\n`contains([1, 5, 9], 5)` → `True`",
     starterCode: `def contains(nums, target):
     pass`,
     solution: `def contains(nums, target):
@@ -396,7 +400,7 @@ None`,
     id: 'o2-dbg-early-else',
     title: 'Debug: any negative?',
     skills: ['early_return', 'conditionals', 'for_loop'],
-    prompt: '`has_negative(nums)` should return `True` if any number is below zero, otherwise `False`.',
+    prompt: "`nums` is a list of numbers. `has_negative(nums)` should return `True` if **any** number in it is below zero, otherwise `False` (an empty list gives `False`). It gives the wrong answer on some lists.",
     brokenCode: `def has_negative(nums):
     for num in nums:
         if num < 0:
@@ -456,7 +460,8 @@ for i, fruit in enumerate(fruits):
     id: 'o2-enum-fill',
     title: 'Write: (index, word) pairs',
     skills: ['enumerate', 'tuples', 'list_append'],
-    prompt: "Write `with_index(words)` that returns a list of `(index, word)` tuples.\n\n`with_index(['a', 'b'])` → `[(0, 'a'), (1, 'b')]`",
+    prompt: "`words` is a list of strings.\n\nWrite `with_index(words)` that returns a list with one **tuple** per word: `(index, word)`, where the index is the word's position, starting at 0. An empty list gives `[]`.\n\n`with_index(['a', 'b'])` → `[(0, 'a'), (1, 'b')]`",
+    note: "A **tuple** is a fixed group of values in parentheses, like `(0, 'a')`. `enumerate` hands you `(index, item)` tuples, and `for i, word in ...` unpacks each one into two names. To put a tuple in a list, build it with its own parentheses.",
     starterCode: `def with_index(words):
     pass`,
     solution: `def with_index(words):
@@ -473,7 +478,7 @@ for i, fruit in enumerate(fruits):
     id: 'o2-index-of',
     title: 'Write: first index of a value',
     skills: ['enumerate', 'early_return'],
-    prompt: 'Write `index_of(nums, target)` that returns the index of the first occurrence of target, or `-1` if it is missing. Use enumerate.',
+    prompt: "`nums` is a list and `target` is a value to look for.\n\nWrite `index_of(nums, target)` that returns the index of the **first** place `target` appears, or `-1` if it is not in the list at all. Use `enumerate`.\n\n`index_of([5, 3, 5], 5)` → `0`",
     starterCode: `def index_of(nums, target):
     pass`,
     solution: `def index_of(nums, target):
@@ -514,7 +519,7 @@ for i, fruit in enumerate(fruits):
     skills: ['enumerate', 'list_append', 'conditionals'],
     stage: 'combine',
     repType: 'combine',
-    prompt: 'Write `indexes_of(nums, target)` that returns a list of **every** index where target appears.',
+    prompt: "`nums` is a list and `target` is a value to look for.\n\nWrite `indexes_of(nums, target)` that returns a list of **every** index where `target` appears, lowest first. If it never appears, return `[]`.\n\n`indexes_of([7, 1, 7, 7], 7)` → `[0, 2, 3]`",
     starterCode: `def indexes_of(nums, target):
     pass`,
     solution: `def indexes_of(nums, target):
@@ -533,7 +538,7 @@ for i, fruit in enumerate(fruits):
     id: 'o2-dbg-enum-order',
     title: 'Debug: find the first match',
     skills: ['enumerate', 'early_return'],
-    prompt: '`find_first(nums, target)` should return the index of the first occurrence of target, or `-1`.',
+    prompt: "`nums` is a list and `target` is a value to look for. `find_first(nums, target)` should return the index of the first place `target` appears, or `-1` if it is missing: `find_first([5, 3, 9], 9)` → `2`. It runs, but returns the wrong thing.",
     brokenCode: `def find_first(nums, target):
     for num, i in enumerate(nums):
         if num == target:
@@ -564,7 +569,7 @@ const sets = section('o2-sets', 'Sets', 'set(), .add, duplicates ignored, fast m
     prompt: 'Which line creates an **empty set**?',
     options: ['seen = set()', 'seen = {}', 'seen = []', 'seen = set[]'],
     answer: 0,
-    note: '`set()` is an empty set. `{}` is an empty **dict**. `{1, 2}` with values is a set.',
+    note: "A **set** is a collection that holds each value at most once, with no order. `set()` is an empty set. `{}` is an empty **dict** (a different structure, coming later). `{1, 2}` with values in it is a set.",
     explanation: '`{}` was taken by dicts first, so an empty set has to be written `set()`.',
     signature: 'recognize:empty-set',
     important: true,
@@ -585,7 +590,7 @@ print(2 in seen, 7 in seen)`,
 2
 3
 True False`,
-    note: 'A set holds each value at most once. `.add(x)` inserts; `x in s` checks in O(1) on average.',
+    note: "A set holds each value at most once. `.add(x)` puts a value in; `x in s` asks whether it is there, in one step however big the set is (written **O(1)**, on average).",
     explanation: 'Adding a value that is already present does nothing, so the size only grows on new values.',
     signature: 'trace:set-add',
   }),
@@ -593,7 +598,8 @@ True False`,
     id: 'o2-set-add-fill',
     title: 'Write: distinct values, sorted',
     skills: ['set_create', 'set_add', 'for_loop', 'sorting'],
-    prompt: 'Write `unique_sorted(nums)` that returns the distinct values in ascending order. Build the set yourself with `.add` in a loop, then return `sorted(...)` of it.',
+    prompt: "`nums` is a list of numbers. Numbers can repeat.\n\nWrite `unique_sorted(nums)` that returns a **list** of the distinct values (each different value once), smallest first. Build the set yourself: start with an empty set, `.add` each number in a loop, then return `sorted(...)` of it.\n\n`unique_sorted([3, 1, 3])` → `[1, 3]`. An empty list gives `[]`.",
+    note: "`sorted(x)` takes any collection and returns a **new list** of its items in ascending order: `sorted({3, 1})` is `[1, 3]`. A set has no order of its own, so `sorted` is how you get a predictable one.",
     starterCode: `def unique_sorted(nums):
     pass`,
     solution: `def unique_sorted(nums):
@@ -611,7 +617,8 @@ True False`,
     id: 'o2-set-unique-count',
     title: 'Write: count distinct words, ignoring case',
     skills: ['set_create', 'set_add', 'len', 'string_methods'],
-    prompt: "Write `distinct_count(words)` that returns how many different words there are when case is ignored. `'Cat'` and `'cat'` are the same word.",
+    prompt: "`words` is a list of strings.\n\nWrite `distinct_count(words)` that returns how many different words there are when upper and lower case are treated as the same: `'Cat'` and `'cat'` are one word. An empty list gives `0`.\n\n`distinct_count(['Cat', 'cat', 'dog'])` → `2`",
+    note: "`word.lower()` returns a lowercase copy of a string: `'Cat'.lower()` is `'cat'`. The original string is not changed. Turning values into one agreed form before comparing them is called **normalizing**.",
     starterCode: `def distinct_count(words):
     pass`,
     solution: `def distinct_count(words):
@@ -628,7 +635,7 @@ True False`,
     id: 'o2-dbg-seen-list',
     title: 'Debug: distinct values in order',
     skills: ['set_create', 'set_add', 'set_membership', 'list_append'],
-    prompt: '`unique_in_order(nums)` should return the distinct values in the order they first appear. The "already seen?" check should be O(1).',
+    prompt: "`nums` is a list of numbers. `unique_in_order(nums)` should return a list of the distinct values in the order they first appear: `unique_in_order([3, 1, 3, 2])` → `[3, 1, 2]`. The \"have I already had this one?\" check should take one step (O(1)), not a scan of everything so far. It crashes. Fix it.",
     brokenCode: `def unique_in_order(nums):
     seen = []
     out = []
@@ -657,7 +664,7 @@ True False`,
     skills: ['set_create', 'set_add', 'set_membership', 'for_loop'],
     stage: 'combine',
     repType: 'combine',
-    prompt: 'Write `shared(a, b)` that returns a **sorted list** of the distinct values that appear in both lists. Build a set from `b` so each membership check is fast.',
+    prompt: "`a` and `b` are lists.\n\nWrite `shared(a, b)` that returns a **sorted list** of the distinct values that appear in both. A value that repeats still appears once in the answer, and if nothing is shared the answer is `[]`.\n\n`shared([1, 2, 3], [2, 3, 4])` → `[2, 3]`\n\nBuild a set from `b` first (`set(b)` turns a whole list into a set in one go), so each \"is it in `b`?\" check takes one step.",
     starterCode: `def shared(a, b):
     pass`,
     solution: `def shared(a, b):
@@ -679,7 +686,8 @@ True False`,
     skills: ['set_create', 'set_membership', 'hash_reasoning', 'accumulator'],
     style: 'optimize',
     stage: 'pattern',
-    prompt: "This is correct but slow when `allowed` is long: every `in` scans the list.\n\n```python\ndef count_allowed_slow(nums, allowed):\n    count = 0\n    for num in nums:\n        if num in allowed:\n            count += 1\n    return count\n```\n\nWrite `count_allowed(nums, allowed)` so each membership check is O(1).",
+    prompt: "`nums` and `allowed` are lists of numbers. This counts how many items of `nums` appear in `allowed`. It is correct, but slow when `allowed` is long: `in` on a **list** scans it item by item, every time.\n\n```python\ndef count_allowed_slow(nums, allowed):\n    count = 0\n    for num in nums:\n        if num in allowed:\n            count += 1\n    return count\n```\n\nWrite `count_allowed(nums, allowed)` that returns the same count, with each \"is it allowed?\" check taking one step (O(1)).\n\n`count_allowed([1, 2, 3, 2], [2, 3])` → `3`",
+    note: "Big-O says how the work grows with the size of the input, n. `x in some_list` looks at the items one by one: **O(n)**. `x in some_set` jumps straight to the answer: **O(1)**, one step however big. A set can do that because it files each value under its *hash*, a number computed from the value.",
     starterCode: `def count_allowed(nums, allowed):
     pass`,
     solution: `def count_allowed(nums, allowed):
@@ -711,7 +719,8 @@ const containsDuplicate = section('o2-contains-duplicate', 'Contains Duplicate',
     id: 'o2-dup-brute',
     title: 'Write: duplicate check, brute force',
     skills: ['range', 'list_index', 'early_return', 'conditionals'],
-    prompt: 'Write `has_dup_slow(nums)` that returns True if any value appears twice. Use two nested loops over indexes, comparing every pair `i < j`. This is the O(n²) baseline you will beat.',
+    prompt: "`nums` is a list.\n\nWrite `has_dup_slow(nums)` that returns `True` if any value appears at least twice, otherwise `False` (an empty or one-item list gives `False`).\n\nDo it the slow, obvious way: two nested loops over indexes that compare every pair of positions `i < j`. This is the baseline the next reps beat.\n\n`has_dup_slow([1, 2, 1])` → `True`",
+    note: "A **nested loop** is a loop inside a loop: for each `i`, the inner loop runs through every `j`. `for i in range(len(nums)):` walks the indexes, so `nums[i]` is the item there. For n items that is about n × n / 2 comparisons, written **O(n²)**: double the list, four times the work.",
     starterCode: `def has_dup_slow(nums):
     pass`,
     solution: `def has_dup_slow(nums):
@@ -731,6 +740,7 @@ const containsDuplicate = section('o2-contains-duplicate', 'Contains Duplicate',
     title: 'Trace: the seen-set',
     skills: ['set_membership', 'set_add', 'conditionals'],
     prompt: 'Predict the output.',
+    note: "A **seen-set** is a set of the values you have already walked past. `num in seen` asks: did this value come up earlier in the list?",
     code: `seen = set()
 for num in [4, 1, 4, 7]:
     if num in seen:
@@ -754,7 +764,8 @@ new 7
     skills: ['set_membership', 'set_add', 'early_return'],
     style: 'finish',
     stage: 'complete',
-    prompt: 'The setup and the final return are written. Write the loop body: return True as soon as a value is seen for the second time, otherwise remember it.',
+    prompt: "`nums` is a list. The setup and the final return are written. Write the loop body: return `True` as soon as a value turns up for the second time, otherwise remember it.",
+    note: "The order inside the loop matters. When you ask \"has this value come up before?\", the set must hold only the values that came **earlier**. If the current value is already in there when you ask, every value finds itself and the answer is always yes. So: ask first, remember after.",
     starterCode: `def has_dup(nums):
     seen = set()
     for num in nums:
@@ -822,7 +833,8 @@ new 7
     skills: ['edge_cases', 'list_create'],
     style: 'write-test',
     stage: 'debug',
-    prompt: "Someone wrote this duplicate check:\n\n```python\ndef has_dup_adjacent(nums):\n    for i in range(len(nums) - 1):\n        if nums[i] == nums[i + 1]:\n            return True\n    return False\n```\n\nIt is already in the editor. Make `breaking_input()` return a list on which it gives the **wrong** answer.",
+    prompt: "Someone wrote this duplicate check. It should return `True` exactly when some value appears at least twice **anywhere** in the list:\n\n```python\ndef has_dup_adjacent(nums):\n    for i in range(len(nums) - 1):\n        if nums[i] == nums[i + 1]:\n            return True\n    return False\n```\n\nIt is already in the editor; leave it as it is. Make `breaking_input()` return one list on which it gives the **wrong** answer.",
+    note: "An **edge case** is an input that hits an assumption the code silently makes. To find one, read the code and ask what it never looks at.",
     starterCode: `def has_dup_adjacent(nums):
     for i in range(len(nums) - 1):
         if nums[i] == nums[i + 1]:
@@ -849,7 +861,7 @@ def breaking_input():
     id: 'o2-dbg-dup-add-first',
     title: 'Debug: duplicate check says True too often',
     skills: ['set_membership', 'set_add', 'early_return'],
-    prompt: '`has_dup(nums)` should return True only if some value appears at least twice.',
+    prompt: "`nums` is a list. `has_dup(nums)` should return `True` only if some value appears at least twice: `has_dup([1, 2, 3])` → `False`, `has_dup([4, 4])` → `True`. It says `True` too often.",
     brokenCode: `def has_dup(nums):
     seen = set()
     for num in nums:
@@ -875,6 +887,7 @@ def breaking_input():
     title: 'Explain: Contains Duplicate',
     skills: ['explanation', 'complexity', 'hash_reasoning', 'edge_cases'],
     prompt: 'Explain your Contains Duplicate solution as you would to an interviewer: the approach, why it is correct, its time and space complexity, and the edge cases you checked.',
+    note: "**Time complexity**: how the number of steps grows with the list length n. **Space complexity**: how much extra memory you use. An **invariant** is a fact that stays true on every pass of the loop, for example what the set holds at the moment you check.",
     rubric: [
       'Names the brute force (compare every pair, O(n^2)) and why a set improves it',
       'States the invariant: seen holds exactly the values before the current index',
@@ -952,7 +965,7 @@ True`,
     id: 'o2-dbg-keyerror',
     title: 'Debug: stock lookup',
     skills: ['dict_lookup', 'dict_membership'],
-    prompt: '`stock_of(stock, item)` should return how many of `item` are in stock. Items that are not listed have 0.',
+    prompt: "`stock` is a dict: item name → how many are in stock. `stock_of(stock, item)` should return how many of `item` there are. Items that are not listed have 0. It works for listed items and crashes for the others.",
     brokenCode: `def stock_of(stock, item):
     return stock[item]`,
     solution: `def stock_of(stock, item):
@@ -969,7 +982,8 @@ True`,
     id: 'o2-dict-safe-lookup',
     title: 'Write: lookup guarded by in',
     skills: ['dict_membership', 'dict_lookup', 'conditionals'],
-    prompt: 'Write `lookup_or(d, key, fallback)` that returns `d[key]` if the key exists, otherwise `fallback`. Use `in` (not `.get()`) this time.',
+    prompt: "`d` is a dictionary. `key` is the key to look for; it may or may not be in `d`. `fallback` is the value to hand back when it is not.\n\nWrite `lookup_or(d, key, fallback)` that returns the value stored under `key`, or `fallback` if `d` has no such key. Use `in` (not `.get()`) this time.\n\n`lookup_or({'a': 1}, 'a', 0)` → `1`, and `lookup_or({'a': 1}, 'b', 0)` → `0`",
+    note: "Reading `d[key]` when the key is missing crashes with a KeyError. `key in d` asks whether the key is there, and never crashes.",
     starterCode: `def lookup_or(d, key, fallback):
     pass`,
     solution: `def lookup_or(d, key, fallback):
@@ -985,7 +999,8 @@ True`,
     id: 'o2-dbg-in-values',
     title: 'Debug: does any value match?',
     skills: ['dict_membership', 'dict_items'],
-    prompt: '`has_value(d, target)` should return True if some **value** in the dict equals target.',
+    prompt: "`d` is a dictionary and `target` is a value to look for. `has_value(d, target)` should return `True` if `target` is one of the dict's **values**, otherwise `False`: `has_value({'a': 1, 'b': 2}, 2)` → `True`. It answers a different question.",
+    note: "A dict has two sides: `d.keys()` is the collection of its keys, `d.values()` the collection of its values.",
     brokenCode: `def has_value(d, target):
     return target in d`,
     solution: `def has_value(d, target):
@@ -1002,7 +1017,8 @@ True`,
     skills: ['dict_items', 'dict_assign', 'dict_create'],
     stage: 'combine',
     repType: 'combine',
-    prompt: 'Write `invert(d)` that returns a new dict where each value becomes a key and each key becomes its value. Values in `d` are distinct.',
+    prompt: "`d` is a dictionary whose values are all different.\n\nWrite `invert(d)` that returns a **new** dict with every pair flipped: each old value becomes a key, and its old key becomes the value. An empty dict gives `{}`.\n\n`invert({'a': 1, 'b': 2})` → `{1: 'a', 2: 'b'}`",
+    note: "Looping over a dict: `for key in d:` hands you each key in turn. `for key, value in d.items():` hands you each key together with its value.",
     starterCode: `def invert(d):
     pass`,
     solution: `def invert(d):
@@ -1267,7 +1283,7 @@ have = inventory.get(name, 0)`,
     skills: ['dict_get', 'accumulator', 'for_loop'],
     stage: 'combine',
     repType: 'combine',
-    prompt: 'Write `total_cost(menu, order)`. `menu` maps item → price; `order` is a list of item names (repeats allowed). Items not on the menu cost 0. Use `.get`.',
+    prompt: "`menu` is a dict: item name → price. `order` is a list of item names; names can repeat, and some may not be on the menu.\n\nWrite `total_cost(menu, order)` that returns the total price of the order. Items that are not on the menu cost 0. Use `.get`.\n\n`total_cost({'tea': 3}, ['tea', 'soda'])` → `3`",
     starterCode: `def total_cost(menu, order):
     pass`,
     solution: `def total_cost(menu, order):
@@ -1290,7 +1306,7 @@ have = inventory.get(name, 0)`,
     id: 'o2-dbg-get-args',
     title: 'Debug: price list',
     skills: ['dict_get', 'list_append'],
-    prompt: '`price_list(menu, items)` should return the price of each item, in order, using `-1` for items not on the menu.',
+    prompt: "`menu` is a dict: item name → price. `items` is a list of item names. `price_list(menu, items)` should return a list with the price of each item, in the same order, using `-1` for items that are not on the menu: `price_list({'tea': 3}, ['tea', 'cake'])` → `[3, -1]`. It runs, but the list is wrong.",
     brokenCode: `def price_list(menu, items):
     out = []
     for item in items:
@@ -1332,6 +1348,7 @@ for ch in 'abca':
     repType: 'combine',
     difficulty: 3,
     prompt: "Write `group_by_first(words)` that returns a dict mapping each first letter to the list of words starting with it, in input order. All words are non-empty.\n\n`group_by_first(['ant', 'bee', 'ape'])` → `{'a': ['ant', 'ape'], 'b': ['bee']}`",
+    note: "A string can be indexed like a list: `word[0]` is its first character and `word[-1]` its last. A dict value can itself be a list.",
     starterCode: `def group_by_first(words):
     pass`,
     solution: `def group_by_first(words):
@@ -1395,7 +1412,7 @@ kiwi 5`,
     id: 'o2-iter-fill',
     title: 'Write: describe each pair',
     skills: ['dict_items', 'list_append'],
-    prompt: "Write `describe(scores)` that returns a list of `'name=score'` strings, in the dict's order.\n\n`describe({'a': 1, 'b': 2})` → `['a=1', 'b=2']`",
+    prompt: "`scores` is a dict: name → score.\n\nWrite `describe(scores)` that returns a list of `'name=score'` strings, one per entry, in the dict's order. An empty dict gives `[]`.\n\n`describe({'a': 1, 'b': 2})` → `['a=1', 'b=2']`",
     starterCode: `def describe(scores):
     pass`,
     solution: `def describe(scores):
@@ -1413,7 +1430,7 @@ kiwi 5`,
     id: 'o2-iter-keys-above',
     title: 'Write: keys whose value passes a test',
     skills: ['dict_items', 'conditionals', 'list_append'],
-    prompt: "Write `keys_above(d, limit)` that returns a list of the keys whose value is greater than `limit`, in the dict's order.",
+    prompt: "`d` is a dictionary whose values are numbers. `limit` is a number.\n\nWrite `keys_above(d, limit)` that returns a list of the keys whose value is **greater than** `limit` (equal does not count), in the dict's order.\n\n`keys_above({'a': 5, 'b': 1, 'c': 9}, 4)` → `['a', 'c']`",
     starterCode: `def keys_above(d, limit):
     pass`,
     solution: `def keys_above(d, limit):
@@ -1432,7 +1449,7 @@ kiwi 5`,
     id: 'o2-dbg-items-unpack',
     title: 'Debug: total score',
     skills: ['dict_items', 'accumulator'],
-    prompt: '`total_score(scores)` should return the sum of all scores in a name → score dict.',
+    prompt: "`scores` is a dict: name → score. `total_score(scores)` should return all the scores added together: `total_score({'ann': 3, 'bo': 4})` → `7`. It crashes. Fix it.",
     brokenCode: `def total_score(scores):
     total = 0
     for name, score in scores:
@@ -1469,7 +1486,7 @@ for ch in 'abca':
 {'a': 1, 'b': 1}
 {'a': 1, 'b': 1, 'c': 1}
 {'a': 2, 'b': 1, 'c': 1}`,
-    note: 'Counting idiom: `counts[x] = counts.get(x, 0) + 1`. New keys start at 0, existing ones go up by 1.',
+    note: "A **frequency map** is a dict of thing → how many times it appears. The counting line is `counts[x] = counts.get(x, 0) + 1`: a new key starts from 0, an existing one goes up by 1. `for ch in 'abca':` visits a string one character at a time.",
     explanation: "The second 'a' does not add a new key; it bumps the existing count to 2.",
     signature: 'trace:freq-map',
     minutes: 2,
@@ -1479,7 +1496,7 @@ for ch in 'abca':
     id: 'o2-freq-fill',
     title: 'Write: character counts',
     skills: ['frequency_map', 'dict_get', 'string_iterate'],
-    prompt: "Write `char_counts(s)` that returns a dict mapping each character of `s` to how many times it appears. Write the counting line from memory.",
+    prompt: "`s` is a string. It can be empty.\n\nWrite `char_counts(s)` that returns a dict mapping each character of `s` to how many times it appears. Write the counting line from memory.\n\n`char_counts('aab')` → `{'a': 2, 'b': 1}`",
     starterCode: `def char_counts(s):
     pass`,
     solution: `def char_counts(s):
@@ -1497,7 +1514,7 @@ for ch in 'abca':
     id: 'o2-dbg-freq-plus-eq',
     title: 'Debug: count letters',
     skills: ['frequency_map', 'dict_lookup'],
-    prompt: '`count_letters(s)` should return a dict of how many times each character appears.',
+    prompt: "`s` is a string. `count_letters(s)` should return a dict: each character → how many times it appears, so `count_letters('aba')` → `{'a': 2, 'b': 1}`. It crashes. Fix it.",
     brokenCode: `def count_letters(s):
     counts = {}
     for ch in s:
@@ -1518,7 +1535,7 @@ for ch in 'abca':
     id: 'o2-dbg-freq-overwrite',
     title: 'Debug: tally the numbers',
     skills: ['frequency_map', 'dict_assign'],
-    prompt: '`tally(nums)` should return a dict mapping each number to how many times it appears.',
+    prompt: "`nums` is a list of numbers. `tally(nums)` should return a dict mapping each number to how many times it appears: `tally([2, 2, 5])` → `{2: 2, 5: 1}`. It runs, but the counts are wrong.",
     brokenCode: `def tally(nums):
     counts = {}
     for num in nums:
@@ -1539,7 +1556,7 @@ for ch in 'abca':
     id: 'o2-freq-words',
     title: 'Write: word counts',
     skills: ['frequency_map', 'dict_get', 'string_methods'],
-    prompt: 'Write `word_counts(sentence)` that counts words separated by spaces. `sentence.split()` gives the list of words.',
+    prompt: "`sentence` is a string of words separated by spaces. It can be empty.\n\nWrite `word_counts(sentence)` that returns a dict: each word → how many times it appears. `sentence.split()` gives you the list of words.\n\n`word_counts('the cat the dog')` → `{'the': 2, 'cat': 1, 'dog': 1}`",
     starterCode: `def word_counts(sentence):
     pass`,
     solution: `def word_counts(sentence):
@@ -1556,7 +1573,7 @@ for ch in 'abca':
     id: 'o2-dbg-get-no-default',
     title: 'Debug: count words by length',
     skills: ['frequency_map', 'dict_get', 'len'],
-    prompt: '`count_by_length(words)` should return a dict mapping each word length to how many words have that length.',
+    prompt: "`words` is a list of strings. `count_by_length(words)` should return a dict mapping each word length to how many words have that length: `count_by_length(['hi', 'yo', 'hey'])` → `{2: 2, 3: 1}`. It crashes. Fix it.",
     brokenCode: `def count_by_length(words):
     counts = {}
     for word in words:
@@ -1582,7 +1599,7 @@ for ch in 'abca':
     stage: 'combine',
     repType: 'combine',
     difficulty: 3,
-    prompt: 'Write `most_common(nums)` that returns the value that appears most often. `nums` is non-empty and exactly one value has the highest count.',
+    prompt: "`nums` is a non-empty list of numbers, and exactly one value appears more often than any other.\n\nWrite `most_common(nums)` that returns that **value** (not its count).\n\n`most_common([1, 3, 3, 2])` → `3`",
     starterCode: `def most_common(nums):
     pass`,
     solution: `def most_common(nums):
@@ -1609,7 +1626,7 @@ for ch in 'abca':
     skills: ['frequency_map', 'dict_get', 'functions'],
     stage: 'combine',
     repType: 'combine',
-    prompt: 'Write `same_items(a, b)` that returns True if lists `a` and `b` contain the same values with the same counts, in any order. Write a small helper that builds a frequency map and use it twice. (Two dicts compare equal with `==` when they have the same keys and values, in any order.)',
+    prompt: "`a` and `b` are lists.\n\nWrite `same_items(a, b)` that returns `True` if they contain the same values the same number of times each, in any order, and `False` otherwise. Write the helper `counts_of(items)` that builds a frequency map of a list, and use it twice. (Two dicts compare equal with `==` when they have the same keys and values, in any order.)\n\n`same_items([1, 2, 2], [2, 1, 2])` → `True`, `same_items([1, 2, 2], [1, 1, 2])` → `False`",
     starterCode: `def counts_of(items):
     pass
 
@@ -1637,7 +1654,7 @@ def same_items(a, b):
     stage: 'combine',
     repType: 'combine',
     difficulty: 3,
-    prompt: 'Write `first_unique(s)` that returns the index of the first character that appears exactly once in `s`, or `-1` if there is none.',
+    prompt: "`s` is a string.\n\nWrite `first_unique(s)` that returns the **index** of the first character that appears exactly once in `s`, or `-1` if there is none (including when `s` is empty).\n\n`first_unique('aabbc')` → `4`",
     starterCode: `def first_unique(s):
     pass`,
     solution: `def first_unique(s):
@@ -2293,6 +2310,7 @@ print(where['up'])`,
     repType: 'combine',
     difficulty: 3,
     prompt: '`nums` is a list of numbers and `target` is a number. Exactly one pair of **different positions** `i < j` has `nums[i] + nums[j] == target`.\n\nWrite `pair_positions(nums, target)` that returns `[i, j]`. One pass: for each number, the partner it needs is `target - nums[j]`. Have you already seen it, and where?\n\n`pair_positions([2, 7, 11, 15], 9)` → `[0, 1]`',
+    note: "The partner a number needs is `target - number`; that amount is called its **complement**. Keep a dict of the numbers you have already passed: number → its position. Ask about the partner **before** you store the current number: at the moment you ask, the dict must hold only earlier numbers, or a number can match itself (with target 6, a lone 3 would find its own 3).",
     starterCode: `def pair_positions(nums, target):
     pass`,
     solution: `def pair_positions(nums, target):
@@ -2430,12 +2448,13 @@ print(where['up'])`,
   }),
   write({
     id: 'o2-dl-lc-group-anagrams',
-    title: 'Rung 5 · LeetCode 49: Group Anagrams',
+    title: "Rung 5 · Words made of the same letters",
+    transfer: true,
     skills: ['dict_membership', 'dict_assign', 'list_append', 'sorting'],
     stage: 'combine',
     repType: 'combine',
     difficulty: 3,
-    prompt: "`words` is a list of lowercase words.\n\nWrite `group_anagrams(words)` that returns a list of groups. Each group is a list of words that are anagrams of each other, in their original order. Groups are ordered by where their first word appears.\n\nUseful: `''.join(sorted(w))` gives the letters of `w` in order, so `'tea'` → `'aet'` and `'eat'` → `'aet'`.\n\n`group_anagrams(['eat', 'tea', 'tan', 'ate', 'nat'])` → `[['eat', 'tea', 'ate'], ['tan', 'nat']]`",
+    prompt: "`words` is a list of lowercase words. Two words are **anagrams** when one is a rearrangement of the other: the same letters, the same number of times each, like `'eat'` and `'tea'`.\n\nWrite `group_anagrams(words)` that returns a list of groups. Each group is a list of the words that are anagrams of each other, in their original order. The groups are ordered by where their first word appears. A word with no anagram is a group of one, and an empty list gives `[]`.\n\n`group_anagrams(['eat', 'tea', 'tan', 'ate', 'nat'])` → `[['eat', 'tea', 'ate'], ['tan', 'nat']]`\n\nPython you may want: `sorted('tea')` gives the list `['a', 'e', 't']`, and `''.join(['a', 'e', 't'])` glues a list of characters back into one string, `'aet'`.",
     starterCode: `def group_anagrams(words):
     pass`,
     solution: `def group_anagrams(words):
@@ -2451,7 +2470,7 @@ print(where['up'])`,
       t.eq('group_anagrams([])', '[]'),
       t.hidden("group_anagrams(['ab', 'c', 'ba'])", "[['ab', 'ba'], ['c']]"),
     ],
-    hints: ['Words that are anagrams share the same sorted letters. Use that as the key.', 'Group like before: new list on first sight, append every time. Then hand back the dict’s values as a list.'],
+    hints: ["What is the same about every word in a group, whatever order its letters are in?", "The sorted letters, joined into one string, are identical for anagrams. That string can be a dict key.", "Group as in the earlier grouping reps: a new empty list the first time a key appears, append every time. At the end hand back the dict’s values as a list: `list(groups.values())`."],
     explanation: 'The dict key is something you compute (the sorted letters), so all anagrams land in the same bucket. O(n · m log m).',
     signature: 'lc:group-anagrams',
     minutes: 6,
@@ -2475,7 +2494,7 @@ print(len('aab') == len('abb'), sorted('aab') == sorted('abb'))`,
     expectedOutput: `['a', 'b', 'c']
 True
 True False`,
-    note: 'Anagrams use the same characters the same number of times. Same length is necessary, not sufficient.',
+    note: "Two strings are **anagrams** when one is a rearrangement of the other: the same characters, the same number of times each. Same length is necessary, but not enough. `sorted` on a string gives a list of its characters in order.",
     explanation: '`sorted` on a string returns a list of characters. Sorting is one anagram test, at O(n log n); counting is O(n).',
     signature: 'trace:sorted-string',
   }),
@@ -2485,7 +2504,7 @@ True False`,
     skills: ['frequency_map', 'dict_get', 'string_iterate'],
     style: 'finish',
     stage: 'complete',
-    prompt: 'Two empty maps are set up. Count `s` into `a` and `t` into `b`, then return whether the strings are anagrams.',
+    prompt: "`s` and `t` are strings. They are anagrams when they use the same characters the same number of times each, in any order: `'rat'` and `'tar'` are, `'rat'` and `'car'` are not.\n\nTwo empty dicts, `a` and `b`, are set up. Count the characters of `s` into `a` and the characters of `t` into `b`, then return `True` if the strings are anagrams and `False` if not.",
     starterCode: `def is_anagram(s, t):
     a = {}
     b = {}
@@ -2558,7 +2577,7 @@ True False`,
     skills: ['edge_cases', 'tuples'],
     style: 'write-test',
     stage: 'debug',
-    prompt: "This anagram check is in the editor:\n\n```python\ndef same_chars(s, t):\n    return set(s) == set(t)\n```\n\nMake `breaking_input()` return a pair `(s, t)` on which it gives the **wrong** answer.",
+    prompt: "This anagram check is in the editor. It should return `True` exactly when `t` uses the same characters as `s`, each the same number of times:\n\n```python\ndef same_chars(s, t):\n    return set(s) == set(t)\n```\n\n`set(s)` is the set of characters in the string `s`. Leave `same_chars` as it is. Make `breaking_input()` return a tuple of two strings, `(s, t)`, on which it gives the **wrong** answer.",
     starterCode: `def same_chars(s, t):
     return set(s) == set(t)
 
@@ -2579,7 +2598,7 @@ def breaking_input():
     id: 'o2-dbg-anagram-length',
     title: 'Debug: one map, count up then down',
     skills: ['frequency_map', 'dict_get', 'len', 'edge_cases'],
-    prompt: '`is_anagram(s, t)` should return True exactly when `t` uses the same characters as `s`, each the same number of times. It counts `s` up and `t` down in one map.',
+    prompt: "`s` and `t` are strings. `is_anagram(s, t)` should return `True` exactly when `t` uses the same characters as `s`, each the same number of times. It counts `s` up and `t` down in one dict. It gives the wrong answer for some pairs.",
     brokenCode: `def is_anagram(s, t):
     counts = {}
     for ch in s:
@@ -2640,7 +2659,7 @@ print(where)
 print(where[9])`,
     expectedOutput: `{5: 2, 7: 1, 9: 3}
 3`,
-    note: 'Index map: `seen[value] = i` while enumerating. The value is the key; the index is the stored value.',
+    note: "An **index map** is a dict of value → the position (index) where you saw it: `where[num] = i` while enumerating. The value is the key; its index is what is stored.",
     explanation: 'Assignment overwrites, so a repeated value ends with its **last** index. Keys keep the position where they were first inserted.',
     signature: 'trace:index-map',
     important: true,
@@ -2649,7 +2668,7 @@ print(where[9])`,
     id: 'o2-imap-fill',
     title: 'Write: positions',
     skills: ['index_map', 'enumerate', 'dict_assign'],
-    prompt: 'Write `positions(nums)` that returns a dict mapping each number to its index. If a number repeats, keep its **last** index.',
+    prompt: "`nums` is a list of numbers.\n\nWrite `positions(nums)` that returns a dict mapping each number to its index. If a number repeats, keep its **last** index.\n\n`positions([4, 8])` → `{4: 0, 8: 1}`, and `positions([3, 3])` → `{3: 1}`",
     starterCode: `def positions(nums):
     pass`,
     solution: `def positions(nums):
@@ -2667,7 +2686,7 @@ print(where[9])`,
     id: 'o2-dbg-seen-direction',
     title: 'Debug: where is each number?',
     skills: ['index_map', 'enumerate', 'dict_assign'],
-    prompt: '`positions_of(nums)` should return a dict so that `positions_of(nums)[x]` is the index where `x` appears (last occurrence wins).',
+    prompt: "`nums` is a list of numbers. `positions_of(nums)` should return a dict so that `positions_of(nums)[x]` is the index where `x` appears (the last one wins): `positions_of([7, 9])` → `{7: 0, 9: 1}`. It runs, but the dict is wrong.",
     brokenCode: `def positions_of(nums):
     seen = {}
     for i, num in enumerate(nums):
@@ -2688,7 +2707,7 @@ print(where[9])`,
     id: 'o2-imap-first-code',
     title: 'Write: first positions',
     skills: ['index_map', 'enumerate', 'dict_membership'],
-    prompt: 'Write `first_positions(words)` that maps each word to the index where it **first** appears.',
+    prompt: "`words` is a list of strings. Words can repeat.\n\nWrite `first_positions(words)` that returns a dict mapping each word to the index where it **first** appears.\n\n`first_positions(['a', 'b', 'a'])` → `{'a': 0, 'b': 1}`",
     starterCode: `def first_positions(words):
     pass`,
     solution: `def first_positions(words):
@@ -2710,7 +2729,7 @@ print(where[9])`,
     stage: 'combine',
     repType: 'combine',
     difficulty: 3,
-    prompt: 'Write `widest_gap(nums)` that returns the largest `j - i` such that `nums[i] == nums[j]` and `i < j`. Return 0 if no value repeats. Do it in one pass.',
+    prompt: "`nums` is a list of numbers.\n\nWrite `widest_gap(nums)` that returns the largest distance `j - i` between two positions `i < j` that hold the same value. Return `0` if no value repeats. Do it in **one pass**: walk the list once, with no loop inside the loop.\n\n`widest_gap([1, 2, 3, 1, 2])` → `3` (the two 1s are 3 apart, and so are the two 2s)",
     starterCode: `def widest_gap(nums):
     pass`,
     solution: `def widest_gap(nums):
@@ -2737,7 +2756,7 @@ print(where[9])`,
     id: 'o2-dbg-closest-repeat',
     title: 'Debug: closest repeat',
     skills: ['index_map', 'enumerate', 'dict_membership'],
-    prompt: '`closest_repeat(nums)` should return the smallest `j - i` with `i < j` and `nums[i] == nums[j]`, or `-1` if nothing repeats.',
+    prompt: "`nums` is a list of numbers. `closest_repeat(nums)` should return the smallest distance `j - i` between two positions `i < j` that hold the same value, or `-1` if nothing repeats: `closest_repeat([4, 0, 4, 0])` → `2`. It gives the wrong answer on some lists.",
     brokenCode: `def closest_repeat(nums):
     last = {}
     best = -1
@@ -2776,7 +2795,7 @@ const complements = section('o2-complements', 'Complements', 'complement = targe
     id: 'o2-comp-write',
     title: 'Write: list the complements',
     skills: ['complement', 'list_append', 'for_loop'],
-    prompt: 'Write `complements(nums, target)` that returns, for each number, the value that would complete it to `target`.\n\n`complements([2, 7, 4], 9)` → `[7, 2, 5]`',
+    prompt: "`nums` is a list of numbers and `target` is a number.\n\nWrite `complements(nums, target)` that returns a list with one entry per number, in the same order: the amount you would have to add to that number to reach `target`.\n\n`complements([2, 7, 4], 9)` → `[7, 2, 5]`",
     starterCode: `def complements(nums, target):
     pass`,
     solution: `def complements(nums, target):
@@ -2786,7 +2805,7 @@ const complements = section('o2-complements', 'Complements', 'complement = targe
     return out`,
     tests: [t.eq('complements([2, 7, 4], 9)', '[7, 2, 5]'), t.eq('complements([], 1)', '[]'), t.hidden('complements([11], 9)', '[-2]')],
     hints: ['`target - num` is what is still needed.'],
-    note: '`complement = target - num`: the value that, added to num, gives target. It can be negative.',
+    note: "The **complement** of `num` is `target - num`: the value that, added to `num`, gives `target`. It can be negative.",
     explanation: 'Complements can be negative when num is larger than target. 2 and 7 are each other\'s complements.',
     signature: 'complement:list',
     minutes: 3,
@@ -2797,7 +2816,7 @@ const complements = section('o2-complements', 'Complements', 'complement = targe
     skills: ['range', 'for_loop', 'complement', 'early_return'],
     stage: 'combine',
     repType: 'combine',
-    prompt: 'Write `pair_exists_slow(nums, target)` that returns True if two **different positions** i < j have `nums[i] + nums[j] == target`. Use two nested loops over indexes; this is the baseline to beat.',
+    prompt: "`nums` is a list of numbers and `target` is a number.\n\nWrite `pair_exists_slow(nums, target)` that returns `True` if two numbers at **different positions** `i < j` add up to `target`, otherwise `False`. Use two nested loops over indexes; this is the slow baseline to beat.\n\n`pair_exists_slow([1, 4, 6], 10)` → `True` (4 + 6). `pair_exists_slow([5], 10)` → `False`: one 5 cannot pair with itself.",
     starterCode: `def pair_exists_slow(nums, target):
     pass`,
     solution: `def pair_exists_slow(nums, target):
@@ -2817,6 +2836,7 @@ const complements = section('o2-complements', 'Complements', 'complement = targe
     title: 'Trace: complement against a seen-set',
     skills: ['complement', 'set_membership', 'set_add'],
     prompt: 'Predict the output.',
+    note: "`seen` is the set of numbers you have already walked past. At each number you ask: is the number I need (`target - num`) among the **earlier** ones? Notice the order: ask first, add after. At the moment you ask, the set must hold only earlier numbers. Add first and a number can match itself: with target 10, a lone 5 would find its own 5.",
     code: `target = 10
 seen = set()
 for num in [3, 9, 7, 1]:
@@ -2865,7 +2885,7 @@ pair 9 1`,
     id: 'o2-dbg-comp-inverted',
     title: 'Debug: pair check finds pairs everywhere',
     skills: ['complement', 'set_membership', 'conditionals'],
-    prompt: '`has_pair(nums, target)` should return True only if two different positions add up to target.',
+    prompt: "`nums` is a list of numbers and `target` is a number. `has_pair(nums, target)` should return `True` only if two numbers at different positions add up to `target`: `has_pair([3, 7], 10)` → `True`, `has_pair([1, 2], 10)` → `False`. It gives the wrong answer.",
     brokenCode: `def has_pair(nums, target):
     seen = set()
     for num in nums:
@@ -2890,7 +2910,7 @@ pair 9 1`,
     id: 'o2-dbg-comp-self-pair',
     title: 'Debug: a number pairs with itself',
     skills: ['complement', 'set_membership', 'set_add'],
-    prompt: '`has_pair(nums, target)` should return True only if two **different positions** add up to target.',
+    prompt: "`nums` is a list of numbers and `target` is a number. `has_pair(nums, target)` should return `True` only if two numbers at **different positions** add up to `target`. It gives the wrong answer for one kind of input.",
     brokenCode: `def has_pair(nums, target):
     seen = set()
     for num in nums:
@@ -2923,6 +2943,7 @@ const twoSum = section('o2-two-sum', 'Two Sum', 'enumerate + index map + complem
     title: 'Trace: the whole algorithm',
     skills: ['index_map', 'complement', 'dict_membership', 'enumerate'],
     prompt: 'Predict every printed line.',
+    note: "`seen` here is a dict: number → the index where it was passed. Its store is the last line of the loop body, so at the moment of each check it holds only the numbers **before** the current one. `break` leaves the loop at once.",
     code: `nums = [2, 11, 7, 15]
 target = 9
 seen = {}
@@ -2944,12 +2965,13 @@ answer [0, 2]`,
   }),
   write({
     id: 'o2-ts-find-pair',
-    title: 'Combine: find the pair of values',
+    title: "Write: the first two numbers that add up",
+    transfer: true,
     skills: ['complement', 'set_membership', 'set_add', 'early_return'],
     stage: 'combine',
     repType: 'combine',
     difficulty: 3,
-    prompt: 'Write `find_pair(nums, target)` that returns `[earlier, later]`: the two **values** of the first pair (by the position of its second member) that sum to target, or `None` if there is none.',
+    prompt: "`nums` is a list of numbers and `target` is a number.\n\nWrite `find_pair(nums, target)` that finds two numbers at **different positions** in `nums` that add up to `target`, and returns their **values** as a list `[earlier, later]`, in the order they appear in `nums`. If no two numbers add up to `target`, return `None`.\n\nIf more than one pair works, return the one that is finished first as you read left to right: the pair whose second number comes earliest.\n\n`find_pair([3, 9, 7, 1], 10)` → `[3, 7]` (9 + 1 also works, but 7 arrives before 1). `find_pair([5], 10)` → `None`: one 5 cannot be used twice. Aim to read the list only once.",
     starterCode: `def find_pair(nums, target):
     pass`,
     solution: `def find_pair(nums, target):
@@ -2961,7 +2983,7 @@ answer [0, 2]`,
         seen.add(num)
     return None`,
     tests: [t.eq('find_pair([3, 9, 7, 1], 10)', '[3, 7]'), t.eq('find_pair([1, 2], 10)', 'None'), t.hidden('find_pair([5, 5], 10)', '[5, 5]'), t.hidden('find_pair([], 3)', 'None'), t.hidden('find_pair([-4, 2, 4], 0)', '[-4, 4]')],
-    hints: ['You only need values, so a set is enough.', 'complement, membership check, then add.', 'Return `[complement, num]`: the complement came earlier.'],
+    hints: ["For each number, exactly one partner value would work. Which one?", "You need to know whether that partner came earlier. Keep the earlier numbers in a set.", "Per number: work out the partner (`target - num`), ask whether it is in the set, and only then add the current number.", "Return `[partner, num]`: the partner is the one that came earlier."],
     explanation: 'Values only need a set. The capstone wants indexes, which is why it upgrades the set to a dict: value → index.',
     signature: 'pair-sum:return-values',
     minutes: 5,
@@ -2974,7 +2996,7 @@ answer [0, 2]`,
     stage: 'combine',
     repType: 'combine',
     difficulty: 3,
-    prompt: 'This returns the two **values** of the pair. Change it so it returns their **indexes** `[i, j]` with `i < j`, or `[]` if there is no pair. A set cannot remember where a value was; something else can.',
+    prompt: "`nums` is a list of numbers and `target` is a number. This returns the two **values** of the first pair that adds up to `target`. Change it so it returns their **indexes** `[i, j]` with `i < j`, or `[]` if there is no pair.\n\n`pair_indexes([2, 7, 11], 9)` → `[0, 1]`\n\nA set cannot remember where a value was; something else can.",
     starterCode: `def pair_indexes(nums, target):
     seen = set()
     for num in nums:
@@ -3046,7 +3068,7 @@ answer [0, 2]`,
     skills: ['edge_cases', 'tuples'],
     style: 'write-test',
     stage: 'debug',
-    prompt: "This Two Sum stores each number **before** checking for its complement:\n\n```python\ndef two_sum_store_first(nums, target):\n    seen = {}\n    for i, num in enumerate(nums):\n        seen[num] = i\n        complement = target - num\n        if complement in seen:\n            return [seen[complement], i]\n    return []\n```\n\nMake `breaking_input()` return `(nums, target)` that has a valid answer but on which this function returns something wrong.",
+    prompt: "This Two Sum stores each number **before** checking for its complement:\n\n```python\ndef two_sum_store_first(nums, target):\n    seen = {}\n    for i, num in enumerate(nums):\n        seen[num] = i\n        complement = target - num\n        if complement in seen:\n            return [seen[complement], i]\n    return []\n```\n\nIt is in the editor; leave it as it is. Make `breaking_input()` return a tuple `(nums, target)`, a list of numbers and a number, for which a valid pair exists but this function returns something wrong.",
     starterCode: `def two_sum_store_first(nums, target):
     seen = {}
     for i, num in enumerate(nums):
@@ -3084,7 +3106,7 @@ def breaking_input():
     id: 'o2-dbg-ts-store-indent',
     title: 'Debug: Two Sum never finds the pair',
     skills: ['index_map', 'dict_assign', 'enumerate'],
-    prompt: '`two_sum(nums, target)` should return `[i, j]` (i < j) of the two numbers that add up to target, or `[]`.',
+    prompt: "`nums` is a list of numbers and `target` is a number. `two_sum(nums, target)` should return the indexes `[i, j]` (with `i < j`) of the two numbers that add up to `target`, or `[]` if there is no such pair: `two_sum([2, 7, 11], 9)` → `[0, 1]`. It runs, but never finds a pair.",
     brokenCode: `def two_sum(nums, target):
     seen = {}
     for i, num in enumerate(nums):
@@ -3130,7 +3152,7 @@ def breaking_input():
     stage: 'pattern',
     repType: 'pattern',
     difficulty: 4,
-    prompt: 'This counts index pairs `i < j` with `nums[i] + nums[j] == target`, in O(n^2):\n\n```python\ndef count_pairs_slow(nums, target):\n    count = 0\n    for i in range(len(nums)):\n        for j in range(i + 1, len(nums)):\n            if nums[i] + nums[j] == target:\n                count += 1\n    return count\n```\n\nWrite `count_pairs(nums, target)` in **one pass**. Instead of "is the complement seen?", ask "how many times has the complement been seen?"',
+    prompt: "`nums` is a list of numbers and `target` is a number. This counts the pairs of positions `i < j` with `nums[i] + nums[j] == target`, in O(n²):\n\n```python\ndef count_pairs_slow(nums, target):\n    count = 0\n    for i in range(len(nums)):\n        for j in range(i + 1, len(nums)):\n            if nums[i] + nums[j] == target:\n                count += 1\n    return count\n```\n\nWrite `count_pairs(nums, target)` that returns the same count in **one pass**. Instead of \"is the complement seen?\", ask \"how many times has the complement been seen?\"\n\n`count_pairs([2, 2, 2], 4)` → `3`: every pair of positions counts, even when the values are equal.",
     starterCode: `def count_pairs(nums, target):
     pass`,
     solution: `def count_pairs(nums, target):
@@ -3265,7 +3287,7 @@ const cold = section('o2-cold', 'Cold reps', 'Write from scratch: no starter bey
   }),
   write({
     id: 'o2-cold-over-k',
-    title: 'Cold: words seen more than k times',
+    title: "Cold: words that appear more than k times",
     skills: ['frequency_map', 'dict_get', 'dict_items', 'sorting'],
     stage: 'retrieval',
     repType: 'cold',
@@ -3291,7 +3313,7 @@ const cold = section('o2-cold', 'Cold reps', 'Write from scratch: no starter bey
     skills: ['frequency_map', 'dict_get', 'len'],
     stage: 'retrieval',
     repType: 'cold',
-    prompt: 'Return True if `a` and `b` contain exactly the same characters with the same counts.',
+    prompt: "Return True if the strings `a` and `b` contain exactly the same characters with the same counts.",
     starterCode: `def same_letters(a, b):
     pass`,
     solution: `def same_letters(a, b):

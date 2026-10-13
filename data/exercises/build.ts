@@ -24,6 +24,8 @@ interface Base {
   examples?: Example[]
   complexity?: { time: string; space: string }
   style?: RepStyle
+  /** Unlabeled transfer: the prompt does not name the technique. */
+  transfer?: boolean
 }
 
 function prereqsFor(skills: string[]): string[] {
@@ -52,6 +54,7 @@ function base(b: Base, defaults: { stage: Stage; repType: RepType; difficulty: 1
     examples: b.examples,
     complexity: b.complexity,
     ...(b.style ? { style: b.style } : {}),
+    ...(b.transfer ? { transfer: true } : {}),
   }
 }
 

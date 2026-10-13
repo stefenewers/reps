@@ -486,3 +486,35 @@ test('today: reaching the target is not the same as being done; logging the last
   await expect(list.locator('li[data-category="bonus"]')).toContainText('Keep going')
   await expect(page.getByTestId('pace-strip')).toContainText('nothing due')
 })
+
+test('learn mode teaches first: the concept comes before the question, then goes away once the skill has been produced', async ({ page }) => {
+  // A brand-new learner on the very first rep: nothing has been produced yet.
+  const first = EXERCISE_BY_ID['o2-list-literal']
+  await page.goto(`/rep/${first.id}`)
+  const teach = page.getByTestId('teach')
+  await expect(teach).toBeVisible()
+  await expect(teach).toContainText('read this first')
+  await expect(teach).toContainText('Hold on to:')
+  await expect(teach).toContainText('Example')
+  // It is part of the rep, above the question, not a drawer behind the Basics button.
+  await expect(page.getByText('Your rep', { exact: true })).toBeVisible()
+  const order = await page.evaluate(() => {
+    const t = document.querySelector('[data-testid="teach"]')!
+    const label = [...document.querySelectorAll('p')].find((p) => p.textContent === 'Your rep')!
+    return Boolean(t.compareDocumentPosition(label) & Node.DOCUMENT_POSITION_FOLLOWING)
+  })
+  expect(order).toBe(true)
+
+  // Produce the skill once (a written rep that builds and indexes a list).
+  const write = EXERCISE_BY_ID['o2-bookends']
+  await page.goto(`/rep/${write.id}`)
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(write.title)
+  await answer(page, write)
+  await expect(page.getByTestId('rep-complete')).toBeVisible({ timeout: 90_000 })
+
+  // Back on a rep that only uses what has now been produced: no automatic lesson. Basics is still one tap away.
+  await page.goto(`/rep/${first.id}`)
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(first.title)
+  await expect(page.getByRole('button', { name: /Basics/ })).toBeVisible()
+  await expect(page.getByTestId('teach')).toHaveCount(0)
+})

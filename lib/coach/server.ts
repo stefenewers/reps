@@ -1,6 +1,7 @@
 import 'server-only'
 import { createClient } from '@supabase/supabase-js'
 import type { z } from 'zod'
+import { TEACHING_RULES } from '@/lib/coach/guidance'
 
 /**
  * Server side of the adaptive coach: access control, model routing, and one
@@ -39,15 +40,7 @@ export function modelFor(tier: Tier): string {
   return tier === 'reasoning' ? process.env.OPENAI_REASONING_MODEL || 'gpt-5' : process.env.OPENAI_DEFAULT_MODEL || 'gpt-5-mini'
 }
 
-/** The shared rules, kept short on purpose. */
-export const TEACHING_RULES = [
-  'You support a learner preparing for a Google SWE internship interview in Python.',
-  'Be concise. No praise, no filler. Never reveal a full solution unless asked.',
-  'Stay inside the given skills. Prefer retrieval over explanation.',
-  'Distinguish Python recall problems from algorithm problems.',
-  'Deterministic tests decide correctness, not you. Never invent Python behavior.',
-  'Reply with JSON only, matching the requested shape.',
-].join(' ')
+export { TEACHING_RULES } from '@/lib/coach/guidance'
 
 export class CoachUnavailable extends Error {}
 

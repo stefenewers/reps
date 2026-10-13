@@ -31,7 +31,7 @@ const br572: PackSection = {
       style: 'finish',
       skills: ['tree_dfs', 'recursion_return', 'recursion_base_case'],
       prompt:
-        '`same_shape(a, b)` is given: it says whether two trees have exactly the same shape (values ignored).\n\nWrite `count_shape(root, shape)`: how many nodes of `root` have a subtree (that node and **everything** below it) with the same shape as `shape`? `shape` is never empty.\n\nExample: in `[1, 2, 3, 4, 5, 6, 7]` the shape `[0, 0, 0]` (a node with two leaf children) starts at node 2 and at node 3, so the answer is `2`.',
+        '`root` and `shape` are the roots of two binary trees (`root` can be `None`: an empty tree has no nodes). `same_shape(a, b)` is given: it says whether two trees have exactly the same shape (values ignored).\n\nWrite `count_shape(root, shape)`: how many nodes of `root` have a subtree (that node and **everything** below it) with the same shape as `shape`? `shape` is never empty.\n\nExample: in `[1, 2, 3, 4, 5, 6, 7]` the shape `[0, 0, 0]` (a node with two leaf children) starts at node 2 and at node 3, so the answer is `2`.',
       starterCode: `${SAME_SHAPE}
 
 def count_shape(root, shape):
@@ -105,8 +105,9 @@ def has_shape(root, shape):
       ...pattern,
       difficulty: 3,
       skills: ['tree_dfs', 'recursion_base_case', 'recursion_return'],
+      transfer: true,
       prompt:
-        'Write `has_mirror_of(root, other)`: `True` if some node of `root` has a subtree (that node and everything below it) that is the **mirror image** of `other`: same values, left and right swapped at every level.\n\nExample: `root = [1, 2, 3, None, None, 5, 4]`, `other = [3, 4, 5]` → `True` (the subtree at node 3 is `[3, 5, 4]`).\n\nAn empty `other` is the mirror of an empty subtree, and every tree has one of those.',
+        '`root` and `other` are the roots of two binary trees; either can be `None`.\n\nWrite `has_mirror_of(root, other)`: `True` if some node of `root` has a subtree (that node and everything below it) that is the **mirror image** of `other`: same values, left and right swapped at every level.\n\nExample: `root = [1, 2, 3, None, None, 5, 4]`, `other = [3, 4, 5]` → `True` (the subtree at node 3 is `[3, 5, 4]`).\n\nAn empty `other` is the mirror of an empty subtree, and every tree has one of those.',
       starterCode: `def has_mirror_of(root, other):
     pass
 `,
@@ -291,8 +292,9 @@ const br235: PackSection = {
       ...pattern,
       difficulty: 3,
       skills: ['bst_property', 'while_loop', 'conditionals'],
+      transfer: true,
       prompt:
-        `\`a\` and \`b\` are two values that are both in the BST. Searching for each one starts at the root, and for a while the two searches visit the same nodes.\n\nWrite \`shared_steps(root, a, b)\`: how many nodes do the two search paths have **in common**?\n\n${BST_PICTURE}\n\nExample: \`a = 4\`, \`b = 7\` → \`3\` (both searches visit 8, 3, 6, then part ways). \`a = 1\`, \`b = 14\` → \`1\` (they part at the root).`,
+        `\`root\` is the root of a BST: at every node, smaller values are in its left subtree and bigger values in its right. \`a\` and \`b\` are two values that are both in it (they can be equal). Searching for each one starts at the root, and for a while the two searches visit the same nodes.\n\nWrite \`shared_steps(root, a, b)\`: how many nodes do the two search paths have **in common**?\n\n${BST_PICTURE}\n\nExample: \`a = 4\`, \`b = 7\` → \`3\` (both searches visit 8, 3, 6, then part ways). \`a = 1\`, \`b = 14\` → \`1\` (they part at the root).`,
       starterCode: `def shared_steps(root, a, b):
     pass
 `,
@@ -458,8 +460,9 @@ const br98: PackSection = {
       ...pattern,
       difficulty: 3,
       skills: ['bst_property', 'tree_dfs', 'recursion_base_case', 'recursion_return'],
+      transfer: true,
       prompt:
-        'A **flipped** search tree puts the bigger values on the left: for every node, everything in its left subtree is **bigger** and everything in its right subtree is **smaller**. No duplicates.\n\nWrite `is_flipped(root)` returning `True` if the whole tree follows that rule.\n\n```python\n#     5            5\n#    / \\          / \\\n#   8   3        8   3\n#  / \\            \\\n# 9   6            4     <- left of 5, but smaller than 5\n#   True          False\n```',
+        'A **flipped** search tree puts the bigger values on the left: for every node, everything in its left subtree is **bigger** and everything in its right subtree is **smaller**. No duplicates.\n\nWrite `is_flipped(root)` returning `True` if the whole tree follows that rule. `root` is the top node, or `None` for an empty tree, which follows it.\n\n```python\n#     5            5\n#    / \\          / \\\n#   8   3        8   3\n#  / \\            \\\n# 9   6            4     <- left of 5, but smaller than 5\n#   True          False\n```',
       starterCode: `def is_flipped(root):
     pass
 `,
@@ -631,8 +634,9 @@ visit(root)`,
       ...pattern,
       difficulty: 3,
       skills: ['tree_inorder', 'tree_dfs', 'accumulator', 'recursion_base_case'],
+      transfer: true,
       prompt:
-        `Write \`kth_largest(root, k)\`: the \`k\`-th **largest** value of a BST (\`k = 1\` is the largest). \`k\` is between 1 and the number of nodes. Do not build the whole list: count nodes as you visit them and stop when the count reaches \`k\`.\n\n${BST_PICTURE}\n\nExample: \`k = 3\` → \`8\` (the order is 14, 10, 8, ...).`,
+        `Write \`kth_largest(root, k)\`: the \`k\`-th **largest** value of a BST (\`k = 1\` is the largest). \`k\` is between 1 and the number of nodes. Do not sort, and do not collect every value first: stop as soon as you have the answer.\n\n${BST_PICTURE}\n\nExample: \`k = 3\` → \`8\` (the order is 14, 10, 8, ...).`,
       starterCode: `def kth_largest(root, k):
     pass
 `,
@@ -763,7 +767,7 @@ const br105: PackSection = {
       ...combine,
       skills: ['tree_build', 'slicing', 'list_index'],
       prompt:
-        '`four_pieces(preorder, inorder)` takes both traversals of the same tree and should return `(left_pre, left_in, right_pre, right_in)`: the pre-order and in-order lists of the left subtree, then of the right subtree. Two of the pieces come out wrong. Fix it.\n\nExample: `four_pieces([1, 2, 4, 5, 3], [4, 2, 5, 1, 3])` → `([2, 4, 5], [4, 2, 5], [3], [3])`.',
+        '`four_pieces(preorder, inorder)` takes the pre-order list and the in-order list of the same tree (all values different) and should return `(left_pre, left_in, right_pre, right_in)`: the pre-order and in-order lists of the left subtree, then of the right subtree. Two of the pieces come out wrong. Fix it.\n\nExample: `four_pieces([1, 2, 4, 5, 3], [4, 2, 5, 1, 3])` → `([2, 4, 5], [4, 2, 5], [3], [3])`.',
       brokenCode: `def four_pieces(preorder, inorder):
     root_val = preorder[0]
     mid = inorder.index(root_val)
@@ -841,8 +845,9 @@ const br105: PackSection = {
       ...pattern,
       difficulty: 4,
       skills: ['tree_build', 'slicing', 'recursion_base_case', 'recursion_return'],
+      transfer: true,
       prompt:
-        'A **post-order** list is written left subtree, right subtree, root: the root comes **last**. An in-order list is left subtree, root, right subtree. All values are different.\n\nWrite `from_post_in(postorder, inorder)`: rebuild the tree both lists describe and return its root.\n\nExample: `postorder = [4, 5, 2, 3, 1]`, `inorder = [4, 2, 5, 1, 3]` → the tree `[1, 2, 3, 4, 5]`.',
+        'A **post-order** list is written left subtree, right subtree, root: the root comes **last**. An in-order list is left subtree, root, right subtree. All values are different.\n\nWrite `from_post_in(postorder, inorder)`: rebuild the tree both lists describe and return its root (`None` when the lists are empty).\n\nExample: `postorder = [4, 5, 2, 3, 1]`, `inorder = [4, 2, 5, 1, 3]` → the tree `[1, 2, 3, 4, 5]`.',
       starterCode: `def from_post_in(postorder, inorder):
     pass
 `,
@@ -923,7 +928,7 @@ print(longest(root))`,
 2 3 4
 1 4 3
 4`,
-      note: 'A parent can only continue **one** arm of a path, so the function returns the longer arm. A path that uses **both** arms bends here and cannot be extended upward, so it is only recorded.',
+      note: 'An **arm** is a straight line of nodes going down from a node. A parent can only continue **one** arm of a path, so the function returns the longer arm. A path that uses **both** arms bends here and cannot be extended upward, so it is only recorded.\n`nonlocal best` is what lets the inner function assign to the outer function’s `best`.',
       explanation: 'The longest path (6-4-2-5-7, four edges) bends at node 2, not at the root. The root only learns that node 2 is 3 nodes tall; the answer survives because node 2 recorded it.',
       signature: 'trace:return-height-record-through',
       minutes: 3,
@@ -933,8 +938,9 @@ print(longest(root))`,
       title: 'The longest path between any two nodes',
       difficulty: 3,
       skills: ['tree_global_best', 'tree_dfs', 'recursion_return', 'state_tracking'],
+      note: 'An inner function can read an outer variable freely. To **assign** to it (`best = ...`) it must first declare `nonlocal best`; without that line Python quietly makes a new local variable instead.',
       prompt:
-        'Write `diameter(root)`: the number of **edges** on the longest path between any two nodes of the tree. The path may or may not pass through the root. An empty tree and a single node both give `0`.\n\nExample: `[1, 2, 3, 4, 5]` → `3` (the path 4-2-1-3).',
+        '`root` is the top node of a binary tree, or `None`.\n\nWrite `diameter(root)`: the number of **edges** on the longest path between any two nodes of the tree (an edge is one parent-to-child link). The path may or may not pass through the root. An empty tree and a single node both give `0`.\n\nExample: `[1, 2, 3, 4, 5]` → `3` (the path 4-2-1-3).',
       starterCode: `def diameter(root):
     pass
 `,
@@ -1108,6 +1114,7 @@ def best_through_root(root):
       ...pattern,
       difficulty: 4,
       skills: ['tree_global_best', 'tree_dfs', 'recursion_return', 'state_tracking'],
+      transfer: true,
       prompt:
         'Write `longest_same(root)`: the number of **edges** on the longest path in which every node holds the same value. The path can bend at a node and does not have to pass through the root. An empty tree gives `0`.\n\n```python\n#       7\n#      / \\\n#     2   7\n#    / \\   \\\n#   1   1   7      -> 2   (7 - 7 - 7)\n```',
       starterCode: `def longest_same(root):

@@ -135,6 +135,7 @@ const br141: PackSection = {
         t.check('the tail points back at the head', 'h = build_list([1, 2, 3])\nh.next.next.next = h\nassert has_loop(h) is True', true),
         t.check('two nodes in a loop', 'h = build_list([1, 2])\nh.next.next = h\nassert has_loop(h) is True', true),
       ],
+      note: '`slow is fast` asks whether the two names are on the very same node. Equal values are not enough: two different nodes can both hold `1`. In a list that ends, `fast` runs off the end. In a loop it never does, and it gains one node on `slow` every turn until it lands on it.',
       hints: ['Trace the very first turn of the loop on `1 -> 2 -> 3`. Where are the two pointers at that moment?', 'They start on the same node. A meeting only means something after they have moved.'],
       explanation: 'Both pointers start on the head, so comparing before moving is true at once. Move first, then compare: after a move they can only share a node if the list loops.',
       signature: 'debug:fast-slow-compare-before-move',
@@ -146,8 +147,9 @@ const br141: PackSection = {
       ...pattern,
       difficulty: 3,
       skills: ['fast_slow', 'while_loop', 'list_index'],
+      transfer: true,
       prompt:
-        '`jumps` is a non-empty list. Standing on index `i`, your next index is `jumps[i]`; a value of `-1` means stop. You start on index `0`.\n\nWrite `loops_forever(jumps)`: `True` if the walk never stops, `False` if it reaches a `-1`. No set and no extra list: two positions moving at different speeds.\n\n`loops_forever([1, 2, 0])` → `True` (0 → 1 → 2 → 0 → …)\n`loops_forever([1, 2, -1])` → `False`',
+        '`jumps` is a non-empty list of whole numbers. Standing on index `i`, your next index is `jumps[i]`; a value of `-1` means stop. Every other value is a valid index of `jumps`. You start on index `0`.\n\nWrite `loops_forever(jumps)`: `True` if the walk never stops, `False` if it reaches a `-1`. Do not keep a record of the indexes you have been on: use only a fixed handful of variables, however long `jumps` is.\n\n`loops_forever([1, 2, 0])` → `True` (0 → 1 → 2 → 0 → …)\n`loops_forever([1, 2, -1])` → `False`',
       starterCode: `def loops_forever(jumps):\n    pass`,
       solution: `def loops_forever(jumps):
     slow = 0
@@ -170,8 +172,8 @@ const br141: PackSection = {
         t.hidden('loops_forever([3, 0, -1, 4, 3])', 'True'),
       ],
       hints: [
-        'An index plays the part of a node, and `jumps[i]` plays the part of `.next`.',
-        'What was `fast and fast.next` on a linked list? Here "nothing there" is spelled `-1`.',
+        'You have answered this question for a linked list. An index plays the part of a node, and `jumps[i]` plays the part of `.next`.',
+        'Two positions moving at different speeds. What was `fast and fast.next` on a linked list? Here "nothing there" is spelled `-1`.',
         'One step is `jumps[slow]`. Two steps is a lookup of a lookup.',
         'Move both, then compare. Equal positions mean a loop; leaving the `while` means the walk ended.',
       ],
@@ -219,7 +221,7 @@ const br19: PackSection = {
         'First loop: move `lead` forward `k` times. Second loop: move both, one node each.',
         'When `lead` is `None` it is one past the last node, so the other pointer is `k` nodes before that.',
       ],
-      note: 'A gap of `k` nodes, held constant: when the front pointer is past the end, the back pointer is `k` from the end.',
+      note: 'A gap of `k` nodes, held constant: when the front pointer is past the end, the back pointer is `k` from the end. To repeat a step `k` times when you do not need the counter, write `for _ in range(k):`. `_` is an ordinary variable name that says "not used".',
       explanation: 'The head start turns "k from the end", which you cannot index, into "stop when the leader runs out".',
       signature: 'fast-slow:lead-by-k-value',
       minutes: 8,
@@ -273,6 +275,7 @@ const br19: PackSection = {
       ...pattern,
       difficulty: 3,
       skills: ['fast_slow', 'dummy_node', 'linked_list_reassignment', 'linked_list_traversal'],
+      transfer: true,
       prompt:
         'Write `insert_from_end(head, k, val)`: put a new node holding `val` just in front of the k-th node from the end (`k = 1` is the last node; `k` is between 1 and the length). Return the head of the list. One pass.\n\n`1 -> 2 -> 3`, `k = 1`, `val = 9` → `1 -> 2 -> 9 -> 3`\n`1 -> 2 -> 3`, `k = 3`, `val = 9` → `9 -> 1 -> 2 -> 3`',
       starterCode: `def insert_from_end(head, k, val):\n    pass`,
@@ -321,7 +324,7 @@ const br143: PackSection = {
       title: 'Weave two lists',
       skills: ['linked_list_reassignment', 'linked_list_traversal', 'while_loop'],
       prompt:
-        '`a` and `b` are the heads of two lists. `a` is as long as `b`, or one node longer.\n\nWrite `weave(a, b)` that rewires the existing nodes so they alternate, starting with `a`: a1, b1, a2, b2, … Return the head (still the first node of `a`). No new nodes.\n\n`1 -> 2 -> 3` and `7 -> 8` → `1 -> 7 -> 2 -> 8 -> 3`',
+        '`a` and `b` are the heads of two linked lists. Either may be `None` (an empty list). `a` is as long as `b`, or one node longer.\n\nWrite `weave(a, b)` that rewires the existing nodes so they alternate, starting with `a`: a1, b1, a2, b2, … Return the head (still the first node of `a`). No new nodes.\n\n`1 -> 2 -> 3` and `7 -> 8` → `1 -> 7 -> 2 -> 8 -> 3`',
       starterCode: `def weave(a, b):\n    pass`,
       solution: `def weave(a, b):
     head = a
@@ -491,6 +494,7 @@ def shuffle_halves(head):
       ...pattern,
       difficulty: 4,
       skills: ['fast_slow', 'linked_list_reassignment', 'linked_list_traversal', 'list_append'],
+      transfer: true,
       prompt:
         'Write `end_pair_sums(head)` for a non-empty list. Return a Python list of sums: first node + last node, second + second-to-last, and so on. With an odd length the middle node has no partner: put its value on the end by itself.\n\nDo not copy the values into a Python list first. You may rewire the linked list.\n\n`1 -> 2 -> 3 -> 10` → `[11, 5]`\n`1 -> 2 -> 3` → `[4, 2]`',
       starterCode: `def end_pair_sums(head):\n    pass`,
@@ -553,7 +557,7 @@ const br23: PackSection = {
       style: 'from-signature',
       skills: ['linked_list_traversal', 'list_iterate', 'accumulator'],
       prompt:
-        '`merge_two(a, b)` is given: it merges two sorted linked lists (either may be `None`).\n\n`lists` is a Python list of heads of sorted linked lists. Some entries may be `None`. Write `merge_fold(lists)` that merges all of them into one sorted list and returns its head: keep one merged list, and merge the next head into it each time.\n\n`[1 -> 4, 2 -> 3, 0 -> 5]` → `0 -> 1 -> 2 -> 3 -> 4 -> 5`\n`[]` → `None`',
+        '`merge_two(a, b)` is given: it merges two sorted linked lists (either may be `None`). Its last line, `tail.next = a if a else b`, reads "`a` if `a` is not empty, otherwise `b`": it attaches whichever list still has nodes.\n\n`lists` is a Python list of heads of sorted linked lists. Some entries may be `None`. Write `merge_fold(lists)` that merges all of them into one sorted list and returns its head: keep one merged list, and merge the next head into it each time.\n\n`[1 -> 4, 2 -> 3, 0 -> 5]` → `0 -> 1 -> 2 -> 3 -> 4 -> 5`\n`[]` → `None`',
       starterCode: `${MERGE_TWO}
 
 
@@ -661,12 +665,13 @@ def merge_rounds(lists):
     }),
     write({
       id: 'b23-merge-arrays',
-      title: 'Many sorted arrays, pair by pair',
+      title: 'Many sorted arrays into one',
       ...pattern,
       difficulty: 4,
       skills: ['two_pointer', 'list_index', 'while_loop', 'range', 'list_append'],
+      transfer: true,
       prompt:
-        '`arrays` is a list of Python lists, each already sorted ascending. Write `merge_sorted_arrays(arrays)` returning one sorted list holding every value.\n\nNo `sorted()` and no `.sort()`. Write your own helper that merges two sorted lists, then pair the lists up round by round until one is left.\n\n`merge_sorted_arrays([[1, 4], [2, 3], [0, 5]])` → `[0, 1, 2, 3, 4, 5]`\n`merge_sorted_arrays([])` → `[]`',
+        '`arrays` is a list of Python lists of numbers, each already sorted ascending. Inner lists may be empty, and `arrays` itself may be empty. Write `merge_sorted_arrays(arrays)` returning one new sorted list holding every value, duplicates included.\n\nNo `sorted()` and no `.sort()`: use the fact that every list is already in order.\n\n`merge_sorted_arrays([[1, 4], [2, 3], [0, 5]])` → `[0, 1, 2, 3, 4, 5]`\n`merge_sorted_arrays([])` → `[]`',
       starterCode: `def merge_sorted_arrays(arrays):\n    pass`,
       solution: `def merge_pair(a, b):
     out = []
@@ -746,7 +751,7 @@ print('a' in node)`,
 ['a', 'o']
 False
 True`,
-      note: '`tree[\'c\']` is itself a dict. `node = tree[\'c\']` steps one level down: `node` is now that inner dict.',
+      note: '`tree[\'c\']` is itself a dict. `node = tree[\'c\']` steps one level down: `node` is now that inner dict. `sorted(node)` gives the keys of a dict as a sorted list.',
       explanation: "The outer dict has one key, 'c'. Its value is another dict with keys 'a' and 'o'. `in` only looks at the level you are standing on.",
       signature: 'trace:nested-dict-levels',
       minutes: 2,
@@ -789,7 +794,7 @@ True`,
       title: 'A node of your own',
       skills: ['trie_node', 'dict_create'],
       prompt:
-        'A dict of dicts cannot say "a word stops here". So each trie node becomes a small object with **two** fields: `children` (a dict: letter → the next node) and `end` (`True` when a word finishes on this node).\n\nYou have used a class like this already:\n\n```python\nclass ListNode:\n    def __init__(self, val=0, next=None):\n        self.val = val\n        self.next = next\n```\n\nWrite `class TrieNode`. Its `__init__` takes nothing besides `self`, and gives the new node an empty dict called `children` and an `end` flag that starts as `False`.',
+        'A dict of dicts cannot say "a word stops here". So each node of the letter tree (a tree like this is called a **trie**) becomes a small object with **two** fields: `children` (a dict: letter → the next node) and `end` (`True` when a word finishes on this node).\n\nYou make your own kind of object with a **class**. You have used one already, without having to write it:\n\n```python\nclass ListNode:\n    def __init__(self, val=0, next=None):\n        self.val = val\n        self.next = next\n```\n\nHow to read it:\n\n- `class ListNode:` names a new kind of object. Calling the name, as in `ListNode(5)`, makes a fresh one.\n- `__init__` (two underscores on each side) is a function inside the class. Python runs it by itself every time an object is made, to set the new object up.\n- `self` is that new object. Python passes it in for you, so it is in the `def` line but never in the call. (`val=0` is the value used when the caller leaves `val` out.)\n- `self.val = val` stores a **field** on the object. Later you read it with a dot: `node.val`.\n\nWrite `class TrieNode`. Its `__init__` takes nothing besides `self` (so a node is made with `TrieNode()`), and gives the new node an empty dict called `children` and an `end` flag that starts as `False`.',
       starterCode: NODE_BLANK,
       solution: NODE,
       tests: [
@@ -833,6 +838,7 @@ def link(parent, ch):
         t.check('two roots stay separate', "r1 = TrieNode()\nr2 = TrieNode()\nlink(r1, 'x')\nassert r2.children == {}, 'a child added to one root showed up in another'", true),
         t.check('end flags are per node', "root = TrieNode()\nkid = link(root, 'a')\nkid.end = True\nassert root.end is False", true),
       ],
+      note: 'Lines written directly under `class` run **once**, when the class itself is defined. Lines inside `__init__` run once **per object**, every time `TrieNode()` is called.',
       hints: ['`link` is fine. How many dicts get created when three nodes are made?', 'A name assigned directly under `class` is created once and shared by every object. Where do per-object fields get created?'],
       explanation: 'A dict written directly in the class body exists once, so every node was using the same `children`. Creating it inside `__init__` gives each node its own. (`def __init__(self, children={})` has the same flaw: the default is built once.)',
       signature: 'debug:trie-shared-children',
@@ -1236,7 +1242,7 @@ def is_command(root, text):
       style: 'from-signature',
       skills: ['trie_search', 'trie_node', 'recursion_return', 'accumulator'],
       prompt:
-        'Two functions.\n\n`count_words(node)`: how many stored words end at `node` or anywhere below it. Recursive: this node counts 1 if it is a word end, plus whatever each child reports.\n\n`count_with_prefix(root, prefix)`: how many stored words begin with `prefix`. Walk to the prefix node, then count from there.\n\nWith `\'car\'`, `\'cart\'`, `\'cat\'`, `\'dog\'` inserted: `count_with_prefix(root, \'ca\')` → `3`, `\'car\'` → `2`, `\'x\'` → `0`.',
+        'Two functions.\n\n`count_words(node)`: how many stored words end at `node` or anywhere below it. Recursive: this node counts 1 if it is a word end, plus whatever each child reports.\n\n`count_with_prefix(root, prefix)`: how many stored words begin with `prefix`. Walk down to the node the letters of `prefix` lead to, then count from there. If the path breaks, no word starts that way.\n\nWith `\'car\'`, `\'cart\'`, `\'cat\'`, `\'dog\'` inserted: `count_with_prefix(root, \'ca\')` → `3`, `\'car\'` → `2`, `\'x\'` → `0`.',
       starterCode: `${NODE}
 
 
@@ -1571,7 +1577,7 @@ class WordSet:
         'Each method is a function you have already written, with one change: where the walk starts.',
         'Inside a method, the object\'s own fields are reached through `self.`',
       ],
-      note: 'A method is a function whose first parameter, `self`, is the object it was called on: `ws.add(\'tea\')` runs `add` with `self` being `ws`.',
+      note: 'A method is a function written inside a class, indented under it. Its first parameter, `self`, is the object it was called on: `ws.add(\'tea\')` runs `add` with `self` being `ws` and `word` being `\'tea\'`. You never pass `self` yourself.',
       explanation: 'The root moved from a parameter to a field. `node = self.root` is the only line that differs from the function versions.',
       signature: 'trie:class-add-has',
       minutes: 12,
@@ -1582,8 +1588,9 @@ class WordSet:
       ...pattern,
       difficulty: 3,
       skills: ['trie_node', 'trie_search', 'string_iterate', 'accumulator'],
+      transfer: true,
       prompt:
-        'Write `PrefixTally` from blank classes. `add(word)` records a word; the same word may be added several times and counts every time. `count(prefix)` returns how many recorded words begin with the non-empty `prefix`.\n\nNo searching below the prefix: give every node a number, how many words have passed through it, and keep it up to date in `add`. (This node needs no end flag.)\n\n```python\npt = PrefixTally()\npt.add(\'tea\')\npt.add(\'ten\')\npt.add(\'to\')\npt.count(\'te\')   # 2\npt.count(\'t\')    # 3\npt.count(\'x\')    # 0\n```',
+        'Write `PrefixTally` from blank classes. `add(word)` records a word; the same word may be added several times and counts every time. `count(prefix)` returns how many recorded words begin with the non-empty `prefix`.\n\n`count` must stay quick however many words have been recorded: one walk along the letters of `prefix`, without looking through the words and without exploring anything beyond those letters. The starter\'s `TrieNode` is empty on purpose: decide what a node has to remember.\n\n```python\npt = PrefixTally()\npt.add(\'tea\')\npt.add(\'ten\')\npt.add(\'to\')\npt.count(\'te\')   # 2\npt.count(\'t\')    # 3\npt.count(\'x\')    # 0\n```',
       starterCode: `class TrieNode:
     def __init__(self):
         pass
@@ -1632,6 +1639,7 @@ class PrefixTally:
       ],
       hints: [
         'Three things to write: the node, the class that owns a root, and two walks.',
+        'Give every node a number: how many added words have passed through it. Keep it up to date in `add`. This node needs no end flag.',
         'A word "passes through" every node on its path. When, during `add`, are you standing on each of them?',
         '`count` is a search walk. What does the node at the end of the prefix already know?',
       ],
@@ -1745,7 +1753,7 @@ def has_length(node, n):
       title: 'Debug: the wildcard gives up early',
       skills: ['trie_wildcard', 'trie_search', 'early_return'],
       prompt:
-        '`matches(node, pattern, i)` should say whether some stored word fits `pattern` from position `i` on. In a pattern, `?` stands for any single letter and every other character must match exactly.\n\nWith `\'bat\'` and `\'mad\'` stored: `\'?ad\'` → `True`, `\'ma?\'` → `True`, `\'??\'` → `False`.\n\nMake the tests pass.',
+        '`matches(node, pattern, i)` should say whether some stored word fits `pattern` from position `i` on. In a pattern, `?` is a wildcard: it stands for any single letter and every other character must match exactly.\n\nWith `\'bat\'` and `\'mad\'` stored: `\'?ad\'` → `True`, `\'ma?\'` → `True`, `\'??\'` → `False`.\n\nMake the tests pass.',
       brokenCode: `${NODE}
 
 
@@ -1799,8 +1807,9 @@ def matches(node, pattern, i):
       ...pattern,
       difficulty: 4,
       skills: ['trie_wildcard', 'trie_node', 'trie_search', 'recursion_return'],
+      transfer: true,
       prompt:
-        'Write `PatternCounter` from blank classes. `add(word)` stores a word (adding the same word again changes nothing). `count(pattern)` returns **how many** stored words fit `pattern`, where `?` stands for any single letter and every other character must match exactly.\n\n```python\npc = PatternCounter()\npc.add(\'bat\')\npc.add(\'bad\')\npc.add(\'mad\')\npc.count(\'?ad\')   # 2\npc.count(\'ba?\')   # 2\npc.count(\'???\')   # 3\npc.count(\'b?\')    # 0\n```\n\nYou will want a recursive helper that takes a node and a position.',
+        'Write `PatternCounter` from blank classes. `add(word)` stores a word (adding the same word again changes nothing). `count(pattern)` returns **how many** stored words fit `pattern`, where `?` stands for any single letter and every other character must match exactly.\n\n```python\npc = PatternCounter()\npc.add(\'bat\')\npc.add(\'bad\')\npc.add(\'mad\')\npc.count(\'?ad\')   # 2\npc.count(\'ba?\')   # 2\npc.count(\'???\')   # 3\npc.count(\'b?\')    # 0\n```\n\nA pattern only fits words of exactly its own length. You may add methods or functions of your own besides `add` and `count`.',
       starterCode: `class TrieNode:
     def __init__(self):
         pass
@@ -1856,9 +1865,10 @@ class PatternCounter:
         t.check('different lengths', "pc = PatternCounter()\nfor w in ['a', 'ab', 'abc', 'xbc']:\n    pc.add(w)\nassert pc.count('?') == 1\nassert pc.count('??') == 1\nassert pc.count('?bc') == 2\nassert pc.count('a??') == 1\nassert pc.count('????') == 0", true),
         t.check('two counters are separate', "a = PatternCounter()\nb = PatternCounter()\na.add('hi')\nassert a.count('??') == 1 and b.count('??') == 0", true),
       ],
+      note: 'A class may have more methods than the ones asked for. Inside the class, one method calls another through `self`: `self.helper(x, y)` runs `helper` on the same object.',
       hints: [
         'Node, class with a root, and `add` are the ones you know. All the new work is in `count`.',
-        'The helper answers: "from this node, how many stored words fit the pattern from position `i` on?" What is that number when no positions are left?',
+        'Write a recursive helper that takes a node and a position. The helper answers: "from this node, how many stored words fit the pattern from position `i` on?" What is that number when no positions are left?',
         'An exact letter leads to at most one child. A `?` leads to all of them: what do you do with their answers when the question is "how many"?',
         'A method calls another method of the same object through `self.`',
       ],
@@ -1986,7 +1996,7 @@ export const pack: Pack = {
     'b141-jump-loop': {
       inputs: [{ name: 'jumps', is: 'a non-empty list of numbers. `jumps[i]` is the index you go to from index `i`; `-1` means the walk stops.' }],
       returns: '`True` if a walk starting at index 0 goes on forever, `False` if it reaches a `-1`.',
-      catch: 'The fast position moves two jumps at a time. Either of those two jumps might be the `-1`.',
+      catch: 'A walk can go round and round without ever coming back to index 0: `[1, 2, 3, 1]` loops.',
     },
 
     // ── LC 19 ──
@@ -2065,7 +2075,7 @@ export const pack: Pack = {
     'b23-merge-arrays': {
       inputs: [{ name: 'arrays', is: 'a list of Python lists of numbers, each sorted ascending. Inner lists may be empty; the outer list may be empty.' }],
       returns: 'one new sorted list containing every number, duplicates included.',
-      catch: 'Three places lose values: the leftovers of a two-way merge, the odd list in a round, and an input with nothing in it.',
+      catch: 'Two different kinds of input have nothing in them. What should each give back?',
     },
 
     // ── Trie ladder ──
@@ -2202,7 +2212,7 @@ export const pack: Pack = {
         { name: 'prefix', is: 'one or more opening letters' },
       ],
       returns: '`add` returns nothing. `count` returns how many recorded words begin with `prefix`.',
-      catch: 'A word of three letters passes through three nodes. Does each of them hear about it?',
+      catch: '`go` added twice and `gone` once makes `count(\'go\')` 3. What would have to be remembered, and where, for one short walk to know that?',
     },
 
     // ── LC 211 ──
@@ -2304,7 +2314,7 @@ report(build([10]))`,
       what: 'A **trie** stores words letter by letter in a tree. Each node has a dict `children` (letter → next node) and a flag `end` that is `True` when a word stops there. Words with the same beginning share the same nodes, so "is this word stored?" and "does anything start with these letters?" each cost one step per letter, however many words there are.',
       model: 'A set of signposted paths: every letter is a turn, words that start alike walk the same road, and a flag is planted wherever a word finishes.',
       syntax: [
-        { code: 'class TrieNode:\n    def __init__(self):\n        self.children = {}\n        self.end = False', note: 'The node. Both fields are created inside `__init__`, so each node gets its own.' },
+        { code: 'class TrieNode:\n    def __init__(self):\n        self.children = {}\n        self.end = False', note: 'The node. `class` defines a new kind of object and `TrieNode()` makes one. Python runs `__init__` on every new object; `self` is that object, so `self.children = {}` gives each node a dict of its own.' },
         { code: 'node = root', note: 'Every walk starts at the root, which stands for "no letters yet".' },
         { code: 'if ch not in node.children:\n    node.children[ch] = TrieNode()', note: 'Inserting: create the child only when it is missing.' },
         { code: 'node = node.children[ch]', note: 'Step down. Used by inserting and searching alike.' },

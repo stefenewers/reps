@@ -8,7 +8,7 @@ export async function POST(req: Request) {
     if (b.mode === 'followup') {
       return callModel({
         tier: 'fast',
-        system: 'Act as a Google interviewer after a working solution. Ask 2-3 short follow-ups: complexity, an edge case, a variation or constraint change. {"questions": [string]}',
+        system: 'Act as an interviewer in an SWE I / new-grad coding loop, after a working solution. Ask 2-3 short follow-ups: complexity, an edge case, a variation or constraint change. {"questions": [string]}',
         user: JSON.stringify({ title: b.title, prompt: b.prompt, code: b.code }),
         schema: followupResponseSchema,
         maxTokens: 1200,
@@ -16,7 +16,7 @@ export async function POST(req: Request) {
     }
     return callModel({
       tier: 'reasoning',
-      system: `Review a 45-minute mock interview like a fair Google interviewer. Tests already determined correctness. Judge communication, complexity reasoning, edge cases, code clarity. Be specific and brief.
+      system: `Review a 45-minute mock interview like a fair interviewer in an SWE I / new-grad loop. Tests already determined correctness. Judge communication, complexity reasoning, edge cases, code clarity. Be specific and brief.
 {"summary": 2-3 sentences, "strengths": [up to 3], "improvements": [up to 4, actionable], "nextReps": [up to 4 skill ids from: ${SKILLS.map((s) => s.id).join(',')}]}`,
       user: JSON.stringify(b),
       schema: reviewResponseSchema,

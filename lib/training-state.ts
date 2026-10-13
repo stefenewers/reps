@@ -142,6 +142,29 @@ export function repPurpose(e: Pick<Exercise, 'kind' | 'stage' | 'repType' | 'ski
 }
 
 /**
+ * First exposure: the skills of this rep that have never been produced. A rep that teaches (not a check, a
+ * capstone, a cold rep or an unlabeled transfer problem) shows its concept BEFORE the question for these:
+ * nobody should be judged on an idea Reps has not explained yet. Once a skill has been produced, the
+ * teaching is no longer shown automatically; it stays one tap away behind Basics.
+ */
+export function firstExposure(e: Pick<Exercise, 'skills' | 'stage' | 'repType' | 'transfer' | 'cleanPass'>, practice: Map<SkillId, SkillPractice>): SkillId[] {
+  if (e.repType === 'capstone' || e.repType === 'cold' || e.repType === 'interview' || e.stage === 'retrieval' || e.stage === 'capstone' || e.transfer || e.cleanPass) return []
+  return e.skills.filter((s) => !(practice.get(s)?.productive ?? 0))
+}
+
+/**
+ * How much scaffolding a rep carries, by what it is for. This is the rule the workspace and the
+ * generated reps both follow: teaching shrinks as the skill is learned, and proving shows none.
+ */
+export const SCAFFOLDING: Record<TrainingState, { teach: boolean; brief: boolean; namesTechnique: boolean; summary: string }> = {
+  learn: { teach: true, brief: true, namesTechnique: true, summary: 'Concept, mental model and a tiny example first; then a small production rep with every input defined.' },
+  drill: { teach: false, brief: false, namesTechnique: true, summary: 'Short prompt, unambiguous contract. Repeated production, tracing, debugging and reconstruction.' },
+  combine: { teach: false, brief: false, namesTechnique: true, summary: 'Two to four known moves together. Clear inputs, output, constraints and edge behaviour; less and less algorithmic instruction.' },
+  prove: { teach: false, brief: false, namesTechnique: false, summary: 'A clean, interview-quality problem. The technique is not named: recognising it is the test.' },
+  maintain: { teach: false, brief: false, namesTechnique: false, summary: 'Cold retrieval. Terse on purpose.' },
+}
+
+/**
  * The 90 days shift their weight: build first, then transfer, then execute.
  * The planner uses this for how much reactivation and maintenance a session
  * carries; learn and drill never disappear, they become repair loops.

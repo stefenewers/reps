@@ -62,6 +62,23 @@ FREE_URL = {252: 'https://neetcode.io/problems/meeting-schedule/question', 253: 
             323: 'https://neetcode.io/problems/count-connected-components/question', 261: 'https://neetcode.io/problems/valid-tree/question',
             271: 'https://neetcode.io/problems/string-encode-and-decode/question'}
 def problem_url(lc, title): return FREE_URL.get(lc) or f"https://leetcode.com/problems/{slug(title)}/"
+# Teaching comes before testing. Whatever the spine trims, a ladder section always keeps:
+#   - the first rep to carry a skill (a first exposure: exported as `first`);
+#   - the unlabeled transfer rep before a capstone (`transfer`);
+#   - the lead-in reps below: the trace or first guided rep of a move that a later scheduled rep, a mastery check or a
+#     capstone relies on. (Found by the Oct 13 teaching audit: each was being skipped, so its move was first met in a
+#     debug rep, a check or the capstone itself.)
+KEEP = {
+    'd4-win-trace-variable',    # the variable window is traced before it is written
+    'd4-ws-distinct-windows',   # count-dict window code is written before it is debugged
+    'd4-st-round-balanced',     # the simplest stack rep before depth and pairs
+    'd06-dfs-count',            # the first tree function written: this node plus both subtrees
+    'd06-dfs-max',              # combining left and right with max, before Maximum Depth
+    'o8-a-in-degree',           # in-degree on its own before Kahn's algorithm
+    'd9-sort-tuples',           # the tuple key is traced before it is written
+    'd10-dt-include-exclude',   # the decision tree is traced before it is walked
+    'd10-roll-robber-trace',    # take-or-skip is traced before House Robber
+}
 DEMOTE = [76, 124, 23, 271, 417, 105, 1143, 211, 261, 143, 5, 79, 435, 73, 139, 33, 230, 57, 300, 62]
 
 BLIND75 = {1,121,217,238,53,152,153,33,15,11,371,191,338,268,190,70,322,300,1143,139,39,198,213,91,62,55,133,207,417,200,128,269,261,323,57,56,435,252,253,206,141,21,23,19,143,73,54,48,79,3,424,76,242,49,20,125,5,647,271,104,100,226,124,102,297,572,105,98,230,235,208,211,212,347,295}
@@ -95,9 +112,11 @@ UNITS = [
     dict(name='Tries', short='Tries', ladder=[], check=None, core=[208, 211], more=[]),
     dict(name='BFS + grids', short='BFS', ladder=['o7-deque', 'o7-tree-bfs', 'o7-cap-level-order', 'o7-grids', 'o7-neighbors', 'o7-grid-bfs', 'o7-islands'], check='o7-cold',
          core=[], more=[199, 695, 994]),
-    dict(name='Graphs', short='Graphs', ladder=['o8-adjacency', 'o8-dfs', 'o8-bfs', 'o8-cap-path-exists', 'o8-cycles', 'o8-cap-course-schedule'], check='o8-cold',
+    # o8-components is back (its capstone, Number of Provinces, is not): the Graphs check asks for a component count, so it is taught first.
+    dict(name='Graphs', short='Graphs', ladder=['o8-adjacency', 'o8-dfs', 'o8-bfs', 'o8-cap-path-exists', 'o8-components', 'o8-cycles', 'o8-cap-course-schedule'], check='o8-cold',
          core=[133, 417, 261, 323], more=[210, 684, 743]),
-    dict(name='Sorting + heaps', short='Heaps', ladder=['d9-sorting', 'd9-keys', 'd9-freq-sort', 'd9-heapq', 'd9-top-k'], check=None,
+    # d9-max-heap is back: later reps and the check need the negation trick, so it is taught first.
+    dict(name='Sorting + heaps', short='Heaps', ladder=['d9-sorting', 'd9-keys', 'd9-freq-sort', 'd9-heapq', 'd9-max-heap', 'd9-top-k'], check=None,
          core=[], more=[703, 1046, 973, 621]),
     dict(name='Intervals', short='Intervals', ladder=['d9-intervals'], check='d9-cold',
          core=[57, 252, 435, 253], more=[]),
@@ -139,14 +158,18 @@ def slug(title):
     return re.sub(r'-+', '-', s.replace(' ', '-')).strip('-')
 
 def spine(reps, caps, evidence=frozenset()):
-    """The reps of a pattern-ladder section the plan keeps: capstones and any rep a bridge cites as evidence, always;
-    of each kind, at most caps[kind] (cited reps count toward it), spread from the first (most scaffolded) to the last (least)."""
+    """The reps of a pattern-ladder section the plan keeps. Always: capstones, any rep a bridge cites as evidence, first
+    exposures, transfer reps and the KEEP lead-ins. Then of each kind at most caps[kind] (kept reps count toward it),
+    spread from the first (most scaffolded) to the last (least)."""
     kind = lambda r: 'scratch' if r['bucket'] == 'write' and r['scratch'] else r['bucket']
     by, cited = collections.OrderedDict(), collections.Counter()
     keep = set()
     for i, r in enumerate(reps):
         if r['capstone']: keep.add(i)
-        elif r['id'] in evidence: keep.add(i); cited[kind(r)] += 1
+        elif r['id'] in evidence or r.get('first') or r.get('transfer') or r['id'] in KEEP:
+            keep.add(i)
+            # A kept write or debug takes one of its kind's places; a kept trace is cheap and takes none.
+            if kind(r) != 'output': cited[kind(r)] += 1
         else: by.setdefault(kind(r), []).append(i)
     for k, idx in by.items():
         n = max(0, caps.get(k, len(idx) + cited[k]) - cited[k])
@@ -276,6 +299,16 @@ def build(more_allowed, demoted=frozenset()):
             else:
                 day['leetcode'].append(lc_row(d, it['lc'], 'new', it['mode'], it['tier']))
                 after(d, it['lc'])
+        # The app reads the plan as one queue in date order. So on the last day before a buffer week, once the next ladder
+        # item no longer fits, the small interview-practice reps that open the buffer week fill what is left of the day:
+        # that is where the app's forecast would put them anyway.
+        nxt = next((x for x in (d + dt.timedelta(n) for n in range(1, 8)) if is_study(x)), None)
+        if ph not in ('buffer', 'final') and iq and nxt and phase(nxt) == 'buffer':
+            while iq and used > 0 and used + iq[0]['cost'] <= budget(d) * 1.1:
+                it = iq.pop(0); used += it['cost']
+                day['order'].append(it['id'])
+                if day['sections'] and day['sections'][-1]['id'] == it['section']: day['sections'][-1]['reps'].append(it['id'])
+                else: day['sections'].append(dict(id=it['section'], reps=[it['id']], gate=False, label=None))
         # the final week also takes whatever new work is left once interview practice is placed
         if ph == 'final' and not iq:
             while True:

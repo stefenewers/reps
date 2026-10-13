@@ -22,7 +22,7 @@ const warmup = {
       skills: ['grid_neighbors', 'grid_nested'],
       stage: 'retrieval',
       repType: 'cold',
-      prompt: 'Ints grid: `0` open, `1` wall. Write `open_neighbors(grid, r, c)` returning the open 4-neighbors of `(r, c)` as `(r, c)` tuples, in the order up, down, left, right.',
+      prompt: '`grid` is a list of rows of ints: `0` open, `1` wall. Write `open_neighbors(grid, r, c)` returning a list of the open cells directly up, down, left and right of `(r, c)`, as `(row, col)` tuples in that order. Skip cells outside the grid.',
       starterCode: 'def open_neighbors(grid, r, c):\n    pass\n',
       solution: `def open_neighbors(grid, r, c):
     rows, cols = len(grid), len(grid[0])
@@ -49,7 +49,7 @@ const warmup = {
       stage: 'retrieval',
       repType: 'cold',
       difficulty: 3,
-      prompt: 'Write `longest_unique(s)`: the length of the longest substring with no repeated character. Variable-size window with a set.',
+      prompt: 'Write `longest_unique(s)`: the length of the longest substring of the string `s` with no repeated character. An empty string gives `0`.',
       starterCode: 'def longest_unique(s):\n    pass\n',
       solution: `def longest_unique(s):
     window = set()
@@ -140,7 +140,7 @@ const adjacency = {
       id: 'o8-a-trace-build',
       title: 'Trace a build',
       skills: ['graph_adjacency', 'dict_items'],
-      prompt: 'What prints?',
+      prompt: 'A **graph** is a set of **nodes** (also called vertices) joined by **edges**. Here there are `n` nodes, numbered `0` to `n-1`, and `edges` is an **edge list**: each `[a, b]` says node `a` and node `b` are connected.\n\nThis code turns the edge list into an **adjacency list**: a dict from each node to the list of its **neighbors** (the nodes one edge away from it). What prints?',
       code: `n = 4
 edges = [[0, 1], [0, 2], [2, 1]]
 graph = {i: [] for i in range(n)}
@@ -151,7 +151,7 @@ for node, nbrs in graph.items():
     print(node, nbrs)
 `,
       expectedOutput: '0 [1, 2]\n1 [0, 2]\n2 [0, 1]\n3 []',
-      note: 'Adjacency list: `graph[node]` is the list of nodes it connects to. Undirected edges go into both lists; directed edges only into `graph[a]`.',
+      note: 'Adjacency list: `graph[node]` is the list of nodes that `node` connects to (its neighbors). An **undirected** edge `[a, b]` works both ways, so it goes into both lists. A **directed** edge a → b is one-way, so it goes only into `graph[a]`.\n\nThe nodes are `0` to `n-1` whether or not any edge mentions them: a node with no edges still exists, with an empty list.',
       explanation: 'Each undirected edge is appended twice, once per endpoint. Node 3 has no edges but still has an entry because the dict was pre-filled for every node.',
       signature: 'trace:adjacency-build',
       minutes: 2,
@@ -160,7 +160,7 @@ for node, nbrs in graph.items():
       id: 'o8-a-build-undirected',
       title: 'Build undirected',
       skills: ['graph_adjacency'],
-      prompt: 'Write `build_undirected(n, edges)` for nodes `0..n-1`. Every node gets a key, even with no edges. Append neighbors in edge order.',
+      prompt: '`n` is the number of nodes; they are numbered `0` to `n-1`. `edges` is a list of `[a, b]` pairs. Each pair is an **undirected** edge: `a` is a neighbor of `b`, and `b` is a neighbor of `a`.\n\nWrite `build_undirected(n, edges)` returning the adjacency list: a dict from every node to the list of its neighbors, in the order the edges list them. A node with no edges still gets a key, with `[]`. If the same edge appears twice, add it twice.\n\n```python\nbuild_undirected(4, [[0, 1], [2, 0]])   # {0: [1, 2], 1: [0], 2: [0], 3: []}\n```',
       starterCode: 'def build_undirected(n, edges):\n    pass\n',
       solution: `def build_undirected(n, edges):
     graph = {i: [] for i in range(n)}
@@ -175,7 +175,11 @@ for node, nbrs in graph.items():
         t.hidden('build_undirected(1, [])', '{0: []}'),
         t.hidden('build_undirected(3, [[0, 1], [0, 1]])', '{0: [1, 1], 1: [0, 0], 2: []}'),
       ],
-      hints: ['Pre-fill with {i: [] for i in range(n)}, then two appends per edge.'],
+      hints: [
+        'Two steps: first give every node from 0 to n-1 its own empty list, then walk the edges.',
+        'A dict comprehension over range(n) makes the starting dict. `for a, b in edges:` unpacks each pair.',
+        'Each edge [a, b] means two appends: b onto a\'s list and a onto b\'s list.',
+      ],
       signature: 'adjacency:build-undirected',
       minutes: 5,
       important: true,
@@ -184,7 +188,7 @@ for node, nbrs in graph.items():
       id: 'o8-a-dbg-one-way',
       title: 'Debug: friends of a node',
       skills: ['graph_adjacency'],
-      prompt: 'Edges are **undirected**. `neighbors_of(n, edges, node)` should return the sorted neighbors of `node` in a graph on `0..n-1`. Make the tests pass.',
+      prompt: 'The graph has nodes `0` to `n-1` and `edges` is a list of **undirected** `[a, b]` pairs. `neighbors_of(n, edges, node)` should return the neighbors of `node` as a sorted list. Make the tests pass.',
       brokenCode: `def neighbors_of(n, edges, node):
     graph = {i: [] for i in range(n)}
     for a, b in edges:
@@ -212,7 +216,8 @@ for node, nbrs in graph.items():
       id: 'o8-a-build-directed',
       title: 'Build directed',
       skills: ['graph_adjacency'],
-      prompt: 'Write `build_directed(n, edges)` where `[a, b]` means a → b. Every node `0..n-1` gets a key.',
+      prompt: 'Now the edges are **directed**: `[a, b]` means you can go from `a` to `b` but not back (written a → b). So `b` is a neighbor of `a`, and `a` is **not** a neighbor of `b`.\n\nWrite `build_directed(n, edges)` returning a dict from every node `0` to `n-1` to the list of nodes it points to, in edge order. A node that points nowhere gets `[]`.\n\n```python\nbuild_directed(3, [[2, 0]])   # {0: [], 1: [], 2: [0]}\n```',
+      hints: ['Same build as the undirected one, except for how many lists each edge is added to.'],
       starterCode: 'def build_directed(n, edges):\n    pass\n',
       solution: `def build_directed(n, edges):
     graph = {i: [] for i in range(n)}
@@ -232,7 +237,7 @@ for node, nbrs in graph.items():
       id: 'o8-a-dbg-shared-list',
       title: 'Debug: everyone has the same friends',
       skills: ['graph_adjacency', 'dict_create'],
-      prompt: '`build(n, edges)` should return an undirected adjacency dict for nodes `0..n-1`, every node with its own list. Make the tests pass.',
+      prompt: '`build(n, edges)` should return the adjacency list (a dict: node → list of neighbors) for nodes `0` to `n-1` and the undirected `[a, b]` pairs in `edges`. Every node has its own list. Make the tests pass.',
       brokenCode: `def build(n, edges):
     graph = dict.fromkeys(range(n), [])
     for a, b in edges:
@@ -261,7 +266,8 @@ for node, nbrs in graph.items():
       id: 'o8-a-in-degree',
       title: 'In-degrees',
       skills: ['graph_adjacency', 'list_index'],
-      prompt: 'Directed edges `[a, b]` mean a → b. Write `in_degrees(n, edges)`: a list where entry `i` is how many edges point **into** node `i`.',
+      prompt: 'Nodes are `0` to `n-1` and each `[a, b]` in `edges` is a directed edge a → b. The **in-degree** of a node is the number of edges that point **into** it.\n\nWrite `in_degrees(n, edges)` returning a list of length `n` where entry `i` is the in-degree of node `i`.\n\n```python\nin_degrees(3, [[0, 1], [0, 2], [1, 2]])   # [0, 1, 2]\n```',
+      note: 'In-degree = how many arrows end at this node. In a → b, only `b` gains one.',
       starterCode: 'def in_degrees(n, edges):\n    pass\n',
       solution: `def in_degrees(n, edges):
     deg = [0] * n
@@ -285,7 +291,7 @@ for node, nbrs in graph.items():
       skills: ['graph_adjacency', 'grid_nested'],
       stage: 'combine',
       repType: 'combine',
-      prompt: 'Some problems give an n x n matrix where `m[i][j] == 1` means i and j are connected. Write `matrix_to_adj(m)`: a dict from each node to its neighbors in increasing order. Ignore the diagonal (`m[i][i]`).',
+      prompt: 'Some problems hand you the graph as a grid instead of an edge list. `m` is an n x n list of lists of `0`s and `1`s. The nodes are `0` to `n-1`, and `m[i][j] == 1` means node `i` and node `j` are connected.\n\nWrite `matrix_to_adj(m)` returning the adjacency list: a dict from each node to the list of its neighbors, smallest first. A node is not its own neighbor, so ignore the diagonal (`m[i][i]`).\n\n```python\nmatrix_to_adj([[1, 1, 0],\n               [1, 1, 0],\n               [0, 0, 1]])   # {0: [1], 1: [0], 2: []}\n```',
       starterCode: 'def matrix_to_adj(m):\n    pass\n',
       solution: `def matrix_to_adj(m):
     n = len(m)
@@ -318,7 +324,7 @@ const graphDfs = {
       id: 'o8-d-trace-recursive',
       title: 'Trace recursive DFS',
       skills: ['graph_dfs'],
-      prompt: 'What order are nodes visited?',
+      prompt: '`graph` is the adjacency list of an undirected graph: `graph[node]` is the list of that node\'s neighbors. `dfs` is a **depth-first search**: from a node, step to its first neighbor, then to that neighbor\'s first neighbor, going as deep as possible before backing up to try the next one. `visited` is the set of nodes it has already been to.\n\nWhat prints?',
       code: `graph = {0: [1, 2], 1: [0, 3], 2: [0, 3], 3: [1, 2]}
 visited = set()
 order = []
@@ -335,7 +341,7 @@ dfs(0)
 print(order)
 `,
       expectedOutput: '[0, 1, 3, 2]',
-      note: 'Unlike trees, graphs can lead back to where you came from (every undirected edge is a 2-cycle). The visited set makes each node processed once.',
+      note: 'A tree only points downward, so tree DFS never meets the same node twice. A graph can lead back: `1` is in `graph[0]` and `0` is in `graph[1]`. Without a record, DFS would bounce 0 → 1 → 0 → 1 forever.\n\nThe **visited set** is that record: add a node the first time you reach it, and never process a node that is already in it.',
       explanation: 'DFS follows 0 → 1 → 3 as deep as possible; from 3 it reaches 2 before backtracking. By the time 0 tries 2, it is already visited.',
       signature: 'trace:graph-dfs-recursive',
       minutes: 2.5,
@@ -344,7 +350,7 @@ print(order)
       id: 'o8-d-order',
       title: 'DFS order (recursive)',
       skills: ['graph_dfs', 'recursion_base_case'],
-      prompt: 'Write `dfs_order(graph, start)` returning nodes in the order a recursive DFS first visits them, trying neighbors in list order. Use an inner function.',
+      prompt: '`graph` is an adjacency list (a dict: node → list of its neighbors; every node is a key) and `start` is one of its nodes. Node labels can be ints or strings.\n\nWrite `dfs_order(graph, start)` returning a list of the nodes in the order a recursive DFS first visits them, beginning with `start` and trying neighbors in list order. Nodes that cannot be reached from `start` are left out.\n\nDefine the recursive `dfs(node)` **inside** `dfs_order`, so it can use the visited set and the result list created there.\n\n```python\ndfs_order({0: [1, 2], 1: [0, 3], 2: [0, 3], 3: [1, 2]}, 0)   # [0, 1, 3, 2]\n```',
       starterCode: 'def dfs_order(graph, start):\n    pass\n',
       solution: `def dfs_order(graph, start):
     visited = set()
@@ -378,7 +384,7 @@ print(order)
       id: 'o8-v-fix-bounce',
       title: 'Debug: the bouncing DFS',
       skills: ['visited_set', 'graph_dfs'],
-      prompt: '`count_from(graph, start)` should return how many nodes are reachable from `start` in an undirected graph, counting each node once. Keep it recursive. Make the tests pass.',
+      prompt: 'A node is **reachable** from `start` if you can get to it by following edges; `start` itself counts. `graph` is the adjacency list of an undirected graph. `count_from(graph, start)` should return how many nodes are reachable from `start`, counting each node once. Keep it recursive. Make the tests pass.',
       brokenCode: `def count_from(graph, start):
     def dfs(node):
         total = 1
@@ -417,7 +423,7 @@ print(order)
       id: 'o8-d-stack',
       title: 'Reachable set (stack)',
       skills: ['graph_dfs', 'stack_push_pop', 'visited_set'],
-      prompt: 'Write `reachable(graph, start)` with an explicit stack (no recursion). Return the reachable nodes as a sorted list.',
+      prompt: 'DFS does not need recursion. Keep a list as a **stack** of nodes still to explore: pop one, look at its neighbors, and push the ones not visited yet. Stop when the stack is empty.\n\n`graph` is an adjacency list and `start` is one of its nodes. Write `reachable(graph, start)` this way (no recursion), returning every node reachable from `start`, including `start`, as a sorted list.\n\n```python\nreachable({0: [1], 1: [0, 2], 2: [1], 3: [4], 4: [3]}, 0)   # [0, 1, 2]\n```',
       starterCode: 'def reachable(graph, start):\n    pass\n',
       solution: `def reachable(graph, start):
     visited = {start}
@@ -436,7 +442,11 @@ print(order)
         t.hidden('reachable({0: []}, 0)', '[0]'),
         t.hidden('reachable({0: [1], 1: [2], 2: [], 3: [0]}, 0)', '[0, 1, 2]'),
       ],
-      hints: ['Exactly the grid BFS shape with a list and pop() instead of deque and popleft().'],
+      hints: [
+        'Two things to keep: the set of visited nodes and the stack. Both begin holding just start.',
+        'The same loop shape as grid BFS, with a list and pop() instead of a deque and popleft(), and graph[node] instead of the directions list.',
+        'Add a neighbor to visited at the moment you push it, so it is never pushed twice.',
+      ],
       explanation: 'Iterative DFS avoids Python\'s recursion limit (about 1000 frames), which matters on long path-like graphs.',
       signature: 'graph-dfs:reachable-stack',
       minutes: 8,
@@ -502,7 +512,7 @@ def component_of_rec(graph, start):
       title: 'Optimize: visited as a list',
       skills: ['visited_set', 'set_membership', 'graph_dfs'],
       style: 'optimize',
-      prompt: '`count_reachable_slow` is correct, but `visited` is a list, so every `nxt not in visited` scans it: O(V) per check, O(V · E) overall. Below it, write `count_reachable(graph, start)` with the same result in O(V + E).',
+      prompt: 'Graph costs are written with **V** (the number of nodes, "vertices") and **E** (the number of edges). `count_reachable_slow` is correct, but `visited` is a list, so every `nxt not in visited` scans it: O(V) per check, O(V · E) overall. Below it, write `count_reachable(graph, start)` with the same result in O(V + E).',
       starterCode: `def count_reachable_slow(graph, start):
     visited = [start]
     stack = [start]
@@ -557,7 +567,7 @@ def count_reachable(graph, start):
       skills: ['graph_adjacency', 'graph_dfs'],
       stage: 'combine',
       repType: 'combine',
-      prompt: 'Nodes `0..n-1`, directed edges `[a, b]` meaning a → b. Write `can_reach(n, edges, src, dst)`: `True` if you can follow edges from `src` to `dst`. Build the graph yourself; DFS either way.',
+      prompt: 'This time you get the raw edge list, not a ready-made graph. Nodes are `0` to `n-1`; each `[a, b]` in `edges` is a **directed** edge a → b. `src` and `dst` are two nodes.\n\nWrite `can_reach(n, edges, src, dst)` returning `True` if you can get from `src` to `dst` by following edges in their direction, otherwise `False`. A node can always reach itself.\n\nBuild the adjacency list first, then run a DFS from `src` (recursive or with a stack).\n\n```python\ncan_reach(3, [[0, 1], [1, 2]], 0, 2)   # True\ncan_reach(3, [[0, 1], [1, 2]], 2, 0)   # False: the edges only go one way\n```',
       starterCode: 'def can_reach(n, edges, src, dst):\n    pass\n',
       solution: `def can_reach(n, edges, src, dst):
     graph = {i: [] for i in range(n)}
@@ -593,7 +603,7 @@ def count_reachable(graph, start):
       id: 'o8-d-dbg-directed-both',
       title: 'Debug: downstream count',
       skills: ['graph_adjacency', 'graph_dfs'],
-      prompt: 'Pipes are **one-way**: `[a, b]` means water flows from a to b. `downstream(n, pipes, src)` should count the nodes water can reach from `src` (including `src`). Make the tests pass.',
+      prompt: 'Junctions are numbered `0` to `n-1`. `pipes` is a list of `[a, b]` pairs, and pipes are **one-way**: `[a, b]` means water flows from a to b. `downstream(n, pipes, src)` should count the junctions water can reach from `src` (including `src`). Make the tests pass.',
       brokenCode: `def downstream(n, pipes, src):
     graph = {i: [] for i in range(n)}
     for a, b in pipes:
@@ -641,7 +651,7 @@ def count_reachable(graph, start):
       repType: 'combine',
       style: 'finish',
       difficulty: 3,
-      prompt: 'Finish recursive `find_path(graph, start, target)`: return a list of nodes from `start` to `target` (any valid path, found by trying neighbors in list order), or `None` if unreachable.',
+      prompt: 'A **path** is a list of nodes in which each node has an edge to the next one, like `[0, 1, 3]`. `graph` is an adjacency list; `start` and `target` are two of its nodes.\n\nFinish the recursive `find_path(graph, start, target)`: return a path that begins with `start` and ends with `target`, or `None` if `target` cannot be reached. Try neighbors in list order and return the first path that works. If `start == target` the path is `[start]`.\n\n```python\nfind_path({0: [1, 2], 1: [3], 2: [3], 3: []}, 0, 3)   # [0, 1, 3]\nfind_path({0: [1], 1: [], 2: []}, 0, 2)               # None\n```',
       starterCode: `def find_path(graph, start, target):
     visited = set()
 
@@ -693,7 +703,8 @@ const graphBfs = {
       id: 'o8-b-order',
       title: 'BFS order from scratch',
       skills: ['graph_bfs', 'queue_deque'],
-      prompt: 'Write `bfs_order(graph, start)` returning nodes in BFS order, neighbors in list order. Same shape as yesterday\'s grid BFS, with `graph[node]` as the neighbors.',
+      prompt: '**BFS** (breadth-first search) visits nodes nearest first: `start`, then every neighbor of `start`, then the unvisited neighbors of those, and so on. It is the loop you wrote for grid BFS (a `deque` used as a queue, `popleft()`, a visited set); the only change is that a node\'s neighbors come from `graph[node]` instead of a directions list.\n\n`graph` is an adjacency list and `start` is one of its nodes. Write `bfs_order(graph, start)` returning a list of the reachable nodes in the order BFS takes them off the queue, adding neighbors in list order.\n\n```python\nbfs_order({0: [1, 2], 1: [0, 3], 2: [0, 4], 3: [1], 4: [2]}, 0)   # [0, 1, 2, 3, 4]\n```',
+      note: 'DFS takes the **newest** node waiting (a stack) and runs deep. BFS takes the **oldest** node waiting (a queue), so it finishes everything 1 edge away before anything 2 edges away. That is why BFS is the one that finds fewest edges.',
       starterCode: 'def bfs_order(graph, start):\n    pass\n',
       solution: `from collections import deque
 
@@ -715,7 +726,11 @@ def bfs_order(graph, start):
         t.hidden('bfs_order({"a": ["b"], "b": ["a", "c"], "c": ["b"]}, "c")', '["c", "b", "a"]'),
         t.hidden('bfs_order({0: [1], 1: [0], 2: []}, 2)', '[2]'),
       ],
-      hints: ['Import deque. Seed visited and the queue with start; mark on enqueue.'],
+      hints: [
+        'You need three things: a visited set, a queue, and the result list. The first two begin holding start.',
+        '`from collections import deque`. Take from the front with popleft(), add to the back with append().',
+        'Record a node in the result when it comes off the queue. Add a neighbor to visited when it goes on the queue.',
+      ],
       signature: 'graph-bfs:order',
       minutes: 9,
       important: true,
@@ -769,7 +784,7 @@ def by_distance(graph, start):
       id: 'o8-b-distances',
       title: 'Distance to every node',
       skills: ['graph_bfs', 'dict_assign'],
-      prompt: 'Write `distances(graph, start)`: a dict from each reachable node to its fewest-edges distance from `start`. The dict can double as the visited set.',
+      prompt: 'The **distance** from `start` to a node is the fewest edges you must cross to get there. `start` is at distance `0`, its neighbors at `1`.\n\n`graph` is an adjacency list. Write `distances(graph, start)` returning a dict from each node reachable from `start` to its distance. Nodes that cannot be reached are left out. The dict can double as the visited set.\n\n```python\ndistances({0: [1, 2], 1: [0, 3], 2: [0, 3], 3: [1, 2]}, 0)   # {0: 0, 1: 1, 2: 1, 3: 2}\n```',
       starterCode: 'from collections import deque\n\ndef distances(graph, start):\n    pass\n',
       solution: `from collections import deque
 
@@ -789,7 +804,10 @@ def distances(graph, start):
         t.hidden('distances({0: [], 1: []}, 1)', '{1: 0}'),
         t.hidden('distances({0: [1], 1: [2], 2: [3], 3: []}, 0)', '{0: 0, 1: 1, 2: 2, 3: 3}'),
       ],
-      hints: ['if nxt not in dist plays the role of if nxt not in visited.'],
+      hints: [
+        'A neighbor first reached from `node` is one edge further away than `node` is.',
+        'if nxt not in dist plays the role of if nxt not in visited.',
+      ],
       signature: 'graph-bfs:distances',
       minutes: 8,
     }),
@@ -797,7 +815,7 @@ def distances(graph, start):
       id: 'o8-b-dbg-late-mark',
       title: 'Debug: distances that grow',
       skills: ['graph_bfs', 'visited_set'],
-      prompt: '`hop_counts(graph, start)` should return a dict from each reachable node to its fewest-edges distance from `start`. Make the tests pass.',
+      prompt: '`graph` is an adjacency list. `hop_counts(graph, start)` should return a dict from each node reachable from `start` to its distance: the fewest edges from `start` to that node. Make the tests pass.',
       brokenCode: `from collections import deque
 
 def hop_counts(graph, start):
@@ -846,7 +864,8 @@ def hop_counts(graph, start):
       stage: 'combine',
       repType: 'combine',
       difficulty: 3,
-      prompt: 'Nodes `0..n-1`, undirected edges. Write `fewest_edges(n, edges, src, dst)`: the minimum number of edges on a path from `src` to `dst`, or `-1` if there is none. Build the graph, then BFS.',
+      transfer: true,
+      prompt: 'There are `n` nodes numbered `0` to `n-1`. `edges` is a list of `[a, b]` pairs; each one joins `a` and `b` and can be crossed in either direction. `src` and `dst` are two nodes.\n\nWrite `fewest_edges(n, edges, src, dst)` returning the smallest number of edges you have to cross to get from `src` to `dst`, or `-1` if there is no way to get there. If `src` and `dst` are the same node the answer is `0`.\n\n```python\nfewest_edges(5, [[0, 1], [1, 2], [2, 3], [0, 4], [4, 3]], 0, 3)   # 2  (0, 4, 3)\nfewest_edges(4, [[0, 1], [2, 3]], 0, 3)                           # -1\n```',
       starterCode: 'from collections import deque\n\ndef fewest_edges(n, edges, src, dst):\n    pass\n',
       solution: `from collections import deque
 
@@ -875,7 +894,8 @@ def fewest_edges(n, edges, src, dst):
         t.hidden('fewest_edges(6, [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5]], 5, 0)', '5'),
       ],
       hints: [
-        'Unweighted fewest edges → BFS.',
+        'Two jobs: turn the pairs into something you can ask "who is next to this node?", then explore outward from src. Which way of exploring reaches nodes nearest first?',
+        'Build the adjacency list (both directions), then BFS from src.',
         'Track distance per node in a dict seeded with {src: 0}.',
         'Return when you pop dst; after the loop return -1.',
       ],
@@ -1025,7 +1045,7 @@ const components = {
       id: 'o8-c-trace',
       title: 'Trace component starts',
       skills: ['connected_components', 'graph_dfs'],
-      prompt: 'Which nodes start a new traversal, and how many components are there?',
+      prompt: 'A **connected component** is a group of nodes that can all reach each other, with no edge leaving the group. A graph can be several separate components; a node with no edges is a component of one.\n\nThe loop below starts a DFS from every node that no earlier DFS reached, and counts the starts. What prints?',
       code: `graph = {0: [1], 1: [0], 2: [], 3: [4], 4: [3], 5: []}
 visited = set()
 
@@ -1044,7 +1064,7 @@ for node in graph:
 print(count)
 `,
       expectedOutput: 'start 0\nstart 2\nstart 3\nstart 5\n4',
-      note: 'Islands were components in disguise: cells were nodes and the directions list computed the edges. One shared visited set keeps the whole scan O(V + E).',
+      note: 'One DFS from a node marks its whole component and nothing else. So: loop over every node, and each time you find one that is still unvisited, that is one more component. The visited set is shared by all the walks.\n\nCounting islands was this in disguise: cells were the nodes and the directions list supplied the edges.',
       explanation: 'Node 1 and 4 are already visited by the time the loop reaches them. Isolated nodes 2 and 5 are components of size one, which is why every node needs a key.',
       signature: 'trace:components',
       minutes: 2.5,
@@ -1055,7 +1075,7 @@ print(count)
       skills: ['connected_components', 'graph_adjacency', 'graph_dfs'],
       stage: 'microbuild',
       difficulty: 3,
-      prompt: 'Nodes `0..n-1`, undirected `edges`. Write `count_components(n, edges)`. Build the graph, then the outer loop with a shared visited set. Use an iterative stack for the inner traversal.',
+      prompt: 'Nodes are `0` to `n-1` and `edges` is a list of undirected `[a, b]` pairs. Write `count_components(n, edges)` returning the number of connected components. A node with no edges is a component by itself, and `n = 0` gives `0`.\n\nBuild the adjacency list, then loop over every node with one shared visited set: each node not yet visited starts a new component. Use a stack (not recursion) for the walk that marks it.\n\n```python\ncount_components(5, [[0, 1], [1, 2], [3, 4]])   # 2\ncount_components(4, [])                         # 4\n```',
       starterCode: 'def count_components(n, edges):\n    pass\n',
       solution: `def count_components(n, edges):
     graph = {i: [] for i in range(n)}
@@ -1100,7 +1120,7 @@ print(count)
       id: 'o8-c-dbg-visited-reset',
       title: 'Debug: every node is its own group',
       skills: ['connected_components', 'visited_set'],
-      prompt: '`count_groups(n, edges)` should count the connected components of an undirected graph on `0..n-1`. Make the tests pass.',
+      prompt: 'Nodes are `0` to `n-1` and `edges` is a list of undirected `[a, b]` pairs. `count_groups(n, edges)` should return the number of connected components. Make the tests pass.',
       brokenCode: `def count_groups(n, edges):
     graph = {i: [] for i in range(n)}
     for a, b in edges:
@@ -1304,7 +1324,7 @@ const cycles = {
       id: 'o8-y-trace-states',
       title: 'Trace three states',
       skills: ['cycle_detection', 'graph_dfs'],
-      prompt: 'A diamond: 0 → 1, 0 → 2, 1 → 3, 2 → 3 (no cycle). What prints?',
+      prompt: 'In a directed graph, a **cycle** is a route that follows the arrows and arrives back where it began, like 0 → 1 → 2 → 0. This `dfs` returns `True` if it finds one.\n\nEach node has one of three states in `state`: `0` = not visited yet, `1` = **visiting** (its `dfs` call has started and not finished, so it is on the route currently being walked), `2` = **done** (its call finished).\n\nThis graph is a diamond: 0 → 1, 0 → 2, 1 → 3, 2 → 3. Node 3 is reached twice, but there is no cycle. What prints?',
       code: `graph = {0: [1, 2], 1: [3], 2: [3], 3: []}
 state = [0] * 4
 
@@ -1324,7 +1344,7 @@ def dfs(node):
 print(dfs(0))
 `,
       expectedOutput: 'done 3\ndone 1\ndone 2\ndone 0\nFalse',
-      note: '```python\n# 0 = unvisited, 1 = visiting (on path), 2 = done\nstate[node] = 1\nfor nxt in graph[node]: ...\nstate[node] = 2\n```',
+      note: 'A visited set only says "I have been here". For a directed cycle you need to know more: "am I **still inside** this node\'s call?". Meeting a node in state 1 means the route looped back onto itself: a cycle. Meeting a node in state 2 is harmless.\n\n```python\n# 0 = unvisited, 1 = visiting (on path), 2 = done\nstate[node] = 1\nfor nxt in graph[node]: ...\nstate[node] = 2\n```',
       explanation: 'When 2 reaches 3, state[3] is 2 (done), not 1, so no cycle. Only meeting a node that is still on the current path (state 1) means a cycle.',
       signature: 'trace:cycle-states',
       minutes: 3,
@@ -1336,7 +1356,7 @@ print(dfs(0))
       skills: ['cycle_detection', 'graph_adjacency', 'graph_dfs'],
       stage: 'microbuild',
       difficulty: 3,
-      prompt: 'Nodes `0..n-1`, directed edges `[a, b]` meaning a → b. Write `has_cycle(n, edges)` with three-state DFS. Start a DFS from every node, since the graph may be disconnected.',
+      prompt: 'Nodes are `0` to `n-1`; each `[a, b]` in `edges` is a directed edge a → b. Write `has_cycle(n, edges)` returning `True` if the graph contains a cycle, otherwise `False`. An edge from a node to itself, like `[0, 0]`, is a cycle.\n\nBuild the directed adjacency list, then use three-state DFS (`0` unvisited, `1` visiting, `2` done). Start a DFS from **every** node: a cycle can sit in a part of the graph that node 0 cannot reach.\n\n```python\nhas_cycle(3, [[0, 1], [1, 2], [2, 0]])           # True\nhas_cycle(4, [[0, 1], [0, 2], [1, 3], [2, 3]])   # False (a diamond)\n```',
       starterCode: 'def has_cycle(n, edges):\n    pass\n',
       solution: `def has_cycle(n, edges):
     graph = {i: [] for i in range(n)}
@@ -1383,7 +1403,7 @@ print(dfs(0))
       id: 'o8-y-dbg-no-visiting',
       title: 'Debug: the cycle nobody saw',
       skills: ['cycle_detection', 'visited_set'],
-      prompt: '`has_loop(graph)` takes a directed graph (dict of lists, every node is a key) and should return `True` if it contains a cycle. Make the tests pass.',
+      prompt: '`graph` is a directed graph as an adjacency list (a dict: node → list of nodes it points to; every node is a key). `has_loop(graph)` should return `True` if it contains a cycle, otherwise `False`. Make the tests pass.',
       brokenCode: `def has_loop(graph):
     visited = set()
 
@@ -1502,7 +1522,7 @@ print(dfs(0))
       title: 'Break it: the naive detector',
       skills: ['cycle_detection', 'visited_set'],
       style: 'write-test',
-      prompt: '`naive_cycle` says "cycle" whenever it meets a node it has seen before. Write `breaking_graph()` returning a directed graph (dict of lists, every node a key) that has **no** cycle but on which `naive_cycle` returns `True`.',
+      prompt: '`naive_cycle` says "cycle" whenever it meets a node it has seen before. Write `breaking_graph()` returning a directed graph (a dict: node → list of nodes it points to; every node is a key) that has **no** cycle but on which `naive_cycle` returns `True`.',
       starterCode: `def naive_cycle(graph):
     seen = set()
 
@@ -1568,7 +1588,8 @@ assert naive_cycle(g), "the naive check gets this graph right"`,
       stage: 'combine',
       repType: 'combine',
       difficulty: 3,
-      prompt: 'A state machine is a directed graph given as a dict of lists (keys are strings). Write `can_loop(graph, start)`: `True` if following edges from `start` can lead into a cycle. Use a dict for states instead of a list.',
+      transfer: true,
+      prompt: 'A machine is always in exactly one named mode. `graph` is a dict: each mode name (a string) maps to the list of modes the machine may switch to next. Every mode is a key, and a mode with `[]` is a dead end where the machine halts.\n\nWrite `can_loop(graph, start)` returning `True` if a machine that begins in `start` could keep switching forever, and `False` if every route from `start` is forced to halt. A mode that may switch to itself counts. Modes that cannot be reached from `start` do not matter.\n\n```python\ncan_loop({"idle": ["run"], "run": ["stop"], "stop": []}, "idle")   # False\ncan_loop({"a": ["b"], "b": ["c"], "c": ["b"]}, "a")                # True: b, c, b, c, ...\n```',
       starterCode: 'def can_loop(graph, start):\n    pass\n',
       solution: `def can_loop(graph, start):
     state = {}
@@ -1595,7 +1616,11 @@ assert naive_cycle(g), "the naive check gets this graph right"`,
         t.hidden('can_loop({"x": ["x"]}, "x")', 'True'),
         t.hidden('can_loop({"a": ["b", "c"], "b": ["d"], "c": ["d"], "d": []}, "a")', 'False'),
       ],
-      hints: ['state.get(node, 0) gives "unvisited" for nodes you have not seen yet.'],
+      hints: [
+        'It can run forever exactly when some route from start comes back to a mode it is still in the middle of: a cycle you can reach from start.',
+        'Three-state DFS, begun only at start. Reaching two routes into the same finished mode is not a loop.',
+        'The names are strings, so keep the states in a dict. state.get(node, 0) gives "unvisited" for a mode you have not seen yet.',
+      ],
       signature: 'cycle:reachable-from-start',
       minutes: 11,
     }),
@@ -1606,7 +1631,8 @@ assert naive_cycle(g), "the naive check gets this graph right"`,
       stage: 'combine',
       repType: 'combine',
       difficulty: 4,
-      prompt: 'The BFS alternative to three-state DFS. Directed edges `[a, b]` mean a → b on nodes `0..n-1`. Write `can_order(n, edges)`: repeatedly remove a node with in-degree 0 (queue them), lowering its neighbors\' in-degrees. Return `True` if every node gets removed (no cycle).',
+      prompt: 'A second way to find a directed cycle, with a queue instead of recursion (**Kahn\'s algorithm**). Nodes are `0` to `n-1`; each `[a, b]` in `edges` is a directed edge a → b. A node\'s **in-degree** is the number of edges pointing into it.\n\nA node with in-degree 0 is waiting on nothing, so it can be removed. Removing it takes its outgoing edges away too, which lowers the in-degree of every node it points to by 1; any of those that drop to 0 can be removed next. Keep the nodes that are ready in a queue.\n\nWrite `can_order(n, edges)` returning `True` if every node ends up removed, and `False` if some never get to 0 (which happens exactly when there is a cycle).\n\n```python\ncan_order(3, [[0, 1], [1, 2]])   # True: remove 0, then 1, then 2\ncan_order(2, [[0, 1], [1, 0]])   # False: each waits on the other\n```',
+      note: 'Read a → b as "a must happen before b": a is a **prerequisite** of b. In-degree is then "how many things I am still waiting on". On a cycle everybody is waiting on somebody, so nobody ever reaches 0.',
       starterCode: 'def can_order(n, edges):\n    pass\n',
       solution: `from collections import deque
 
@@ -1744,11 +1770,11 @@ const cold = {
   exercises: [
     write({
       id: 'o8-cold-build',
-      title: 'Adjacency from memory',
+      title: 'Graph from edges, cold',
       skills: ['graph_adjacency'],
       stage: 'retrieval',
       repType: 'cold',
-      prompt: 'Write `adj(n, edges, directed)`: an adjacency dict for nodes `0..n-1`. If `directed` is `False`, add both directions.',
+      prompt: 'Nodes `0..n-1`, `edges` a list of `[a, b]` pairs. Write `adj(n, edges, directed)`: a dict from every node to its list of neighbors. If `directed` is `True`, `[a, b]` means a → b only; if `False`, it goes both ways.',
       starterCode: 'def adj(n, edges, directed):\n    pass\n',
       solution: `def adj(n, edges, directed):
     graph = {i: [] for i in range(n)}
@@ -1773,7 +1799,7 @@ const cold = {
       stage: 'retrieval',
       repType: 'cold',
       difficulty: 3,
-      prompt: 'Write `num_groups(n, edges)`: the number of connected components of an undirected graph on `0..n-1`. Any traversal.',
+      prompt: 'Nodes `0..n-1`, `edges` a list of undirected `[a, b]` pairs. Write `num_groups(n, edges)`: how many separate groups of linked nodes there are. A node with no edges is a group of one.',
       starterCode: 'def num_groups(n, edges):\n    pass\n',
       solution: `def num_groups(n, edges):
     graph = {i: [] for i in range(n)}
@@ -1812,7 +1838,7 @@ const cold = {
       stage: 'retrieval',
       repType: 'cold',
       difficulty: 3,
-      prompt: 'Directed graph as a dict of lists over nodes `0..n-1` (every node has a key). Write `cyclic(graph)`: `True` if it has a cycle. Three states.',
+      prompt: 'Directed graph as a dict of lists over nodes `0..n-1` (every node has a key). Write `cyclic(graph)`: `True` if it has a cycle, else `False`.',
       starterCode: 'def cyclic(graph):\n    pass\n',
       solution: `def cyclic(graph):
     state = {node: 0 for node in graph}
@@ -1842,12 +1868,12 @@ const cold = {
     }),
     write({
       id: 'o8-cold-grid-steps',
-      title: 'Grid BFS, a day later',
+      title: 'Fewest moves on a grid',
       skills: ['bfs', 'grid_neighbors', 'visited_set'],
       stage: 'retrieval',
       repType: 'cold',
       difficulty: 3,
-      prompt: 'Yesterday\'s skill, cold. Strings grid with `"."` open and `"#"` wall. Write `steps(grid, start, goal)` where `start`/`goal` are `(r, c)` tuples: fewest 4-directional moves, or `-1`. Assume `start` is open.',
+      prompt: '`grid` is a list of strings: `"."` open, `"#"` wall. Write `steps(grid, start, goal)` where `start` and `goal` are `(r, c)` tuples: the fewest up/down/left/right moves from `start` to `goal` through open cells, or `-1` if it cannot be reached. Assume `start` is open.',
       starterCode: 'def steps(grid, start, goal):\n    pass\n',
       solution: `from collections import deque
 

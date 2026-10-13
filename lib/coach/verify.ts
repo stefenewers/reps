@@ -4,10 +4,12 @@ import { outputMatches, hasBlanks } from '@/lib/answers'
 import type { RunResult } from '@/lib/python/runner'
 import type { TestCase } from '@/lib/types'
 import { SKILL_BY_ID } from '@/data/skills'
+import { pedagogyProblem } from '@/lib/coach/guidance'
 
 /**
  * Never trust a generated coding rep. Before it is shown:
- *   schema → known skills → canonical solution passes every test
+ *   schema → known skills → the scaffolding fits the rep's purpose (lib/coach/guidance.ts)
+ *   → canonical solution passes every test
  *   → starter code does not already pass → (output reps) printed output matches.
  */
 
@@ -18,13 +20,15 @@ export interface Verdict {
   reason?: string
 }
 
-export async function verifyGeneratedRep(raw: unknown, run: Run, allowedSkills?: string[]): Promise<Verdict & { rep?: GeneratedRep }> {
+export async function verifyGeneratedRep(raw: unknown, run: Run, allowedSkills?: string[], opts: { hidePattern?: boolean } = {}): Promise<Verdict & { rep?: GeneratedRep }> {
   const parsed = generatedRepSchema.safeParse(raw)
   if (!parsed.success) return { ok: false, reason: `schema: ${parsed.error.issues.map((i) => `${i.path.join('.')} ${i.message}`).join('; ').slice(0, 300)}` }
   const rep = parsed.data
   const unknown = rep.skills.filter((s) => !SKILL_BY_ID[s])
   if (unknown.length) return { ok: false, reason: `unknown skills: ${unknown.join(', ')}` }
   if (allowedSkills && !rep.skills.some((s) => allowedSkills.includes(s))) return { ok: false, reason: 'rep does not target the requested skills' }
+  const teachingProblem = pedagogyProblem(rep, opts)
+  if (teachingProblem) return { ok: false, reason: `pedagogy: ${teachingProblem}` }
 
   if (rep.format === 'output') {
     const r = await run(rep.code ?? '', [])

@@ -1,18 +1,125 @@
 # Authoring Reps curriculum
 
-Reps turns concepts the learner already understands into things they can recall and
-type automatically under interview pressure. LeetCode problems are capstones of skill
-graphs, not the teaching material. Every day module builds the bridge from single
-Python primitives to the capstone, then takes the scaffolding away.
+Reps teaches the foundations coding interviews need, builds them into automatic
+fluency through repetition, shows how they combine into patterns, gradually removes
+the scaffolding, and only then uses LeetCode-style problems as tests of transfer:
 
-The learner: understands programming concepts, but Python syntax retrieval is not yet
-automatic. Target: full-time SWE I (new-grad) interview loops, prepared over the 90-day
-plan (Oct 12, 2026 → Jan 9, 2027). Python only.
+```
+teach → demonstrate → guided production → repetition → debugging → combination
+      → unlabeled transfer → capstone → spaced retrieval
+```
 
-**A LeetCode problem is the final integration test of a prerequisite graph.** Nothing is
-scheduled as "learn the pattern, then hope it transfers": every pattern has a primer, a
-ladder and a cold mastery check, and every target problem has a bridge (see
-"Problem bridges" below).
+A learner can get problem statements anywhere. What Reps adds is the layer before
+them. **Never assume a concept is understood because it appears in an interview
+curriculum.** A learner should never fail a foundational rep because Reps did not
+explain the prerequisite idea first. And once an idea has been learned, the
+explanation goes away: the goal is progressive removal of scaffolding, not permanent
+hand-holding.
+
+The learner: building toward SWE I / new-grad coding interviews in Python. General
+programming is understood; fluent Python, data structures, algorithms and pattern
+recognition are still developing. Python only. The 90-day plan runs Oct 12, 2026 →
+Jan 9, 2027.
+
+Confusion about the **problem statement** is not desirable difficulty. Reasoning
+about the **solution** is. The test every rep must pass, from a real question the
+learner asked about `lookup_or(d, key, fallback)`: *"is `d` a dictionary? Is that an
+assumption? Am I supposed to find that out?"*
+
+## The model, as an operating standard
+
+**1. Reps teaches when necessary.** A learner may meet a concept for the first time
+here. On first exposure a rep (with its primer and `note`) establishes: what the
+concept is, why it exists, the mental model, the vocabulary, the smallest Python
+mechanics needed, and one concrete example. Then, immediately, a small production
+rep. Not a lesson to read: the learner reaches the editor quickly.
+
+**2. Reps drills what has been taught.** Once the idea exists, explanations shrink.
+The learner types the mechanics repeatedly, in different shapes, until they are cheap.
+
+**3. Reps combines known moves** into increasingly realistic tasks.
+
+**4. Reps removes the labels.** Before a target problem the learner solves at least
+one small problem where the pattern is not named for them (`transfer: true`).
+
+**5. Capstones prove transfer.** The original problem is never the first place the
+learner sees the underlying ideas. Every target has a prerequisite graph (see
+"Problem bridges").
+
+**6. Reps retrieves later.** Cold and maintenance reps are terse on purpose.
+
+## Scaffolding by what the rep is for
+
+The same task is a different rep at different stages. `lib/training-state.ts`
+(`SCAFFOLDING`, `repPurpose`, `firstExposure`) is the rule the workspace, the planner
+and the generated reps all follow; write prompts to match it.
+
+| Purpose | Which reps | What the prompt carries |
+|---|---|---|
+| **Learn** | the first rep(s) to carry a skill | 2–5 sentences: what each input **is**, what to return, any new term in plain words; one tiny worked example; the edge behaviour the tests check. The concept goes in `note` (1–3 lines). Never the solution. |
+| **Drill** | the reps that follow | Shorter. The contract is still unambiguous; no re-teaching. An example only if the contract needs one. Tracing, debugging, reconstruction, small transformations. |
+| **Combine** | `stage: 'combine' / 'pattern'`, bridge reps | Inputs, output, constraints, edge behaviour. May name the technique early in a section; later ones name it less. |
+| **Prove** | capstones, mastery checks, `transfer: true` reps | A clean, interview-quality problem. The technique is **not** named: recognising it is the test. |
+| **Maintain** | warm-ups, `-cold` sections, the interview module | Terse. `Write count_evens(nums).` is good retrieval. Fix only a real ambiguity. |
+
+`Write count_evens(nums).` is good Maintain content and poor Learn content. There is
+no minimum prompt length, and no rule that every prompt needs an example: a short
+prompt is right when it is short on purpose.
+
+`nums`, `words`, `items`, `root`, `head`, `grid` are legitimate interview names. Do
+not turn reps into story problems. The rule is only: **when a mechanic is first
+learned, say what the variable represents.**
+
+- Bad Learn: `Write count_nodes(root) from the signature.`
+- Good Learn: `root` is the top node of a binary tree, or `None` if the tree is empty.
+  Each node has `.left` and `.right`, themselves nodes or `None`. Write
+  `count_nodes(root)` returning how many nodes the tree has. An empty tree has 0.
+
+### What the learner sees
+
+On a true first exposure (a skill of the rep has never been produced, and the rep is
+not a check, capstone, cold or transfer rep) the workspace shows, **before** the
+question and without anyone pressing Basics: the primer's concept, its mental model
+and its example, the rep's `note`, then "Your rep", the prompt and the plain-English
+brief. After the skill has been produced once, none of that is shown automatically;
+it stays behind Basics. Drill, combine, prove and maintain reps never open with a
+lecture.
+
+### Vocabulary
+
+A term is defined in plain words the first time it appears, in the prompt or `note`
+of that rep, and in the skill's primer (`data/vocabulary.ts` lists the terms and the
+skill that introduces each; a test checks the primer defines it). Examples: window,
+pointer, invariant, lower bound, half-open range, stack, queue, deque, traversal,
+preorder / inorder / postorder, BFS, DFS, adjacency list, visited set, connected
+component, directed edge, in-degree, base case, recurrence, memoization, bottom-up,
+DP state, rolling state, backtracking, interval, heap, size-k heap.
+
+### Briefs
+
+`data/briefs/<module>.ts` (and `data/briefs.ts` for the dictionary stretch): "this
+question, in plain English". `task` (for traces, fills, debugs), `inputs` (every
+input, in order: what it is), `returns`, `catch` (a pointer or a question, never the
+fix). Every scheduled teaching rep and the first rep of every skill has one. Warm-up,
+cold, mastery-check and capstone reps do not.
+
+### Unlabeled transfer
+
+"Use two pointers", "use a set", "use a heap" are right while teaching and must
+eventually disappear. Before each capstone, and at the end of each problem bridge,
+one from-signature rep is marked `transfer: true`: a small, clearly worded problem
+whose title and prompt do not name the technique, the data structure or the
+algorithm (`data/pattern-words.ts` holds the words; a test enforces it). Its hints
+may still name the technique, progressively.
+
+### Generated reps
+
+The coach follows the same rule (`lib/coach/guidance.ts`). A **foundation** rep must
+teach (a structured `teaching` field: concept and a tiny example that is not the
+answer), define its inputs and include a worked example. A **combine** rep states a
+clear contract with less instruction. A **pattern** rep does not name its pattern. A
+**cold** rep carries no teaching and a one- or two-sentence prompt. These are checked
+with the deterministic tests before a generated rep is ever shown.
 
 ## Files
 
@@ -48,7 +155,8 @@ Section titles form the visible learning path on the dashboard, so keep them sho
 
 Reps exists because courses don't give enough actual repetitions writing code. The
 main activity is writing, running, breaking, fixing and rewriting Python. Choice and
-trace reps are short on-ramps, never the bulk.
+trace reps are short on-ramps, never the bulk. Teaching is short and comes first;
+it never replaces the typing.
 
 `npm run audit:curriculum -- <date>` reports each day's mix. The guardrails (enforced
 by tests) are:
@@ -95,7 +203,7 @@ High-value formats (all are `code` reps run by tests; set `style`):
 Fill-in-the-blank is scaffolding: filling `counts.get(ch, ____)` does not prove you can
 write `counts[ch] = counts.get(ch, 0) + 1`. Every primitive must later be produced
 from memory. Cold reps are a signature and a blank body, never "which structure would
-you use?".
+you use?", and never a re-explanation.
 
 ## The ladder
 

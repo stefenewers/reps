@@ -422,6 +422,7 @@ None`,
       'Sorting is **stable**: items with equal keys keep their original order (`fig` stays before `pea`).',
       'Sorting costs O(n log n). Mention it when it is the slowest step of your solution.',
       '`lambda p: p[1]` is just a tiny unnamed function: "given `p`, return `p[1]`".',
+      'To sort by two things, return a tuple from the key: `key=lambda w: (len(w), w)`. Negate a number inside it to make just that part descending. `min` and `max` take `key=` too. **In place** means the original list itself is changed and nothing new is returned.',
     ],
   },
   {

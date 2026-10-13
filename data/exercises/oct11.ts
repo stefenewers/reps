@@ -303,7 +303,7 @@ print(s[1:4], s[-3:], s[::-1][:2])`,
     title: 'In-bounds neighbors',
     skills: ['grid_neighbors', 'grid_nested'],
     ...R,
-    prompt: 'Return the in-bounds neighbors of `(r, c)` as a list of tuples in the order up, down, left, right.',
+    prompt: '`grid` is a non-empty list of equal-length rows. Return the in-bounds neighbors of cell `(r, c)` (the cells directly up, down, left and right of it) as a list of `(row, col)` tuples in the order up, down, left, right.',
     starterCode: `def neighbors(grid, r, c):
     pass
 `,
@@ -1364,7 +1364,7 @@ def k_largest(nums, k):
     title: 'pop(0) in a loop',
     skills: ['complexity', 'queue_deque'],
     ...BIG_O,
-    prompt: 'You just rotated a deque with `popleft()`. Why not a list? Time complexity of this for n numbers?',
+    prompt: 'A deque takes from the front with `popleft()`. Why not a list and `pop(0)`? Time complexity of this for n numbers?',
     code: `def drain(nums):
     total = 0
     while nums:

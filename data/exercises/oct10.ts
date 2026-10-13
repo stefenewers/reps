@@ -182,6 +182,7 @@ const decisions = [
     title: 'Down and back up',
     skills: ['recursion_base_case', 'recursion_return'],
     prompt: 'Predict the output. Watch what happens after each recursive call returns.',
+    note: 'A function that calls itself pauses at that line. When the inner call returns, the outer one carries on from the very next line. So code written after a recursive call runs "on the way back up".',
     code: `def walk(i, n):
     if i == n:
         print('leaf')
@@ -204,7 +205,7 @@ exit 0`,
     id: 'd10-dt-include-exclude',
     title: 'Include first, then exclude',
     skills: ['backtracking_state', 'recursion_base_case'],
-    prompt: 'Predict the output. Here the path is passed as a new list each time (`picked + [x]`), so nothing has to be undone.',
+    prompt: 'Predict the output. `choose` decides about one item per call: `i` is the index of the item being decided and `picked` is the list of items taken so far. Each call is handed a **new** list (`picked + [x]` builds one), so nothing has to be undone.',
     code: `def choose(items, i, picked):
     if i == len(items):
         print(picked)
@@ -217,7 +218,7 @@ choose(['a', 'b'], 0, [])`,
 ['a']
 ['b']
 []`,
-    note: 'Decision tree: at index i, branch 1 takes items[i], branch 2 skips it. The base case is i == len(items). Two branches per item means 2^n leaves.',
+    note: 'Decision tree: at index i, branch 1 takes items[i], branch 2 skips it. The base case (where the recursion stops) is i == len(items): every item has been decided. Two branches per item means 2^n leaves.',
     explanation: 'The include branch is explored fully before the exclude branch, so the first leaf takes everything and the last takes nothing.',
     important: true,
     minutes: 2.5,
@@ -230,7 +231,8 @@ choose(['a', 'b'], 0, [])`,
     style: 'finish',
     difficulty: 2,
     minutes: 5,
-    prompt: 'Finish `all_sums(nums)`: return a list with the sum of every subset of `nums` (one entry per subset, so `2 ** len(nums)` entries, duplicates allowed). Write the body of `go(i, total)`: a base case, then an include call and an exclude call.',
+    prompt: '`nums` is a list of numbers. A **subset** of it is any selection of its items: each item is either taken or left out. `[1, 2]` has four subsets: `[1, 2]`, `[1]`, `[2]` and `[]` (taking nothing counts).\n\nFinish `all_sums(nums)`: return a list with the sum of every subset, one entry per subset, in any order. `all_sums([1, 2])` → `[3, 1, 2, 0]`, and `all_sums([])` → `[0]`. Two subsets with the same sum give two entries.\n\nThe helper `go(i, total)` decides about one item per call: `i` is the index of the item being decided and `total` is the sum of the items taken so far. Write its body: if there is no item left to decide, record `total` in `out`; otherwise call `go` twice, once taking `nums[i]` and once leaving it out.',
+    note: 'A **decision tree**: one take-it-or-leave-it decision per item, from the top down. Every route from the top to a bottom end (a **leaf**) is one complete set of decisions, so one subset. `n` items give `2 ** n` leaves. Trying every route like this is called **backtracking**.',
     starterCode: `def all_sums(nums):
     out = []
     def go(i, total):
@@ -252,7 +254,7 @@ choose(['a', 'b'], 0, [])`,
       t.eq('all_sums([])', '[0]', { compare: 'unordered' }),
       t.hidden('all_sums([5, 5, -1])', '[9, 10, 4, 5, 4, 5, -1, 0]', { compare: 'unordered' }),
     ],
-    hints: ['Base case: i == len(nums), record total.', 'Two calls: one with total + nums[i], one with total.'],
+    hints: ['Base case: every item has been decided when `i` has run off the end of `nums`. Record `total` and return.', 'Otherwise two calls, both moving on to the next index: one with `total + nums[i]`, one with `total` unchanged.'],
     signature: 'backtrack:collect-subset-sums',
   }),
   write({
@@ -261,7 +263,7 @@ choose(['a', 'b'], 0, [])`,
     skills: ['backtracking_state', 'recursion_base_case'],
     difficulty: 2,
     minutes: 5,
-    prompt: "Write `bit_strings(n)` returning every string of length `n` made of `'0'` and `'1'`, in order with `'0'` branches first (so `n = 2` gives `['00', '01', '10', '11']`). Pass the string built so far as a parameter.",
+    prompt: '`n` is a whole number, 0 or more. Write `bit_strings(n)` returning a list of every string of length `n` made only of `\'0\'` and `\'1\'`. Order matters here: at each position try `\'0\'` before `\'1\'`, so `bit_strings(2)` → `[\'00\', \'01\', \'10\', \'11\']`. `bit_strings(0)` → `[\'\']` (the one string of length 0).\n\nUse an inner helper that takes the string built so far as a parameter and adds one character per call.',
     starterCode: `def bit_strings(n):
     pass`,
     solution: `def bit_strings(n):
@@ -288,7 +290,7 @@ choose(['a', 'b'], 0, [])`,
     title: 'Debug: count subsets hitting a target',
     skills: ['backtracking_state', 'recursion_base_case'],
     minutes: 3.5,
-    prompt: '`count_sums(nums, target)` should count the subsets of `nums` whose values add up to `target` (the empty subset sums to 0). Fix it.',
+    prompt: '`nums` is a list of integers and `target` is an integer. `count_sums(nums, target)` should return how many subsets of `nums` (take or leave each item) add up to exactly `target`. The empty subset adds up to 0. `count_sums([1, 2, 3], 3)` → `2` (`[1, 2]` and `[3]`). Fix it.',
     brokenCode: `def count_sums(nums, target):
     def go(i, total):
         if i == len(nums) - 1:
@@ -319,7 +321,7 @@ choose(['a', 'b'], 0, [])`,
     repType: 'combine',
     difficulty: 3,
     minutes: 6,
-    prompt: 'Write `can_reach(nums, target)` returning `True` if some subset of `nums` sums exactly to `target` (the empty subset sums to 0). Return as soon as one branch succeeds.',
+    prompt: '`nums` is a list of integers (negatives allowed) and `target` is an integer. Write `can_reach(nums, target)` returning `True` if some subset of `nums` adds up to exactly `target`, otherwise `False`. The empty subset adds up to 0, so `can_reach([], 0)` is `True`. `can_reach([3, 34, 4, 12, 5, 2], 9)` → `True` (4 + 5). Stop as soon as one branch succeeds.',
     starterCode: `def can_reach(nums, target):
     pass`,
     solution: `def can_reach(nums, target):
@@ -346,7 +348,7 @@ choose(['a', 'b'], 0, [])`,
     repType: 'combine',
     difficulty: 3,
     minutes: 6,
-    prompt: 'Put a `+` or `-` in front of every number in `nums`. Write `sign_ways(nums, target)` returning how many sign choices make the total equal `target`. The two branches here are "add" and "subtract", not include/exclude.',
+    prompt: '`nums` is a list of integers. Put a `+` or a `-` in front of **every** number, then add them up. Write `sign_ways(nums, target)` returning how many different sign choices make the total equal `target`. `sign_ways([1, 1], 0)` → `2` (`+1 -1` and `-1 +1`). With no numbers the total is 0, so `sign_ways([], 0)` → `1`.\n\nThe two branches at each index are "add" and "subtract" this time, not take/leave.',
     starterCode: `def sign_ways(nums, target):
     pass`,
     solution: `def sign_ways(nums, target):
@@ -372,7 +374,7 @@ const pathState = [
     id: 'd10-ps-copy-trace',
     title: 'One shared path',
     skills: ['backtracking_state'],
-    prompt: 'Predict the output. One `path` list is shared by every call: append, recurse, pop.',
+    prompt: 'Predict the output. One `path` list is shared by every call: `path.append(i)` takes `i`, the call after it explores with `i` taken, and `path.pop()` removes it again. `path[:]` makes a copy of the list as it is right now.',
     code: `res = []
 path = []
 
@@ -388,7 +390,7 @@ def dfs(i):
 dfs(0)
 print(res)`,
     expectedOutput: `[[0, 1], [0], [1], []]`,
-    note: 'Choose, explore, un-choose: path.append(x); dfs(...); path.pop(). Record a snapshot at the leaf with path[:] because path keeps changing.',
+    note: 'Choose / explore / un-choose: `path.append(x)`, recurse, `path.pop()`. `path` holds the choices made so far on the current route. At a leaf, save a **copy** (`path[:]`): `path` itself keeps changing and ends up empty, and anything saved without a copy would change with it.',
     explanation: 'Include 0 and 1, then drop 1, then drop 0 and include 1, then nothing. Same order as the immutable version.',
     important: true,
     minutes: 2,
@@ -401,7 +403,7 @@ print(res)`,
     style: 'finish',
     difficulty: 2,
     minutes: 4,
-    prompt: '`pickings(s)` should return every subsequence of `s` as a string. The base case is written. Replace the comment with the four lines that include `s[i]`, explore, undo, and explore without it.',
+    prompt: '`s` is a string. A **subsequence** keeps some of its characters (possibly none, possibly all) in their original order: `\'ab\'` has `\'ab\'`, `\'a\'`, `\'b\'` and `\'\'`. `pickings(s)` should return a list of every subsequence of `s` as a string, in any order.\n\nThe base case is written: it joins the characters in `path` into one string. Replace the comment with the four lines that take `s[i]`, explore, undo the take, and explore without it.',
     starterCode: `def pickings(s):
     res = []
     path = []
@@ -430,7 +432,7 @@ print(res)`,
       t.eq("pickings('')", "['']"),
       t.hidden("len(pickings('abcd'))", '16'),
     ],
-    hints: ['append, dfs(i + 1), pop, dfs(i + 1).'],
+    hints: ['The first two lines choose and explore: put `s[i]` on `path`, then move on to index `i + 1`.', 'The last two un-choose and explore again: take it back off `path`, then move on to `i + 1` without it.'],
     explanation: "''.join(path) builds a new string, so here no explicit copy is needed.",
     important: true,
     signature: 'backtrack:finish-append-pop',
@@ -442,7 +444,7 @@ print(res)`,
     style: 'finish',
     difficulty: 3,
     minutes: 6,
-    prompt: 'Write `rolls(n, sides)` returning every sequence of `n` die rolls (values `1..sides`) as lists, in increasing order (`[1, 1]` before `[1, 2]`). Use the shared `path` with append / recurse / pop, branching with a `for` loop instead of include/exclude.',
+    prompt: '`n` is how many times a die is rolled and `sides` is how many faces it has (values `1` to `sides`). Write `rolls(n, sides)` returning every possible sequence of `n` rolls, each as a list, smallest first: `rolls(2, 2)` → `[[1, 1], [1, 2], [2, 1], [2, 2]]`. `rolls(0, 6)` → `[[]]`.\n\nUse the shared `path` with append / recurse / pop. There are `sides` branches per roll, not two, so branch with a `for` loop over the values.',
     starterCode: `def rolls(n, sides):
     res = []
     path = []
@@ -521,7 +523,7 @@ print(res)`,
     repType: 'combine',
     difficulty: 3,
     minutes: 9,
-    prompt: 'Write `groups(nums, k)` returning every way to choose `k` items from `nums` (distinct values), ignoring order inside a group. Use a `start` index so each item is only considered after the previous pick, which prevents `[1, 2]` and `[2, 1]` both appearing.',
+    prompt: '`nums` is a list of distinct values and `k` is a whole number, 0 or more. A **combination** is a choice of items where order does not matter: `[1, 2]` and `[2, 1]` are the same group. Write `groups(nums, k)` returning every group of exactly `k` items, each group once. `groups([1, 2, 3], 2)` → `[[1, 2], [1, 3], [2, 3]]` (the groups may come in any order). `k = 0` gives `[[]]`; a `k` bigger than `len(nums)` gives `[]`.\n\nBranch with a `for` loop over the items you could pick next, and pass a `start` index down: each call only looks at items **after** the previous pick. That is what stops `[2, 1]` appearing as well as `[1, 2]`.',
     starterCode: `def groups(nums, k):
     pass`,
     solution: `def groups(nums, k):
@@ -601,7 +603,7 @@ print(res)`,
     repType: 'combine',
     difficulty: 3,
     minutes: 9,
-    prompt: "Each digit maps to some letters (the mapping is in the starter). Write `spell(digits)` returning every string you get by picking one letter per digit, in order. An empty `digits` gives `[]`.",
+    prompt: '`digits` is a string of digits from `2` to `9`, like `\'23\'`. On a phone keypad each digit stands for some letters; the mapping `KEYS` is in the starter. Write `spell(digits)` returning every string made by picking one letter for each digit, keeping the digits\' order: `spell(\'23\')` → `[\'ad\', \'ae\', \'af\', \'bd\', \'be\', \'bf\', \'cd\', \'ce\', \'cf\']` (the strings may come in any order). An empty `digits` gives `[]`.',
     starterCode: `KEYS = {'2': 'abc', '3': 'def', '4': 'ghi', '5': 'jkl', '6': 'mno', '7': 'pqrs', '8': 'tuv', '9': 'wxyz'}
 
 def spell(digits):
@@ -640,7 +642,7 @@ def spell(digits):
     repType: 'pattern',
     difficulty: 4,
     minutes: 12,
-    prompt: 'Write `orderings(nums)` returning every ordering of the distinct values in `nums`. Track which indexes are already in the path (a `used` list or set) so each value appears once per ordering.',
+    prompt: '`nums` is a list of distinct values. An **ordering** (also called a **permutation**) uses every value exactly once; two orderings differ only in the order. Write `orderings(nums)` returning every ordering as a list. `orderings([1, 2])` → `[[1, 2], [2, 1]]` (the orderings may come in any order). `orderings([])` → `[[]]`.\n\nUnlike a subset, nothing is left out, and any value not yet placed can go next. Keep track of which indexes are already in the path (a `used` list of booleans, or a set) so no value is placed twice.',
     starterCode: `def orderings(nums):
     pass`,
     solution: `def orderings(nums):
@@ -733,7 +735,7 @@ def spell(digits):
     repType: 'combine',
     difficulty: 3,
     minutes: 9,
-    prompt: 'Write `leaf_paths(root)` returning every root-to-leaf path as a list of values, left subtree paths before right. Use one shared `path` list: append the node, recurse, pop.',
+    prompt: '`root` is the top node of a binary tree, or `None` for an empty tree. Each node has `.val`, `.left` and `.right`. A **leaf** is a node with no children, and a root-to-leaf path is the list of values you pass going from the root down to one leaf. Write `leaf_paths(root)` returning every root-to-leaf path, leftmost first. For the tree with `1` on top, children `2` and `3`, and `5` as the right child of `2`, that is `[[1, 2, 5], [1, 3]]`. An empty tree gives `[]`.\n\nUse one shared `path` list: append the node\'s value, explore below it, pop.',
     starterCode: `def leaf_paths(root):
     pass`,
     solution: `def leaf_paths(root):
@@ -769,7 +771,7 @@ const subsets = [
     skills: ['backtracking_state', 'range'],
     difficulty: 3,
     minutes: 7,
-    prompt: 'Write `all_groups(nums)` returning every subset of the distinct values in `nums`, using the **loop style**: `dfs(start)` records a copy of `path` on every call (not only at leaves), then for each `i` from `start` onward appends `nums[i]`, recurses with `i + 1`, and pops.',
+    prompt: '`nums` is a list of distinct values. Write `all_groups(nums)` returning every subset of `nums` as a list (subsets in any order): `all_groups([1, 2])` → `[[], [1], [1, 2], [2]]`, and `all_groups([])` → `[[]]`.\n\nUse the **loop style** this time instead of take/leave. `dfs(start)` saves a copy of `path` on **every** call, not only at the bottom, because every partial path is itself a subset. Then, for each index `i` from `start` onward, it appends `nums[i]`, recurses with `i + 1`, and pops.',
     starterCode: `def all_groups(nums):
     pass`,
     solution: `def all_groups(nums):
@@ -800,7 +802,8 @@ const subsets = [
     repType: 'combine',
     difficulty: 3,
     minutes: 8,
-    prompt: 'Write `hitting(nums, target)` returning every subset (as a list, in any order) whose values add to `target`. Values are distinct.',
+    prompt: '`nums` is a list of distinct integers (negatives allowed) and `target` is an integer. Write `hitting(nums, target)` returning every subset of `nums` whose values add up to exactly `target`.\n\nEach subset is a list. The subsets may come in any order, and so may the values inside each one. If no subset works, return `[]`. The empty subset adds up to 0, so `hitting([], 0)` → `[[]]`.\n\n`hitting([1, 2, 3, 4], 5)` → `[[1, 4], [2, 3]]`',
+    transfer: true,
     starterCode: `def hitting(nums, target):
     pass`,
     solution: `def hitting(nums, target):
@@ -823,7 +826,7 @@ const subsets = [
       t.hidden('hitting([], 0)', '[[]]', { compare: 'sorted-inner' }),
       t.hidden('hitting([-1, 1, 2], 1)', '[[1], [-1, 2]]', { compare: 'sorted-inner' }),
     ],
-    hints: ['Carry the total alongside the shared path.', 'At the leaf, record path[:] only if total == target.'],
+    hints: ['Every value is either in a subset or not. How did you list every such selection before?', 'Carry the running total alongside the shared path.', 'At the leaf, record path[:] only if total == target.'],
     signature: 'backtrack:subsets-filtered',
   }),
   write({
@@ -833,7 +836,7 @@ const subsets = [
     style: 'write-test',
     difficulty: 2,
     minutes: 4,
-    prompt: 'Write `test_subsets(subsets)`: it receives some implementation of "every subset of distinct `nums`" and must `assert` on its results. A correct one must pass. Three buggy ones must fail: one records `path` instead of `path[:]`, one forgets `path.pop()`, one has no exclude branch. Subsets may come in any order, and so may values inside them, so normalize before comparing (e.g. `sorted(sorted(s) for s in result)`).',
+    prompt: 'This time you write the test. `test_subsets(subsets)` receives a **function** `subsets`: calling `subsets(nums)` with a list of distinct numbers is supposed to return every subset of `nums`, as a list of lists. Call it on inputs you choose and `assert` that the results are right.\n\nWhen `subsets` is correct, your function must finish without an error. It must raise an `AssertionError` for each of three buggy versions: one saves `path` instead of `path[:]`, one forgets `path.pop()`, one never explores the leave-it-out branch.\n\nA correct `subsets` may return the subsets in any order, with the values inside each in any order, so normalize before comparing, e.g. `sorted(sorted(s) for s in result)`.',
     starterCode: `def test_subsets(subsets):
     pass`,
     solution: `def test_subsets(subsets):
@@ -931,7 +934,7 @@ const recurrence = [
     id: 'd10-rec-fib-calls',
     title: 'How many calls?',
     skills: ['recurrence', 'recursion_return'],
-    prompt: 'Predict the output.',
+    prompt: 'Predict the output. `fib(n)` is the n-th Fibonacci number: each one is the sum of the two before it (`0, 1, 1, 2, 3, 5, ...`). `calls` counts how many times `fib` runs.',
     code: `calls = 0
 
 def fib(n):
@@ -945,7 +948,7 @@ print(fib(5))
 print(calls)`,
     expectedOutput: `5
 15`,
-    note: 'Recurrence: write the answer in terms of smaller answers, e.g. f(n) = f(n - 1) + f(n - 2). Plain recursion recomputes the same subproblems, so the call count explodes.',
+    note: 'A **recurrence** writes the answer in terms of answers to smaller inputs: `fib(n) = fib(n - 1) + fib(n - 2)`. The **base cases** are the smallest inputs, answered directly. Plain recursion solves the same smaller problem again and again (**overlapping subproblems**), so the number of calls explodes.',
     explanation: 'fib(3) is computed twice, fib(2) three times... The call count grows exponentially. Memoization fixes exactly this.',
     minutes: 2.5,
     signature: 'trace:fib-call-count',
@@ -956,7 +959,7 @@ print(calls)`,
     skills: ['recurrence', 'recursion_base_case'],
     difficulty: 1,
     minutes: 3,
-    prompt: 'Write `fib(n)` recursively with `fib(0) = 0`, `fib(1) = 1`, and `fib(n) = fib(n - 1) + fib(n - 2)`.',
+    prompt: 'The Fibonacci numbers are `0, 1, 1, 2, 3, 5, 8, ...`: each is the sum of the two before it. `n` is a whole number, 0 or more. Write `fib(n)` recursively, straight from the recurrence: `fib(0) = 0`, `fib(1) = 1`, and `fib(n) = fib(n - 1) + fib(n - 2)`. `fib(10)` → `55`.',
     starterCode: `def fib(n):
     pass`,
     solution: `def fib(n):
@@ -973,7 +976,7 @@ print(calls)`,
     skills: ['recurrence', 'recursion_base_case'],
     difficulty: 2,
     minutes: 4,
-    prompt: 'You may climb 1, 2 or 3 steps at a time. Write recursive `ways3(n)` counting the ways to reach exactly step `n`. Use base cases `n == 0` (one way: do nothing) and `n < 0` (no way).',
+    prompt: 'You stand at the bottom of a staircase (step 0) and each move climbs 1, 2 or 3 steps. `n` is the step you want to land on exactly. Write recursive `ways3(n)` returning how many different sequences of moves get there. Order matters: `ways3(3)` → `4` (`1+1+1`, `1+2`, `2+1`, `3`).\n\nFind the recurrence by asking what the **last** move was: 1, 2 or 3 steps, so the answer is built from `ways3(n - 1)`, `ways3(n - 2)` and `ways3(n - 3)`. Base cases: `n == 0` has one way (make no move), and a negative `n` has none (you overshot).',
     starterCode: `def ways3(n):
     pass`,
     solution: `def ways3(n):
@@ -992,7 +995,7 @@ print(calls)`,
     skills: ['recurrence', 'recursion_base_case'],
     difficulty: 2,
     minutes: 4,
-    prompt: 'On a `rows` x `cols` grid you start top-left and may only move right or down. Write recursive `grid_paths(rows, cols)` counting the routes to the bottom-right. A grid with one row or one column has exactly one route.',
+    prompt: 'A grid has `rows` rows and `cols` columns (both at least 1). You start in the top-left cell and each move goes one cell right or one cell down. Write recursive `grid_paths(rows, cols)` returning how many different routes reach the bottom-right cell. `grid_paths(2, 2)` → `2` (right then down, or down then right). A grid with one row or one column has exactly one route.',
     starterCode: `def grid_paths(rows, cols):
     pass`,
     solution: `def grid_paths(rows, cols):
@@ -1029,7 +1032,7 @@ const memo = [
     id: 'd10-memo-trace',
     title: 'What ends up in the memo?',
     skills: ['memoization', 'dict_items'],
-    prompt: 'Predict the output.',
+    prompt: 'Predict the output. `memo` is a dict: `n` → the answer already worked out for `fib(n)`.',
     code: `memo = {}
 
 def fib(n):
@@ -1044,7 +1047,7 @@ print(fib(6))
 print(sorted(memo.items()))`,
     expectedOutput: `8
 [(2, 1), (3, 2), (4, 3), (5, 5), (6, 8)]`,
-    note: 'Memoization: check the dict, compute, store, return. The key is every argument that changes. The dict must outlive a single call: put it outside the recursive function.',
+    note: '**Memoization**: remember each answer the first time you compute it, in a dict, and look it up after that. Four moves: check the dict, compute, store, return. The key is every argument that changes. The dict must outlive a single call, so create it outside the recursive function.',
     explanation: 'Base cases are returned directly and never stored, so the memo holds 2 through 6: each computed exactly once.',
     minutes: 2,
     signature: 'trace:memo-contents',
@@ -1056,7 +1059,7 @@ print(sorted(memo.items()))`,
     style: 'optimize',
     difficulty: 2,
     minutes: 5,
-    prompt: '`climb(n)` is correct but exponential: `calls` counts how often it runs. Add a dict memo (created once, outside the function) so each `n` is computed only once. A test resets `calls` and requires `climb(25)` to make at most 60 calls.',
+    prompt: '`climb(n)` counts the ways to climb `n` steps taking 1 or 2 at a time. It is correct but slow: it works out the same `n` again and again, and `calls` counts how often it runs. Add a dict `memo` (`n` → answer), created once, outside the function, so each `n` is computed only once. A test resets `calls` and requires `climb(25)` to make at most 60 calls.',
     starterCode: `calls = 0
 
 def climb(n):
@@ -1091,7 +1094,7 @@ def climb(n):
     skills: ['memoization', 'recurrence'],
     difficulty: 2,
     minutes: 5,
-    prompt: 'Write `fast_fib(n)` (same definition as `fib`) using a dict memo created in the outer function and an inner recursive helper. It must handle `n = 80` instantly.',
+    prompt: 'Write `fast_fib(n)` returning the n-th Fibonacci number: `fast_fib(0) = 0`, `fast_fib(1) = 1`, and after that each number is the sum of the two before it (`fast_fib(10)` → `55`). Memoize it: create a dict inside `fast_fib` and do the recursion in an inner helper function that can see that dict. `n = 80` must come back instantly.',
     starterCode: `def fast_fib(n):
     pass`,
     solution: `def fast_fib(n):
@@ -1154,7 +1157,7 @@ def tri(n):
     repType: 'combine',
     difficulty: 3,
     minutes: 6,
-    prompt: 'Speed up `grid_paths(rows, cols)` (right/down moves only) with a dict memo keyed by `(rows, cols)`. A 16 x 16 grid must finish instantly.',
+    prompt: 'A grid has `rows` rows and `cols` columns (both at least 1). Starting top-left and moving only right or down, `grid_paths(rows, cols)` returns how many routes reach the bottom-right; one row or one column means exactly one route. `grid_paths(3, 3)` → `6`.\n\nPlain recursion is far too slow for a 16 x 16 grid, so memoize it. A subproblem now has **two** changing numbers, so the dict key is the pair `(rows, cols)`.',
     starterCode: `def grid_paths(rows, cols):
     pass`,
     solution: `def grid_paths(rows, cols):
@@ -1208,7 +1211,7 @@ def tri(n):
     skills: ['memoization', 'recurrence'],
     difficulty: 2,
     minutes: 4,
-    prompt: 'Write `ways3(n)` (steps of 1, 2 or 3; `ways3(0) = 1`) using `@cache` from `functools`, which memoizes a function by its arguments. It must handle `n = 40`.',
+    prompt: 'Each move climbs 1, 2 or 3 steps. Write `ways3(n)` returning how many sequences of moves land exactly on step `n` (`ways3(0) = 1`, `ways3(4)` → `7`). This time let Python do the remembering: `@cache` from `functools`, written on the line above `def`, memoizes a function by its arguments. It must handle `n = 40`.',
     starterCode: `def ways3(n):
     pass`,
     solution: `from functools import cache
@@ -1231,7 +1234,7 @@ const bottomUp = [
     id: 'd10-bu-trace',
     title: 'Fill the table',
     skills: ['dp_table'],
-    prompt: 'Predict the output.',
+    prompt: 'Predict the output. `dp` is a list where `dp[i]` holds the i-th Fibonacci number (`dp[0] = 0`, `dp[1] = 1`).',
     code: `n = 6
 dp = [0] * (n + 1)
 dp[1] = 1
@@ -1241,7 +1244,7 @@ print(dp)
 print(dp[n])`,
     expectedOutput: `[0, 1, 1, 2, 3, 5, 8]
 8`,
-    note: 'Bottom-up DP: define dp[i] in words; dp = [0] * (n + 1); set the base entries; fill i upward from earlier entries; answer is dp[n].',
+    note: '**Bottom-up DP**: instead of recursing down from `n` (top-down, with a memo), fill a list (the **table**) upward from the smallest inputs. First say in words what `dp[i]` means (the **state**). Then: `dp = [0] * (n + 1)`, set the base entries, fill `i` upward from earlier entries, and the answer is `dp[n]`.',
     explanation: 'Each entry depends only on entries already filled to its left. That order is what makes it "bottom-up".',
     minutes: 2,
     signature: 'trace:dp-fib-table',
@@ -1253,7 +1256,7 @@ print(dp[n])`,
     style: 'translate',
     difficulty: 2,
     minutes: 5,
-    prompt: 'This memoized `count_ways(n)` (1 or 2 steps) is O(n), but it recurses `n` levels deep and crashes for `n = 3000`. Rewrite it bottom-up with a `dp` list and a loop, no recursion.',
+    prompt: 'This memoized `count_ways(n)` counts the ways to climb `n` steps taking 1 or 2 at a time. It is O(n), but it recurses `n` levels deep and crashes for `n = 3000`. Rewrite it **bottom-up**, with no recursion: build a list `dp` where `dp[i]` means exactly what `go(i)` returns (the number of ways to climb `i` steps), fill it with a loop from the smallest `i` upward, and return `dp[n]`.',
     starterCode: `def count_ways(n):
     memo = {}
     def go(i):
@@ -1283,7 +1286,7 @@ print(dp[n])`,
     skills: ['dp_table', 'recurrence'],
     difficulty: 2,
     minutes: 5,
-    prompt: 'Write `ways3_table(n)` bottom-up with a list: steps of 1, 2 or 3, `ways3_table(0) = 1`. No recursion.',
+    prompt: 'Each move climbs 1, 2 or 3 steps. Write `ways3_table(n)` returning how many sequences of moves land exactly on step `n` (`n` is 0 or more), bottom-up with no recursion. Build a list `dp` where `dp[i]` is the number of ways to land on step `i`; `dp[0]` is `1` (make no move). `ways3_table(4)` → `7`. Watch the small `i`: a 3-step move cannot land on step 1 or 2.',
     starterCode: `def ways3_table(n):
     pass`,
     solution: `def ways3_table(n):
@@ -1306,7 +1309,8 @@ print(dp[n])`,
     repType: 'combine',
     difficulty: 3,
     minutes: 7,
-    prompt: 'Generalize: `steps` is a list of allowed step sizes (positive, distinct). Write `ways_with(n, steps)` counting the ways to reach exactly step `n` (order of moves matters).',
+    prompt: 'A staircase has `n` steps (`n` is 0 or more) and you start on the ground. `steps` is a list of distinct positive whole numbers: the sizes of move you are allowed to make. Write `ways_with(n, steps)` returning how many different sequences of moves land exactly on step `n`.\n\nOrder matters: with `steps = [1, 2]`, "1 then 2" and "2 then 1" are two different ways. Making no move is the one way to climb 0 steps, so `ways_with(0, [3])` → `1`. If no sequence lands exactly on step `n`, return `0`: `ways_with(5, [2])` → `0`.\n\n`ways_with(4, [1, 2])` → `5`',
+    transfer: true,
     starterCode: `def ways_with(n, steps):
     pass`,
     solution: `def ways_with(n, steps):
@@ -1324,7 +1328,7 @@ print(dp[n])`,
       t.hidden('ways_with(7, [1, 3])', '9'),
       t.hidden('ways_with(30, [1, 3])', '58425'),
     ],
-    hints: ['dp[i] = sum of dp[i - s] for every allowed s that fits.', 'Base: dp[0] = 1.'],
+    hints: ['Think about the last move. Which smaller staircases could it have started from?', 'Let dp[i] be the number of ways to land on step i, and fill a list from 0 up to n.', 'dp[i] = sum of dp[i - s] for every allowed s that fits (s <= i).', 'Base: dp[0] = 1.'],
     signature: 'dp:general-steps',
   }),
   debug({
@@ -1332,7 +1336,7 @@ print(dp[n])`,
     title: 'Debug: domino tilings',
     skills: ['dp_table'],
     minutes: 3,
-    prompt: '`tilings(n)` counts the ways to tile a 2 x `n` strip with 2 x 1 dominoes: `dp[0] = dp[1] = 1` and `dp[i] = dp[i - 1] + dp[i - 2]`. Its answers are wrong. Fix it.',
+    prompt: '`tilings(n)` counts the ways to cover a 2 x `n` strip with 2 x 1 dominoes. `dp[i]` is the number of ways to cover a 2 x `i` strip: `dp[0] = dp[1] = 1` and `dp[i] = dp[i - 1] + dp[i - 2]`. `tilings(3)` should be `3`. Its answers are wrong. Fix it.',
     brokenCode: `def tilings(n):
     dp = [1] * (n + 1)
     for i in range(2, n):
@@ -1355,7 +1359,7 @@ print(dp[n])`,
     repType: 'pattern',
     difficulty: 3,
     minutes: 10,
-    prompt: 'Step `i` costs `cost[i]` to stand on. You may start on step 0 or step 1, and from any step move up 1 or 2. The top is just past the last step and costs nothing. Write `cheapest(cost)` returning the minimum total cost to reach the top. Assume `len(cost) >= 2`.',
+    prompt: '`cost` is a list of at least two non-negative numbers: `cost[i]` is what you pay for standing on step `i`. You may start on step 0 or step 1, and from any step you move up 1 or 2. The top is just past the last step and costs nothing. Write `cheapest(cost)` returning the smallest total you can pay to reach the top. `cheapest([10, 15, 20])` → `15` (start on step 1, pay 15, jump 2 to the top).\n\nThis is a table again, but each entry keeps the **smaller** of two options instead of adding them. Let `dp[i]` be the cheapest total paid to be standing on step `i`.',
     starterCode: `def cheapest(cost):
     pass`,
     solution: `def cheapest(cost):
@@ -1372,12 +1376,7 @@ print(dp[n])`,
       t.hidden('cheapest([5, 3])', '3'),
       t.hidden('cheapest([2, 2, 2, 2])', '4'),
     ],
-    hints: [
-      'Define dp[i] = cheapest total cost to be standing on step i.',
-      'You arrive on i from i - 1 or i - 2.',
-      'dp[i] = cost[i] + min(dp[i - 1], dp[i - 2]).',
-      'The top can be reached from either of the last two steps: min(dp[-1], dp[-2]).',
-    ],
+    hints: ['You arrive on step i from step i - 1 or step i - 2. Which would you rather have come from?', 'dp[0] and dp[1] are just their own costs: you may start on either.', 'dp[i] = cost[i] + min(dp[i - 1], dp[i - 2]).', 'The top can be reached from either of the last two steps: min(dp[-1], dp[-2]).'],
     signature: 'dp:min-cost-stairs',
   }),
   capstone({
@@ -1472,7 +1471,7 @@ const rolling = [
     id: 'd10-roll-trace',
     title: 'Two variables marching forward',
     skills: ['state_tracking'],
-    prompt: 'Predict the output.',
+    prompt: 'Predict the output. `a` and `b` always hold two neighbouring Fibonacci numbers.',
     code: `a, b = 0, 1
 for _ in range(5):
     a, b = b, a + b
@@ -1482,7 +1481,7 @@ for _ in range(5):
 2 3
 3 5
 5 8`,
-    note: 'Rolling state: when dp[i] only reads the previous two entries, keep just two variables. prev2, prev1 = prev1, prev1 + prev2 (the right side uses the old values).',
+    note: '**Rolling variables**: when `dp[i]` only ever reads the previous two entries, the rest of the list is dead weight. Keep just the last two values in two variables and move them forward together: `prev2, prev1 = prev1, prev1 + prev2`. The right side is worked out with the old values first.',
     explanation: 'The right side is evaluated fully, using the old a and b, before either name is reassigned.',
     important: true,
     minutes: 2,
@@ -1494,7 +1493,7 @@ for _ in range(5):
     skills: ['state_tracking', 'recurrence'],
     difficulty: 2,
     minutes: 3,
-    prompt: 'Write `fib2(n)` (`fib2(0) = 0`, `fib2(1) = 1`) with a loop and two variables, no list and no recursion.',
+    prompt: 'Write `fib2(n)` returning the n-th Fibonacci number (`0, 1, 1, 2, 3, 5, ...`, so `fib2(0) = 0` and `fib2(1) = 1`) with a loop and two rolling variables: no list and no recursion.',
     starterCode: `def fib2(n):
     pass`,
     solution: `def fib2(n):
@@ -1550,7 +1549,7 @@ for _ in range(5):
     id: 'd10-roll-robber-trace',
     title: 'Trace the take-or-skip table',
     skills: ['dp_table', 'recurrence'],
-    prompt: 'Predict the output.',
+    prompt: 'Predict the output. You may take values from `nums`, but never two that are next to each other. `best[i]` is the largest total you can take using only `nums[0]` to `nums[i]`.',
     code: `nums = [2, 7, 9, 3, 1]
 best = [0] * len(nums)
 best[0] = nums[0]
@@ -1573,7 +1572,8 @@ print(best)`,
     repType: 'combine',
     difficulty: 3,
     minutes: 7,
-    prompt: 'Write `best_no_neighbours(nums)` top-down: `go(i)` is the best total from index `i` to the end, either skipping `i` (`go(i + 1)`) or taking it (`nums[i] + go(i + 2)`). Memoize with a dict. Values are non-negative.',
+    prompt: '`nums` is a list of non-negative numbers. You may take any of them, but never two that are **adjacent** (next to each other in the list: indexes `i` and `i + 1`). Write `best_no_neighbours(nums)` returning the largest total you can take. `[2, 7, 9, 3, 1]` → `12` (2 + 9 + 1). An empty list gives `0`.\n\nWork top-down: let `go(i)` be the best total using only the values from index `i` to the end. At index `i` there are two choices: skip it (`go(i + 1)`), or take it, which rules out `i + 1` (`nums[i] + go(i + 2)`). Keep the larger, and memoize `go` with a dict so each `i` is solved once.',
+    note: 'Take or skip: at each index, either skip it (the answer is whatever the rest gives) or take it (its value plus the best of what is still allowed after it). The answer is the larger of the two. Two values are **adjacent** when their indexes differ by 1.',
     starterCode: `def best_no_neighbours(nums):
     pass`,
     solution: `def best_no_neighbours(nums):
@@ -1599,11 +1599,12 @@ print(best)`,
   }),
   write({
     id: 'd10-roll-robber-table',
-    title: 'Take or skip, bottom-up',
+    title: 'Never two days in a row',
     skills: ['dp_table', 'recurrence', 'edge_cases'],
     difficulty: 3,
     minutes: 7,
-    prompt: 'Now bottom-up: write `best_table(nums)` with a list `best` where `best[i]` is the largest total using only `nums[0..i]` without taking neighbours. Handle an empty list and a single value before building the table.',
+    prompt: '`nums[i]` is what a job on day `i` pays (never negative). You may work any days you like, but never two days in a row. Write `best_table(nums)` returning the most you can earn.\n\n`best_table([2, 7, 9, 3, 1])` → `12` (days 0, 2 and 4). With no days at all the answer is `0`; with one day it is that day\'s pay.',
+    transfer: true,
     starterCode: `def best_table(nums):
     pass`,
     solution: `def best_table(nums):
@@ -1624,7 +1625,7 @@ print(best)`,
       t.hidden('best_table([2, 1, 1, 2])', '4'),
       t.hidden('best_table([3, 10])', '10'),
     ],
-    hints: ['best[1] is the better of the first two values.', 'best[i] = max(best[i - 1], best[i - 2] + nums[i]).'],
+    hints: ['On the last day you either work or you rest. What is the best total in each case?', 'Let best[i] be the most you can earn from days 0 to i, and build it in a list from left to right. Handle zero days and one day first.', 'best[1] is the better of the first two values.', 'best[i] = max(best[i - 1], best[i - 2] + nums[i]).'],
     signature: 'dp:take-skip-table',
   }),
   debug({
@@ -1632,7 +1633,7 @@ print(best)`,
     title: 'Debug: no neighbours allowed',
     skills: ['state_tracking', 'recurrence'],
     minutes: 3.5,
-    prompt: '`best_total(nums)` should return the largest sum of values from `nums` (all non-negative) without ever taking two neighbours, using two rolling variables. Fix it.',
+    prompt: '`nums` is a list of non-negative numbers. `best_total(nums)` should return the largest sum you can make without ever taking two values that are next to each other (`[2, 7, 9, 3, 1]` → `12`, an empty list → `0`). It uses two rolling variables instead of a list: after each value, `prev1` is the best total so far and `prev2` is the best total as of one value earlier. Fix it.',
     brokenCode: `def best_total(nums):
     prev2, prev1 = 0, 0
     for x in nums:
@@ -1777,7 +1778,7 @@ const cold = [
     repType: 'cold',
     difficulty: 3,
     minutes: 6,
-    prompt: 'A strip of length `n` is covered left to right with pieces of length 1 or 3. Write `cover(n)` counting the ways (`cover(0) = 1`). Use bottom-up DP or rolling variables, not plain recursion.',
+    prompt: 'A strip of length `n` is covered left to right with pieces of length 1 or 3. Write `cover(n)` counting the ways (`cover(0) = 1`). No recursion.',
     starterCode: `def cover(n):
     pass`,
     solution: `def cover(n):

@@ -107,6 +107,13 @@ export interface Exercise {
   hints?: string[]
   /** Short concept reminder shown in Learn mode. */
   note?: string
+  /**
+   * Unlabeled transfer: a small problem placed before a target, stated cleanly, that does not say which
+   * technique to use. Recognising the pattern is part of what it tests.
+   */
+  transfer?: boolean
+  /** Generated reps only: the little teaching a first-exposure rep carries (what it is, a tiny example). */
+  teaching?: { concept: string; example?: string }
   /** Shown after completion. */
   explanation?: string
   rubric?: string[]

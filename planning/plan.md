@@ -18,10 +18,11 @@ primer → ladder → mastery check → [ bridge → problem ] for each problem 
                                       teach)
 ```
 
-1. **Primer.** One short page per idea, behind the Basics button: what it is, the lines you will type, the mistakes that happen.
+1. **Primer.** One short page per idea: what it is, the lines you will type, the mistakes that happen. **The first time you meet an idea, it is shown before the question** (concept, mental model, a tiny example, then "Your rep"), not hidden behind a button. Once you have produced the idea yourself it stops appearing on its own and stays behind Basics.
 2. **Ladder.** The pattern's reps in Reps, smallest idea first: trace it, write it, a different shape, break it, fix it, combine it, then its capstone.
 3. **Mastery check.** Cold reps from a bare signature. Each must be passed **without opening the solution** before anything after it unlocks. Hints and Basics are fine. All 15 patterns have one.
-4. **Bridge.** A pattern ladder is not enough: most problems need one or two moves the ladder never trained (prefix and suffix passes for Product of Array Except Self; which half is sorted for a rotated search). Each problem lists its **building blocks**, named moves like "spot where a run starts". Blocks the ladder already covers are ticked by the ladder reps; the rest are taught by the problem's bridge, 2–7 reps placed **directly before the problem**, ending on a miniature version written from a signature.
+4. **Unlabeled transfer.** Before each capstone, and at the end of each bridge, one small problem is stated cleanly and does **not** say which technique to use: recognising it is part of the rep. The page hides the skills it trains until you pass.
+4a. **Bridge.** A pattern ladder is not enough: most problems need one or two moves the ladder never trained (prefix and suffix passes for Product of Array Except Self; which half is sorted for a rotated search). Each problem lists its **building blocks**, named moves like "spot where a run starts". Blocks the ladder already covers are ticked by the ladder reps; the rest are taught by the problem's bridge, 2–7 reps placed **directly before the problem**, ending on a miniature version written from a signature.
 5. **The problem.** When every block is ready, the problem is those moves assembled. Attempt for up to 30 minutes, then log it.
 6. **If it needed help, it is not finished.** Rebuild it from a blank editor, then go back down the ladder to the block that broke (Reps starts that block's reps as a repair set).
 7. **Re-solves.** Every problem comes back three times, cold, about 15 minutes each: 3–4, 10–12 and 30–33 days after you first solve it.
@@ -48,34 +49,36 @@ A capstone you solve inside Reps **is** that LeetCode problem (Two Sum, Valid Pa
 
 | | Count |
 |---|---|
-| Reps in Reps | **588**: 357 ladder, 70 mastery-check, 111 bridge, 50 mixed interview practice |
+| Reps in Reps | **603**: 371 ladder, 70 mastery-check, 112 bridge, 50 mixed interview practice |
 | Problems | **52**: 22 as Reps capstones + 30 on LeetCode, each of the 30 behind its bridge |
-| Re-solves scheduled | **144**, each inside its window (27 more fall after Jan 9: the maintenance queue) |
+| Re-solves scheduled | **143**, each inside its window (28 more fall after Jan 9: the maintenance queue) |
 | Ready for when you are ahead | **15 more problems with their bridges already written** (70 reps), in `stretch.csv` order |
 
 | # | Pattern | Ladder | Check | Bridge | Problems (capstone + LeetCode) |
 |---|---|---|---|---|---|
 | 1 | Hashing | 25 | 8 | 12 | 2 + 3 |
 | 2 | Strings + two pointers | 42 | 4 | 8 | 3 + 2 |
-| 3 | Sliding window | 19 | 5 | 5 | 1 + 1 |
+| 3 | Sliding window | 20 | 5 | 5 | 1 + 1 |
 | 4 | Stacks | 19 | 5 | 0 | 1 + 0 |
-| 5 | Binary search | 20 | 4 | 8 | 1 + 2 |
-| 6 | Linked lists | 22 | 5 | 6 | 2 + 2 |
-| 7 | Recursion + trees | 35 | 6 | 15 | 3 + 4 |
+| 5 | Binary search | 20 | 4 | 4 | 1 + 1 |
+| 6 | Linked lists | 23 | 5 | 6 | 2 + 2 |
+| 7 | Recursion + trees | 36 | 6 | 15 | 3 + 4 |
 | 8 | Tries | 15 | 4 | 6 | 0 + 2 |
 | 9 | BFS + grids | 37 | 3 | 0 | 2 + 0 |
-| 10 | Graphs | 28 | 4 | 8 | 1 + 2 |
-| 11 | Sorting + heaps | 30 | 5 | 0 | 2 + 0 |
+| 10 | Graphs | 32 | 4 | 8 | 1 + 2 |
+| 11 | Sorting + heaps | 35 | 5 | 0 | 2 + 0 |
 | 12 | Intervals | 8 | 5 | 11 | 1 + 3 |
-| 13 | Backtracking | 17 | 4 | 5 | 1 + 1 |
-| 14 | Dynamic programming | 26 | 4 | 23 | 2 + 6 |
+| 13 | Backtracking | 18 | 4 | 5 | 1 + 1 |
+| 14 | Dynamic programming | 27 | 4 | 28 | 2 + 7 |
 | 15 | Matrix | 14 | 4 | 4 | 0 + 2 |
 
 **What changed from the first ladder edition, and the honest cost.** Six patterns had no mastery check and two (tries, matrix) had no ladder at all; they do now. And every LeetCode problem now has a bridge. Done in full, that is about 49 more hours than 90 days hold at your measured pace, so three things were trimmed, in this order, and the method was not one of them:
 
+**Teaching is never what gets trimmed** (Oct 13 audit). Whatever the spine below removes, a ladder section always keeps the first rep to carry each skill (a first exposure), the unlabeled transfer rep before each capstone, and the lead-in reps a later rep, check or capstone relies on (the variable-window trace, the first count-dict window, max over a tree, in-degree before Kahn, the tuple-key trace, the decision-tree trace, the take-or-skip trace). Two small sections came back for the same reason: connected components (the Graphs check asks for a component count) and the max-heap section (later reps and the check need the negation trick). That added 15 reps and swapped one problem: Word Break is in, Search in Rotated Sorted Array waits.
+
 1. **Redundant reps left the pattern ladders** (they stay in the app as extras): the explain-after-capstone reps (the solve log and the mocks train explanation) and variations beyond each section's spine. A section keeps its trace, up to 2 guided writes, up to 4 from-signature writes and 2 debugs; after the first month, 1 guided and 3 from-signature, because by then the Python underneath is owned.
 2. **A capstone is costed like the problem it is** (25–40 minutes), not as authored minutes × 2.25: ladder-reached solves measured 3–13 minutes.
-3. **Fifteen problems wait for when you are ahead**, with their bridges written: the three Hards (Minimum Window Substring, Merge k Sorted Lists, Maximum Path Sum) and the costliest or rarest Mediums (Encode and Decode Strings, Pacific Atlantic, Construct Tree, LCS, Graph Valid Tree, Reorder List, Longest Palindromic Substring, Word Search, Non-overlapping Intervals, Set Matrix Zeroes, Word Break, Decode Ways).
+3. **Fifteen problems wait for when you are ahead**, with their bridges written: the three Hards (Minimum Window Substring, Merge k Sorted Lists, Maximum Path Sum) and the costliest or rarest Mediums (Encode and Decode Strings, Pacific Atlantic, Construct Tree, LCS, Graph Valid Tree, Reorder List, Longest Palindromic Substring, Word Search, Non-overlapping Intervals, Set Matrix Zeroes, Search in Rotated Sorted Array, Decode Ways).
 
 So the 90 days hold **52 problems learned deeply, not 67 met quickly**. The other route to more problems is more minutes: about 30 more minutes of new work a day in the Full phase brings roughly 8 of the 15 back inside the 90 days. That is a decision about your days, so it is yours; change `BUDGETS` in `planning/gen.py` and rerun.
 
@@ -163,17 +166,17 @@ Reps does not open on "the next unfinished thing". It opens on **Today's trainin
 |---|---|---|---|---|---|---|---|
 | 1 | Oct 12–Oct 17 | Hashing | 42 | 49, 128 | 7 | — | — |
 | 2 | Oct 19–Oct 24 | Hashing, Strings + two pointers | 53 | 238, 11 | 9 | 1 self (recorded) | Résumé final; list of SWE I postings open now |
-| 3 | Oct 26–Oct 31 | Strings + two pointers, Sliding window, Stacks | 45 | 15, 424 | 10 | 1 self | Object design: Min Stack; stories 1–2; 5 applications |
-| 4 | Nov 2–Nov 7 | Stacks, Binary search, Linked lists | 49 | 153, 33 | 9 | 2 (self + Nadani) | Object design: parking lot; stories 3–4; 5 applications |
-| 5 | Nov 9–Nov 14 | Linked lists, Recursion + trees | 69 | 141, 19 | 15 | 2 | LRU cache design; story 5; 5 applications · **Day 30 = Tue Nov 10** |
-| 6 | Nov 16–Nov 21 | Recursion + trees, Tries, BFS + grids | 44 | 572, 235, 98, 230, 208, 211 | 17 | 2 | Rate limiter design; story 6; 5 applications |
-| 7 | Nov 23–Nov 28 | Interview practice | 50 | — | 14 | 1 | **Buffer.** Mixed interview practice in Reps; catch up or rest (Nov 26–27 off) |
-| 8 | Nov 30–Dec 5 | BFS + grids, Graphs | 56 | — | 8 | 2 + 1 timed set | System design primer; stories 7–8; 5 applications |
-| 9 | Dec 7–Dec 12 | Graphs, Sorting + heaps | 54 | 133, 323 | 11 | 2 | URL shortener; behavioral mock · **Day 60 = Thu Dec 10** |
-| 10 | Dec 14–Dec 19 | Sorting + heaps, Intervals, Backtracking | 51 | 57, 252, 253, 39 | 15 | 2 (1 AI-assisted) | Key-value store design; stories 9–10 |
-| 11 | Dec 21–Dec 26 | Re-solves | 0 | — | 11 | 1 | **Buffer.** Re-solves only; rest (Dec 24–25 off) |
-| 12 | Dec 28–Jan 2 | Dynamic programming | 48 | 213, 53, 55, 322 | 6 | 2 | Code-review drill; stories 11–12 (Jan 1 off) |
-| 13 | Jan 4–Jan 9 | Dynamic programming, Matrix | 27 | 300, 62, 48, 54 | 12 | 3–4 full loops | Final polish · **Day 90 = Sat Jan 9** |
+| 3 | Oct 26–Oct 31 | Strings + two pointers, Sliding window, Stacks | 46 | 15, 424 | 10 | 1 self | Object design: Min Stack; stories 1–2; 5 applications |
+| 4 | Nov 2–Nov 7 | Stacks, Binary search, Linked lists | 59 | 153 | 9 | 2 (self + Nadani) | Object design: parking lot; stories 3–4; 5 applications |
+| 5 | Nov 9–Nov 14 | Linked lists, Recursion + trees | 64 | 141, 19, 572 | 15 | 2 | LRU cache design; story 5; 5 applications · **Day 30 = Tue Nov 10** |
+| 6 | Nov 16–Nov 21 | Recursion + trees, Tries, BFS + grids | 47 | 235, 98, 230, 208, 211 | 17 | 2 | Rate limiter design; story 6; 5 applications |
+| 7 | Nov 23–Nov 28 | Interview practice | 48 | — | 13 | 1 | **Buffer.** Mixed interview practice in Reps; catch up or rest (Nov 26–27 off) |
+| 8 | Nov 30–Dec 5 | BFS + grids, Graphs | 57 | — | 7 | 2 + 1 timed set | System design primer; stories 7–8; 5 applications |
+| 9 | Dec 7–Dec 12 | Graphs, Sorting + heaps, Intervals | 58 | 133, 323 | 11 | 2 | URL shortener; behavioral mock · **Day 60 = Thu Dec 10** |
+| 10 | Dec 14–Dec 19 | Intervals, Backtracking, Dynamic programming | 54 | 57, 252, 253, 39 | 16 | 2 (1 AI-assisted) | Key-value store design; stories 9–10 |
+| 11 | Dec 21–Dec 26 | Re-solves | 0 | — | 9 | 1 | **Buffer.** Re-solves only; rest (Dec 24–25 off) |
+| 12 | Dec 28–Jan 2 | Dynamic programming | 45 | 213, 53, 55, 322, 139 | 7 | 2 | Code-review drill; stories 11–12 (Jan 1 off) |
+| 13 | Jan 4–Jan 9 | Dynamic programming, Matrix | 30 | 300, 62, 48, 54 | 13 | 3–4 full loops | Final polish · **Day 90 = Sat Jan 9** |
 
 Jan 10 is a rest and debrief day; it is not part of the 90.
 

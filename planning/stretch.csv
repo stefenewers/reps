@@ -1,5 +1,5 @@
 lc,title,pattern,difficulty,source,why_not_scheduled,neetcode_video
-139,Word Break,1D DP on prefixes,Medium,NC150,bridge ready: first in when ahead,https://www.youtube.com/watch?v=Sx9NNgInc3A
+33,Search in Rotated Sorted Array,Binary search rotated,Medium,NC150,bridge ready: first in when ahead,https://www.youtube.com/watch?v=U8XENwh8Oy8
 73,Set Matrix Zeroes,Matrix in-place markers,Medium,NC150,bridge ready: first in when ahead,https://www.youtube.com/watch?v=T41rL0L3Pnw
 435,Non-overlapping Intervals,Intervals greedy,Medium,NC150,bridge ready: first in when ahead,https://www.youtube.com/watch?v=nONCGxWoUfM
 79,Word Search,Grid backtracking,Medium,NC150,bridge ready: first in when ahead,https://www.youtube.com/watch?v=pfiQ_PS1g8E

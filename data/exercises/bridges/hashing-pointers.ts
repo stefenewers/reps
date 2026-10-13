@@ -22,8 +22,9 @@ const sections: PackSection[] = [
         id: 'b49-dbg-list-key',
         title: 'Group numbers that share digits',
         skills: ['grouping_key', 'dict_membership', 'list_append', 'sorting'],
+        note: '`str(321)` turns the number into the text `"321"`, so its digits can be handled like the letters of a word.',
         prompt:
-          '`group_by_digits(nums)` should put numbers that are made of the same digits into one group, keeping the original order inside each group and ordering groups by their first number.\n\n`group_by_digits([123, 45, 321, 54, 7])` → `[[123, 321], [45, 54], [7]]`\n\nIt crashes. Make it work.',
+          '`nums` is a list of whole numbers, none negative. `group_by_digits(nums)` should put numbers that are made of the same digits into one group, keeping the original order inside each group. The groups come out in the order their first number appears in `nums`.\n\n`group_by_digits([123, 45, 321, 54, 7])` → `[[123, 321], [45, 54], [7]]`\n\nIt crashes. Make it work.',
         brokenCode: `def group_by_digits(nums):
     groups = {}
     for n in nums:
@@ -56,11 +57,12 @@ const sections: PackSection[] = [
         id: 'b49-group-by-ends',
         title: 'Group words by both ends',
         skills: ['grouping_key', 'tuples', 'dict_membership', 'list_append'],
+        transfer: true,
         stage: 'pattern',
         repType: 'pattern',
         difficulty: 3,
         prompt:
-          '`words` is a list of non-empty words.\n\nWrite `group_by_ends(words)`: words that share **both** their first letter and their last letter go in the same group. Keep the original order inside each group; order the groups by their first word. Return a list of groups.\n\n`group_by_ends(["apple", "bob", "axle", "blob", "ant"])` → `[["apple", "axle"], ["bob", "blob"], ["ant"]]`',
+          '`words` is a list of non-empty words. A one-letter word starts and ends with that letter.\n\nWrite `group_by_ends(words)`: words that share **both** their first letter and their last letter go in the same group. Keep the original order inside each group; the groups come out in the order their first word appears in `words`. Return a list of groups (an empty list gives `[]`).\n\n`group_by_ends(["apple", "bob", "axle", "blob", "ant"])` → `[["apple", "axle"], ["bob", "blob"], ["ant"]]`',
         starterCode: `def group_by_ends(words):
     pass`,
         solution: `def group_by_ends(words):
@@ -208,6 +210,7 @@ print(x, length)`,
         id: 'b128-long-streaks',
         title: 'Count the long streaks',
         skills: ['sequence_start', 'set_create', 'while_loop', 'accumulator'],
+        transfer: true,
         stage: 'pattern',
         repType: 'pattern',
         difficulty: 3,
@@ -257,7 +260,7 @@ print(x, length)`,
         title: 'The total before each position',
         skills: ['prefix_suffix', 'accumulator', 'list_append'],
         prompt:
-          'Write `sums_before(nums)`: a list the same length as `nums` where entry `i` is the sum of everything **before** position `i` (not including `nums[i]` itself).\n\n`sums_before([3, 1, 4])` → `[0, 3, 4]`',
+          '`nums` is a list of numbers (it can be empty).\n\nWrite `sums_before(nums)`: a list the same length as `nums` where entry `i` is the sum of everything **before** position `i` (not including `nums[i]` itself).\n\n`sums_before([3, 1, 4])` → `[0, 3, 4]`',
         starterCode: `def sums_before(nums):
     pass`,
         solution: `def sums_before(nums):
@@ -317,7 +320,7 @@ print(x, length)`,
         skills: ['prefix_suffix', 'range', 'list_index', 'accumulator'],
         difficulty: 3,
         prompt:
-          'Now from the other side. Write `products_after(nums)`: entry `i` is everything **after** position `i` multiplied together (`1` when nothing is after it).\n\n`products_after([2, 3, 4])` → `[12, 4, 1]`\n\nYou cannot append this time: the last entry is known first. Make the full-length list up front and fill it from the right.',
+          'Now from the other side. `nums` is a list of numbers. Write `products_after(nums)`: entry `i` is everything **after** position `i` multiplied together (`1` when nothing is after it).\n\n`products_after([2, 3, 4])` → `[12, 4, 1]`\n\nYou cannot append this time: the last entry is known first. Make the full-length list up front and fill it from the right.',
         starterCode: `def products_after(nums):
     pass`,
         solution: `def products_after(nums):
@@ -336,7 +339,7 @@ print(x, length)`,
           t.hidden('products_after([1, 1, 1, 1])', '[1, 1, 1, 1]'),
         ],
         hints: ['`[1] * n` makes a list of n ones to write into.', '`range(start, stop, step)` can count down: begin at the last index, stop just past 0, step -1.', 'Inside the loop it is the same two lines as before, written with an index: store, then update.'],
-        note: '`range(n - 1, -1, -1)` gives `n - 1, n - 2, ..., 0`. The stop value is never produced, so stopping at `-1` is how you include index 0.',
+        note: '`[1] * 4` makes `[1, 1, 1, 1]`: a list that already has its full length, ready to be written into by index. `range(n - 1, -1, -1)` gives `n - 1, n - 2, ..., 0`. The stop value is never produced, so stopping at `-1` is how you include index 0.',
         explanation: 'A suffix pass is a prefix pass walking the other way. Because you visit positions in reverse, you write by index into a list that already has its full length.',
         signature: 'suffix:product-after',
         minutes: 5.5,
@@ -388,11 +391,13 @@ print(x, length)`,
         id: 'b238-best-rival',
         title: 'The best of everyone else',
         skills: ['prefix_suffix', 'state_tracking', 'range', 'list_index'],
+        transfer: true,
+        note: '`float(\'-inf\')` is a value lower than every number. It is a safe thing to compare against before any real value has been seen, even when the values are negative.',
         stage: 'pattern',
         repType: 'pattern',
         difficulty: 3,
         prompt:
-          '`scores` holds one score per player (at least two players).\n\nWrite `best_rival(scores)`: a list where entry `i` is the highest score among all the **other** players, leaving out player `i`. One pass from the left and one from the right; no nested loop.\n\n`best_rival([3, 9, 4, 7])` → `[9, 7, 9, 9]`',
+          '`scores` holds one score per player (at least two players).\n\nWrite `best_rival(scores)`: a list where entry `i` is the highest score among all the **other** players, leaving out player `i`. The list can be long: do not rescan it for every player.\n\n`best_rival([3, 9, 4, 7])` → `[9, 7, 9, 9]`',
         starterCode: `def best_rival(scores):
     pass`,
         solution: `def best_rival(scores):
@@ -435,6 +440,7 @@ print(x, length)`,
         id: 'b271-break-join',
         title: 'Break the comma trick',
         skills: ['string_framing', 'string_methods', 'edge_cases'],
+        note: '`\',\'.join(words)` glues the strings into one string with a comma between each pair. `text.split(\',\')` cuts a string at every comma and returns the list of pieces.',
         style: 'write-test',
         stage: 'debug',
         prompt:
@@ -463,7 +469,7 @@ def breaking_input():
         title: 'Length, marker, text',
         skills: ['string_framing', 'string_methods', 'len', 'for_loop'],
         prompt:
-          'Write `pack(words)`: one string holding every word, each written as its length, then `#`, then the word itself, with nothing in between.\n\n`pack(["cat", "hi"])` → `"3#cat2#hi"`',
+          '`words` is a list of strings; any of them can be empty.\n\nWrite `pack(words)`: one string holding every word, each written as its length, then `#`, then the word itself, with nothing in between.\n\n`pack(["cat", "hi"])` → `"3#cat2#hi"`\n\nAn empty word is still written, as `0#`. An empty list gives `""`.',
         starterCode: `def pack(words):
     pass`,
         solution: `def pack(words):
@@ -561,11 +567,12 @@ def breaking_input():
         id: 'b271-count-items',
         title: 'How many items are packed',
         skills: ['string_framing', 'slicing', 'while_loop', 'accumulator'],
+        transfer: true,
         stage: 'pattern',
         repType: 'pattern',
         difficulty: 3,
         prompt:
-          '`data` is a packed string: each item is written as its length, `#`, then its text. The texts can contain anything, including `#` and digits.\n\nWrite `count_items(data)`: how many items it holds. Do not build the items; hop from one to the next.\n\n`count_items("3#cat2#hi")` → `2`\n`count_items("3#a#b1#7")` → `2`',
+          '`data` is a packed string: each item is written as its length, `#`, then its text. The texts can contain anything, including `#` and digits.\n\nWrite `count_items(data)`: how many items it holds. Only the count is wanted, not the items. An empty string holds `0` items.\n\n`count_items("3#cat2#hi")` → `2`\n`count_items("3#a#b1#7")` → `2`',
         starterCode: `def count_items(data):
     pass`,
         solution: `def count_items(data):
@@ -673,6 +680,7 @@ def breaking_input():
         id: 'b11-best-banner',
         title: 'The biggest banner',
         skills: ['two_pointer', 'pointer_update', 'state_tracking'],
+        transfer: true,
         stage: 'pattern',
         repType: 'pattern',
         difficulty: 3,
@@ -751,7 +759,7 @@ def breaking_input():
         title: 'Each value once, by sorting',
         skills: ['sorted_dedupe', 'sorting', 'range', 'list_append'],
         prompt:
-          'Write `distinct_sorted(nums)`: every different value in `nums`, smallest first, each one once. `nums` is in any order.\n\nDo it by sorting and comparing each value with the one just before it (no set this time).\n\n`distinct_sorted([4, 1, 4, 1, 1, 6])` → `[1, 4, 6]`',
+          'Write `distinct_sorted(nums)`: every different value in `nums`, smallest first, each one once. `nums` is a list of numbers in any order, possibly empty.\n\nDo it by sorting and comparing each value with the one just before it (no set this time).\n\n`distinct_sorted([4, 1, 4, 1, 1, 6])` → `[1, 4, 6]`',
         starterCode: `def distinct_sorted(nums):
     pass`,
         solution: `def distinct_sorted(nums):
@@ -818,7 +826,7 @@ def breaking_input():
         repType: 'combine',
         difficulty: 4,
         prompt:
-          '`nums` is sorted and may contain repeats.\n\nWrite `unique_pairs(nums, target)`: every **different** pair of values `[a, b]` (taken from two different positions, `a <= b`) that adds up to `target`. Each pair appears once, in the order the two-pointer scan finds them.\n\n`unique_pairs([1, 1, 2, 3, 4, 4], 5)` → `[[1, 4], [2, 3]]`\n\nThis is your sorted pair search, except that it keeps going after a hit and must not report the same pair again.',
+          '`nums` is sorted and may contain repeats.\n\nWrite `unique_pairs(nums, target)`: every **different** pair of values `[a, b]` (taken from two different positions, `a <= b`) that adds up to `target`. Each pair appears once, ordered by `a`, smallest first.\n\n`unique_pairs([1, 1, 2, 3, 4, 4], 5)` → `[[1, 4], [2, 3]]`\n\nThis is the two-pointer pair search on a sorted list (start at both ends; a sum that is too small moves `left`, one that is too big moves `right`), except that it keeps going after a hit and must not report the same pair again.',
         starterCode: `def unique_pairs(nums, target):
     pass`,
         solution: `def unique_pairs(nums, target):
@@ -864,6 +872,7 @@ def breaking_input():
         id: 'b15-count-baskets',
         title: 'Three prices, one gift card',
         skills: ['sorted_dedupe', 'two_pointer', 'sorting', 'pointer_update'],
+        transfer: true,
         stage: 'pattern',
         repType: 'pattern',
         difficulty: 4,

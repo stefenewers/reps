@@ -240,7 +240,7 @@ for right in range(len(s)):
       skills: ['window_counts', 'frequency_map', 'dict_get'],
       difficulty: 2,
       prompt:
-        "Write `changes_needed(s)`: the smallest number of characters you would have to change so that **every** character of `s` is the same. An empty string needs `0`.\n\n`changes_needed('AABAB')` → `2` (change both `B`s)",
+        "`s` is a string of letters.\n\nWrite `changes_needed(s)`: the smallest number of characters you would have to change so that **every** character of `s` is the same. An empty string needs `0`.\n\n`changes_needed('AABAB')` → `2` (change both `B`s)",
       starterCode: `def changes_needed(s):
     pass`,
       solution: `def changes_needed(s):
@@ -269,7 +269,7 @@ for right in range(len(s)):
       skills: ['window_counts', 'window_state', 'sliding_window', 'enumerate'],
       difficulty: 3,
       prompt:
-        "Write `fixable_windows(s, size, k)`: how many substrings of length `size` could be turned into one repeated letter by changing **at most `k`** characters. `size >= 1`. Keep one count map and update it on both edges.\n\n`fixable_windows('AABAB', 3, 1)` → `3` (`AAB`, `ABA` and `BAB` each need one change)",
+        "`s` is a string of letters.\n\nWrite `fixable_windows(s, size, k)`: how many substrings of length `size` could be turned into one repeated letter by changing **at most `k`** characters. `size >= 1`; a string shorter than `size` has none. Keep one count map and update it on both edges.\n\n`fixable_windows('AABAB', 3, 1)` → `3` (`AAB`, `ABA` and `BAB` each need one change)",
       starterCode: `def fixable_windows(s, size, k):
     pass`,
       solution: `def fixable_windows(s, size, k):
@@ -347,12 +347,13 @@ for right in range(len(s)):
       id: 'b424-longest-agreeing',
       title: 'Longest near-unanimous run',
       skills: ['window_counts', 'sliding_window', 'window_state', 'state_tracking'],
+      transfer: true,
       stage: 'pattern',
       repType: 'pattern',
       difficulty: 4,
       important: true,
       prompt:
-        "`votes` is a list of answers in the order they were cast. A recount may overturn **at most `k`** of them.\n\nWrite `longest_agreeing(votes, k)`: the length of the longest run of votes in a row that could be made unanimous.\n\n`longest_agreeing(['y', 'n', 'y', 'y', 'n', 'n'], 1)` → `4` (the first four, overturning the one `'n'`)",
+        "`votes` is a list of answers in the order they were cast. A recount may overturn **at most `k`** of them.\n\nWrite `longest_agreeing(votes, k)`: the length of the longest run of votes in a row that could be made unanimous. No votes gives `0`.\n\n`longest_agreeing(['y', 'n', 'y', 'y', 'n', 'n'], 1)` → `4` (the first four, overturning the one `'n'`)",
       starterCode: `def longest_agreeing(votes, k):
     pass`,
       solution: `def longest_agreeing(votes, k):
@@ -401,7 +402,7 @@ const toward76: PackSection = {
       skills: ['window_counts', 'frequency_map', 'tuples'],
       difficulty: 2,
       prompt:
-        "`t` lists the characters a window must contain, repeats included.\n\nWrite `need_map(t)` that returns two things as a tuple: a dict of character → how many are needed, and **how many different characters** are needed.\n\n`need_map('aab')` → `({'a': 2, 'b': 1}, 2)`",
+        "`t` is a string listing the characters a window must contain, repeats included (it can be empty).\n\nWrite `need_map(t)` that returns two things as a tuple: a dict of character → how many are needed, and **how many different characters** are needed.\n\n`need_map('aab')` → `({'a': 2, 'b': 1}, 2)`",
       starterCode: `def need_map(t):
     pass`,
       solution: `def need_map(t):
@@ -453,7 +454,7 @@ const toward76: PackSection = {
       skills: ['window_counts', 'window_state', 'dict_membership'],
       difficulty: 3,
       prompt:
-        "Asking `covers` on every step is slow. Keep a number instead: `formed` = how many needs are met right now.\n\nWrite `add_right(ch, window, need, formed)`: add `ch` to the `window` counts, and return the new `formed`. It goes up by one only at the moment `ch` **reaches** its needed count.\n\n`add_right('a', {'a': 1}, {'a': 2, 'b': 1}, 0)` → `1`\n`add_right('a', {'a': 2}, {'a': 2}, 1)` → `1` (a spare copy changes nothing)",
+        "`window` and `need` are dicts of character → count: what the window holds now, and what is required. Checking every need on every step is slow, so keep a number instead: `formed` = how many needs are met right now. `ch` is the character entering the window.\n\nWrite `add_right(ch, window, need, formed)`: add `ch` to the `window` counts, and return the new `formed`. It goes up by one only at the moment `ch` **reaches** its needed count.\n\n`add_right('a', {'a': 1}, {'a': 2, 'b': 1}, 0)` → `1`\n`add_right('a', {'a': 2}, {'a': 2}, 1)` → `1` (a spare copy changes nothing)",
       starterCode: `def add_right(ch, window, need, formed):
     pass`,
       solution: `def add_right(ch, window, need, formed):
@@ -481,7 +482,7 @@ const toward76: PackSection = {
       skills: ['window_counts', 'window_state', 'dict_membership'],
       difficulty: 3,
       prompt:
-        "The mirror image. `ch` is in the window and is about to leave from the left.\n\nWrite `drop_left(ch, window, need, formed)`: lower its count in `window` and return the new `formed`. It goes down by one only when losing this copy **breaks** a need that was met.\n\n`drop_left('a', {'a': 2}, {'a': 2}, 1)` → `0`\n`drop_left('a', {'a': 3}, {'a': 2}, 1)` → `1` (there was a spare)",
+        "`window` and `need` are dicts of character → count: what the window holds now, and what is required. `formed` is how many needs are met right now. `ch` is in the window and is about to leave from the left.\n\nWrite `drop_left(ch, window, need, formed)`: lower its count in `window` and return the new `formed`. It goes down by one only when losing this copy **breaks** a need that was met.\n\n`drop_left('a', {'a': 2}, {'a': 2}, 1)` → `0`\n`drop_left('a', {'a': 3}, {'a': 2}, 1)` → `1` (there was a spare)",
       starterCode: `def drop_left(ch, window, need, formed):
     pass`,
       solution: `def drop_left(ch, window, need, formed):
@@ -593,12 +594,13 @@ const toward76: PackSection = {
       id: 'b76-shortest-with-all',
       title: 'Shortest stretch with every required letter',
       skills: ['window_counts', 'sliding_window', 'window_state', 'state_tracking'],
+      transfer: true,
       stage: 'pattern',
       repType: 'pattern',
       difficulty: 5,
       important: true,
       prompt:
-        "`required` is a non-empty **set** of characters (each is needed once; there are no repeats to worry about).\n\nWrite `shortest_with_all(s, required)`: the shortest substring of `s` that contains every character in `required`. On a tie, the earliest. If there is none, return `''`.\n\n`shortest_with_all('xaybzab', {'a', 'b'})` → `'ab'`",
+        "`s` is a string (it can be empty) and `required` is a non-empty **set** of characters (each is needed once; there are no repeats to worry about).\n\nWrite `shortest_with_all(s, required)`: the shortest substring of `s` that contains every character in `required`. On a tie, the earliest. If there is none, return `''`.\n\n`shortest_with_all('xaybzab', {'a', 'b'})` → `'ab'`",
       starterCode: `def shortest_with_all(s, required):
     pass`,
       solution: `def shortest_with_all(s, required):
@@ -842,7 +844,7 @@ print(lo)`,
       skills: ['rotated_search', 'mid_calc', 'tuples'],
       difficulty: 2,
       prompt:
-        '`nums` is a rotated sorted list of different values, and the smallest value is somewhere in `nums[lo..hi]` with `lo < hi`.\n\nWrite `narrow(nums, lo, hi)`: look at the middle once and return the new `(lo, hi)` that still holds the smallest value.\n\n`narrow([4, 5, 6, 7, 0, 1, 2], 0, 6)` → `(4, 6)`\n`narrow([4, 5, 6, 7, 0, 1, 2], 4, 6)` → `(4, 5)`',
+        '`nums` is a **rotated** sorted list of different values: a sorted list whose front was cut off and moved to the back, like `[4, 5, 6, 7, 0, 1, 2]`. The smallest value is somewhere in `nums[lo..hi]` (both ends included), with `lo < hi`.\n\nWrite `narrow(nums, lo, hi)`: look at the middle once and return the new `(lo, hi)` that still holds the smallest value.\n\n`narrow([4, 5, 6, 7, 0, 1, 2], 0, 6)` → `(4, 6)`\n`narrow([4, 5, 6, 7, 0, 1, 2], 4, 6)` → `(4, 5)`',
       starterCode: `def narrow(nums, lo, hi):
     pass`,
       solution: `def narrow(nums, lo, hi):
@@ -907,6 +909,7 @@ print(lo)`,
       id: 'b153-peak-mini',
       title: 'The reading just before the reset',
       skills: ['rotated_search', 'search_invariant', 'binary_search', 'list_index'],
+      transfer: true,
       stage: 'pattern',
       repType: 'pattern',
       difficulty: 4,
@@ -959,7 +962,7 @@ const toward33: PackSection = {
       skills: ['rotated_search', 'mid_calc', 'conditionals'],
       difficulty: 2,
       prompt:
-        "`nums` is a rotated sorted list of different values. Cut `nums[lo..hi]` at its middle index `mid`: at least one of `lo..mid` and `mid..hi` rises all the way.\n\nWrite `sorted_half(nums, lo, hi)`: `'left'` if `nums[lo..mid]` is sorted, otherwise `'right'`.\n\n`sorted_half([4, 5, 6, 7, 0, 1, 2], 0, 6)` → `'left'`\n`sorted_half([6, 7, 0, 1, 2, 4, 5], 0, 6)` → `'right'`",
+        "`nums` is a rotated sorted list of different values: a sorted list whose front was moved to the back. `lo` and `hi` are the two ends of the range being searched, both included. Cut `nums[lo..hi]` at its middle index `mid`: at least one of `lo..mid` and `mid..hi` rises all the way.\n\nWrite `sorted_half(nums, lo, hi)`: `'left'` if `nums[lo..mid]` is sorted, otherwise `'right'`.\n\n`sorted_half([4, 5, 6, 7, 0, 1, 2], 0, 6)` → `'left'`\n`sorted_half([6, 7, 0, 1, 2, 4, 5], 0, 6)` → `'right'`",
       starterCode: `def sorted_half(nums, lo, hi):
     pass`,
       solution: `def sorted_half(nums, lo, hi):
@@ -987,7 +990,7 @@ const toward33: PackSection = {
       difficulty: 4,
       important: true,
       prompt:
-        'Same kind of list. You are looking for `target` in `nums[lo..hi]`, and you have already checked that `nums[mid]` is **not** it.\n\nWrite `next_bounds(nums, lo, hi, target)`: the `(lo, hi)` to search next. Find the sorted half; if `target` lies between its two ends, keep that half, otherwise keep the other. Either way `mid` itself is dropped.\n\n`next_bounds([4, 5, 6, 7, 0, 1, 2], 0, 6, 5)` → `(0, 2)`\n`next_bounds([4, 5, 6, 7, 0, 1, 2], 0, 6, 0)` → `(4, 6)`',
+        '`nums` is a rotated sorted list of different values: a sorted list whose front was moved to the back. You are looking for `target` in `nums[lo..hi]` (both ends included), and you have already checked that `nums[mid]`, the value at the middle index `(lo + hi) // 2`, is **not** it.\n\nWrite `next_bounds(nums, lo, hi, target)`: the `(lo, hi)` to search next. Find the sorted half; if `target` lies between its two ends, keep that half, otherwise keep the other. Either way `mid` itself is dropped.\n\n`next_bounds([4, 5, 6, 7, 0, 1, 2], 0, 6, 5)` → `(0, 2)`\n`next_bounds([4, 5, 6, 7, 0, 1, 2], 0, 6, 0)` → `(4, 6)`',
       starterCode: `def next_bounds(nums, lo, hi, target):
     pass`,
       solution: `def next_bounds(nums, lo, hi, target):
@@ -1010,7 +1013,7 @@ const toward33: PackSection = {
         t.hidden('next_bounds([6, 7, 0, 1, 2, 4, 5], 0, 6, 5)', '(4, 6)'),
       ],
       hints: [
-        'First decide which half is sorted, exactly as in the last rep.',
+        'First decide which half is sorted: a half with no drop in it starts no higher than it ends.',
         'Only a sorted half can answer "is the target in here?" from its two ends.',
         'Python lets you chain: `a <= x < b`. The end at `mid` is already ruled out; the far end is not.',
         'If the target is not inside the sorted half, it can only be in the other one.',
@@ -1080,6 +1083,7 @@ const toward33: PackSection = {
       id: 'b33-slot-mini',
       title: 'Find the hour on a night shift',
       skills: ['rotated_search', 'binary_search', 'search_invariant', 'mid_calc'],
+      transfer: true,
       stage: 'pattern',
       repType: 'pattern',
       difficulty: 4,
