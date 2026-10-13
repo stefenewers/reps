@@ -134,7 +134,7 @@ test('pacing: a missed week changes the gauge, not the plan', async ({ page }) =
   await page.goto('/plan')
   const gauge = page.getByTestId('pace-gauge')
   await expect(gauge).toHaveAttribute('data-pace', 'behind')
-  await expect(gauge).toContainText(/Behind by \d+ working days/)
+  await expect(gauge).toContainText(/Starting today: behind by \d+ working days/)
   // Nothing was dropped: the first module is still where you are, and the forecast just runs later.
   await expect(page.getByText('you are here')).toBeVisible()
   await expect(gauge).toContainText(/days? after Jan 9/)
@@ -144,6 +144,8 @@ test('pacing: a missed week changes the gauge, not the plan', async ({ page }) =
 })
 
 test('the plan calendar links every day, and unknown reps are a real 404', async ({ page }) => {
+  // Day 1, on the line: the calendar is exactly the 90 planned days (later, unfinished work makes the forecast run longer).
+  await page.clock.setFixedTime(new Date('2026-10-12T10:00:00-04:00'))
   await page.goto('/plan')
   await expect(page.getByRole('heading', { name: 'Plan', exact: true })).toBeVisible()
   await expect(page.locator('section[aria-labelledby^="wk-"] a[href^="/day/"]')).toHaveCount(90)
@@ -309,14 +311,21 @@ test('training: briefing → drill → repair and back → combine → the targe
   await expect(page.getByText(`Imported ${seed.count} new attempts`)).toBeVisible()
 
   // Today leads with one thing to do next, then today's steps in order, the goal and where the last session left off.
-  const training = page.getByTestId('training')
-  await expect(training.getByTestId('next-up')).toHaveText(EXERCISE_BY_ID['o2-dbg-comp-self-pair'].title)
-  await expect(training.getByTestId('next-up-step')).toContainText("Step 1 of")
-  await expect(training.getByTestId('training-goal')).toContainText('Two Sum')
-  await expect(training.getByTestId('training-briefing')).toContainText('Last session (Oct 20)')
-  const steps = await training.getByTestId('training-steps').locator('li').evaluateAll((els) => els.map((e) => `${e.getAttribute('data-step')}:${e.getAttribute('data-state')}`))
-  expect(steps[0]).toBe('plan:now') // everything it leans on was produced yesterday: no warm-up
-  expect(steps.filter((x) => x.endsWith(':now'))).toHaveLength(1)
+  const training = page.getByTestId('today-target')
+  await expect(training).toHaveAttribute('data-day', 'target')
+  await expect(training.getByTestId('target-title')).toContainText('Two Sum')
+  await expect(training.getByTestId('next-up')).toContainText(EXERCISE_BY_ID['o2-dbg-comp-self-pair'].title)
+  // Coming in behind is said plainly, and is not confused with today's own progress.
+  await expect(training.getByTestId('starting-today')).toHaveText(/Starting today: \d+ working days? behind/)
+  await expect(training.getByTestId('target-progress')).toHaveAttribute('aria-valuenow', '0')
+  await expect(training.getByTestId('target-remaining')).toContainText(/0 of \d+ target reps complete · about .+ of target work remaining/)
+  await expect(training.getByTestId('target-message')).toContainText('keeps the forecast at')
+  // One checklist: the plan's reps are the target and the next thing; re-solves sit under maintenance.
+  const rows = await page.getByTestId('today-checklist').locator('li').evaluateAll((els) => els.map((e) => `${e.getAttribute('data-category')}:${e.getAttribute('data-key')}:${e.getAttribute('data-state')}`))
+  expect(rows[0]).toBe('target:plan:now') // everything it leans on was produced yesterday: no warm-up
+  expect(rows.filter((x) => x.endsWith(':now'))).toHaveLength(1)
+  expect(rows.some((x) => x.startsWith('maintenance:resolves'))).toBe(true)
+  await expect(page.getByTestId('pace-strip')).toContainText('Starting today')
   // Everything that is not "what next" is folded away.
   await expect(page.getByTestId('more')).not.toHaveAttribute('open', '')
   await training.getByTestId('training-start').click()
@@ -377,8 +386,12 @@ test('training: briefing → drill → repair and back → combine → the targe
   await answer(page, EXERCISE_BY_ID['cap-two-sum'])
   await expect(page.getByTestId('rep-complete')).toBeVisible({ timeout: 90_000 })
 
-  // Back on Today: the review is about what changed, not a count.
+  // Back on Today: the target has moved, by the amount of plan work done; the day is not called done.
   await page.goto('/')
+  await expect(page.getByTestId('target-progress')).not.toHaveAttribute('aria-valuenow', '0')
+  await expect(page.getByTestId('today-target')).not.toContainText(/Done for today|Everything due today is complete/)
+  // The review (under More) is about what changed, not a count.
+  await page.getByTestId('more').locator('summary').click()
   const review = page.getByTestId('session-review')
   await expect(review).toContainText('What changed because you trained today')
   expect(await review.getByTestId('review-came').locator('li').count() + (await review.getByTestId('review-improved').locator('li').count())).toBeGreaterThan(0)
@@ -397,12 +410,14 @@ test('training: skills learned weeks ago are warmed up first, then the normal qu
   await expect(page.getByText(`Imported ${seed.count} new attempts`)).toBeVisible()
 
   // Nothing was unlearned: Today prescribes a short reactivation, in the planner's own words, before the queue.
-  const training = page.getByTestId('training')
-  const first = training.getByTestId('training-steps').locator('li').first()
-  await expect(first).toHaveAttribute('data-step', 'warm')
+  const training = page.getByTestId('today-target')
+  const first = page.getByTestId('today-checklist').locator('li').first()
+  await expect(first).toHaveAttribute('data-key', 'warm')
+  await expect(first).toHaveAttribute('data-category', 'target')
   await expect(first).toHaveAttribute('data-state', 'now')
-  await expect(first).toContainText('You already learned')
-  await expect(training.getByTestId('next-up-step')).toContainText('Step 1 of')
+  await expect(first).toContainText('prep')
+  await expect(page.getByTestId('today-checklist')).toContainText('not counted toward the target')
+  await expect(training.getByTestId('next-up')).toContainText('Warm up (prep)')
   await expect(page.getByTestId('reactivate')).toHaveCount(0) // the one-time Oct 12 session is over
   await training.getByTestId('training-start').click()
   await page.waitForURL(/\/rep\//)
@@ -427,11 +442,47 @@ test('training: skills learned weeks ago are warmed up first, then the normal qu
 
   // The repeats added evidence; the plan's own position did not move.
   await page.goto('/')
-  const again = page.getByTestId('training').getByTestId('training-steps').locator('li').first()
-  await expect(again).toHaveAttribute('data-step', 'warm')
+  const again = page.getByTestId('today-checklist').locator('li').first()
+  await expect(again).toHaveAttribute('data-key', 'warm')
   await expect(again).toHaveAttribute('data-state', 'done')
-  // Next up is now the plan itself: the same rep the 90-day plan was waiting on.
-  await expect(page.getByTestId('next-up')).toHaveText(EXERCISE_BY_ID['o2-dbg-comp-self-pair'].title)
+  // The warm-up did not move the target: it is prep. Next is the plan itself, the rep the 90-day plan was waiting on.
+  await expect(page.getByTestId('target-progress')).toHaveAttribute('aria-valuenow', '0')
+  await expect(page.getByTestId('next-up')).toContainText(EXERCISE_BY_ID['o2-dbg-comp-self-pair'].title)
   await expect(page.getByTestId('training-start')).toHaveAttribute('href', /\/rep\/o2-dbg-comp-self-pair\?s=/)
   await expect(page.getByTestId('start-today')).toHaveAttribute('href', '/rep/o2-dbg-comp-self-pair')
+})
+
+test('today: reaching the target is not the same as being done; logging the last re-solve is', async ({ page }) => {
+  // Tue Oct 20, with everything the plan expected through today already passed today.
+  const tomorrow = PLAN_DAYS.find((d) => d.date === '2026-10-21')!.planOrder!.find((k) => !k.startsWith('lc:'))!
+  const seed = progressBundle(tomorrow, '2026-10-20')
+  await page.clock.setFixedTime(new Date('2026-10-20T16:00:00-04:00'))
+  await page.goto('/')
+  await page.getByLabel('Import progress file').setInputFiles(seed.file)
+  await expect(page.getByText(`Imported ${seed.count} new attempts`)).toBeVisible()
+
+  // The target is reached, and said so. Re-solves are still due: that is maintenance, named as such, and not "done".
+  const hero = page.getByTestId('today-target')
+  await expect(hero).toHaveAttribute('data-day', 'maintenance')
+  await expect(hero.getByTestId('target-title')).toContainText('Today’s target reached.')
+  await expect(hero.getByTestId('target-progress')).toHaveAttribute('aria-valuenow', '100')
+  await expect(hero.getByTestId('target-remaining')).toContainText(/Required work: complete · Maintenance: \d+ re-solves?/)
+  await expect(hero).not.toContainText(/Everything due today is complete|Done for today/)
+  await expect(hero.getByTestId('training-start')).toContainText('Do maintenance')
+  const list = page.getByTestId('today-checklist')
+  await expect(list.locator('li[data-key="plan"]')).toHaveAttribute('data-state', 'done')
+  await expect(list.locator('li[data-key="resolves"]')).toHaveAttribute('data-state', 'now')
+  await expect(list.locator('[data-group="maintenance"]')).toContainText('Not needed for pace')
+  await expect(list).toContainText('Target remaining')
+  await expect(page.getByTestId('pace-strip')).toContainText(/re-solves? due/)
+
+  // Log every re-solve: now everything due is complete, and anything further is bonus.
+  const lc = page.getByTestId('leetcode-list')
+  for (const b of await lc.getByRole('button', { name: 'Unaided' }).all()) await b.click()
+  await expect(hero).toHaveAttribute('data-day', 'complete')
+  await expect(hero.getByTestId('target-title')).toContainText('Everything due today is complete.')
+  await expect(hero.getByTestId('target-message')).toContainText('Anything else today is bonus')
+  await expect(hero.getByTestId('keep-going')).toContainText('bonus')
+  await expect(list.locator('li[data-category="bonus"]')).toContainText('Keep going')
+  await expect(page.getByTestId('pace-strip')).toContainText('nothing due')
 })

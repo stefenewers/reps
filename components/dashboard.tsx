@@ -11,7 +11,8 @@ import ChallengeMe from '@/components/challenge-me'
 import ProgressIO from '@/components/progress-io'
 import BuildingToward from '@/components/building-toward'
 import ReactivateCard from '@/components/reactivate-card'
-import TrainingCard, { SessionReviewCard } from '@/components/training-card'
+import { SessionReviewCard } from '@/components/training-card'
+import TodayTarget from '@/components/today-target'
 import { useTraining } from '@/components/use-training'
 import LeetcodeList from '@/components/leetcode-list'
 import TodayBlocks from '@/components/today-blocks'
@@ -145,15 +146,26 @@ function DashboardToday() {
 
         {live ? (
           <>
-            {/* What to do next, and today's steps in order. Everything under it is reference. */}
-            <TrainingCard
+            {/* Today's target, one checklist (target, maintenance, bonus) and a compact pace strip. Everything under it is reference. */}
+            <TodayTarget
+              day={day}
+              pace={pace}
               training={training}
+              resolves={{ total: resolves.length, logged: resolves.filter((x) => solves.some((e) => e.id === x.solveId)).length, next: resolves.find((x) => !solves.some((e) => e.id === x.solveId))?.title ?? null }}
+              coldDue={due.length}
+              startCold={startReview}
               roadmap={next && section ? { label: `${section.title} · ${next.title}`, href: `/rep/${next.id}` } : ahead ? { label: ahead.title, href: `/rep/${ahead.id}` } : null}
-              leetcode={{ total: resolves.length, logged: resolves.filter((x) => solves.some((e) => e.id === x.solveId)).length, next: resolves.find((x) => !solves.some((e) => e.id === x.solveId))?.title ?? null }}
+              planEnd={PLAN_DAYS[PLAN_DAYS.length - 1].date}
             />
         <div id="leetcode" className="mt-8 scroll-mt-6 empty:hidden">
           <LeetcodeList day={day} />
         </div>
+
+            <details className="group mt-10" data-testid="more">
+              <summary className="flex cursor-pointer list-none items-center gap-2 px-2 text-[13.5px] font-medium text-ink-2 hover:text-ink [&::-webkit-details-marker]:hidden">
+                <span aria-hidden="true" className="inline-block transition-transform group-open:rotate-90">›</span>
+                More: session review, the full pace gauge, plan my day, the roadmap, building blocks, skills
+              </summary>
             <SessionReviewCard training={training} />
         {day.planDay && (
           <div className="mt-8">
@@ -161,11 +173,6 @@ function DashboardToday() {
           </div>
         )}
 
-            <details className="group mt-10" data-testid="more">
-              <summary className="flex cursor-pointer list-none items-center gap-2 px-2 text-[13.5px] font-medium text-ink-2 hover:text-ink [&::-webkit-details-marker]:hidden">
-                <span aria-hidden="true" className="inline-block transition-transform group-open:rotate-90">›</span>
-                More: where you are in the plan, building blocks, the day by the clock, skills
-              </summary>
         {/* The roadmap: where the canonical queue stands. */}
         <section aria-labelledby="now" hidden={startsIn !== null && !carry} className="relative mt-9 overflow-hidden rounded-[20px] bg-bg shadow-[0_0_0_1px_var(--hairline),0_2px_4px_rgba(28,24,12,0.04),0_18px_40px_-16px_rgba(28,24,12,0.18)]">
           <BarsPattern className="-right-10 -top-16 text-ink [mask-image:linear-gradient(to_bottom,black,transparent)]" opacity={0.045} />

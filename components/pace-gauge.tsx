@@ -10,11 +10,12 @@ import type { PaceCalendar } from '@/lib/pace-calendar'
  * the needle and changes nothing else.
  */
 
+/** How you came into today. It says nothing about whether today's own work is done. */
 const HEADLINE = {
   'not-started': 'Not started yet',
-  'on-pace': 'On pace',
-  ahead: 'Ahead',
-  behind: 'Behind',
+  'on-pace': 'Starting today: on track',
+  ahead: 'Starting today: ahead',
+  behind: 'Starting today: behind',
   complete: 'Queue complete',
 } as const
 
@@ -46,7 +47,7 @@ export default function PaceGauge({ pace, planEnd }: { pace: PaceCalendar; planE
           <p className="mt-1 text-[13px] leading-relaxed text-ink-2">
             {status.state === 'behind' && 'Nothing is lost: the next thing is still the next thing. The buffer weeks take up the slack first.'}
             {status.state === 'ahead' && 'Later work has moved forward. Keep the pace or bank the time.'}
-            {status.state === 'on-pace' && 'Everything the plan expected before today is done.'}
+            {status.state === 'on-pace' && 'Everything the plan expected before today is done. Today’s own target is separate: it is at the top of Today.'}
             {status.state === 'not-started' && 'The queue starts with the last Dictionary ladder rung.'}
             {status.state === 'complete' && 'Every rep and problem in the plan is done.'}
           </p>

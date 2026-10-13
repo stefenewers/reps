@@ -62,7 +62,7 @@ export default function TodayBlocks({ day, resolves }: { day: DayModule; resolve
     <section aria-labelledby="blocks-h" className="panel p-6" data-testid="today-blocks">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <h2 id="blocks-h" className="h2">
-          Today’s blocks
+          Plan my day
         </h2>
         <p className="text-[12.5px] text-muted">
           {day.phase && PHASE_LABEL[day.phase]} · {formatMinutes(total)} planned ·{' '}
