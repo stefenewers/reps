@@ -60,11 +60,11 @@ export default function PlanView() {
             How the training load grows
           </h2>
           <p className="mt-1 max-w-[720px] text-[13.5px] leading-relaxed text-muted">
-            Like training in a gym: start with a load you can finish every day, then add a little when the week before was handled. The roadmap is long; a day never is. Each Monday last week is reviewed: handled, the load goes up a step; not yet, it stays where it is for another week.
+            Like training in a gym: start with a load you can finish every day, then add a little when the week before was handled. The roadmap is long; a day never is. Each Monday last week is reviewed: handled, the load goes up one step (10 → 12 → 15 → 18 → 20 → 22 → 25); not yet, it stays where it is for another week. It never skips a step and never goes down.
           </p>
           <ol className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {[
-              { name: 'Foundation', when: 'Weeks 1–2', load: '10 → 15 reps a day', what: 'Learn heavily: each idea taught first, then guided reps and drills.', phase: 'foundation' },
+              { name: 'Foundation', when: 'Weeks 1–2', load: '10, then 12 reps a day', what: 'Learn heavily: each idea taught first, then guided reps and drills.', phase: 'foundation' },
               { name: 'Build', when: 'Weeks 3–4', load: '15 → 18 reps a day', what: 'Drill and combine. Small unlabeled problems.', phase: 'build' },
               { name: 'Transfer', when: 'Month 2', load: 'About 20 reps a day', what: 'Capstones and LeetCode problems become routine. Mixed sets.', phase: 'transfer' },
               { name: 'Interview', when: 'Month 3', load: '20–25 reps a day', what: 'Harder, colder, timed: new Mediums, follow-ups, mocks. Not more micro-questions.', phase: 'interview' },

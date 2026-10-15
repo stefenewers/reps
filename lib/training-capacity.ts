@@ -29,7 +29,7 @@ export interface RampStage {
 /** The default ramp. The load only reaches a stage's ceiling if the weeks before were handled. */
 export const RAMP: RampStage[] = [
   { phase: 'foundation', title: 'Building the habit', weeks: [1, 1], ceiling: 0, range: '10 reps', goal: 'Understand each idea and get the core moves into your fingers.' },
-  { phase: 'foundation', title: 'Building the habit', weeks: [2, 2], ceiling: 2, range: '12–15 reps', goal: 'The same kind of work, a little more of it. Still strongly guided.' },
+  { phase: 'foundation', title: 'Building the habit', weeks: [2, 2], ceiling: 1, range: '12 reps', goal: 'The same kind of work, a little more of it. Still strongly guided.' },
   { phase: 'build', title: 'Drill and combine', weeks: [3, 4], ceiling: 3, range: '15–18 reps', goal: 'More combining moves and small unlabeled problems.' },
   { phase: 'transfer', title: 'Transfer', weeks: [5, 8], ceiling: 4, range: '18–20 reps', goal: 'Capstones and LeetCode problems become a normal part of the day.' },
   { phase: 'interview', title: 'Interview execution', weeks: [9, 99], ceiling: 6, range: '20–25 reps', goal: 'Harder, colder, timed: new Mediums, follow-ups, mocks. Not more micro-questions.' },
@@ -46,7 +46,8 @@ export function stageFor(week: number): RampStage {
 /** What one day of training looked like, from the record. */
 export interface DayRecord {
   /** Weighted reps done (passed) that day. */
-  units: number
+  /** Reps done that day: each rep or logged problem is one. */
+  reps: number
   /** Minutes spent in reps that day. */
   minutes: number
   /** Reps passed with the solution open or two or more hints. */
@@ -71,7 +72,7 @@ export interface WeekReview {
   assistance: number
   coldRate: number | null
   avgMinutes: number
-  /** Handled: the load may go up a step. Strong: it may go up two (within the stage's ceiling). */
+  /** Handled: the load goes up one step. Strong: handled cleanly (still one step). */
   ready: boolean
   strong: boolean
   reason: string
@@ -81,10 +82,10 @@ const READY = { completedDays: 4, completion: 0.8, assistance: 0.35, coldRate: 0
 const STRONG = { completedDays: 5, completion: 0.95, assistance: 0.15, coldRate: 0.8 }
 
 export function reviewWeek(week: number, load: number, days: DayRecord[]): WeekReview {
-  const trained = days.filter((d) => d.units > 0 || d.mock)
-  const done = (d: DayRecord) => d.mock || d.units >= load
+  const trained = days.filter((d) => d.reps > 0 || d.mock)
+  const done = (d: DayRecord) => d.mock || d.reps >= load
   const completedDays = trained.filter(done).length
-  const completion = trained.length ? trained.reduce((n, d) => n + (d.mock ? 1 : Math.min(d.units, load) / load), 0) / trained.length : 0
+  const completion = trained.length ? trained.reduce((n, d) => n + (d.mock ? 1 : Math.min(d.reps, load) / load), 0) / trained.length : 0
   const passed = trained.reduce((n, d) => n + d.passed, 0)
   const assistance = passed ? trained.reduce((n, d) => n + d.assisted, 0) / passed : 0
   const coldTotal = trained.reduce((n, d) => n + d.coldTotal, 0)
@@ -123,8 +124,8 @@ export interface DailyCapacity {
 
 /**
  * Today's capacity. Week 1 is 10 reps. At the start of every later week, the week
- * before is reviewed: handled → up one step, handled cleanly → up two, otherwise
- * held. Never above the stage's ceiling, never more than two steps in a week (one after the first month).
+ * before is reviewed: handled → up one step, otherwise held. Never more than one
+ * step a week, never above the stage's ceiling, never down.
  * Days off (Sundays and the plan's days off) are not counted against anything.
  */
 export function capacityFor(date: string, planStart: string, record: (date: string) => DayRecord | undefined, isStudyDay: (date: string) => boolean): DailyCapacity {
@@ -136,12 +137,11 @@ export function capacityFor(date: string, planStart: string, record: (date: stri
     for (let i = 0; i < 7; i++) {
       const d = addDays(planStart, (w - 1) * 7 + i)
       if (!isStudyDay(d)) continue
-      days.push(record(d) ?? { units: 0, minutes: 0, assisted: 0, passed: 0, coldPassed: 0, coldTotal: 0 })
+      days.push(record(d) ?? { reps: 0, minutes: 0, assisted: 0, passed: 0, coldPassed: 0, coldTotal: 0 })
     }
     review = reviewWeek(w, LOADS[level], days)
-    // Two steps only while the loads are small (the first month); after that, one step a week at most.
-    const step = review.strong && stageFor(w + 1).weeks[0] <= 4 ? 2 : 1
-    if (review.ready) level = Math.min(level + step, Math.max(level, stageFor(w + 1).ceiling))
+    // One step a week at most, however strong the week: 10 → 12 → 15 → 18 → 20 → 22 → 25. Never down.
+    if (review.ready) level = Math.min(level + 1, Math.max(level, stageFor(w + 1).ceiling))
   }
   const stage = stageFor(week)
   const reason =

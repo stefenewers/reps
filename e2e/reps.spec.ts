@@ -139,7 +139,7 @@ test('pacing: a missed week changes the gauge, not the plan', async ({ page }) =
   await expect(gauge).toContainText(/Behind the original line by \d+ working days/)
   await expect(gauge).toContainText('That is fine')
   // The training load is its own thing, and the plan shows how it grows.
-  await expect(page.getByTestId('ramp')).toContainText('10 → 15 reps a day')
+  await expect(page.getByTestId('ramp')).toContainText('10 → 12 → 15 → 18 → 20 → 22 → 25')
   await expect(page.getByTestId('ramp').locator('li[data-current]')).toContainText('Foundation')
   // Nothing was dropped: the first module is still where you are, and the forecast just runs later.
   await expect(page.getByText('you are here')).toBeVisible()

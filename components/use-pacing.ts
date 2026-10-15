@@ -5,7 +5,7 @@ import { useReps } from '@/components/reps-provider'
 import { lcMeta, useSolveLog } from '@/components/use-solve-log'
 import { DAY_BY_DATE, EXERCISE_BY_ID, PLAN_DAYS, PLAN_START, sectionSlice } from '@/data/curriculum'
 import { useCapacity } from '@/components/use-capacity'
-import { repUnits } from '@/lib/today-plan'
+import { loadLimit, repUnits } from '@/lib/today-plan'
 import { projectedLoad } from '@/lib/training-capacity'
 import { PROBLEMS } from '@/data/problems'
 import { PACE, RESOLVE_CAPS } from '@/data/schedule-90'
@@ -41,7 +41,8 @@ export function usePacing() {
         resolveCaps: RESOLVE_CAPS,
         // The forecast runs at the training capacity: today's load, then one step a week up the ramp.
         load: {
-          on: (date) => (date <= today ? capacity.requiredReps : projectedLoad(date, capacity, PLAN_START)),
+          // A day holds its reps, and heavier reps weigh more within the same headroom Today uses.
+          on: (date) => loadLimit(date <= today ? capacity.requiredReps : projectedLoad(date, capacity, PLAN_START)),
           units: (q) => (q.kind === 'lc' ? 3 : repUnits(EXERCISE_BY_ID[q.key])),
         },
       }),

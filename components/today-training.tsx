@@ -66,7 +66,7 @@ export default function TodayTraining({ plan, training, lcUrl, forecast }: { pla
   const next = left[0]
   const focus = focusOf(plan.items)
   const session = training.session
-  const pct = Math.min(100, Math.round((100 * plan.unitsDone) / plan.capacity))
+  const pct = Math.min(100, Math.round((100 * plan.repsDone) / plan.capacity))
 
   // A session over today's reps that are typed in the editor, in order, with what each is for.
   const start = async () => {
@@ -102,7 +102,7 @@ export default function TodayTraining({ plan, training, lcUrl, forecast }: { pla
       </Link>
     ) : (
       <button type="button" className="btn btn-accent btn-lg" onClick={start} disabled={busy} data-testid="training-start">
-        {plan.unitsDone ? 'Continue' : 'Start'} <IconArrowRight size={15} />
+        {plan.repsDone ? 'Continue' : 'Start'} <IconArrowRight size={15} />
       </button>
     )
   ) : next?.lc ? (
@@ -130,7 +130,7 @@ export default function TodayTraining({ plan, training, lcUrl, forecast }: { pla
             <IconCheck size={22} strokeWidth={2.6} className="text-pass" /> Training complete
           </h2>
           <p className="num mt-1 text-[15px] text-ink-2">
-            {plan.unitsDone} / {plan.capacity} · You did enough today.
+            {plan.repsDone} / {plan.capacity} · You did enough today.
           </p>
         </div>
       ) : (
@@ -164,9 +164,9 @@ export default function TodayTraining({ plan, training, lcUrl, forecast }: { pla
 
       <div className="mt-5 flex items-center gap-4">
         <span className="num text-[15px] font-semibold text-ink" aria-hidden="true">
-          {plan.unitsDone} / {plan.capacity}
+          {plan.repsDone} / {plan.capacity}
         </span>
-        <span className="bar block h-2 flex-1" role="progressbar" aria-valuemin={0} aria-valuemax={plan.capacity} aria-valuenow={Math.min(plan.unitsDone, plan.capacity)} aria-label={`Today's training: ${Math.min(plan.unitsDone, plan.capacity)} of ${plan.capacity} reps done`} data-testid="training-progress">
+        <span className="bar block h-2 flex-1" role="progressbar" aria-valuemin={0} aria-valuemax={plan.capacity} aria-valuenow={Math.min(plan.repsDone, plan.capacity)} aria-label={`Today's training: ${Math.min(plan.repsDone, plan.capacity)} of ${plan.capacity} reps done`} data-testid="training-progress">
           <span style={{ width: `${pct}%`, background: 'var(--accent)' }} />
         </span>
         {cta && <span className="shrink-0">{cta}</span>}
@@ -193,7 +193,6 @@ export default function TodayTraining({ plan, training, lcUrl, forecast }: { pla
               </p>
               <span className="whitespace-nowrap text-right text-[12px] text-muted">
                 {KIND[i.kind]}
-                {i.units > 1 && <span className="num"> · counts as {i.units}</span>}
               </span>
             </li>
           )

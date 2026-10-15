@@ -149,14 +149,16 @@ Today prescribes a fixed number of reps (`lib/training-capacity.ts`, `lib/today-
 
 | Stage | When | Load |
 |---|---|---|
-| Foundation | Weeks 1–2 | 10 → 15 reps a day (Week 1 is 10; Week 2 12–15) |
+| Foundation | Weeks 1–2 | 10, then 12 reps a day |
 | Build | Weeks 3–4 | 15 → 18 |
 | Transfer | Month 2 | about 20 |
 | Interview | Month 3 | 20–25 |
 
-- Load steps: 10, 12, 15, 18, 20, 22, 25. Each Monday the previous week is reviewed. Handled (at least 4 days at the full load, at least 80% of the load done, at most 35% of passes with heavy help, cold reps at least 60% when there were 3 or more, a reasonable daily time) means one step up; handled cleanly in the first month means two. Not handled means the load holds. One big day never raises it. Each stage has a ceiling.
-- Units: trace, micro, debug and drill reps count 1. Long combine reps count 2, transfer reps 2, capstones 3, a new LeetCode problem 3, a re-solve 2. A mock is a full day.
-- Warm-ups, redos, re-solves and cold reps take slots inside the load, never on top of it (prep up to 20%, maintenance up to 20%, the plan the rest). Missed days add nothing to today: the next ten reps are just the next ten.
+- Load steps: 10, 12, 15, 18, 20, 22, 25. Each Monday the previous week is reviewed. Handled (at least 4 days at the full load, at least 80% of the load done, at most 35% of passes with heavy help, cold reps at least 60% when there were 3 or more, a reasonable daily time) means one step up, never two, however strong the week. Not handled means the load holds; it never goes down. One big day never raises it. Each stage has a ceiling.
+- The target is literal reps: 10 reps means 10 things to do, and 10 done completes the day. Each rep or logged problem is one.
+- Internally, heavier reps weigh more (trace, micro, debug and drill 1; long combine 2; transfer 2; capstone 3; new LeetCode 3; re-solve 2) and the day's weight may run at most 30% over the rep count. That never shows; it only decides what fits. A heavy rep that would make the day too heavy waits, still first in the queue, and a lighter one takes its slot, so the day can always be finished.
+- Foundation is learning first: at most 30% of the day's reps are warm-ups, maintenance or proving; the rest is learn, drill and combine. Priority for those few slots: one warm-up, the plan's own check if today reaches it, one maintenance item, then the rest.
+- Warm-ups, redos, re-solves and cold reps take slots inside the day, never on top of it (prep up to 20%, maintenance up to 20%). Missed days add nothing to today: the next ten reps are just the next ten.
 - No new LeetCode problem is prescribed in the Foundation weeks, or before its building blocks are in place. It is offered as optional instead.
 - When the load is done, Today says "Training complete". More is optional: keep going, one bonus problem, or review a concept.
 - The training target (today's load) and the program forecast (when the queue finishes at this load) are shown separately. The forecast moves, and being behind the original line is said plainly, never as an alarm.

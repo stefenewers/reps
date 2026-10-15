@@ -3,8 +3,7 @@
 import { useMemo } from 'react'
 import { useReps } from '@/components/reps-provider'
 import { useSolveLog } from '@/components/use-solve-log'
-import { EXERCISE_BY_ID, PLAN_DAYS, PLAN_START } from '@/data/curriculum'
-import { repUnits } from '@/lib/today-plan'
+import { PLAN_DAYS, PLAN_START } from '@/data/curriculum'
 import { capacityFor, isSunday, type DailyCapacity, type DayRecord } from '@/lib/training-capacity'
 
 /** The record of each day's training, for the weekly capacity review. */
@@ -13,7 +12,7 @@ export function useDayRecords(): Map<string, DayRecord> {
   const { entries } = useSolveLog()
   return useMemo(() => {
     const out = new Map<string, DayRecord>()
-    const get = (d: string) => out.get(d) ?? (out.set(d, { units: 0, minutes: 0, assisted: 0, passed: 0, coldPassed: 0, coldTotal: 0 }), out.get(d)!)
+    const get = (d: string) => out.get(d) ?? (out.set(d, { reps: 0, minutes: 0, assisted: 0, passed: 0, coldPassed: 0, coldTotal: 0 }), out.get(d)!)
     const counted = new Set<string>()
     for (const a of attempts) {
       if (!a.completedAt && !a.attemptsBeforePass) continue
@@ -30,12 +29,12 @@ export function useDayRecords(): Map<string, DayRecord> {
       const key = `${a.date}:${a.exerciseId}`
       if (counted.has(key)) continue
       counted.add(key)
-      r.units += repUnits(EXERCISE_BY_ID[a.exerciseId])
+      r.reps++
     }
     for (const e of entries) {
       if (!e.lc) continue
       const r = get(e.date)
-      r.units += e.kind === 'new' ? 3 : 2
+      r.reps++
       r.minutes += e.minutes ?? 15
     }
     return out
