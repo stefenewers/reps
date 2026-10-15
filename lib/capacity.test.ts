@@ -1,0 +1,145 @@
+import { test } from 'node:test'
+import assert from 'node:assert/strict'
+import { LOADS, RAMP, capacityFor, projectedLoad, reviewWeek, stageFor, weekOf, type DayRecord } from '@/lib/training-capacity'
+import { prescribe, units, type Candidate } from '@/lib/today-plan'
+import { addDays, parseLocal } from '@/lib/dates'
+
+/** Progressive capacity: how much to train today, and today's prescription inside it. */
+
+const START = '2026-10-12'
+const study = (d: string) => parseLocal(d).getDay() !== 0
+const day = (u: number, over: Partial<DayRecord> = {}): DayRecord => ({ units: u, minutes: 60, assisted: 0, passed: u, coldPassed: 0, coldTotal: 0, ...over })
+/** A record where each week w has the given per-day units (Mon–Sat). */
+const history = (weeks: Record<number, DayRecord[]>) => (d: string) => {
+  const w = weekOf(d, START)
+  const i = Math.floor((parseLocal(d).getTime() - parseLocal(addDays(START, (w - 1) * 7)).getTime()) / 86_400_000)
+  return weeks[w]?.[i]
+}
+const full = (load: number, n = 6, over: Partial<DayRecord> = {}) => Array.from({ length: n }, () => day(load, over))
+
+// ── the ramp ─────────────────────────────────────────────────────────────────
+
+test('week 1 is 10 reps a day, whatever has or has not been done', () => {
+  for (const d of ['2026-10-12', '2026-10-15', '2026-10-17']) {
+    const c = capacityFor(d, START, () => undefined, study)
+    assert.deepEqual([c.week, c.requiredReps, c.phase], [1, 10, 'foundation'])
+  }
+  assert.match(capacityFor('2026-10-13', START, () => undefined, study).reason, /10 reps/)
+})
+
+test('a handled week goes up one step; a clean one up two; never past the stage ceiling', () => {
+  // Week 1 handled (5 full days, some help): week 2 is 12.
+  const handled = capacityFor('2026-10-19', START, history({ 1: full(10, 5, { assisted: 3 }) }), study)
+  assert.equal(handled.requiredReps, 12)
+  // Week 1 clean (6 full days, no help): week 2 may be 15, the top of week 2's range.
+  const clean = capacityFor('2026-10-19', START, history({ 1: full(10) }), study)
+  assert.equal(clean.requiredReps, 15)
+  // Week 2 clean too: week 3's ceiling is 18, so it cannot jump to 20.
+  assert.equal(capacityFor('2026-10-26', START, history({ 1: full(10), 2: full(15) }), study).requiredReps, 18)
+  // Clean every week: the load climbs a step or two a week and stops at each stage's top.
+  const loads: number[] = []
+  const always = () => day(30, { units: 30 })
+  for (let w = 1; w <= 13; w++) loads.push(capacityFor(addDays(START, (w - 1) * 7), START, always, study).requiredReps)
+  assert.deepEqual(loads, [10, 15, 18, 18, 20, 20, 20, 20, 22, 25, 25, 25, 25])
+  for (let i = 1; i < loads.length; i++) assert.ok(loads[i] - loads[i - 1] <= 5, `no jump: ${loads[i - 1]} → ${loads[i]}`)
+  assert.ok(Math.max(...loads) <= 25, 'the last month adds difficulty, not endless volume')
+})
+
+test('a weak or incomplete week holds the load, and says why without calling it failure', () => {
+  // Three full days only.
+  const few = capacityFor('2026-10-19', START, history({ 1: [day(10), day(10), day(10), day(0), day(0), day(0)] }), study)
+  assert.equal(few.requiredReps, 10)
+  assert.match(few.reason, /3 of 4 days at the full load/)
+  assert.match(few.reason, /Holding the load.*not falling behind/)
+  // Every day done, but mostly with the solution open.
+  const leaning = capacityFor('2026-10-19', START, history({ 1: full(10, 6, { assisted: 6 }) }), study)
+  assert.equal(leaning.requiredReps, 10)
+  assert.match(leaning.reason, /with the solution or several hints/)
+  // Cold reps failing.
+  assert.equal(capacityFor('2026-10-19', START, history({ 1: full(10, 6, { coldTotal: 5, coldPassed: 1 }) }), study).requiredReps, 10)
+})
+
+test('one exceptional day cannot create a giant jump', () => {
+  // One 60-rep day and nothing else: the week was not handled.
+  const one = capacityFor('2026-10-19', START, history({ 1: [day(60), day(0), day(0), day(0), day(0), day(0)] }), study)
+  assert.equal(one.requiredReps, 10)
+  // Even a perfect week moves at most two steps.
+  assert.ok(capacityFor('2026-10-19', START, history({ 1: full(40) }), study).requiredReps <= LOADS[2])
+})
+
+test('the ramp is visible and monotone; the forecast assumes one step a week', () => {
+  assert.deepEqual(RAMP.map((s) => s.phase), ['foundation', 'foundation', 'build', 'transfer', 'interview'])
+  assert.equal(stageFor(1).range, '10 reps')
+  assert.equal(stageFor(6).phase, 'transfer')
+  assert.equal(stageFor(12).phase, 'interview')
+  const now = capacityFor('2026-10-15', START, () => undefined, study)
+  assert.deepEqual(['2026-10-16', '2026-10-20', '2026-10-27', '2026-11-03', '2026-12-30'].map((d) => projectedLoad(d, now, START)), [10, 12, 15, 18, 25])
+  assert.equal(reviewWeek(1, 10, []).ready, false, 'no training, no increase')
+})
+
+// ── today's prescription ─────────────────────────────────────────────────────
+
+const rep = (key: string, kind: Candidate['kind'] = 'drill', u = 1): Candidate => ({ key, kind, title: key, units: u, exerciseId: key })
+const plan = Array.from({ length: 40 }, (_, i) => rep(`p${i}`))
+const base = { capacity: 10, phase: 'foundation' as const, doneToday: [], prep: [], plan, resolves: [], cold: [] }
+
+test('the prescription is exactly the capacity: ten reps, not the backlog', () => {
+  const t = prescribe(base)
+  assert.equal(t.items.length, 10)
+  assert.deepEqual(t.items.map((i) => i.key), plan.slice(0, 10).map((p) => p.key))
+  assert.deepEqual([t.unitsDone, t.complete], [0, false])
+  // Forty items in the queue (or four hundred) change nothing about today.
+  assert.equal(prescribe({ ...base, plan: Array.from({ length: 400 }, (_, i) => rep(`q${i}`)) }).items.length, 10)
+})
+
+test('missed days add nothing to today: the next ten reps are simply the next ten', () => {
+  // Whether yesterday was done or not, today asks for the same capacity from wherever the queue stands.
+  const after3Missed = prescribe({ ...base, plan: plan.slice(0) })
+  assert.equal(after3Missed.items.reduce((n, i) => n + i.units, 0), 10)
+})
+
+test('warm-ups, redos, re-solves and cold reps take slots inside the day, never on top of it', () => {
+  const t = prescribe({
+    ...base,
+    prep: [rep('w1', 'warm'), rep('w2', 'warm'), rep('w3', 'warm'), rep('w4', 'warm'), rep('r1', 'redo')],
+    resolves: [{ key: 'lc:217:review1', kind: 'resolve', title: 'Contains Duplicate', units: 2, lc: 217 }, { key: 'lc:387:redo', kind: 'resolve', title: 'First Unique', units: 2, lc: 387 }],
+    cold: [rep('c1', 'cold'), rep('c2', 'cold')],
+  })
+  const sum = t.items.reduce((n, i) => n + i.units, 0)
+  assert.equal(sum, 10, 'still ten in total')
+  assert.equal(t.items.filter((i) => i.kind === 'warm' || i.kind === 'redo').length, 2, 'prep takes at most 20%')
+  const maint = t.items.filter((i) => i.kind === 'resolve' || i.kind === 'cold').reduce((n, i) => n + i.units, 0)
+  assert.ok(maint <= 2, 'maintenance takes at most 20%')
+  assert.ok(t.items.filter((i) => i.kind === 'drill').reduce((n, i) => n + i.units, 0) >= 6, 'the plan keeps most of the day')
+  // What did not fit is not lost: it is offered once the day is done.
+  assert.ok(t.optional.some((c) => c.key === 'w4') && t.optional.some((c) => c.key === 'lc:387:redo'))
+})
+
+test('heavy work takes several slots: a capstone is three, a transfer problem two, a new LeetCode problem three', () => {
+  assert.deepEqual([units({ kind: 'prove', capstone: true }), units({ kind: 'transfer' }), units({ kind: 'problem' }), units({ kind: 'drill' }), units({ kind: 'combine', combineHeavy: true })], [3, 2, 3, 1, 2])
+  const t = prescribe({ ...base, plan: [rep('a'), rep('b'), rep('cap', 'prove', 3), rep('t', 'transfer', 2), ...plan] })
+  assert.equal(t.items.reduce((n, i) => n + i.units, 0), 10)
+  assert.equal(t.items.length, 7, 'ten units, seven items')
+})
+
+test('a new LeetCode problem is not prescribed in the foundation weeks, or before it is ready', () => {
+  const problem: Candidate = { key: 'lc:49:new', kind: 'problem', title: 'Group Anagrams', units: 3, lc: 49, ready: true }
+  const withProblem = [rep('a'), problem, ...plan]
+  assert.ok(!prescribe({ ...base, plan: withProblem }).items.some((i) => i.kind === 'problem'), 'week 1: not required')
+  assert.ok(prescribe({ ...base, plan: withProblem }).optional.some((c) => c.kind === 'problem'), 'but offered when the day is done')
+  assert.ok(prescribe({ ...base, phase: 'build', plan: withProblem }).items.some((i) => i.kind === 'problem'), 'later, and ready: prescribed')
+  assert.ok(!prescribe({ ...base, phase: 'build', plan: [rep('a'), { ...problem, ready: false }, ...plan] }).items.some((i) => i.kind === 'problem'))
+})
+
+test('finishing today’s capacity is “training complete”, and the queue is not marked done for it', () => {
+  const doneToday = plan.slice(0, 10).map((p) => ({ key: p.key, units: 1 }))
+  const t = prescribe({ ...base, doneToday })
+  assert.deepEqual([t.unitsDone, t.complete], [10, true])
+  assert.ok(t.items.every((i) => i.done))
+  assert.equal(t.optional[0].key, 'p10', 'what comes next in the queue is still there, as optional')
+  // Partway: done items count, the rest of the day is the next reps.
+  const half = prescribe({ ...base, doneToday: doneToday.slice(0, 4) })
+  assert.deepEqual([half.unitsDone, half.items.filter((i) => !i.done).length, half.complete], [4, 6, false])
+  // Work done outside the list still counts as training today.
+  assert.equal(prescribe({ ...base, doneToday: [{ key: 'something-else', units: 3 }] }).items.filter((i) => !i.done).length, 7)
+})

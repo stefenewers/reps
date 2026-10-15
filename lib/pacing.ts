@@ -146,6 +146,17 @@ export function paceStatus(queue: QueueItem[], done: Done, today: string, planDa
   return { ...base, state: days > 0 ? 'ahead' : 'on-pace', days }
 }
 
+/**
+ * Training load instead of minutes: how many weighted reps a date carries, and how many
+ * an item takes. With it, the forecast lays the queue at the learner's capacity (see
+ * lib/training-capacity.ts), so a slower, deliberate ramp moves the finish date rather
+ * than piling work onto today.
+ */
+export interface Load {
+  on: (date: string) => number
+  units: (item: QueueItem) => number
+}
+
 export interface ForecastDay {
   date: string
   /** New work the pace reaches on this date (today: what is left of today's stretch). */
@@ -158,16 +169,18 @@ export interface ForecastDay {
  * plan's pace. Buffer days with nothing planned stay empty unless you are
  * behind, in which case they absorb the deficit: that is what they are for.
  */
-export function forecast(queue: QueueItem[], done: Done, today: string, planDays: DayModule[], pace: PaceModel, usedToday = 0): { days: ForecastDay[]; finish: string | null } {
+export function forecast(queue: QueueItem[], done: Done, today: string, planDays: DayModule[], pace: PaceModel, usedToday = 0, load?: Load): { days: ForecastDay[]; finish: string | null } {
   const left = queue.filter((q) => !isDone(q, done))
   const start = planDays[0]?.date ?? today
-  let deficit = Math.max(0, queue.filter((q) => q.baseline < today && !isDone(q, done)).reduce((n, q) => n + q.minutes, 0))
+  const cost = (q: QueueItem) => (load ? load.units(q) : q.minutes)
+  let deficit = Math.max(0, queue.filter((q) => q.baseline < today && !isDone(q, done)).reduce((n, q) => n + cost(q), 0))
   const out: ForecastDay[] = []
   let date = today < start ? start : today
   let finish: string | null = null
   for (let guard = 0; left.length && guard < 400; guard++, date = addDays(date, 1)) {
     const planDay = planDays.find((d) => d.date === date)
-    let budget = budgetOn(date, planDays, pace)
+    const minutesBudget = budgetOn(date, planDays, pace)
+    let budget = load && minutesBudget > 0 ? load.on(date) : minutesBudget
     if (planDay?.phase === 'buffer' && (planDay.planMinutes ?? 0) === 0) {
       budget = Math.min(budget, deficit)
       deficit -= budget
@@ -181,10 +194,10 @@ export function forecast(queue: QueueItem[], done: Done, today: string, planDays
       // Once the day has its new LeetCode problems, carry on with the next ladder rep behind them.
       const j = left[0].kind !== 'lc' || newLc < pace.maxNewLeetcode ? 0 : left.findIndex((x) => x.kind === 'rep')
       if (j < 0) break
-      if (!(used === 0 || used + left[j].minutes <= budget * pace.overfill)) break
+      if (!(used === 0 || used + cost(left[j]) <= budget * (load ? 1 : pace.overfill))) break
       const [it] = left.splice(j, 1)
       if (it.kind === 'lc') newLc++
-      used += it.minutes
+      used += cost(it)
       items.push(it)
     }
     if (items.length) {

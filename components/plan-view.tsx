@@ -51,8 +51,41 @@ export default function PlanView() {
         </p>
 
         <div className="mt-6">
-          <PaceGauge pace={pace} planEnd={BASELINE[BASELINE.length - 1].date} />
+          <PaceGauge pace={pace} planEnd={BASELINE[BASELINE.length - 1].date} load={pace.capacity} />
         </div>
+
+        {/* We are training capacity, not cramming a syllabus. */}
+        <section aria-labelledby="ramp-h" className="panel mt-6 p-6" data-testid="ramp">
+          <h2 id="ramp-h" className="h2">
+            How the training load grows
+          </h2>
+          <p className="mt-1 max-w-[720px] text-[13.5px] leading-relaxed text-muted">
+            Like training in a gym: start with a load you can finish every day, then add a little when the week before was handled. The roadmap is long; a day never is. Each Monday last week is reviewed: handled, the load goes up a step; not yet, it stays where it is for another week.
+          </p>
+          <ol className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {[
+              { name: 'Foundation', when: 'Weeks 1–2', load: '10 → 15 reps a day', what: 'Learn heavily: each idea taught first, then guided reps and drills.', phase: 'foundation' },
+              { name: 'Build', when: 'Weeks 3–4', load: '15 → 18 reps a day', what: 'Drill and combine. Small unlabeled problems.', phase: 'build' },
+              { name: 'Transfer', when: 'Month 2', load: 'About 20 reps a day', what: 'Capstones and LeetCode problems become routine. Mixed sets.', phase: 'transfer' },
+              { name: 'Interview', when: 'Month 3', load: '20–25 reps a day', what: 'Harder, colder, timed: new Mediums, follow-ups, mocks. Not more micro-questions.', phase: 'interview' },
+            ].map((s) => {
+              const now = pace.capacity.phase === s.phase
+              return (
+                <li key={s.name} className={`rounded-xl px-4 py-3.5 ${now ? 'bg-surface shadow-[inset_2px_0_0_var(--accent)]' : 'shadow-[0_0_0_1px_var(--line)]'}`} data-current={now ? 'true' : undefined}>
+                  <p className="text-[14px] font-semibold text-ink">
+                    {s.name} {now && <span className="ml-1 text-[12px] font-normal text-muted">· this stage</span>}
+                  </p>
+                  <p className="num text-[12.5px] text-muted">{s.when}</p>
+                  <p className="mt-2 text-[13px] font-medium text-ink-2">{s.load}</p>
+                  <p className="mt-1 text-[13px] leading-relaxed text-muted">{s.what}</p>
+                </li>
+              )
+            })}
+          </ol>
+          <p className="mt-3 text-[12.5px] leading-relaxed text-ink-2" data-testid="ramp-now">
+            <span className="font-medium text-ink">Now: {pace.capacity.requiredReps} reps a day.</span> {pace.capacity.reason}
+          </p>
+        </section>
 
         <section aria-labelledby="modules-h" className="mt-8">
           <h2 id="modules-h" className="h2">

@@ -18,6 +18,8 @@ import { KIND_VERB } from '@/lib/labels'
 import { kindOf } from '@/components/rep-kind'
 import { RepsBars } from '@/components/motif'
 import BasicsPanel, { BriefView } from '@/components/rep/basics-panel'
+import ConceptGuide from '@/components/concept-guide'
+import { conceptFor, guideMode } from '@/data/concepts'
 import { primersFor } from '@/data/primers'
 import { movesFor } from '@/data/primers/moves'
 import { BRIEFS } from '@/data/briefs'
@@ -319,6 +321,9 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ex.id, loaded])
   const walk = walkthroughFor(ex, section?.id)
+  // The concept this rep trains, and how the Learn panel behaves for what the rep is for.
+  const concept = useMemo(() => conceptFor(ex.skills, teach?.skills ?? []), [ex.skills, teach])
+  const learnMode = guideMode(ex, { firstExposure: Boolean(teach), interview: false })
   // The problem this rep builds toward, and where this rep sits among its building blocks.
   const toward = useMemo(() => {
     const target = targetOfRep(ex.id)
@@ -927,59 +932,24 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
               </p>
             )}
 
-            {teach && !interview && (
-              <section aria-label="The idea behind this rep" className="flex flex-col gap-3 rounded-xl bg-surface px-4 py-3.5 shadow-[inset_2px_0_0_var(--accent)]" data-testid="teach">
-                <p className="label !text-ink-2">New here · read this first</p>
-                {ex.teaching && (
-                  <div>
+            {/* The Learn layer: open on a first exposure, one click away while practising, and on a rep that proves
+                something, collapsed and counted as help when opened. Never in Interview mode. */}
+            {concept && !interview && learnMode !== 'hidden' && (
+              <div className="flex flex-col gap-3" data-testid={teach ? 'teach' : undefined}>
+                <ConceptGuide key={`${ex.id}:${learnMode}`} concept={concept} mode={learnMode} onAssisted={() => countHint()} />
+                {teach && ex.teaching && (
+                  <div className="rounded-xl bg-surface px-4 py-3">
                     <Markdown text={ex.teaching.concept} className="!text-[14px] !leading-relaxed" />
                     {ex.teaching.example && <div className="mt-2"><CodeView code={ex.teaching.example} /></div>}
                   </div>
                 )}
-                {/* One idea, kept short: what it is, the rule to hold on to, the two or three lines you will type. */}
-                {teach.lessons.slice(0, 1).map((p) => (
-                  <div key={p.id} data-primer={p.id}>
-                    <p className="text-[13.5px] font-semibold text-ink">{p.title}</p>
-                    <Markdown text={p.what} className="mt-1 !text-[14px] !leading-relaxed" />
-                    <p className="mt-1.5 text-[13.5px] leading-relaxed text-ink-2">
-                      <span className="font-medium text-ink">Hold on to: </span>
-                      {p.model}
-                    </p>
-                    <div className="mt-2.5">
-                      <p className="label mb-1">Example</p>
-                      <ul className="well divide-y divide-line overflow-hidden">
-                        {p.syntax.slice(0, 3).map((x, k) => (
-                          <li key={k} className="grid gap-x-4 gap-y-0.5 px-3.5 py-2 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
-                            <code className="mono whitespace-pre-wrap text-[12.5px] text-ink">{x.code}</code>
-                            <span className="text-[12.5px] leading-relaxed text-muted">
-                              <Markdown text={x.note} inline className="!text-[12.5px]" />
-                            </span>
-                          </li>
-                        ))}
-                      </ul>
-                      <details className="group mt-1.5">
-                        <summary className="cursor-pointer list-none text-[12.5px] text-muted underline decoration-line-strong underline-offset-4 hover:text-ink [&::-webkit-details-marker]:hidden">A full worked example</summary>
-                        <div className="mt-2">
-                          <CodeView code={p.example.code} />
-                          <p className="mono mt-1.5 whitespace-pre-wrap text-[12.5px] text-muted">prints: {p.example.output}</p>
-                        </div>
-                      </details>
-                    </div>
-                  </div>
-                ))}
-                {teach.lessons.slice(1).map((p) => (
-                  <p key={p.id} className="text-[13px] leading-relaxed text-ink-2" data-primer={p.id}>
-                    <span className="font-medium text-ink">Also new here, {p.title.toLowerCase()}: </span>
-                    {p.model} <span className="text-muted">(More behind Basics.)</span>
-                  </p>
-                ))}
-                {ex.note && (
-                  <div>
+                {teach && ex.note && (
+                  <div className="rounded-xl bg-surface px-4 py-3">
                     <p className="label mb-1">For this rep</p>
                     <Markdown text={ex.note} className="!text-[13.5px]" />
                   </div>
                 )}
-              </section>
+              </div>
             )}
             {teach && !interview && <p className="label -mb-2">Your rep</p>}
 

@@ -143,6 +143,24 @@ Reps does not open on "the next unfinished thing". It opens on **Today's trainin
 - **None of this changes the queue.** Repeats add evidence and freshness; they never undo or duplicate what the plan counts as complete. After a warm-up or a repair you are back at the same place in the queue.
 - **The session review** at the end says what changed: came back clean, improved today, still developing, and what the next session starts with.
 
+## 5c. Training capacity: a load that grows, not a syllabus to cram
+
+Today prescribes a fixed number of reps (`lib/training-capacity.ts`, `lib/today-plan.ts`). The roadmap is long; a day never is.
+
+| Stage | When | Load |
+|---|---|---|
+| Foundation | Weeks 1–2 | 10 → 15 reps a day (Week 1 is 10; Week 2 12–15) |
+| Build | Weeks 3–4 | 15 → 18 |
+| Transfer | Month 2 | about 20 |
+| Interview | Month 3 | 20–25 |
+
+- Load steps: 10, 12, 15, 18, 20, 22, 25. Each Monday the previous week is reviewed. Handled (at least 4 days at the full load, at least 80% of the load done, at most 35% of passes with heavy help, cold reps at least 60% when there were 3 or more, a reasonable daily time) means one step up; handled cleanly in the first month means two. Not handled means the load holds. One big day never raises it. Each stage has a ceiling.
+- Units: trace, micro, debug and drill reps count 1. Long combine reps count 2, transfer reps 2, capstones 3, a new LeetCode problem 3, a re-solve 2. A mock is a full day.
+- Warm-ups, redos, re-solves and cold reps take slots inside the load, never on top of it (prep up to 20%, maintenance up to 20%, the plan the rest). Missed days add nothing to today: the next ten reps are just the next ten.
+- No new LeetCode problem is prescribed in the Foundation weeks, or before its building blocks are in place. It is offered as optional instead.
+- When the load is done, Today says "Training complete". More is optional: keep going, one bonus problem, or review a concept.
+- The training target (today's load) and the program forecast (when the queue finishes at this load) are shown separately. The forecast moves, and being behind the original line is said plainly, never as an alarm.
+
 ## 5b. Where everything lives
 
 - **Reps → Today** shows the next rep, the problem it is **building toward** with its blocks ticked off, and the day's LeetCode list with links, walkthroughs and the Unaided / Needed help buttons.

@@ -12,7 +12,8 @@ import ProgressIO from '@/components/progress-io'
 import BuildingToward from '@/components/building-toward'
 import ReactivateCard from '@/components/reactivate-card'
 import { SessionReviewCard } from '@/components/training-card'
-import TodayTarget from '@/components/today-target'
+import TodayTraining from '@/components/today-training'
+import { useTodayPlan } from '@/components/use-today-plan'
 import { useTraining } from '@/components/use-training'
 import LeetcodeList from '@/components/leetcode-list'
 import TodayBlocks from '@/components/today-blocks'
@@ -63,6 +64,8 @@ function DashboardToday() {
   const lcItems = leetcodeFor(day, solves, DAYS, lcMeta)
   // Re-solves and redos due today: done on LeetCode, logged in the list.
   const resolves = lcItems.filter((x) => x.type !== 'new')
+  // Today's prescription: exactly the training capacity, filled from what is due.
+  const todayPlan = useTodayPlan(pace, training, resolves)
   // Before the plan begins: how many days until Day 1.
   const startsIn = day.planDay ? null : Math.round((parseLocal(PLAN_START).getTime() - parseLocal(today).getTime()) / 86_400_000)
   const stats = dayStats(day, attempts)
@@ -146,17 +149,8 @@ function DashboardToday() {
 
         {live ? (
           <>
-            {/* Today's target, one checklist (target, maintenance, bonus) and a compact pace strip. Everything under it is reference. */}
-            <TodayTarget
-              day={day}
-              pace={pace}
-              training={training}
-              resolves={{ total: resolves.length, logged: resolves.filter((x) => solves.some((e) => e.id === x.solveId)).length, next: resolves.find((x) => !solves.some((e) => e.id === x.solveId))?.title ?? null }}
-              coldDue={due.length}
-              startCold={startReview}
-              roadmap={next && section ? { label: `${section.title} · ${next.title}`, href: `/rep/${next.id}` } : ahead ? { label: ahead.title, href: `/rep/${ahead.id}` } : null}
-              planEnd={PLAN_DAYS[PLAN_DAYS.length - 1].date}
-            />
+            {/* Today's training: the day's load, filled from what is due, and a clear point at which the day is done. */}
+            <TodayTraining plan={todayPlan} training={training} lcUrl={(lc) => lcMeta(lc)?.url} forecast={{ finish: pace.finish, planEnd: PLAN_DAYS[PLAN_DAYS.length - 1].date }} />
         <div id="leetcode" className="mt-8 scroll-mt-6 empty:hidden">
           <LeetcodeList day={day} />
         </div>

@@ -312,3 +312,7 @@ npm run verify:content -- 2026-10-03
 runs every solution and every predicted output through real Python with the same
 harness the browser uses. Fix everything it reports. It prints rep counts and estimated
 minutes per day.
+
+## The Learn layer
+
+Concept guides (`data/concepts.ts`) are composed from the primers, so they have one source of truth. Each covers what the idea is, why it matters, a mental model, core moves, the usual shape, common mistakes and concept videos (`data/concept-videos.ts`). Concept videos explain an idea and are never problem walkthroughs. On a rep the guide starts open on first exposure, is collapsed on drills and combines, is collapsed on anything that proves (opening it there counts as help), and is not shown in interview mode. The full guide lives at `/learn/<id>`. To teach a new pattern, add or extend a primer and list it in a concept spec. `lib/learn.test.ts` fails if a primer or a practised skill has no concept.

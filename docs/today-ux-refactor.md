@@ -1,3 +1,5 @@
+> Superseded in part (Oct 15): the target/maintenance/bonus hero is replaced by *Today's training*, a fixed daily load in reps that grows week by week. See planning/plan.md §5c. The single-next-thing principle stays.
+
 # Today: target, maintenance, bonus
 
 An information-hierarchy refactor of the Today page. No change to the curriculum

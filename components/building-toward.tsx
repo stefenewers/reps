@@ -5,6 +5,7 @@ import { IconArrowRight, IconCheck, IconExternal, IconPlay } from '@/components/
 import { useTargets, type TargetState } from '@/components/use-targets'
 import { EXERCISE_BY_ID } from '@/data/curriculum'
 import { targetOfRep } from '@/data/problem-bridges'
+import { conceptFor } from '@/data/concepts'
 import type { Target } from '@/lib/bridges'
 
 /**
@@ -60,6 +61,31 @@ export function LearnResource({ state, className = '' }: { state: TargetState; c
   )
 }
 
+/** The ideas behind the blocks still open: read the concept before the reps. Distinct from the problem walkthrough. */
+export function ConceptLinks({ state }: { state: TargetState }) {
+  const open = state.blocks.filter((b) => !b.ready)
+  const seen = new Set<string>()
+  const concepts = (open.length ? open : state.blocks)
+    .map((b) => conceptFor(b.skills))
+    .filter((c): c is NonNullable<typeof c> => Boolean(c) && !seen.has(c!.id) && Boolean(seen.add(c!.id)))
+    .slice(0, 3)
+  if (!concepts.length) return null
+  return (
+    <div className="rounded-xl px-3.5 py-3 shadow-[inset_0_0_0_1px_var(--line)]" data-testid="toward-concepts">
+      <p className="label">The ideas</p>
+      <ul className="mt-1 flex flex-col gap-1">
+        {concepts.map((c) => (
+          <li key={c.id}>
+            <Link href={`/learn/${c.id}`} className="inline-flex items-center gap-1.5 text-[13.5px] font-medium text-ink hover:underline">
+              {c.title} <IconArrowRight size={12} />
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
 export default function BuildingToward({ repId }: { repId?: string }) {
   const { byLc, nextOpen } = useTargets()
   const owner = repId ? targetOfRep(repId) : undefined
@@ -105,6 +131,7 @@ export default function BuildingToward({ repId }: { repId?: string }) {
                 : `Then ${state.repsLeft - 1 > 0 ? `${state.repsLeft - 1} more rep${state.repsLeft - 1 === 1 ? '' : 's'}` : 'nothing else'}${then > 1 ? ` across ${then} blocks` : ''}, then attempt ${target.title}.`}
             </p>
           </div>
+          <ConceptLinks state={state} />
           <LearnResource state={state} />
         </div>
       </div>

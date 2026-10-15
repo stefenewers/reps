@@ -1,7 +1,7 @@
 import type { Attempt, DayModule, LeetcodeItem, Section } from '@/lib/types'
 import type { SolveEntry } from '@/lib/solve-log'
 import { addDays, parseLocal } from '@/lib/dates'
-import { buildQueue, firstSolves, forecast, isDone, paceStatus, resolvesFor, type Done, type PaceModel, type PaceStatus, type QueueItem, type Resolve } from '@/lib/pacing'
+import { buildQueue, firstSolves, forecast, isDone, paceStatus, resolvesFor, type Done, type Load, type PaceModel, type PaceStatus, type QueueItem, type Resolve } from '@/lib/pacing'
 
 /**
  * The calendar as the app shows it, built from progress instead of fixed dates:
@@ -26,6 +26,8 @@ export interface CalendarInput {
   lcMeta: (lc: number) => LeetcodeItem | undefined
   /** Most re-solves a day carries, by phase: [weekday, Saturday]. */
   resolveCaps: Record<string, readonly number[]>
+  /** Lay the future at the training capacity (weighted reps a day) instead of the plan's minutes. */
+  load?: Load
 }
 
 export interface PaceCalendar {
@@ -65,7 +67,7 @@ export function buildCalendar(input: CalendarInput): PaceCalendar {
   }
   const doneToday = queue.filter((q) => (q.kind === 'rep' ? passedOn.get(q.key) === today : entries.some((e) => e.id === `lc:${q.lc!.lc}:new` && e.date === today)))
   const doneTodayMinutes = Math.round(doneToday.reduce((n, q) => n + q.minutes, 0))
-  const fc = forecast(queue, done, today, planDays, pace, doneTodayMinutes)
+  const fc = forecast(queue, done, today, planDays, pace, input.load ? doneToday.reduce((n, q) => n + input.load!.units(q), 0) : doneTodayMinutes, input.load)
   const planned = new Map(fc.days.map((d) => [d.date, d]))
 
   // Re-solves: anchored to the real first solve, or the forecast one, or (for problems solved before the plan) their slot in week 1.
