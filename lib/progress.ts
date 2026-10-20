@@ -40,7 +40,7 @@ export function dayStats(day: DayModule, attempts: Attempt[]): DayStats {
   const sectionsCompleted = req(day).filter((s) => s.exercises.length && s.exercises.every((e) => passed.has(e.id))).map((s) => s.id)
   const minutesTotal = all.reduce((n, e) => n + e.minutes, 0)
   const minutesRemaining = all.filter((e) => !passed.has(e.id)).reduce((n, e) => n + e.minutes, 0)
-  const timeSpentSeconds = attempts.filter((a) => a.date === day.date).reduce((n, a) => n + (a.durationSeconds ?? 0), 0)
+  const timeSpentSeconds = attempts.filter((a) => a.date === day.date).reduce((n, a) => n + Math.min(30 * 60, a.durationSeconds ?? 0), 0) // a rep left open counts for half an hour at most
   const percent = all.length ? Math.round((done.length / all.length) * 100) : 0
   return {
     date: day.date,

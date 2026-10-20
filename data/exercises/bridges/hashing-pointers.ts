@@ -615,7 +615,7 @@ def breaking_input():
         title: 'Area between two walls',
         skills: ['two_pointer', 'list_index', 'functions'],
         prompt:
-          '`heights` holds the heights of walls standing one unit apart. `left` and `right` are the indexes of two of them, `left < right`.\n\nWrite `area(heights, left, right)`: the rectangle that fits between them. Its width is the distance between the two indexes; its height is the **shorter** of the two walls.\n\n`area([2, 5, 3, 6], 0, 3)` → `6` (width 3, height 2)',
+          '`heights` holds the heights of walls standing one unit apart. `left` and `right` are the indexes of two of them, and `left < right`.\n\nWrite `area(heights, left, right)`. Return the area of the rectangle that fits between those two walls. Its width is the distance between the two indexes. Its height is the **shorter** of the two walls.\n\n`area([2, 5, 3, 6], 0, 3)` → `6` (width 3, height 2)\n`area([1, 8, 8, 1], 0, 3)` → `3` (the tall walls in between do not count)',
         starterCode: `def area(heights, left, right):
     pass`,
         solution: `def area(heights, left, right):
@@ -685,7 +685,7 @@ def breaking_input():
         repType: 'pattern',
         difficulty: 3,
         prompt:
-          '`posts` holds the heights of fence posts standing one metre apart. A rectangular banner is hung between two posts: it is as wide as the gap between them and as tall as the **shorter** of the two.\n\nWrite `best_banner(posts)`: the largest banner area any two posts allow, or `0` when there are fewer than two posts. One pass; no nested loop.\n\n`best_banner([2, 5, 3, 6])` → `10` (the posts of height 5 and 6, two metres apart)',
+          '`posts` holds the heights of fence posts standing one metre apart. You hang a rectangular banner between two posts. It is as wide as the gap between them and as tall as the **shorter** of the two.\n\nWrite `best_banner(posts)`. Return the largest banner area any two posts allow. With fewer than two posts, return `0`. Use one pass, with no nested loop.\n\n`best_banner([2, 5, 3, 6])` → `10` (the posts of height 5 and 6, two metres apart)\n`best_banner([9])` → `0` (one post, so no banner)',
         starterCode: `def best_banner(posts):
     pass`,
         solution: `def best_banner(posts):
@@ -732,7 +732,7 @@ def breaking_input():
         title: 'Step past the repeats',
         skills: ['sorted_dedupe', 'while_loop', 'list_index'],
         prompt:
-          '`nums` is sorted, so equal values sit next to each other. `i` is a valid index.\n\nWrite `next_different(nums, i)`: the first index after `i` whose value is different from `nums[i]`, or `len(nums)` if there is none.\n\n`next_different([1, 1, 1, 4, 4, 6], 0)` → `3`',
+          '`nums` is sorted, so equal values sit next to each other. `i` is a valid index.\n\nWrite `next_different(nums, i)`. Start just after `i` and walk right. Return the first index whose value is different from `nums[i]`. If you reach the end first, return `len(nums)`.\n\n`next_different([1, 1, 1, 4, 4, 6], 0)` → `3`\n`next_different([2, 2, 2], 0)` → `3` (every value matches, so you reach the end)',
         starterCode: `def next_different(nums, i):
     pass`,
         solution: `def next_different(nums, i):
@@ -759,7 +759,7 @@ def breaking_input():
         title: 'Each value once, by sorting',
         skills: ['sorted_dedupe', 'sorting', 'range', 'list_append'],
         prompt:
-          'Write `distinct_sorted(nums)`: every different value in `nums`, smallest first, each one once. `nums` is a list of numbers in any order, possibly empty.\n\nDo it by sorting and comparing each value with the one just before it (no set this time).\n\n`distinct_sorted([4, 1, 4, 1, 1, 6])` → `[1, 4, 6]`',
+          '`nums` is a list of numbers in any order, possibly empty.\n\nWrite `distinct_sorted(nums)`. Return each different value in `nums` once, smallest first.\n\nSort first, then compare each value with the one just before it. Do not use a set this time.\n\n`distinct_sorted([4, 1, 4, 1, 1, 6])` → `[1, 4, 6]`\n`distinct_sorted([])` → `[]`',
         starterCode: `def distinct_sorted(nums):
     pass`,
         solution: `def distinct_sorted(nums):
@@ -826,7 +826,7 @@ def breaking_input():
         repType: 'combine',
         difficulty: 4,
         prompt:
-          '`nums` is sorted and may contain repeats.\n\nWrite `unique_pairs(nums, target)`: every **different** pair of values `[a, b]` (taken from two different positions, `a <= b`) that adds up to `target`. Each pair appears once, ordered by `a`, smallest first.\n\n`unique_pairs([1, 1, 2, 3, 4, 4], 5)` → `[[1, 4], [2, 3]]`\n\nThis is the two-pointer pair search on a sorted list (start at both ends; a sum that is too small moves `left`, one that is too big moves `right`), except that it keeps going after a hit and must not report the same pair again.',
+          '`nums` is sorted and may contain repeats.\n\nWrite `unique_pairs(nums, target)`. Return every **different** pair of values `[a, b]` that adds up to `target`. The two values come from two different positions, and `a <= b`. List each pair once, smallest `a` first.\n\n`unique_pairs([1, 1, 2, 3, 4, 4], 5)` → `[[1, 4], [2, 3]]`\n`unique_pairs([2, 2, 2, 2], 4)` → `[[2, 2]]` (many matches, but one pair)\n\nThis is the two-pointer pair search on a sorted list. Start at both ends. If the sum is too small, move `left`. If it is too big, move `right`. The new part: after a hit, keep going, and never report the same pair twice.',
         starterCode: `def unique_pairs(nums, target):
     pass`,
         solution: `def unique_pairs(nums, target):
@@ -877,7 +877,7 @@ def breaking_input():
         repType: 'pattern',
         difficulty: 4,
         prompt:
-          'A shop has one of each item on a shelf; `prices` lists their prices in any order, repeats allowed. A gift card is worth exactly `budget`.\n\nWrite `count_baskets(prices, budget)`: how many **different** combinations of three prices, from three different items, add up to exactly `budget`. Two baskets with the same three prices count once.\n\n`count_baskets([3, 1, 4, 1, 6, 2], 9)` → `2` (1 + 2 + 6, whichever of the two 1s is used, and 2 + 3 + 4)',
+          'A shop has one of each item on a shelf. `prices` lists their prices in any order, and prices can repeat. A gift card is worth exactly `budget`.\n\nWrite `count_baskets(prices, budget)`. A basket is three different items whose prices add up to exactly `budget`. Return how many **different** baskets there are. Two baskets with the same three prices count once.\n\n`count_baskets([3, 1, 4, 1, 6, 2], 9)` → `2` (1 + 2 + 6, whichever 1 you use, and 2 + 3 + 4)\n`count_baskets([4, 6], 10)` → `0` (fewer than three items)',
         starterCode: `def count_baskets(prices, budget):
     pass`,
         solution: `def count_baskets(prices, budget):

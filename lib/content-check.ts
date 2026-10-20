@@ -6,6 +6,7 @@ import { PROBLEM_BY_ID } from '@/data/problems'
 import { outputMatches, hasBlanks } from '@/lib/answers'
 import { primerPrograms } from '@/data/primers'
 import type { Primer } from '@/data/primers/types'
+import { promptExamples } from '@/lib/wording'
 
 /**
  * Verifies curriculum content against real Python (local python3, same
@@ -149,3 +150,14 @@ export function verifyPrimers(primers: Primer[]): string[] {
   return problems
 }
 
+
+/** The worked examples in prompts (`f(args)` → `value`) must be true of the reference solution. */
+export function verifyPromptExamples(exercises: Exercise[]): string[] {
+  const jobs = exercises.map((e) => ({ id: e.id, solution: e.solution ?? '', examples: promptExamples(e) })).filter((j) => j.examples.length)
+  if (!jobs.length) return []
+  const driver = path.join(process.cwd(), 'scripts', 'verify_examples.py')
+  const res = spawnSync('python3', [driver], { input: JSON.stringify(jobs), maxBuffer: 64 * 1024 * 1024, encoding: 'utf8' })
+  if (res.status !== 0) throw new Error(`python3 failed: ${res.stderr}`)
+  const out = JSON.parse(res.stdout) as { id: string; errors: string[] }[]
+  return out.flatMap((r) => r.errors.map((err) => `[${r.id}] prompt example: ${err}`))
+}

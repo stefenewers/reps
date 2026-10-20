@@ -103,7 +103,7 @@ export function ConceptBody({ concept: c, full = false }: { concept: Concept; fu
  * - prove (capstone, check, transfer, cold): collapsed, and opening it counts as help;
  * - interview mode: not shown at all (the caller does not render it).
  */
-export default function ConceptGuide({ concept, mode, onAssisted }: { concept: Concept; mode: 'learn' | 'practice' | 'prove'; onAssisted?: () => void }) {
+export default function ConceptGuide({ concept, mode, label, onAssisted }: { concept: Concept; mode: 'learn' | 'practice' | 'prove'; label?: string; onAssisted?: () => void }) {
   const [open, setOpen] = useState(GUIDE_BEHAVIOUR[mode].open)
   const toggle = () => {
     if (!open && GUIDE_BEHAVIOUR[mode].assisted) onAssisted?.()
@@ -113,7 +113,7 @@ export default function ConceptGuide({ concept, mode, onAssisted }: { concept: C
     <section aria-label={`Learn: ${concept.title}`} className={`rounded-xl ${open ? 'bg-surface px-4 py-3.5 shadow-[inset_2px_0_0_var(--accent)]' : 'shadow-[inset_0_0_0_1px_var(--line)]'}`} data-testid="concept-guide" data-mode={mode} data-open={open ? 'true' : 'false'}>
       <button type="button" onClick={toggle} aria-expanded={open} className={`flex w-full items-center justify-between gap-3 text-left ${open ? '' : 'px-4 py-2.5'}`}>
         <span className="text-[13px]">
-          <span className="label mr-2 !text-ink-2">{mode === 'learn' ? 'New here · read this first' : 'Learn'}</span>
+          <span className="label mr-2 !text-ink-2">{label ?? (mode === 'learn' ? 'New here · read this first' : 'Learn')}</span>
           <span className="font-medium text-ink">{concept.title}</span>
         </span>
         <span className="shrink-0 text-[12px] text-muted">{open ? 'Hide' : mode === 'prove' ? 'Open (counts as help)' : 'Open'}</span>

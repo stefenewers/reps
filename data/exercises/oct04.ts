@@ -152,7 +152,7 @@ for right in range(k - 1, len(s)):
           id: 'd4-win-all-windows',
           title: 'List every window',
           skills: ['sliding_window', 'slicing', 'range'],
-          prompt: '`s` is a string and `k` is a window size (a whole number, 1 or more). A **substring** is a run of neighbouring characters with none skipped: `"bc"` is a substring of `"abcd"`, `"ac"` is not.\n\nWrite `all_windows(s, k)` returning a list of every substring of length `k`, from left to right.\n\n`all_windows("abcd", 2)` → `["ab", "bc", "cd"]`\n\nIf `k` is bigger than `len(s)` no window fits: return `[]`.',
+          prompt: '`s` is a string and `k` is a window size (a whole number, 1 or more). A **substring** is a run of neighbouring characters with none skipped. `"bc"` is a substring of `"abcd"`, but `"ac"` isn\'t.\n\nWrite `all_windows(s, k)`. Return a list of every substring of length `k`, from left to right. If `k` is bigger than `len(s)`, no window fits, so return `[]`.\n\n`all_windows("abcd", 2)` → `["ab", "bc", "cd"]`\n`all_windows("ab", 3)` → `[]` (a window of 3 doesn\'t fit in 2 characters)',
           starterCode: `def all_windows(s, k):
     pass`,
           solution: `def all_windows(s, k):
@@ -170,7 +170,7 @@ for right in range(k - 1, len(s)):
           title: 'Slide a running sum',
           skills: ['sliding_window', 'state_tracking'],
           style: 'optimize',
-          prompt: '`nums` is a list of numbers. `max_sum_k(nums, k)` returns the largest sum of any `k` neighbouring values: `max_sum_k([1, 4, 2, 10], 2)` → `12` (`2 + 10`).\n\nThis version adds up every window from scratch, O(n·k):\n\n```python\ndef max_sum_k(nums, k):\n    best = None\n    for i in range(len(nums) - k + 1):\n        total = sum(nums[i:i + k])\n        if best is None or total > best:\n            best = total\n    return best\n```\n\nRewrite it in O(n). Two neighbouring windows share all but two values, so do not add those again: sum the first window once, then for each step to the right add the value that enters on the right and subtract the value that leaves on the left. Assume `1 <= k <= len(nums)`. Numbers can be negative.',
+          prompt: '`nums` is a list of numbers. `max_sum_k(nums, k)` returns the largest sum of any `k` neighbouring values.\n\n`max_sum_k([1, 4, 2, 10], 2)` → `12` (`2 + 10`)\n`max_sum_k([-3, -1, -2], 1)` → `-1` (every value is negative, so the best is the biggest one)\n\nThis version adds up every window from scratch, O(n·k):\n\n```python\ndef max_sum_k(nums, k):\n    best = None\n    for i in range(len(nums) - k + 1):\n        total = sum(nums[i:i + k])\n        if best is None or total > best:\n            best = total\n    return best\n```\n\nRewrite it in O(n). Sum the first window once. Then slide it one step at a time. Add the value that enters on the right, and subtract the value that leaves on the left. Assume `1 <= k <= len(nums)`. Numbers can be negative.',
           starterCode: `def max_sum_k(nums, k):
     pass`,
           solution: `def max_sum_k(nums, k):
@@ -220,7 +220,7 @@ for right in range(k - 1, len(s)):
           title: 'Most vowels in k letters',
           skills: ['sliding_window', 'window_state', 'conditionals'],
           difficulty: 3,
-          prompt: '`s` is a string of lowercase letters. Write `max_vowels(s, k)` returning the largest number of vowels (`a e i o u`) found in any substring of length `k`.\n\n`max_vowels("abciiidef", 3)` → `3` (`"iii"`)\n\nAssume `1 <= k <= len(s)`. Keep one vowel count for the current window and update it when a letter enters and when a letter leaves. Do not recount each window.',
+          prompt: '`s` is a string of lowercase letters. Write `max_vowels(s, k)`. Return the largest number of vowels (`a e i o u`) in any substring of length `k`. Assume `1 <= k <= len(s)`.\n\n`max_vowels("abciiidef", 3)` → `3` (`"iii"`)\n`max_vowels("xyz", 2)` → `0` (no vowels at all)\n\nKeep one vowel count for the current window. Update it when a letter enters and when a letter leaves. Don\'t recount each window.',
           note: '**Window state** is whatever you keep track of about the items currently inside the window: a sum, a count, a set. When the window slides, update the state for the one item that enters and the one that leaves. Never rebuild it.',
           starterCode: `def max_vowels(s, k):
     pass`,
@@ -247,7 +247,7 @@ for right in range(k - 1, len(s)):
           title: 'Trace grow and shrink',
           skills: ['sliding_window', 'while_loop'],
           difficulty: 2,
-          prompt: 'The window `nums[left..right]` must keep a total of at most `limit`. Each line prints `right`, `left` and the total once the window obeys that rule again. What does this print?',
+          prompt: 'The window `nums[left..right]` must keep its total at most `limit`. Each loop adds `nums[right]`, then shrinks the window from the left until the total fits again. Then it prints `right`, `left` and the total. What does this print?',
           code: `nums = [2, 1, 3, 2, 4]
 limit = 6
 left = 0
@@ -270,7 +270,7 @@ for right in range(len(nums)):
           skills: ['sliding_window', 'state_tracking', 'while_loop'],
           difficulty: 3,
           style: 'optimize',
-          prompt: '`nums` is a list of **positive** numbers and `limit` is a number. `longest_under(nums, limit)` returns the length of the longest stretch of neighbouring values whose sum is at most `limit`, or `0` if not even one value fits.\n\n`longest_under([2, 1, 3, 2, 4], 6)` → `3` (`2 + 1 + 3`)\n\nThis version tries every start, O(n²):\n\n```python\ndef longest_under(nums, limit):\n    best = 0\n    for i in range(len(nums)):\n        total = 0\n        for j in range(i, len(nums)):\n            total += nums[j]\n            if total > limit:\n                break\n            best = max(best, j - i + 1)\n    return best\n```\n\nRewrite it in O(n) with one **variable-size** window `nums[left..right]`. Call the window **valid** when its sum is at most `limit`. For each `right`: add `nums[right]`; while the window is not valid, take `nums[left]` out and move `left` forward; now the window is valid, so record its size.',
+          prompt: '`nums` is a list of **positive** numbers and `limit` is a number. `longest_under(nums, limit)` returns the length of the longest stretch of neighbouring values whose sum is at most `limit`. If not even one value fits, it returns `0`.\n\n`longest_under([2, 1, 3, 2, 4], 6)` → `3` (`2 + 1 + 3`)\n`longest_under([7, 8], 5)` → `0` (every value is over the limit)\n\nThis version tries every start, O(n²):\n\n```python\ndef longest_under(nums, limit):\n    best = 0\n    for i in range(len(nums)):\n        total = 0\n        for j in range(i, len(nums)):\n            total += nums[j]\n            if total > limit:\n                break\n            best = max(best, j - i + 1)\n    return best\n```\n\nRewrite it in O(n) with one **variable-size** window `nums[left..right]`. Call the window **valid** when its sum is at most `limit`. For each `right`, add `nums[right]` to the sum. While the window isn\'t valid, take `nums[left]` out and move `left` forward. The window is now valid, so record its size.',
           note: 'Variable window: its size changes. `right` moves every loop (grow). `left` moves only `while` the window breaks the rule (shrink). Measure `right - left + 1` after the shrinking, when the window is **valid** again.',
           starterCode: `def longest_under(nums, limit):
     pass`,
@@ -359,7 +359,7 @@ for right in range(len(s)):
           id: 'd4-ws-remove-one',
           title: 'Decrement and delete',
           skills: ['window_state', 'dict_lookup', 'dict_assign'],
-          prompt: '`counts` is a dict used as window state: each item in the window → how many copies of it are inside. `key` is an item that is leaving the window, so it is always in `counts`.\n\nWrite `remove_one(counts, key)`: lower `counts[key]` by one, and delete the key entirely when its count reaches 0. Return `counts`.\n\n`remove_one({"a": 2, "b": 1}, "b")` → `{"a": 2}`\n\nDeleting at 0 keeps `len(counts)` equal to the number of different items in the window.',
+          prompt: '`counts` is a dict used as window state. It maps each item in the window to how many copies of it are inside. `key` is an item that is leaving the window, so it is always in `counts`.\n\nWrite `remove_one(counts, key)`. Lower `counts[key]` by one. If the count reaches 0, delete the key. Return `counts`.\n\n`remove_one({"a": 2, "b": 1}, "b")` → `{"a": 2}` (`"b"` hit 0, so it is gone)\n`remove_one({"a": 2}, "a")` → `{"a": 1}`\n\nDeleting at 0 keeps `len(counts)` equal to the number of different items in the window.',
           starterCode: `def remove_one(counts, key):
     pass`,
           solution: `def remove_one(counts, key):
@@ -454,7 +454,7 @@ for right in range(len(s)):
           difficulty: 4,
           stage: 'combine',
           repType: 'combine',
-          prompt: '`nums` is a list of numbers. Write `distinct_per_window(nums, k)` returning a list with one entry per window of size `k`, left to right: how many **distinct** (different) values that window contains. If `k > len(nums)` there are no windows: return `[]`.\n\n`distinct_per_window([1, 2, 1, 3, 4, 2, 3], 4)` → `[3, 4, 4, 3]`\n\nKeep a count dict (value → copies inside the window) and update it on both edges; do not rebuild a set per window.',
+          prompt: '`nums` is a list of numbers. Write `distinct_per_window(nums, k)`. For each window of size `k`, from left to right, count how many **distinct** (different) values it holds. Return those counts as a list. If `k > len(nums)`, there are no windows, so return `[]`.\n\n`distinct_per_window([1, 2, 1, 3, 4, 2, 3], 4)` → `[3, 4, 4, 3]`\n`distinct_per_window([1, 2], 3)` → `[]`\n\nKeep a count dict (value → copies inside the window). Update it at both edges as the window slides. Don\'t rebuild a set for each window.',
           starterCode: `def distinct_per_window(nums, k):
     pass`,
           solution: `def distinct_per_window(nums, k):
@@ -485,7 +485,7 @@ for right in range(len(s)):
           id: 'd4-ws-debug-no-del',
           title: 'Fix the distinct counter',
           skills: ['window_state', 'frequency_map'],
-          prompt: '`nums` is a list of numbers. `max_distinct(nums, k)` should return the largest number of **distinct** (different) values found in any window of `k` neighbouring items. Its window state is `counts`, a dict: value → how many copies are inside the window right now.\n\n`max_distinct([1, 2, 3, 3, 3], 2)` → `2`\n\nAssume `1 <= k <= len(nums)`. Make the tests pass.',
+          prompt: '`nums` is a list of numbers. `max_distinct(nums, k)` should return the largest number of **distinct** (different) values in any window of `k` neighbouring items. It keeps its window state in `counts`, a dict from each value to how many copies are inside the window right now.\n\n`max_distinct([1, 2, 3, 3, 3], 2)` → `2`\n\nAssume `1 <= k <= len(nums)`. Make the tests pass.',
           brokenCode: `def max_distinct(nums, k):
     counts = {}
     best = 0
@@ -609,7 +609,7 @@ for right in range(len(s)):
           difficulty: 4,
           stage: 'pattern',
           repType: 'pattern',
-          prompt: '`s` is a string. Write `longest_two_kinds(s)` returning the length of the longest substring (neighbouring characters, none skipped) that uses **at most two different characters**. An empty string gives `0`.\n\n`longest_two_kinds("ccaabbb")` → `5` (`"aabbb"`)\n\n`longest_two_kinds("eceba")` → `3` (`"ece"`)',
+          prompt: '`s` is a string. Write `longest_two_kinds(s)`. Return the length of the longest substring (neighbouring characters, none skipped) that uses **at most two different characters**. An empty string gives `0`.\n\n`longest_two_kinds("ccaabbb")` → `5` (`"aabbb"`)\n\n`longest_two_kinds("eceba")` → `3` (`"ece"`)',
           transfer: true,
           starterCode: `def longest_two_kinds(s):
     pass`,
@@ -644,7 +644,7 @@ for right in range(len(s)):
           skills: ['window_state', 'sliding_window', 'frequency_map'],
           difficulty: 3,
           stage: 'reconstruct',
-          prompt: 'Write `longest_k_kinds(s, k)`: the length of the longest substring of the string `s` that uses at most `k` different characters. `k` is a whole number and may be 0, which gives `0`.\n\n`longest_k_kinds("eceba", 2)` → `3`',
+          prompt: '`s` is a string and `k` is a whole number, 0 or more. Write `longest_k_kinds(s, k)`. Return the length of the longest substring of `s` that uses at most `k` different characters. When `k` is 0, the answer is `0`.\n\n`longest_k_kinds("eceba", 2)` → `3` (`"ece"`)\n`longest_k_kinds("abc", 0)` → `0`',
           starterCode: `def longest_k_kinds(s, k):
     pass`,
           solution: `def longest_k_kinds(s, k):
@@ -683,7 +683,7 @@ for right in range(len(s)):
           problemId: 'longest-substring',
           skills: ['sliding_window', 'window_state', 'set_membership', 'state_tracking'],
           prompt:
-            'Given a string `s`, return the length of the longest stretch of consecutive characters in which no character appears twice.\n\nA stretch must be contiguous: "pwke" taken from "pwwkew" does not count because it skips a character. Aim for O(n).',
+            '`s` is a string. Return the length of the longest stretch of consecutive characters in which no character appears twice.\n\nThe stretch must be unbroken. In `"pwwkew"`, `"pwke"` doesn\'t count because it skips a character.\n\n`longest_unique("pwwkew")` → `3` (`"wke"`)\n`longest_unique("")` → `0`\n\nAim for O(n).',
           starterCode: `def longest_unique(s: str) -> int:
     pass`,
           solution: `def longest_unique(s: str) -> int:
@@ -780,7 +780,7 @@ for right in range(len(s)):
           difficulty: 4,
           stage: 'pattern',
           repType: 'pattern',
-          prompt: 'Write `longest_unique_jump(s)`: the length of the longest substring of `s` with no repeated character (`"abcabcbb"` → `3`).\n\nThis time keep a dict `last` mapping each character to the index where it most recently appeared. When the character at `right` already has a copy inside the window, do not step `left` one at a time: **jump** it to just past that copy.\n\nCareful: `left` must never move backwards. Try `"abba"` → `2`.',
+          prompt: 'Write `longest_unique_jump(s)`. Return the length of the longest substring of `s` with no repeated character.\n\n`longest_unique_jump("abcabcbb")` → `3` (`"abc"`)\n`longest_unique_jump("abba")` → `2`\n\nThis time keep a dict `last` from each character to the index where it last appeared. If the character at `right` already has a copy inside the window, don\'t step `left` forward one at a time. **Jump** it to just past that copy.\n\nCareful: `left` must never move backwards. The `"abba"` example checks this.',
           starterCode: `def longest_unique_jump(s):
     pass`,
           solution: `def longest_unique_jump(s):
@@ -808,7 +808,7 @@ for right in range(len(s)):
           title: 'Break the jump',
           skills: ['sliding_window', 'index_map', 'edge_cases'],
           style: 'write-test',
-          prompt: '`longest_unique_jump(s)` should return the length of the longest substring with no repeated character. It keeps `last` (character → the index where it most recently appeared) and jumps `left` to just past the previous copy. A teammate wrote it like this, and it is wrong on some strings:\n\n```python\ndef longest_unique_jump(s):\n    last = {}\n    left = 0\n    best = 0\n    for right, ch in enumerate(s):\n        if ch in last:\n            left = last[ch] + 1\n        last[ch] = right\n        best = max(best, right - left + 1)\n    return best\n```\n\nWrite `breaking_input()`: it takes nothing and returns one string on which the code above gives the wrong length.',
+          prompt: '`longest_unique_jump(s)` should return the length of the longest substring with no repeated character. It keeps `last`, a dict from each character to the index where it last appeared. When it sees a repeat, it jumps `left` to just past the earlier copy. A teammate wrote it like this, and it is wrong on some strings:\n\n```python\ndef longest_unique_jump(s):\n    last = {}\n    left = 0\n    best = 0\n    for right, ch in enumerate(s):\n        if ch in last:\n            left = last[ch] + 1\n        last[ch] = right\n        best = max(best, right - left + 1)\n    return best\n```\n\nWrite `breaking_input()`. It takes nothing and returns one string on which the code above gives the wrong length.',
           starterCode: `def breaking_input():
     pass`,
           solution: `def breaking_input():
@@ -832,7 +832,7 @@ for right in range(len(s)):
           stage: 'pattern',
           repType: 'pattern',
           style: 'modify',
-          prompt: 'This returns the **length** of the longest substring with no repeated characters. Change `longest_unique_text(s)` to return the substring itself (a string). If several tie for longest, return the one that starts first. An empty `s` gives `""`.\n\n`"pwwkew"` → `"wke"`',
+          prompt: 'This code returns the **length** of the longest substring with no repeated characters. Change `longest_unique_text(s)` to return the substring itself. If several tie for longest, return the one that starts first. An empty `s` gives `""`.\n\n`longest_unique_text("pwwkew")` → `"wke"`\n`longest_unique_text("abab")` → `"ab"` (`"ab"` and `"ba"` tie; `"ab"` starts first)',
           starterCode: `def longest_unique_text(s):
     seen = set()
     left = 0
@@ -893,7 +893,7 @@ print(stack[-1], len(stack))`,
           id: 'd4-st-reverse',
           title: 'Reverse with a stack',
           skills: ['stack_push_pop', 'string_iterate', 'while_loop'],
-          prompt: 'Write `reverse_with_stack(s)` returning the string `s` backwards, without slicing. Use a list as a stack: push every character (`append`), then pop until the stack is empty, collecting each popped character in order.\n\n`"abc"` → `"cba"`. An empty string gives `""`.',
+          prompt: 'Write `reverse_with_stack(s)`. Return the string `s` backwards, without slicing. Use a list as a stack. Push every character with `append`. Then pop until the stack is empty, and join the popped characters in the order they came off.\n\n`reverse_with_stack("abc")` → `"cba"`\n`reverse_with_stack("")` → `""`',
           starterCode: `def reverse_with_stack(s):
     pass`,
           solution: `def reverse_with_stack(s):
@@ -935,7 +935,7 @@ print(stack[-1], len(stack))`,
           id: 'd4-st-debug-empty-pop',
           title: 'Fix the star remover',
           skills: ['stack_push_pop', 'conditionals'],
-          prompt: '`remove_stars(s)` takes a string of letters and `*`. Reading left to right, each `*` removes the nearest letter still remaining on its left; a `*` with nothing to remove does nothing. It should return what is left, as a string.\n\n`"ab*c"` → `"ac"`\n\nMake the tests pass.',
+          prompt: '`remove_stars(s)` takes a string of letters and `*`. Read it left to right. Each `*` removes the nearest letter to its left that is still there. A `*` with nothing to remove does nothing. The function should return the letters that are left, as a string.\n\n`remove_stars("ab*c")` → `"ac"`\n\nMake the tests pass.',
           brokenCode: `def remove_stars(s):
     stack = []
     for ch in s:
@@ -964,7 +964,7 @@ print(stack[-1], len(stack))`,
           title: 'Cancel adjacent twins',
           skills: ['stack_push_pop', 'conditionals'],
           difficulty: 3,
-          prompt: 'Write `cancel_pairs(s)`: `s` is a string. Whenever two equal characters sit next to each other, remove both. Removing a pair can bring two more equal characters together, so keep going until no such pair is left. Return what remains.\n\n`"abbaca"` → `"ca"` (remove `"bb"`, which leaves `"aaca"`; then remove `"aa"`)\n\nOne pass is enough if you keep the characters that have survived so far on a stack.',
+          prompt: '`s` is a string. Write `cancel_pairs(s)`. Whenever two equal characters sit next to each other, remove both. Removing a pair can bring two more equal characters together. Keep going until no such pair is left, and return what remains.\n\n`cancel_pairs("abbaca")` → `"ca"` (remove `"bb"` to get `"aaca"`, then remove `"aa"`)\n`cancel_pairs("abba")` → `""` (`"bb"` goes, then `"aa"`)\n\nOne pass is enough if you keep the characters that have survived so far on a stack.',
           starterCode: `def cancel_pairs(s):
     pass`,
           solution: `def cancel_pairs(s):
@@ -990,7 +990,7 @@ print(stack[-1], len(stack))`,
           id: 'd4-st-round-balanced',
           title: 'Balanced round brackets',
           skills: ['stack_push_pop', 'conditionals', 'early_return'],
-          prompt: '`s` contains only `(` and `)`. It is **balanced** when every `(` is closed by a later `)` and no `)` arrives while nothing is open. Write `balanced(s)` returning `True` or `False`. An empty string is balanced.\n\n`"(())()"` → `True`, `")("` → `False`, `"((("` → `False`\n\nUse a stack: push on `(`, pop on `)`. A `)` with nothing to pop means not balanced; so does anything left on the stack at the end.',
+          prompt: '`s` contains only `(` and `)`. It is **balanced** when every `(` is closed by a later `)`, and no `)` shows up while nothing is open. Write `balanced(s)`. Return `True` or `False`. An empty string is balanced.\n\n`balanced("(())()")` → `True`\n`balanced(")(")` → `False` (the `)` comes before anything is open)\n`balanced("(((")` → `False` (nothing gets closed)\n`balanced("")` → `True`\n\nUse a stack. Push on `(` and pop on `)`. If a `)` has nothing to pop, the string isn\'t balanced. It also isn\'t balanced if anything is left on the stack at the end.',
           starterCode: `def balanced(s):
     pass`,
           solution: `def balanced(s):
@@ -1038,7 +1038,7 @@ print(stack[-1], len(stack))`,
           difficulty: 3,
           stage: 'pattern',
           repType: 'pattern',
-          prompt: '`expr` is a string of tokens separated by spaces: whole numbers (possibly negative) and the operators `+ - *`, written in **postfix** order, meaning each operator comes after the two values it works on. `eval_postfix(expr)` should return the result as an int.\n\nAn operator applies to the two most recent values, the older one on its left: `"9 2 -"` is `9 - 2 = 7`, and `"3 4 + 2 *"` is `(3 + 4) * 2 = 14`.\n\nMake the tests pass.',
+          prompt: '`expr` is a string of tokens separated by spaces. The tokens are whole numbers (possibly negative) and the operators `+ - *`. They come in **postfix** order: each operator comes after the two values it works on. `eval_postfix(expr)` should return the result as an int.\n\nAn operator works on the two most recent values. The older of the two goes on its left.\n\n`eval_postfix("9 2 -")` → `7` (`9 - 2`)\n`eval_postfix("3 4 + 2 *")` → `14` (`(3 + 4) * 2`)\n\nMake the tests pass.',
           brokenCode: `def eval_postfix(expr):
     stack = []
     for tok in expr.split():
@@ -1124,7 +1124,7 @@ print(stack[-1], len(stack))`,
           difficulty: 4,
           stage: 'pattern',
           repType: 'pattern',
-          prompt: 'Stretch. `nums` is a list of numbers. Write `next_greater(nums)` returning a list of the same length: entry `i` is the first value to the right of `nums[i]` that is strictly larger than it, or `-1` if there is none.\n\n`[2, 1, 3, 2]` → `[3, 3, -1, -1]`\n\nAim for O(n): keep a stack of the **indexes** that are still waiting for their answer.',
+          prompt: 'Stretch. `nums` is a list of numbers. Write `next_greater(nums)`. Return a list of the same length. Entry `i` is the first value to the right of `nums[i]` that is strictly larger than it. If there is none, entry `i` is `-1`.\n\n`next_greater([2, 1, 3, 2])` → `[3, 3, -1, -1]`\n`next_greater([5, 5])` → `[-1, -1]` (equal isn\'t larger)\n\nAim for O(n). Keep a stack of the **indexes** that are still waiting for their answer.',
           starterCode: `def next_greater(nums):
     pass`,
           solution: `def next_greater(nums):
@@ -1186,7 +1186,7 @@ print(stack)`,
           id: 'd4-mp-one-line-lookup',
           title: 'Look up the opener',
           skills: ['matching_pairs', 'dict_get', 'dict_lookup'],
-          prompt: '`pairs` is a dict: each closing bracket → the opening bracket that matches it. Write two lines below the given code:\n\n- `opener`: the opening bracket that `ch` needs\n- `missing`: the opening bracket that `other` needs. `other` is not a closing bracket, so this must come out as `None`, with no KeyError',
+          prompt: '`pairs` is a dict from each closing bracket to the opening bracket that matches it. Write two lines below the given code:\n\n- `opener`: the opening bracket that `ch` needs\n- `missing`: the opening bracket that `other` needs. `other` isn\'t a closing bracket, so this must come out as `None`, with no KeyError',
           starterCode: `pairs = {")": "(", "]": "[", "}": "{"}
 ch = "]"
 other = "x"
@@ -1206,7 +1206,7 @@ missing = pairs.get(other)`,
           id: 'd4-mp-closes-top',
           title: 'Does it close the top?',
           skills: ['matching_pairs', 'stack_push_pop', 'dict_lookup'],
-          prompt: '`stack` is a list of opening brackets still waiting to be closed; its top is the last item. `ch` is one closing bracket: `)`, `]` or `}`.\n\nWrite `closes_top(stack, ch)`: return `True` only when the stack is not empty and its top is the opener that matches `ch`. Otherwise return `False`. Do not change `stack`. Build the closer → opener dict inside the function.\n\n`closes_top(["(", "["], "]")` → `True`, `closes_top([], ")")` → `False`',
+          prompt: '`stack` is a list of opening brackets still waiting to be closed. Its top is the last item. `ch` is one closing bracket: `)`, `]` or `}`.\n\nWrite `closes_top(stack, ch)`. Return `True` only when the stack isn\'t empty and its top is the opener that matches `ch`. Otherwise return `False`. Don\'t change `stack`. Build the closer → opener dict inside the function.\n\n`closes_top(["(", "["], "]")` → `True`\n`closes_top([], ")")` → `False` (nothing is open)',
           starterCode: `def closes_top(stack, ch):
     pass`,
           solution: `def closes_top(stack, ch):
@@ -1226,7 +1226,7 @@ missing = pairs.get(other)`,
           stage: 'combine',
           repType: 'combine',
           style: 'finish',
-          prompt: '`s` is a string made only of the brackets `()[]{}`. A closer is **bad** when nothing is open for it to close, or when the most recently opened bracket is a different kind. Finish `first_bad(s)`: return the index of the first bad closer, or `-1` if there is none. Openers that are never closed are fine here.\n\n`"([)]"` → `2` (the `)` arrives while `[` is the most recent opener)',
+          prompt: '`s` is a string made only of the brackets `()[]{}`. A closer is **bad** if nothing is open for it to close. It is also bad if the most recently opened bracket is a different kind. Finish `first_bad(s)`. Return the index of the first bad closer, or `-1` if there is none. Openers that never get closed are fine here.\n\n`first_bad("([)]")` → `2` (the `)` arrives while `[` is the most recent opener)\n`first_bad("((")` → `-1` (unclosed openers don\'t count)',
           starterCode: `def first_bad(s):
     pairs = {")": "(", "]": "[", "}": "{"}
     stack = []
@@ -1254,7 +1254,7 @@ missing = pairs.get(other)`,
           difficulty: 3,
           stage: 'combine',
           repType: 'combine',
-          prompt: '`s` is a balanced string of `(` and `)`: every opener is closed later, and no closer comes early. Write `pair_positions(s)` returning a dict: index of each opener → index of the closer that matches it. An empty string gives `{}`.\n\n`"(())"` → `{0: 3, 1: 2}`\n\nUse a stack, but push **indexes**, not characters.',
+          prompt: '`s` is a balanced string of `(` and `)`: every opener is closed later, and no closer comes early. Write `pair_positions(s)`. Return a dict from the index of each opener to the index of the closer that matches it. An empty string gives `{}`.\n\n`pair_positions("(())")` → `{0: 3, 1: 2}`\n`pair_positions("()()")` → `{0: 1, 2: 3}`\n\nUse a stack, but push **indexes**, not characters.',
           starterCode: `def pair_positions(s):
     pass`,
           solution: `def pair_positions(s):
@@ -1276,7 +1276,7 @@ missing = pairs.get(other)`,
           id: 'd4-mp-debug-peek',
           title: 'Fix the widest pair',
           skills: ['matching_pairs', 'stack_push_pop', 'enumerate'],
-          prompt: '`s` is a balanced string of `(` and `)`. Each opener is matched by the closer that closes it. The width of a pair is how many characters it spans, both brackets included: closer index − opener index + 1. `widest_pair(s)` should return the width of the widest pair, or `0` for an empty string.\n\n`"()(())"` → `4`\n\nMake the tests pass.',
+          prompt: '`s` is a balanced string of `(` and `)`. Each opener is matched by the closer that closes it. The **width** of a pair is how many characters it spans, both brackets included: closer index − opener index + 1. `widest_pair(s)` should return the width of the widest pair, or `0` for an empty string.\n\n`widest_pair("()(())")` → `4` (the pair from index 2 to index 5)\n\nMake the tests pass.',
           brokenCode: `def widest_pair(s):
     stack = []
     best = 0
@@ -1310,7 +1310,7 @@ missing = pairs.get(other)`,
           difficulty: 3,
           stage: 'pattern',
           repType: 'pattern',
-          prompt: '`s` contains only `(` and `)`. It is **balanced** when every `(` is closed by a later `)` and every `)` closes an earlier `(`. Write `min_to_fix(s)` returning the smallest number of brackets you would have to insert, anywhere in the string, to make it balanced. A string that is already balanced, including the empty string, needs `0`.\n\n`"())"` → `1`, `"((("` → `3`, `"()))(("` → `4`',
+          prompt: '`s` contains only `(` and `)`. It is **balanced** when every `(` is closed by a later `)` and every `)` closes an earlier `(`. Write `min_to_fix(s)`. Return the smallest number of brackets you would have to insert, anywhere in the string, to make it balanced. A string that is already balanced needs `0`, and so does the empty string.\n\n`min_to_fix("())")` → `1`\n`min_to_fix("(((")` → `3`\n`min_to_fix("()))((")` → `4`\n`min_to_fix("")` → `0`',
           transfer: true,
           starterCode: `def min_to_fix(s):
     pass`,
@@ -1371,7 +1371,7 @@ missing = pairs.get(other)`,
           problemId: 'valid-parentheses',
           skills: ['stack_push_pop', 'matching_pairs', 'dict_lookup'],
           prompt:
-            'A string contains only the six characters `( ) [ ] { }`. It is well formed when every opening bracket is closed by a bracket of the same kind, closings happen in the reverse order of openings (inner pairs close first), and no closing bracket appears without a matching opener. Return `True` if `s` is well formed, otherwise `False`. The empty string counts as well formed.',
+            '`s` is a string made only of the six characters `( ) [ ] { }`. Return `True` if `s` is well formed, otherwise `False`. It is well formed when all of these hold:\n\n- every opening bracket is closed by a bracket of the same kind\n- brackets close in the reverse order they opened (inner pairs close first)\n- no closing bracket appears without a matching opener\n\nThe empty string counts as well formed.\n\n`is_valid("([]{})")` → `True`\n`is_valid("([)]")` → `False` (the `)` closes before the inner `[` does)',
           starterCode: `def is_valid(s: str) -> bool:
     pass`,
           solution: `def is_valid(s: str) -> bool:
@@ -1434,7 +1434,7 @@ missing = pairs.get(other)`,
           title: 'Fix the bracket checker',
           skills: ['matching_pairs', 'stack_push_pop', 'edge_cases'],
           difficulty: 3,
-          prompt: 'A teammate’s `is_valid(s)` takes a string of `()[]{}` and should return `True` exactly when every bracket is closed by the same kind in the right order, otherwise `False`. It passes `"()[]"` but not every input. Make the tests pass.',
+          prompt: 'A teammate’s `is_valid(s)` takes a string of `()[]{}`. It should return `True` exactly when every bracket is closed by the same kind in the right order, otherwise `False`. It passes `"()[]"` but fails on other inputs. Make the tests pass.',
           brokenCode: `def is_valid(s):
     pairs = {")": "(", "]": "[", "}": "{"}
     stack = []
@@ -1470,7 +1470,7 @@ missing = pairs.get(other)`,
           difficulty: 3,
           stage: 'pattern',
           repType: 'pattern',
-          prompt: '`s` is a line of code, so it holds brackets mixed with letters, spaces and punctuation. Write `code_brackets_ok(s)`: return `True` when the brackets `()[]{}` are each closed by the same kind in the right order, otherwise `False`. Every other character is ignored. A line with no brackets is fine.\n\n`"f(a[i], {k: v})"` → `True`, `"print(x])"` → `False`',
+          prompt: '`s` is a line of code, so its brackets are mixed in with letters, spaces and punctuation. Write `code_brackets_ok(s)`. Return `True` when each bracket `()[]{}` is closed by the same kind in the right order, otherwise `False`. Ignore every other character. A line with no brackets is fine.\n\n`code_brackets_ok("f(a[i], {k: v})")` → `True`\n`code_brackets_ok("print(x])")` → `False` (the `]` tries to close the open `(`)\n`code_brackets_ok("x = 1")` → `True` (no brackets)',
           starterCode: `def code_brackets_ok(s):
     pass`,
           solution: `def code_brackets_ok(s):
@@ -1537,7 +1537,7 @@ missing = pairs.get(other)`,
           skills: ['sliding_window', 'window_state', 'set_membership'],
           ...cold,
           difficulty: 3,
-          prompt: 'Write `longest_unique(s)`: the length of the longest substring with no repeated characters.',
+          prompt: 'Write `longest_unique(s)`. Return the length of the longest substring with no repeated characters.',
           starterCode: `def longest_unique(s):
     pass`,
           solution: `def longest_unique(s):
@@ -1562,7 +1562,7 @@ missing = pairs.get(other)`,
           skills: ['matching_pairs', 'stack_push_pop'],
           ...cold,
           difficulty: 3,
-          prompt: 'Write `is_valid(s)` for a string of `()[]{}`: `True` if every bracket is closed by the same kind in the right order.',
+          prompt: '`s` is a string of `()[]{}`. Write `is_valid(s)`. Return `True` if every bracket is closed by the same kind in the right order, otherwise `False`.',
           starterCode: `def is_valid(s):
     pass`,
           solution: `def is_valid(s):
@@ -1587,7 +1587,7 @@ missing = pairs.get(other)`,
           skills: ['sliding_window', 'while_loop', 'state_tracking'],
           ...cold,
           difficulty: 3,
-          prompt: 'Write `shortest_at_least(nums, goal)`: `nums` holds positive numbers. Return the length of the shortest run whose sum is at least `goal`, or `0` if there is none.',
+          prompt: '`nums` holds positive numbers. Write `shortest_at_least(nums, goal)`. Return the length of the shortest run of neighbouring values whose sum is at least `goal`, or `0` if there is none.',
           starterCode: `def shortest_at_least(nums, goal):
     pass`,
           solution: `def shortest_at_least(nums, goal):
@@ -1610,7 +1610,7 @@ missing = pairs.get(other)`,
           title: 'Same after backspaces?',
           skills: ['stack_push_pop', 'functions'],
           ...cold,
-          prompt: 'Write `same_typed(a, b)`: `#` is a backspace (it does nothing when there is nothing to delete). Return `True` if both strings produce the same final text.',
+          prompt: '`a` and `b` are strings of typed keys, where `#` is a backspace. A backspace with nothing to delete does nothing. Write `same_typed(a, b)`. Return `True` if both strings produce the same final text.',
           starterCode: `def same_typed(a, b):
     pass`,
           solution: `def same_typed(a, b):
@@ -1634,7 +1634,7 @@ missing = pairs.get(other)`,
           title: 'Count good runs',
           skills: ['sliding_window', 'state_tracking'],
           ...cold,
-          prompt: 'Write `count_windows(nums, k, threshold)`: how many stretches of `k` neighbouring values have a sum of at least `threshold`? If `k > len(nums)`, return `0`.',
+          prompt: 'Write `count_windows(nums, k, threshold)`. Return how many stretches of `k` neighbouring values have a sum of at least `threshold`. If `k > len(nums)`, return `0`.',
           starterCode: `def count_windows(nums, k, threshold):
     pass`,
           solution: `def count_windows(nums, k, threshold):

@@ -24,7 +24,7 @@ const windowCheck: PackSection = {
       repType: 'cold',
       difficulty: 3,
       prompt:
-        '`noise` is a list of hourly noise readings and `1 <= k <= len(noise)`.\n\nWrite `quietest_start(noise, k)`: the **index where the quietest stretch of `k` hours in a row begins** (the stretch with the smallest total). On a tie, the earliest one. One pass.\n\n`quietest_start([5, 1, 2, 8, 1, 1], 2)` → `4`',
+        '`noise` is a list of hourly noise readings, and `1 <= k <= len(noise)`.\n\nWrite `quietest_start(noise, k)`. Look at every stretch of `k` hours in a row. The quietest one is the one with the smallest total. Return the index where it begins. On a tie, return the earliest. Use one pass.\n\n`quietest_start([5, 1, 2, 8, 1, 1], 2)` → `4`',
       starterCode: `def quietest_start(noise, k):
     pass`,
       solution: `def quietest_start(noise, k):
@@ -59,7 +59,7 @@ const windowCheck: PackSection = {
       repType: 'cold',
       difficulty: 3,
       prompt:
-        "`shots` is a string of `'H'` (hit) and `'M'` (miss).\n\nWrite `longest_few_misses(shots, k)`: the length of the longest stretch of shots in a row that contains **at most `k` misses**.\n\n`longest_few_misses('HHMHHHMH', 1)` → `6`",
+        "`shots` is a string of `'H'` (hit) and `'M'` (miss).\n\nWrite `longest_few_misses(shots, k)`. Return the length of the longest stretch of shots in a row that has **at most `k`** misses.\n\n`longest_few_misses('HHMHHHMH', 1)` → `6`",
       starterCode: `def longest_few_misses(shots, k):
     pass`,
       solution: `def longest_few_misses(shots, k):
@@ -97,7 +97,7 @@ const windowCheck: PackSection = {
       repType: 'cold',
       difficulty: 4,
       prompt:
-        '`steps` is a list of positive step counts, one per day, and `goal` is a positive number.\n\nWrite `shortest_reaching(steps, goal)`: the **shortest run of days in a row** whose steps add up to at least `goal`, returned as a list. On a tie, the earliest run. If no run reaches the goal, return `[]`.\n\n`shortest_reaching([2, 3, 1, 2, 4, 3], 7)` → `[4, 3]`',
+        '`steps` is a list of positive step counts, one per day, and `goal` is a positive number.\n\nWrite `shortest_reaching(steps, goal)`. Find the **shortest run of days in a row** whose steps add up to at least `goal`. Return that run as a list. On a tie, return the earliest run. If no run reaches the goal, return `[]`.\n\n`shortest_reaching([2, 3, 1, 2, 4, 3], 7)` → `[4, 3]`',
       starterCode: `def shortest_reaching(steps, goal):
     pass`,
       solution: `def shortest_reaching(steps, goal):
@@ -135,7 +135,7 @@ const windowCheck: PackSection = {
       repType: 'cold',
       difficulty: 4,
       prompt:
-        "`s` is a string and `k >= 1`.\n\nWrite `count_all_different(s, k)`: how many substrings of length `k` are made of `k` **different** characters. Do not rebuild anything per substring.\n\n`count_all_different('abcab', 3)` → `3` (`'abc'`, `'bca'`, `'cab'`)",
+        "`s` is a string and `k >= 1`.\n\nWrite `count_all_different(s, k)`. Return how many substrings of length `k` have `k` **different** characters. Don't rebuild anything for each substring.\n\n`count_all_different('abcab', 3)` → `3` (`'abc'`, `'bca'`, `'cab'`)",
       starterCode: `def count_all_different(s, k):
     pass`,
       solution: `def count_all_different(s, k):
@@ -174,7 +174,7 @@ const windowCheck: PackSection = {
       repType: 'cold',
       difficulty: 3,
       prompt:
-        "`songs` is a list of song names in the order they were played.\n\nWrite `longest_fresh_streak(songs)`: the length of the longest stretch of plays in a row in which **no song is played twice**.\n\n`longest_fresh_streak(['a', 'b', 'a', 'c', 'd'])` → `4`",
+        "`songs` is a list of song names in the order they were played.\n\nWrite `longest_fresh_streak(songs)`. Return the length of the longest stretch of plays in a row where **no song is played twice**.\n\n`longest_fresh_streak(['a', 'b', 'a', 'c', 'd'])` → `4`",
       starterCode: `def longest_fresh_streak(songs):
     pass`,
       solution: `def longest_fresh_streak(songs):
@@ -240,7 +240,7 @@ for right in range(len(s)):
       skills: ['window_counts', 'frequency_map', 'dict_get'],
       difficulty: 2,
       prompt:
-        "`s` is a string of letters.\n\nWrite `changes_needed(s)`: the smallest number of characters you would have to change so that **every** character of `s` is the same. An empty string needs `0`.\n\n`changes_needed('AABAB')` → `2` (change both `B`s)",
+        "`s` is a string of letters.\n\nWrite `changes_needed(s)`. You want **every** character of `s` to be the same. Return the smallest number of characters you have to change. An empty string needs `0`.\n\n`changes_needed('AABAB')` → `2` (keep the `A`s, change both `B`s)\n`changes_needed('')` → `0`",
       starterCode: `def changes_needed(s):
     pass`,
       solution: `def changes_needed(s):
@@ -269,7 +269,7 @@ for right in range(len(s)):
       skills: ['window_counts', 'window_state', 'sliding_window', 'enumerate'],
       difficulty: 3,
       prompt:
-        "`s` is a string of letters.\n\nWrite `fixable_windows(s, size, k)`: how many substrings of length `size` could be turned into one repeated letter by changing **at most `k`** characters. `size >= 1`; a string shorter than `size` has none. Keep one count map and update it on both edges.\n\n`fixable_windows('AABAB', 3, 1)` → `3` (`AAB`, `ABA` and `BAB` each need one change)",
+        "`s` is a string of letters, and `size >= 1`.\n\nWrite `fixable_windows(s, size, k)`. Look at each substring of length `size`. Count the ones you could turn into one repeated letter by changing **at most `k`** characters. A string shorter than `size` has none.\n\nKeep one count map, and update it at both edges as you move.\n\n`fixable_windows('AABAB', 3, 1)` → `3` (`AAB`, `ABA` and `BAB` each need one change)\n`fixable_windows('AB', 3, 5)` → `0` (the string is shorter than `size`)",
       starterCode: `def fixable_windows(s, size, k):
     pass`,
       solution: `def fixable_windows(s, size, k):
@@ -353,7 +353,7 @@ for right in range(len(s)):
       difficulty: 4,
       important: true,
       prompt:
-        "`votes` is a list of answers in the order they were cast. A recount may overturn **at most `k`** of them.\n\nWrite `longest_agreeing(votes, k)`: the length of the longest run of votes in a row that could be made unanimous. No votes gives `0`.\n\n`longest_agreeing(['y', 'n', 'y', 'y', 'n', 'n'], 1)` → `4` (the first four, overturning the one `'n'`)",
+        "`votes` is a list of answers in the order they were cast. A recount may overturn **at most `k`** of them.\n\nWrite `longest_agreeing(votes, k)`. Return the length of the longest run of votes in a row that could be made unanimous (all the same answer). With no votes, return `0`.\n\n`longest_agreeing(['y', 'n', 'y', 'y', 'n', 'n'], 1)` → `4` (the first four, after overturning the one `'n'`)\n`longest_agreeing(['a', 'b', 'c'], 0)` → `1` (nothing can be overturned, so one vote on its own)",
       starterCode: `def longest_agreeing(votes, k):
     pass`,
       solution: `def longest_agreeing(votes, k):
@@ -667,7 +667,7 @@ const searchCheck: PackSection = {
       repType: 'cold',
       difficulty: 3,
       prompt:
-        "`words` is a list of different words in alphabetical order. Strings compare with `<` and `==` just like numbers.\n\nWrite `page_of(words, word)`: the index of `word`, or `-1` if it is not there. O(log n).\n\n`page_of(['ant', 'bee', 'cat', 'dog'], 'cat')` → `2`",
+        "`words` is a list of different words in alphabetical order. Strings compare with `<` and `==` just like numbers.\n\nWrite `page_of(words, word)`. Return the index of `word`, or `-1` if it isn't there. It must run in O(log n).\n\n`page_of(['ant', 'bee', 'cat', 'dog'], 'cat')` → `2`",
       starterCode: `def page_of(words, word):
     pass`,
       solution: `def page_of(words, word):
@@ -704,7 +704,7 @@ const searchCheck: PackSection = {
       repType: 'cold',
       difficulty: 3,
       prompt:
-        '`scores` is sorted from low to high and may contain repeats.\n\nWrite `count_below(scores, cutoff)`: how many scores are **strictly less than** `cutoff`. O(log n).\n\n`count_below([10, 20, 20, 30], 20)` → `1`',
+        '`scores` is sorted from low to high and may contain repeats.\n\nWrite `count_below(scores, cutoff)`. Return how many scores are **strictly less than** `cutoff`. It must run in O(log n).\n\n`count_below([10, 20, 20, 30], 20)` → `1`',
       starterCode: `def count_below(scores, cutoff):
     pass`,
       solution: `def count_below(scores, cutoff):
@@ -739,7 +739,7 @@ const searchCheck: PackSection = {
       repType: 'cold',
       difficulty: 3,
       prompt:
-        '`prices` is sorted from low to high and may contain repeats.\n\nWrite `last_affordable(prices, budget)`: the index of the **last** price that is at most `budget`, or `-1` if even the cheapest costs more. O(log n).\n\n`last_affordable([3, 5, 5, 9], 5)` → `2`',
+        '`prices` is sorted from low to high and may contain repeats.\n\nWrite `last_affordable(prices, budget)`. Return the index of the **last** price that is at most `budget`. If even the cheapest price is more than `budget`, return `-1`. It must run in O(log n).\n\n`last_affordable([3, 5, 5, 9], 5)` → `2`',
       starterCode: `def last_affordable(prices, budget):
     pass`,
       solution: `def last_affordable(prices, budget):
@@ -776,7 +776,7 @@ const searchCheck: PackSection = {
       repType: 'cold',
       difficulty: 4,
       prompt:
-        'A staircase with `h` steps uses 1 block for the first step, 2 for the second, and so on: `h * (h + 1) // 2` blocks in all.\n\nWrite `tallest_staircase(blocks)` for `blocks >= 0`: the largest `h` you can build completely. No `math`, and no loop that tries every height.\n\n`tallest_staircase(8)` → `3` (6 blocks used, 2 left over)',
+        'A staircase with `h` steps uses 1 block for the first step, 2 for the second, and so on. That is `h * (h + 1) // 2` blocks in all.\n\n`blocks` is a whole number, and `blocks >= 0`. Write `tallest_staircase(blocks)`. Return the largest `h` you can build completely. Do not use `math`, and do not loop over every height.\n\n`tallest_staircase(8)` → `3` (6 blocks used, 2 left over)',
       starterCode: `def tallest_staircase(blocks):
     pass`,
       solution: `def tallest_staircase(blocks):
@@ -844,7 +844,7 @@ print(lo)`,
       skills: ['rotated_search', 'mid_calc', 'tuples'],
       difficulty: 2,
       prompt:
-        '`nums` is a **rotated** sorted list of different values: a sorted list whose front was cut off and moved to the back, like `[4, 5, 6, 7, 0, 1, 2]`. The smallest value is somewhere in `nums[lo..hi]` (both ends included), with `lo < hi`.\n\nWrite `narrow(nums, lo, hi)`: look at the middle once and return the new `(lo, hi)` that still holds the smallest value.\n\n`narrow([4, 5, 6, 7, 0, 1, 2], 0, 6)` → `(4, 6)`\n`narrow([4, 5, 6, 7, 0, 1, 2], 4, 6)` → `(4, 5)`',
+        '`nums` is a **rotated** sorted list of different values: a sorted list whose front was cut off and moved to the back. For example, `[0, 1, 2, 4, 5, 6, 7]` rotated is `[4, 5, 6, 7, 0, 1, 2]`. The smallest value is somewhere in `nums[lo..hi]` (both ends included), and `lo < hi`.\n\nWrite `narrow(nums, lo, hi)`. Look at the middle once. Return the new `(lo, hi)`: a smaller range that still holds the smallest value.\n\n`narrow([4, 5, 6, 7, 0, 1, 2], 0, 6)` → `(4, 6)`\n`narrow([4, 5, 6, 7, 0, 1, 2], 4, 6)` → `(4, 5)`',
       starterCode: `def narrow(nums, lo, hi):
     pass`,
       solution: `def narrow(nums, lo, hi):
@@ -915,7 +915,7 @@ print(lo)`,
       difficulty: 4,
       important: true,
       prompt:
-        '`readings` is a non-empty list of different numbers from a counter that only climbs, except that it may have reset to a low value **once** and climbed again from there: `[4, 5, 6, 7, 0, 1, 2]`. The readings after a reset are all lower than the ones before it.\n\nWrite `peak_reading(readings)`: the **largest** reading, in O(log n).\n\n`peak_reading([4, 5, 6, 7, 0, 1, 2])` → `7`\n`peak_reading([1, 2, 3])` → `3`',
+        '`readings` is a non-empty list of different numbers from a counter. The counter only climbs, but it may have reset to a low value **once** and climbed again from there, like `[4, 5, 6, 7, 0, 1, 2]`. Every reading after the reset is lower than every reading before it.\n\nWrite `peak_reading(readings)`. Return the **largest** reading. It must run in O(log n).\n\n`peak_reading([4, 5, 6, 7, 0, 1, 2])` → `7`\n`peak_reading([1, 2, 3])` → `3`',
       starterCode: `def peak_reading(readings):
     pass`,
       solution: `def peak_reading(readings):
