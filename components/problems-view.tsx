@@ -9,6 +9,8 @@ import { useTargets, type TargetState } from '@/components/use-targets'
 import { EXERCISE_BY_ID } from '@/data/curriculum'
 import { TARGET_BY_LC } from '@/data/problem-bridges'
 import { PROBLEMS } from '@/data/problems'
+import { practiceSite } from '@/data/problem-urls'
+import PracticeSite from '@/components/practice-site'
 import { PLAN_UNITS } from '@/data/schedule-90'
 import { skillName } from '@/data/skills'
 import { shortDate } from '@/lib/dates'
@@ -124,11 +126,11 @@ function TargetCard({ state, missing }: { state: TargetState; missing: string[] 
         </span>
         <div className="min-w-0 flex-1">
           <p className="eyebrow text-faint">
-            LC {target.lc} · {target.source === 'reps' ? 'first solve in Reps' : 'on LeetCode'}
+            LC {target.lc} · {target.source === 'reps' ? 'first solve in Reps' : `on ${practiceSite(target.lc)}`}
           </p>
           <h3 className="mt-0.5 text-[16px] font-semibold leading-snug tracking-tight">{target.title}</h3>
         </div>
-        <a href={state.url} target="_blank" rel="noreferrer" className="icon-btn -mr-1 shrink-0" aria-label={`${target.title} on LeetCode`} title={`LeetCode ${target.lc}`}>
+        <a href={state.url} target="_blank" rel="noreferrer" className="icon-btn -mr-1 shrink-0" aria-label={`${target.title} on ${practiceSite(target.lc)}`} title={`Practice on ${practiceSite(target.lc)}`}>
           <IconExternal size={14} />
         </a>
       </div>
@@ -195,9 +197,12 @@ function TargetCard({ state, missing }: { state: TargetState; missing: string[] 
             {state.first ? 'Solve again' : 'Solve in Reps'} <IconArrowRight size={12} />
           </Link>
         ) : (
-          <a href={state.url} target="_blank" rel="noreferrer" className="ml-auto inline-flex items-center gap-1 font-medium text-ink hover:text-accent">
-            {state.first ? 'Open on LeetCode' : 'Attempt on LeetCode'} <IconExternal size={11} />
-          </a>
+          <span className="ml-auto inline-flex items-center gap-2">
+            <PracticeSite lc={target.lc} />
+            <a href={state.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 font-medium text-ink hover:text-accent" data-testid="practice-link">
+              Practice on {practiceSite(target.lc)} <IconExternal size={11} />
+            </a>
+          </span>
         )}
       </div>
     </li>

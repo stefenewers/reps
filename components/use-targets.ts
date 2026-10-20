@@ -6,6 +6,7 @@ import { CAPSTONE_NUMBER } from '@/components/use-pacing'
 import { lcMeta, useSolveLog } from '@/components/use-solve-log'
 import { EXERCISE_BY_ID, PLAN_DAYS } from '@/data/curriculum'
 import { TARGETS } from '@/data/problem-bridges'
+import { practiceUrl } from '@/data/problem-urls'
 import { PROBLEMS } from '@/data/problems'
 import { PACE, PLAN_WHEN_AHEAD } from '@/data/schedule-90'
 import { WALKTHROUGHS } from '@/data/walkthroughs'
@@ -21,7 +22,7 @@ const AHEAD = new Map(PLAN_WHEN_AHEAD.map((x) => [x.lc, x]))
 export function targetLinks(t: Pick<Target, 'lc'>): { url: string; video: string | null } {
   const meta = lcMeta(t.lc) ?? AHEAD.get(t.lc)
   const problem = PROBLEM_BY_NUMBER.get(t.lc)
-  return { url: meta?.url ?? problem?.leetcode ?? `https://leetcode.com/problemset/?search=${t.lc}`, video: meta?.video ?? (problem ? (WALK_BY_PROBLEM.get(problem.id)?.url ?? null) : null) }
+  return { url: practiceUrl(t.lc) ?? meta?.url ?? problem?.practice ?? `https://leetcode.com/problemset/?search=${t.lc}`, video: meta?.video ?? (problem ? (WALK_BY_PROBLEM.get(problem.id)?.url ?? null) : null) }
 }
 
 export interface TargetState extends Readiness {

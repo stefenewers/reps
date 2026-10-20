@@ -1,4 +1,5 @@
 import type { Problem } from '@/lib/types'
+import { leetcodeUrl, practiceUrl } from '@/data/problem-urls'
 
 /**
  * Canonical LeetCode targets. Reps never reproduces problem statements: the
@@ -7,7 +8,8 @@ import type { Problem } from '@/lib/types'
  */
 
 function p(id: string, number: number, title: string, slug: string, pattern: string, day: string, skills: string[]): Problem {
-  return { id, number, title, leetcode: `https://leetcode.com/problems/${slug}/`, pattern, day, skills, exerciseId: `cap-${id}` }
+  // The LeetCode page stays the reference; practice happens on NeetCode where it has the problem (data/problem-urls.ts).
+  return { id, number, title, leetcode: leetcodeUrl(number) ?? `https://leetcode.com/problems/${slug}/`, practice: practiceUrl(number) ?? `https://leetcode.com/problems/${slug}/`, pattern, day, skills, exerciseId: `cap-${id}` }
 }
 
 export const PROBLEMS: Problem[] = [

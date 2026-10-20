@@ -190,8 +190,9 @@ test('LeetCode Premium problems link to their free version, so no problem link i
   const PREMIUM = [252, 253, 261, 271, 323]
   const all = [...PLAN_90.flatMap((d) => d.leetcode), ...PLAN_WHEN_AHEAD]
   for (const x of all) {
-    if (PREMIUM.includes(x.lc)) assert.match(x.url, /^https:\/\/neetcode\.io\/problems\/[a-z-]+\/question$/, `LC ${x.lc}`)
-    else assert.match(x.url, /^https:\/\/leetcode\.com\/problems\/[a-z0-9-]+\/$/, `LC ${x.lc}`)
+    // Practice links go to NeetCode (data/problem-urls.ts); a Premium problem must never fall back to LeetCode.
+    if (PREMIUM.includes(x.lc)) assert.match(x.url, /^https:\/\/neetcode\.io\/problems\/[a-z0-9-]+$/, `LC ${x.lc}`)
+    else assert.match(x.url, /^https:\/\/(neetcode\.io\/problems\/[a-z0-9-]+|leetcode\.com\/problems\/[a-z0-9-]+\/)$/, `LC ${x.lc}`)
   }
   for (const lc of PREMIUM) assert.ok(all.some((x) => x.lc === lc), `LC ${lc} is in the plan or waiting`)
 })

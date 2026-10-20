@@ -5,6 +5,7 @@ import { IconArrowRight, IconCheck, IconExternal, IconPlay } from '@/components/
 import { useTargets, type TargetState } from '@/components/use-targets'
 import { EXERCISE_BY_ID } from '@/data/curriculum'
 import { targetOfRep } from '@/data/problem-bridges'
+import { practiceSite } from '@/data/problem-urls'
 import { conceptFor } from '@/data/concepts'
 import type { Target } from '@/lib/bridges'
 
@@ -122,7 +123,7 @@ export default function BuildingToward({ repId }: { repId?: string }) {
               </Link>
             ) : (
               <a href={state.url} target="_blank" rel="noreferrer" className="mt-1 inline-flex items-center gap-1.5 text-[14px] font-medium text-ink hover:underline">
-                Attempt {target.title} on LeetCode <IconExternal size={12} />
+                Practice {target.title} on {practiceSite(target.lc)} <IconExternal size={12} />
               </a>
             )}
             <p className="mt-1 text-[12.5px] leading-relaxed text-muted">

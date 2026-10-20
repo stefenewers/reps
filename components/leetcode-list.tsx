@@ -8,6 +8,8 @@ import { useReps } from '@/components/reps-provider'
 import { useTargets, type TargetState } from '@/components/use-targets'
 import { lcMeta, useSolveLog } from '@/components/use-solve-log'
 import { IconCheck, IconExternal, IconPlay } from '@/components/icons'
+import PracticeSite from '@/components/practice-site'
+import { practiceSite } from '@/data/problem-urls'
 import { DAYS, EXERCISE_BY_ID } from '@/data/curriculum'
 import { repairReps } from '@/lib/bridges'
 import { createSession } from '@/lib/sessions'
@@ -71,7 +73,7 @@ export default function LeetcodeList({ day, heading = 'On LeetCode today' }: { d
         </p>
       </div>
       <p className="mt-1 max-w-[640px] text-[13.5px] leading-relaxed text-muted">
-        Solve these on LeetCode, from a blank editor, saying your approach out loud, then log how it went. A re-solve you needed help on comes back on your next working day.
+        Solve these on NeetCode, from a blank editor, saying your approach out loud, then log how it went. A re-solve you needed help on comes back on your next working day.
       </p>
       <ul className="mt-4 flex flex-col divide-y divide-line">
         {items.map((i) => {
@@ -86,14 +88,19 @@ export default function LeetcodeList({ day, heading = 'On LeetCode today' }: { d
                 {r && <IconCheck size={12} strokeWidth={2.2} />}
               </span>
               <div className="min-w-0 flex-1">
-                <a href={i.url} target="_blank" rel="noreferrer" className="inline-flex max-w-full items-center gap-1.5 text-[14.5px] font-medium text-ink hover:underline">
+                <a href={i.url} target="_blank" rel="noreferrer" className="inline-flex max-w-full items-center gap-1.5 text-[14.5px] font-medium text-ink hover:underline" title={`Practice on ${practiceSite(i.lc)}`}>
                   <span className="num text-muted">LC {i.lc}</span>
                   <span className="truncate">{i.title}</span>
                   <IconExternal size={12} className="shrink-0 text-muted" />
                 </a>
                 <p className="mt-0.5 text-[12.5px] text-muted">
                   {how(i)} · {i.difficulty} · {i.pattern}
-                  {i.url.includes('neetcode.io') && ' · free version on NeetCode (Premium on LeetCode)'}
+                </p>
+                <p className="mt-0.5 flex items-center gap-2 text-[12px]">
+                  <a href={i.url} target="_blank" rel="noreferrer" className="font-medium text-ink-2 hover:underline" data-testid="practice-link">
+                    Practice on {practiceSite(i.lc)}
+                  </a>
+                  <PracticeSite lc={i.lc} />
                 </p>
                 {state && !r && (
                   <p className="mt-1 text-[12.5px]" data-testid="lc-readiness">

@@ -203,7 +203,10 @@ export type SkillGroup =
 export interface Problem {
   id: string
   title: string
+  /** The LeetCode page (reference and fallback). */
   leetcode: string
+  /** Where to practise it: NeetCode when it has the problem, otherwise LeetCode. */
+  practice: string
   number: number
   pattern: string
   skills: SkillId[]

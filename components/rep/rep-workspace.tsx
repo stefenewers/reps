@@ -11,6 +11,7 @@ import { ChoiceInput, ExplainInput, OutputInput, ReorderInput } from '@/componen
 import { TestResults } from '@/components/rep/results'
 import { ALL_EXERCISES, DAY_BY_DATE, DAY_OF_EXERCISE, DAYS, EXERCISE_BY_ID } from '@/data/curriculum'
 import { PROBLEM_BY_ID } from '@/data/problems'
+import { practiceSite } from '@/data/problem-urls'
 import { skillName } from '@/data/skills'
 import { firstDifference, hasBlanks, outputMatches } from '@/lib/answers'
 import { localDate, shortDate } from '@/lib/dates'
@@ -1166,8 +1167,8 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
                   </div>
                 )}
                 {problem && (
-                  <a href={problem.leetcode} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 self-start text-[13px] text-muted hover:text-ink">
-                    LeetCode {problem.number}: {problem.title} <IconExternal size={13} />
+                  <a href={problem.practice} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 self-start text-[13px] text-muted hover:text-ink">
+                    LC {problem.number}: {problem.title} · Practice on {practiceSite(problem.number)} <IconExternal size={13} />
                   </a>
                 )}
               </footer>
