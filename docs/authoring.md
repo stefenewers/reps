@@ -316,3 +316,19 @@ minutes per day.
 ## The Learn layer
 
 Concept guides (`data/concepts.ts`) are composed from the primers, so they have one source of truth. Each covers what the idea is, why it matters, a mental model, core moves, the usual shape, common mistakes and concept videos (`data/concept-videos.ts`). Concept videos explain an idea and are never problem walkthroughs. On a rep the guide starts open on first exposure, is collapsed on drills and combines, is collapsed on anything that proves (opening it there counts as help), and is not shown in interview mode. The full guide lives at `/learn/<id>`. To teach a new pattern, add or extend a primer and list it in a concept spec. `lib/learn.test.ts` fails if a primer or a practised skill has no concept.
+
+## How a prompt reads (plain English)
+
+A learner should understand the task on the first read. Most of the confusion so far was the English, not the Python.
+
+1. **Inputs, then the task as an instruction.** "`nums` is a list of numbers. Return the largest gap between …". Never "Write `f(x)`: a list where …" (a noun phrase the reader has to turn into a verb).
+2. **One rule per sentence.** Stopping conditions, edge cases and constraints each get their own short sentence. Under 32 words, usually far fewer.
+3. **Say the steps the way you would say them out loud.** "Count up from `start`. Stop at the first number that isn't in `seen`." beats "the unbroken run `start, start + 1, …` that are all in `seen`".
+4. **"So" only for real consequences.** Do not join two separate rules with "so".
+5. **Hints are plain.** "Use a dict from value to index." Not "a set cannot remember where a value was; something else can".
+6. **New words get an example, not a definition.** "A streak is days in a row, like 4, 5, 6." Bold the word once.
+7. **Two examples for anything you write from a description:** a normal case and an edge case, each with a short reason in parentheses when it is not obvious. Examples use `f(args)` → `value`; `npm run verify:content` runs every one against the solution.
+8. **Plain words.** "isn't", "the rest", "the first one". No "respectively", "the former", "as long as it can be", "such that".
+9. **Keep what the rep tests.** Rewording never changes the tests, the solution, the function name or the skill.
+
+`lib/wording.ts` checks the mechanical part (the "Write `f()`:" form, sentence length, riddle hints, the two examples). Reps listed in `data/plain-english.ts` must pass it; `npm run audit:curriculum` reports how many others still need a pass.

@@ -1,9 +1,11 @@
+import { PLAIN_ENGLISH } from '@/data/plain-english'
+import { wordingProblems } from '@/lib/wording'
 /**
  * How code-first is the curriculum?
  *   npm run audit:curriculum            # report + guardrails
  *   npm run audit:curriculum -- --json  # machine-readable
  */
-import { DAYS as CALENDAR, MODULES as DAYS, dayExercises } from '@/data/curriculum'
+import { ALL_EXERCISES, DAYS as CALENDAR, MODULES as DAYS, dayExercises } from '@/data/curriculum'
 import { auditDays, BUCKET_LABEL, BUCKETS, guardrailViolations, pct, type DayAudit } from '@/lib/curriculum-audit'
 
 const { days, overall } = auditDays(DAYS)
@@ -68,6 +70,13 @@ for (const d of CALENDAR) {
   const extras = d.sections.filter((x) => x.optional).flatMap((x) => x.exercises)
   const min = req.reduce((n, e) => n + e.minutes, 0)
   console.log(`  ${d.date.slice(5)}  ${String(req.length).padStart(3)} reps  ${String(Math.round(min)).padStart(4)} min   +${extras.length} extra   ${d.short}`)
+}
+
+// Plain English: reps that have had the pass are held to it by the tests; the rest are counted here.
+{
+  const plain = new Set(PLAIN_ENGLISH)
+  const left = ALL_EXERCISES.filter((e) => !plain.has(e.id) && wordingProblems(e).length).length
+  console.log(`\nPlain English: ${plain.size} reps reworded and checked; ${left} others still flagged by lib/wording.ts.`)
 }
 
 const only = process.argv.find((a) => /^\d{4}-\d{2}-\d{2}$/.test(a))

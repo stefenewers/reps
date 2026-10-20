@@ -518,3 +518,31 @@ test('learn mode teaches first: the concept comes before the question, then goes
   await expect(page.getByRole('heading', { level: 1 })).toContainText('Index maps')
   await expect(page.getByTestId('concept-video').first()).toHaveAttribute('href', /youtube\.com\/watch/)
 })
+
+test('a shown solution is for looking, then rebuilding: the editor starts over and the solution hides once you type; unclear wording is one tap to flag', async ({ page }) => {
+  const e = EXERCISE_BY_ID['o2-bookends']
+  await page.goto(`/rep/${e.id}`)
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(e.title)
+  await page.locator('.cm-content').click()
+  await page.keyboard.insertText('# my first try')
+  await page.getByRole('button', { name: 'More actions' }).click()
+  await page.getByRole('menuitem', { name: /Show solution/ }).click()
+  // The solution shows, and the editor is back at the start (the half-written try is gone, so it cannot be patched up from the answer).
+  await expect(page.getByTestId('solution')).toBeVisible()
+  await expect(page.locator('.cm-content')).not.toContainText('my first try')
+  // Typing hides it; it can be looked at again.
+  await page.locator('.cm-content').click()
+  await page.keyboard.insertText('x')
+  await expect(page.getByTestId('solution')).toHaveCount(0)
+  await expect(page.getByTestId('solution-hidden')).toBeVisible()
+  await page.getByTestId('solution-hidden').getByRole('button', { name: 'Look again' }).click()
+  await expect(page.getByTestId('solution')).toBeVisible()
+
+  // Flag the wording, with a note; it is remembered.
+  await page.getByTestId('wording-flag').click()
+  await page.getByLabel('What was unclear').fill('the second sentence')
+  await page.getByLabel('What was unclear').press('Enter')
+  await page.reload()
+  await expect(page.getByTestId('wording-flagged')).toBeVisible()
+  await expect(page.getByLabel('What was unclear')).toHaveValue('the second sentence')
+})

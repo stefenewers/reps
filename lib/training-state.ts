@@ -230,3 +230,18 @@ export const REPAIR_SHAPE: Record<RepairCategory, { reps: number; from: 'primiti
   edge_case: { reps: 2, from: 'debug' },
   implementation: { reps: 0, from: 'stay' },
 }
+
+/** A pass that leaned on the solution or on two or more hints. */
+export const passedWithHelp = (a: Attempt) => a.passed && Boolean(a.completedAt) && (a.solutionViewed || a.hintsUsed >= 2)
+
+/**
+ * A rep that needed help on two different days is not a recall problem, it is a
+ * learning gap: next time it opens with the concept first, as on first exposure.
+ */
+export function needsRelearn(exerciseId: string, attempts: Attempt[]): boolean {
+  const days = new Set(attempts.filter((a) => a.exerciseId === exerciseId && passedWithHelp(a)).map((a) => a.date))
+  if (days.size < 2) return false
+  // Once it has been passed cleanly after the second assisted day, the gap is closed.
+  const lastHelped = [...days].sort().pop()!
+  return !attempts.some((a) => a.exerciseId === exerciseId && a.date > lastHelped && a.passed && a.completedAt && !a.solutionViewed && a.hintsUsed === 0)
+}

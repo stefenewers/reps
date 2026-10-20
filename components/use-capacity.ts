@@ -6,6 +6,9 @@ import { useSolveLog } from '@/components/use-solve-log'
 import { PLAN_DAYS, PLAN_START } from '@/data/curriculum'
 import { capacityFor, isSunday, type DailyCapacity, type DayRecord } from '@/lib/training-capacity'
 
+/** The most one attempt adds to a day's minutes. */
+export const MAX_ATTEMPT_MINUTES = 30
+
 /** The record of each day's training, for the weekly capacity review. */
 export function useDayRecords(): Map<string, DayRecord> {
   const { attempts } = useReps()
@@ -17,7 +20,8 @@ export function useDayRecords(): Map<string, DayRecord> {
     for (const a of attempts) {
       if (!a.completedAt && !a.attemptsBeforePass) continue
       const r = get(a.date)
-      r.minutes += (a.durationSeconds ?? 0) / 60
+      // A rep left open in a tab is not a long day: one attempt counts for at most half an hour.
+      r.minutes += Math.min(MAX_ATTEMPT_MINUTES, (a.durationSeconds ?? 0) / 60)
       if (a.retrievalType === 'cold') {
         r.coldTotal++
         if (a.passed) r.coldPassed++

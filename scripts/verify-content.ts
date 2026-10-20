@@ -5,14 +5,14 @@
  */
 import { MODULES as DAYS, ALL_EXERCISES, allDayExercises as dayExercises } from '@/data/curriculum'
 import { MOCK_EXERCISES, MOCKS } from '@/data/mocks'
-import { verifyDays, verifyExercises, verifyPrimers } from '@/lib/content-check'
+import { verifyDays, verifyExercises, verifyPrimers, verifyPromptExamples } from '@/lib/content-check'
 import { PRIMERS } from '@/data/primers'
 
 const only = process.argv[2]
 const days = only && only !== 'mocks' && only !== 'primers' ? DAYS.filter((d) => d.date === only) : only ? [] : DAYS
 const exercises = only === 'mocks' ? MOCK_EXERCISES : only === 'primers' ? [] : only ? days.flatMap(dayExercises) : ALL_EXERCISES
 
-const problems = [...verifyDays(days), ...verifyExercises(exercises), ...(only === 'primers' || !only ? verifyPrimers(PRIMERS) : [])]
+const problems = [...verifyDays(days), ...verifyExercises(exercises), ...verifyPromptExamples(exercises), ...(only === 'primers' || !only ? verifyPrimers(PRIMERS) : [])]
 
 // Ids must be unique across the whole curriculum, not just the filtered slice.
 const counts = new Map<string, number>()

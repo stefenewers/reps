@@ -507,7 +507,7 @@ print(s)`,
           skills: ['string_methods', 'slicing'],
           stage: 'combine',
           repType: 'combine',
-          prompt: '`s` is a string that may hold letters, digits, spaces and punctuation. Write `is_clean_mirror(s)` returning `True` if `s` reads the same backwards once you ignore case and drop everything that is not a letter or digit, otherwise `False`. If nothing is left after dropping, return `True`. Build a cleaned string and compare it with its reverse.\n\n`is_clean_mirror("Step on no pets!")` → `True`',
+          prompt: '`s` is a string that may hold letters, digits, spaces and punctuation. Write `is_clean_mirror(s)`. Lowercase `s` and drop everything that isn\'t a letter or digit. Return `True` if what is left reads the same backwards, otherwise `False`. If nothing is left, return `True`. Build the cleaned string and compare it with its reverse.\n\n`is_clean_mirror("Step on no pets!")` → `True` (cleaned, it is "steponnopets")\n`is_clean_mirror(".,")` → `True` (nothing is left)',
           starterCode: `def is_clean_mirror(s):
     pass`,
           solution: `def is_clean_mirror(s):
@@ -600,7 +600,7 @@ print("met at", left)`,
           id: 'd3-tp-swap-reverse',
           title: 'Reverse a list in place',
           skills: ['two_pointer', 'list_index', 'tuples'],
-          prompt: '`nums` is a list (it may be empty). Write `reverse_in_place(nums)` that reverses it **in place** and then returns it. **In place** means you change the list you were handed instead of building a new one, so afterwards the caller’s own list is reversed. Do it by swapping items from both ends, moving inward. Do not use slicing or `.reverse()`.\n\n`[1, 2, 3]` becomes `[3, 2, 1]`',
+          prompt: '`nums` is a list (it may be empty). Write `reverse_in_place(nums)`. Reverse the list **in place**, then return it. In place means you change the list you were given instead of building a new one. Afterwards the caller’s own list is reversed. Swap the two end items, then move inward from both ends. Don’t use slicing or `.reverse()`.\n\n`reverse_in_place([1, 2, 3])` → `[3, 2, 1]`\n`reverse_in_place([])` → `[]`',
           note: 'Lists, unlike strings, can be changed: `nums[i] = x` overwrites one slot. Working **in place** means doing all the work with assignments like that on the original list. Python swaps two slots in one line: `a[i], a[j] = a[j], a[i]`.',
           starterCode: `def reverse_in_place(nums):
     pass`,
@@ -626,7 +626,7 @@ print("met at", left)`,
           title: 'Changes to make a palindrome',
           skills: ['two_pointer', 'while_loop', 'accumulator'],
           style: 'modify',
-          prompt: '`s` is a string. The starter code is the two-pointer palindrome check under a new name: it returns `True` or `False`. Change it so `changes_needed(s)` returns a **number**: how many characters you would have to change to make `s` a palindrome. Each mirror pair (`s[left]` and `s[right]`) that differs needs exactly one change. A string that is already a palindrome, including the empty string, gives `0`.\n\n`changes_needed("abca")` → `1`, `changes_needed("abcd")` → `2`',
+          prompt: '`s` is a string. The starter code is the two-pointer palindrome check under a new name. It returns `True` or `False`. Change it so `changes_needed(s)` returns a **number** instead: how many characters you would have to change to make `s` a palindrome. Each mirror pair (`s[left]` and `s[right]`) that differs needs exactly one change. A palindrome, including the empty string, needs `0`.\n\n`changes_needed("abca")` → `1` (only b and c differ)\n`changes_needed("abcd")` → `2`',
           starterCode: `def changes_needed(s):
     left, right = 0, len(s) - 1
     while left < right:
@@ -654,7 +654,7 @@ print("met at", left)`,
           title: 'Is one the reverse of the other?',
           skills: ['two_pointer', 'while_loop', 'len', 'early_return'],
           difficulty: 3,
-          prompt: '`a` and `b` are strings. Write `is_reverse_of(a, b)` returning `True` if `a` is exactly `b` backwards, otherwise `False`. Strings of different lengths are never reverses of each other; two empty strings are. Walk one pointer forward through `a` and another backward through `b`. No slicing.\n\n`is_reverse_of("abc", "cba")` → `True`',
+          prompt: '`a` and `b` are strings. Write `is_reverse_of(a, b)`. Return `True` if `a` is exactly `b` backwards, otherwise `False`. Strings of different lengths are never reverses. Two empty strings are. Walk one pointer forward through `a` and another backward through `b`. No slicing.\n\n`is_reverse_of("abc", "cba")` → `True`\n`is_reverse_of("ab", "a")` → `False` (different lengths)',
           starterCode: `def is_reverse_of(a, b):
     pass`,
           solution: `def is_reverse_of(a, b):
@@ -710,7 +710,7 @@ while left < right:
           id: 'd3-pu-has-pair',
           title: 'Sorted pair search',
           skills: ['pointer_update', 'two_pointer', 'conditionals'],
-          prompt: '`nums` is a list of numbers sorted from smallest to largest (it may be empty), and `target` is a number. Write `has_pair(nums, target)` returning `True` if the values at two different positions add up to `target`, otherwise `False`. A list with fewer than two numbers has no pair. Use two pointers, one starting at each end, not a set.\n\n`has_pair([1, 2, 4, 7], 9)` → `True` (2 + 7)',
+          prompt: '`nums` is a list of numbers sorted from smallest to largest (it may be empty). `target` is a number. Write `has_pair(nums, target)`. Return `True` if the values at two different positions add up to `target`, otherwise `False`. A list with fewer than two numbers has no pair. Use two pointers, one starting at each end. Don’t use a set.\n\n`has_pair([1, 2, 4, 7], 9)` → `True` (2 + 7)\n`has_pair([5], 10)` → `False` (only one number)',
           starterCode: `def has_pair(nums, target):
     pass`,
           solution: `def has_pair(nums, target):
@@ -734,7 +734,7 @@ while left < right:
           id: 'd3-pu-debug-swapped',
           title: 'Fix the pair finder',
           skills: ['pointer_update', 'two_pointer'],
-          prompt: '`nums` is a list of numbers sorted from smallest to largest, and `target` is a number. `pair_values(nums, target)` should return a tuple `(small, big)`: the two values, at different positions, that add up to `target`. If no pair does, it returns `None`. Make the tests pass.\n\n`pair_values([1, 2, 4, 7], 9)` should be `(2, 7)`',
+          prompt: '`nums` is a list of numbers sorted from smallest to largest, and `target` is a number. `pair_values(nums, target)` should find two values, at different positions, that add up to `target`. It returns them as a tuple `(small, big)`. If no pair adds up to `target`, it returns `None`. Make the tests pass.\n\n`pair_values([1, 2, 4, 7], 9)` → `(2, 7)`',
           brokenCode: `def pair_values(nums, target):
     left, right = 0, len(nums) - 1
     while left < right:
@@ -769,7 +769,7 @@ while left < right:
           skills: ['pointer_update', 'two_pointer', 'accumulator'],
           difficulty: 3,
           transfer: true,
-          prompt: '`nums` is a list of numbers sorted from smallest to largest, with **no value repeated**. `target` is a number. Write `count_pairs(nums, target)` returning how many pairs of values, taken from two different positions, add up to `target`. Each pair counts once. If there are none (including when the list is empty), return `0`.\n\n`count_pairs([1, 2, 3, 4, 5, 6], 7)` → `3` (1 + 6, 2 + 5, 3 + 4)',
+          prompt: '`nums` is a list of numbers sorted from smallest to largest. **No value appears twice.** `target` is a number. Write `count_pairs(nums, target)`. Return how many pairs of values, from two different positions, add up to `target`. Each pair counts once. If there are none, return `0`. That includes the empty list.\n\n`count_pairs([1, 2, 3, 4, 5, 6], 7)` → `3` (1 + 6, 2 + 5, 3 + 4)\n`count_pairs([], 0)` → `0`',
           starterCode: `def count_pairs(nums, target):
     pass`,
           solution: `def count_pairs(nums, target):
@@ -804,7 +804,7 @@ while left < right:
           stage: 'combine',
           repType: 'combine',
           style: 'finish',
-          prompt: '`s` is a string that may contain spaces. Finish `is_pal_ignoring_spaces(s)` with two pointers: return `True` if `s` reads the same backwards when spaces are skipped, otherwise `False`. Every other character must match exactly (case matters). A string that is empty or all spaces returns `True`. Do not build a new string.\n\n`"taco cat"` → `True`, `"ab  c"` → `False`',
+          prompt: '`s` is a string that may contain spaces. Finish `is_pal_ignoring_spaces(s)` using two pointers. Return `True` if `s` reads the same backwards once you skip the spaces, otherwise `False`. Every other character must match exactly. Case matters. An empty or all-space string returns `True`. Don’t build a new string.\n\n`is_pal_ignoring_spaces("taco cat")` → `True`\n`is_pal_ignoring_spaces("ab  c")` → `False`',
           starterCode: `def is_pal_ignoring_spaces(s):
     left, right = 0, len(s) - 1
     # while left < right:
@@ -840,7 +840,7 @@ while left < right:
           title: 'Count pairs below a target',
           skills: ['pointer_update', 'two_pointer', 'accumulator'],
           difficulty: 4,
-          prompt: '`nums` is a list of numbers sorted from smallest to largest (values may repeat), and `target` is a number. Write `count_below(nums, target)` returning how many pairs of positions `i < j` have `nums[i] + nums[j]` strictly less than `target`. No such pair (or fewer than two numbers) gives `0`. Aim for O(n): one two-pointer scan, not a loop inside a loop.\n\n`count_below([1, 2, 3, 4], 6)` → `4` (1 + 2, 1 + 3, 1 + 4, 2 + 3)',
+          prompt: '`nums` is a list of numbers sorted from smallest to largest. Values may repeat. `target` is a number. Write `count_below(nums, target)`. Count the pairs of positions `i < j` where `nums[i] + nums[j]` is strictly less than `target`, and return that count. If there are none, or fewer than two numbers, return `0`. Aim for O(n): one two-pointer scan, not a loop inside a loop.\n\n`count_below([1, 2, 3, 4], 6)` → `4` (1 + 2, 1 + 3, 1 + 4, 2 + 3)\n`count_below([5, 6], 3)` → `0` (5 + 6 is too big)',
           starterCode: `def count_below(nums, target):
     pass`,
           solution: `def count_below(nums, target):
@@ -1024,7 +1024,7 @@ print(mins)`,
           id: 'd3-rs-largest',
           title: 'Largest by hand',
           skills: ['state_tracking', 'accumulator', 'conditionals'],
-          prompt: '`nums` is a list of numbers with at least one item. Write `largest(nums)` returning the biggest value in it, without calling `max()`. Keep a best-so-far variable and update it as you loop. It must work when every value is negative.\n\n`largest([-5, -2, -9])` → `-2`',
+          prompt: '`nums` is a list of numbers with at least one item. Write `largest(nums)`. Return the biggest value in it without calling `max()`. Keep a best-so-far variable and update it as you loop. It must work when every value is negative.\n\n`largest([3, 9, 2])` → `9`\n`largest([-5, -2, -9])` → `-2` (all negative)',
           starterCode: `def largest(nums):
     pass`,
           solution: `def largest(nums):
@@ -1042,7 +1042,7 @@ print(mins)`,
           id: 'd3-rs-debug-init',
           title: 'Fix min and max',
           skills: ['state_tracking', 'tuples'],
-          prompt: '`nums` is a list of numbers with at least one item. `min_and_max(nums)` should return a tuple `(smallest, largest)` of the smallest and largest values, found in one pass: `[3, 9, 2]` → `(2, 9)`. Make the tests pass.',
+          prompt: '`nums` is a list of numbers with at least one item. `min_and_max(nums)` should return the smallest and largest values as a tuple `(smallest, largest)`. It finds both in one pass. Make the tests pass.\n\n`min_and_max([3, 9, 2])` → `(2, 9)`',
           brokenCode: `def min_and_max(nums):
     lo = 0
     hi = 0
@@ -1071,7 +1071,7 @@ print(mins)`,
           id: 'd3-rs-prefix-mins',
           title: 'Prefix minimums',
           skills: ['state_tracking', 'list_append', 'list_create'],
-          prompt: '`nums` is a list of numbers (it may be empty). Write `prefix_mins(nums)` returning a new list of the same length where entry `i` is the smallest value seen so far: the smallest of `nums[0]` through `nums[i]`, with `nums[i]` included. An empty list gives `[]`.\n\n`prefix_mins([4, 6, 2, 5, 1])` → `[4, 4, 2, 2, 1]`',
+          prompt: '`nums` is a list of numbers (it may be empty). Write `prefix_mins(nums)`. Return a new list of the same length. Entry `i` is the smallest value so far: the smallest of `nums[0]` through `nums[i]`, including `nums[i]`. An empty list gives `[]`.\n\n`prefix_mins([4, 6, 2, 5, 1])` → `[4, 4, 2, 2, 1]`\n`prefix_mins([])` → `[]`',
           starterCode: `def prefix_mins(nums):
     pass`,
           solution: `def prefix_mins(nums):
@@ -1090,7 +1090,7 @@ print(mins)`,
           id: 'd3-rs-records',
           title: 'Count new records',
           skills: ['state_tracking', 'conditionals', 'accumulator'],
-          prompt: '`scores` is a list of numbers in the order they happened (it may be empty; scores can be negative). A score is a **record** if it is strictly higher than every score before it; the first score always counts. Write `count_records(scores)` returning how many records there are. An empty list gives `0`.\n\n`count_records([3, 1, 4, 1, 5])` → `3` (3, 4 and 5)',
+          prompt: '`scores` is a list of numbers in the order they happened. It may be empty, and scores can be negative. A score is a **record** if it is strictly higher than every score before it. The first score always counts. Write `count_records(scores)`. Return how many records there are. An empty list gives `0`.\n\n`count_records([3, 1, 4, 1, 5])` → `3` (3, 4 and 5)\n`count_records([2, 2, 2])` → `1` (a tie isn’t a record)',
           starterCode: `def count_records(scores):
     pass`,
           solution: `def count_records(scores):
@@ -1113,7 +1113,7 @@ print(mins)`,
           difficulty: 3,
           stage: 'combine',
           repType: 'combine',
-          prompt: '`values` is a list of numbers in time order (it may be empty). Write `biggest_drop(values)` returning the largest fall from an earlier value to a later one: the largest `values[i] - values[j]` with `i < j`. If the values never fall (or there are fewer than two), return `0`. One pass.\n\n`[5, 9, 3, 6, 1]` → `8` (from 9 down to 1)',
+          prompt: '`values` is a list of numbers in time order (it may be empty). Write `biggest_drop(values)`. Return the largest fall from an earlier value to a later one: the largest `values[i] - values[j]` with `i < j`. If the values never fall, return `0`. Fewer than two values also gives `0`. One pass.\n\n`biggest_drop([5, 9, 3, 6, 1])` → `8` (from 9 down to 1)\n`biggest_drop([1, 2, 3])` → `0` (it never falls)',
           starterCode: `def biggest_drop(values):
     pass`,
           solution: `def biggest_drop(values):
@@ -1149,7 +1149,7 @@ print(mins)`,
           problemId: 'valid-palindrome',
           skills: ['two_pointer', 'pointer_update', 'string_index', 'string_methods', 'while_loop'],
           prompt:
-            'Decide whether a phrase is a mirror phrase. Only letters and digits count, and upper/lower case are treated the same; spaces, punctuation and symbols are ignored completely. Return `True` if the remaining characters read the same from both ends, otherwise `False`.\n\nAim for O(1) extra space: walk two indexes over the original string instead of building a cleaned copy.',
+            '`s` is a phrase. Only its letters and digits count. Upper and lower case are treated the same. Spaces, punctuation and symbols are ignored completely. Return `True` if the remaining characters read the same from both ends, otherwise `False`.\n\nAim for O(1) extra space. Walk two indexes over the original string instead of building a cleaned copy.\n\n`is_palindrome("race a car")` → `False` ("raceacar" backwards is "racaecar")\n`is_palindrome(" ")` → `True` (nothing is left to compare)',
           starterCode: `def is_palindrome(s: str) -> bool:
     pass`,
           solution: `def is_palindrome(s: str) -> bool:
@@ -1211,7 +1211,7 @@ print(mins)`,
           id: 'd3-vp-debug-case',
           title: 'Fix the mirror check: case',
           skills: ['string_methods', 'two_pointer'],
-          prompt: '`is_palindrome(s)` should ignore case and every character that is not a letter or digit, then report whether what is left reads the same both ways. Make the tests pass.',
+          prompt: '`is_palindrome(s)` should ignore case and skip every character that isn’t a letter or digit. It returns `True` if what is left reads the same both ways, otherwise `False`. Make the tests pass.',
           brokenCode: `def is_palindrome(s):
     left, right = 0, len(s) - 1
     while left < right:
@@ -1246,7 +1246,7 @@ print(mins)`,
           id: 'd3-vp-debug-guard',
           title: 'Fix the mirror check: junk',
           skills: ['two_pointer', 'pointer_update', 'while_loop'],
-          prompt: 'This `is_palindrome(s)` should ignore case and every character that is not a letter or digit. A string with nothing left to compare is a palindrome. Make the tests pass.',
+          prompt: '`is_palindrome(s)` should ignore case and skip every character that isn’t a letter or digit. A string with nothing left to compare is a palindrome. Make the tests pass.',
           brokenCode: `def is_palindrome(s):
     left, right = 0, len(s) - 1
     while left < right:
@@ -1285,7 +1285,7 @@ print(mins)`,
           stage: 'pattern',
           repType: 'pattern',
           transfer: true,
-          prompt: 'A palindrome is a string that reads the same backwards as forwards, like `"aba"`. `s` is a string (it may be empty). Write `almost_palindrome(s)` returning `True` if `s` is already a palindrome, or becomes one after deleting **at most one** character, otherwise `False`. Characters are compared exactly: case matters and nothing is ignored. Aim for O(n) time.\n\n`almost_palindrome("abca")` → `True` (delete `"b"` or `"c"`), `almost_palindrome("abc")` → `False`',
+          prompt: 'A palindrome reads the same backwards as forwards, like `"aba"`. `s` is a string (it may be empty). Write `almost_palindrome(s)`. Return `True` if `s` is already a palindrome, or becomes one after deleting **at most one** character. Otherwise return `False`. Compare characters exactly: case matters and nothing is skipped. Aim for O(n) time.\n\n`almost_palindrome("abca")` → `True` (delete `"b"` or `"c"`)\n`almost_palindrome("abc")` → `False`',
           starterCode: `def almost_palindrome(s):
     pass`,
           solution: `def almost_palindrome(s):
@@ -1338,7 +1338,7 @@ print(mins)`,
           problemId: 'best-time-stock',
           skills: ['state_tracking', 'list_iterate', 'accumulator'],
           prompt:
-            "`prices[i]` is a share's price on day `i`. You may buy once and sell once, and the sale must happen on a later day than the purchase. Return the largest profit you could make, or `0` if no trade makes money. The list may be empty.\n\nOne pass, O(1) extra space.",
+            "`prices[i]` is a share's price on day `i`. The list may be empty. You may buy once and sell once. The sale must be on a later day than the purchase. Return the largest profit you could make. If no trade makes money, return `0`.\n\nOne pass, O(1) extra space.\n\n`max_profit([7, 1, 5, 3, 6, 4])` → `5` (buy at 1, sell at 6)\n`max_profit([7, 6, 4, 3, 1])` → `0` (prices only go down)",
           starterCode: `from typing import List
 
 
@@ -1399,7 +1399,7 @@ def max_profit(prices: List[int]) -> int:
           id: 'd3-stock-debug-order',
           title: 'Fix the profit calculator',
           skills: ['state_tracking'],
-          prompt: '`max_profit(prices)` should return the best profit from buying once and selling on a **later** day, or `0` if no trade makes money (including an empty list). Make the tests pass.',
+          prompt: '`max_profit(prices)` should return the best profit from buying once and selling on a **later** day. If no trade makes money, it returns `0`. An empty list also gives `0`. Make the tests pass.',
           brokenCode: `def max_profit(prices):
     lowest = float("inf")
     highest = 0
@@ -1428,7 +1428,7 @@ def max_profit(prices: List[int]) -> int:
           stage: 'pattern',
           repType: 'pattern',
           transfer: true,
-          prompt: '`prices` is a list of numbers: `prices[i]` is a share’s price on day `i` (it may be empty). You buy on one day and sell on a **later** day. Write `best_days(prices)` returning a tuple `(buy_day, sell_day)` of the two day indexes that give the largest profit, or `None` if no trade makes money. Every test has exactly one best trade.\n\n`best_days([7, 1, 5, 3, 6, 4])` → `(1, 4)` (buy at 1, sell at 6)',
+          prompt: '`prices` is a list of numbers. `prices[i]` is a share’s price on day `i`. The list may be empty. You buy on one day and sell on a **later** day. Write `best_days(prices)`. Return a tuple `(buy_day, sell_day)` of the two day indexes that give the largest profit. If no trade makes money, return `None`. Every test has exactly one best trade.\n\n`best_days([7, 1, 5, 3, 6, 4])` → `(1, 4)` (buy at 1, sell at 6)\n`best_days([5, 4, 3])` → `None` (prices only go down)',
           starterCode: `def best_days(prices):
     pass`,
           solution: `def best_days(prices):
@@ -1463,7 +1463,7 @@ def max_profit(prices: List[int]) -> int:
           problemId: 'two-sum-ii',
           skills: ['two_pointer', 'pointer_update', 'while_loop'],
           prompt:
-            '`numbers` is sorted in non-decreasing order. Exactly one pair of different positions adds up to `target`. Return their positions as a list `[a, b]` using **1-based** positions, with `a < b`.\n\nUse O(1) extra space: no dict or set.',
+            '`numbers` is sorted from smallest to largest, and values may repeat. Exactly one pair of different positions adds up to `target`. Return their positions as a list `[a, b]`, with `a < b`. Use **1-based** positions: the first item is position 1.\n\nUse O(1) extra space: no dict or set.\n\n`two_sum_sorted([2, 7, 11, 15], 9)` → `[1, 2]` (2 + 7)\n`two_sum_sorted([2, 3, 4], 6)` → `[1, 3]` (2 + 4)',
           starterCode: `from typing import List
 
 
@@ -1529,7 +1529,7 @@ def two_sum_sorted(numbers: List[int], target: int) -> List[int]:
           id: 'd3-tsii-debug-positions',
           title: 'Fix the positions',
           skills: ['two_pointer', 'pointer_update'],
-          prompt: '`two_sum_sorted(numbers, target)` should return the **1-based** positions `[a, b]` of the one pair that adds to `target` in a sorted list. Make the tests pass.',
+          prompt: '`numbers` is a sorted list with exactly one pair that adds up to `target`. `two_sum_sorted(numbers, target)` should return that pair’s positions as `[a, b]`. Positions are **1-based**: the first item is position 1. Make the tests pass.',
           brokenCode: `def two_sum_sorted(numbers, target):
     left, right = 0, len(numbers) - 1
     while left < right:
@@ -1566,7 +1566,7 @@ def two_sum_sorted(numbers: List[int], target: int) -> List[int]:
           style: 'optimize',
           stage: 'pattern',
           repType: 'pattern',
-          prompt: 'This works but is O(n²):\n\n```python\ndef has_diff(nums, k):\n    for i in range(len(nums)):\n        for j in range(i + 1, len(nums)):\n            if nums[j] - nums[i] == k:\n                return True\n    return False\n```\n\n`nums` is a list of numbers sorted from smallest to largest (it may be empty) and `k` is a number, `k >= 0`. It returns `True` if two values at different positions differ by exactly `k`. Rewrite `has_diff(nums, k)` in O(n) time and O(1) space with two pointers that both move **left to right**: `i` behind, `j` ahead.',
+          prompt: 'This works but is O(n²):\n\n```python\ndef has_diff(nums, k):\n    for i in range(len(nums)):\n        for j in range(i + 1, len(nums)):\n            if nums[j] - nums[i] == k:\n                return True\n    return False\n```\n\n`nums` is a list of numbers sorted from smallest to largest (it may be empty). `k` is a number, `k >= 0`. The function returns `True` if two values at different positions differ by exactly `k`. Rewrite `has_diff(nums, k)` in O(n) time and O(1) space. Use two pointers that both move **left to right**: `i` behind, `j` ahead.\n\n`has_diff([1, 3, 5, 8], 3)` → `True` (8 - 5)\n`has_diff([1, 5], 0)` → `False` (k = 0 needs two equal values)',
           starterCode: `def has_diff(nums, k):
     pass`,
           solution: `def has_diff(nums, k):
@@ -1608,7 +1608,7 @@ def two_sum_sorted(numbers: List[int], target: int) -> List[int]:
           difficulty: 4,
           stage: 'pattern',
           repType: 'pattern',
-          prompt: 'Stretch. `nums` is a list of numbers in no particular order (it is **not** sorted), and `target` is a number. Write `has_triplet(nums, target)` returning `True` if three numbers at three different positions add up to `target`, otherwise `False`. A list with fewer than three numbers returns `False`. Aim for O(n²).\n\n`has_triplet([4, 1, -3, 2], 3)` → `True` (4 + 2 + -3)',
+          prompt: 'Stretch. `nums` is a list of numbers in no particular order. It is **not** sorted. `target` is a number. Write `has_triplet(nums, target)`. Return `True` if three numbers at three different positions add up to `target`, otherwise `False`. A list with fewer than three numbers returns `False`. Aim for O(n²).\n\n`has_triplet([4, 1, -3, 2], 3)` → `True` (4 + 2 + -3)\n`has_triplet([5, -1], 4)` → `False` (only two numbers)',
           starterCode: `def has_triplet(nums, target):
     pass`,
           solution: `def has_triplet(nums, target):
@@ -1657,7 +1657,7 @@ def two_sum_sorted(numbers: List[int], target: int) -> List[int]:
           title: 'Last k characters',
           skills: ['slicing', 'edge_cases'],
           ...cold,
-          prompt: 'Write `last_k(s, k)` returning the last `k` characters of `s` (all of `s` if `k` is larger, `""` if `k` is 0).',
+          prompt: 'Write `last_k(s, k)`. Return the last `k` characters of `s`. If `k` is bigger than `len(s)`, return all of `s`. If `k` is 0, return `""`.',
           starterCode: `def last_k(s, k):
     pass`,
           solution: `def last_k(s, k):
@@ -1674,7 +1674,7 @@ def two_sum_sorted(numbers: List[int], target: int) -> List[int]:
           title: 'Sorted pair, from a signature',
           skills: ['two_pointer', 'pointer_update'],
           ...cold,
-          prompt: 'Write `pair_exists(nums, target)` for a sorted list: `True` if two different positions sum to `target`. O(1) extra space.',
+          prompt: '`nums` is a sorted list. Write `pair_exists(nums, target)`. Return `True` if the values at two different positions add up to `target`, otherwise `False`. O(1) extra space.',
           starterCode: `def pair_exists(nums, target):
     pass`,
           solution: `def pair_exists(nums, target):
@@ -1698,7 +1698,7 @@ def two_sum_sorted(numbers: List[int], target: int) -> List[int]:
           title: 'Profit if you sell today',
           skills: ['state_tracking', 'list_append'],
           ...cold,
-          prompt: 'Write `sell_today(prices)` returning a list: for each day, the profit from selling that day after buying at the lowest price up to and including that day.\n\n`[3, 1, 4]` → `[0, 0, 3]`',
+          prompt: 'Write `sell_today(prices)`. For each day, work out the profit from selling that day after buying at the lowest price up to and including that day. Return those profits as a list.\n\n`sell_today([3, 1, 4])` → `[0, 0, 3]`',
           starterCode: `def sell_today(prices):
     pass`,
           solution: `def sell_today(prices):
@@ -1718,7 +1718,7 @@ def two_sum_sorted(numbers: List[int], target: int) -> List[int]:
           skills: ['two_pointer', 'pointer_update', 'string_methods'],
           ...cold,
           difficulty: 3,
-          prompt: 'Write `letters_pal(s)`: ignoring case and every character that is not a **letter** (`.isalpha()`, so digits are ignored too), is `s` a palindrome? O(1) extra space: do not build a cleaned copy.',
+          prompt: 'Write `letters_pal(s)`. Ignore case and every character that isn’t a **letter** (`.isalpha()`, so digits are ignored too). Return `True` if what is left is a palindrome, otherwise `False`. O(1) extra space: don’t build a cleaned copy.',
           starterCode: `def letters_pal(s):
     pass`,
           solution: `def letters_pal(s):

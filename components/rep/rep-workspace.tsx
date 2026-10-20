@@ -19,6 +19,7 @@ import { kindOf } from '@/components/rep-kind'
 import { RepsBars } from '@/components/motif'
 import BasicsPanel, { BriefView } from '@/components/rep/basics-panel'
 import ConceptGuide from '@/components/concept-guide'
+import WordingFlagButton from '@/components/rep/wording-flag'
 import { conceptFor, guideMode } from '@/data/concepts'
 import { primersFor } from '@/data/primers'
 import { movesFor } from '@/data/primers/moves'
@@ -27,7 +28,7 @@ import { walkthroughFor } from '@/data/walkthroughs'
 import { TARGET_BY_LC, targetOfRep } from '@/data/problem-bridges'
 import { readiness, repairReps } from '@/lib/bridges'
 import { REPAIR_AFTER, nextInSession, planRepair } from '@/lib/session-planner'
-import { REPAIR_LABEL, TRAINING_LABEL, firstExposure, practiceBySkill, type TrainingState } from '@/lib/training-state'
+import { REPAIR_LABEL, TRAINING_LABEL, firstExposure, needsRelearn, practiceBySkill, type TrainingState } from '@/lib/training-state'
 import { IconArrowRight, IconBug, IconBulb, IconClock, IconDots, IconExternal, IconPlay, IconRotate, IconSpark, IconX } from '@/components/icons'
 import { followingExercise, lockedByGate, missingPrerequisites, nextInOrder, passedSet, retrievalTypeFor } from '@/lib/progress'
 import { getRunner, type RunResult } from '@/lib/python/runner'
@@ -226,6 +227,8 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
   const [hintsShown, setHintsShown] = useState(0)
   const [aiHints, setAiHints] = useState<string[]>([])
   const [solutionShown, setSolutionShown] = useState(false)
+  // Look, then rebuild: after the solution is shown the editor starts over, and the solution hides once you type.
+  const [solutionPeek, setSolutionPeek] = useState(false)
   const [showNote, setShowNote] = useState(false)
   const [showBasics, setShowBasics] = useState(false)
   const basicsCounted = useRef(false)
@@ -323,7 +326,10 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
   const walk = walkthroughFor(ex, section?.id)
   // The concept this rep trains, and how the Learn panel behaves for what the rep is for.
   const concept = useMemo(() => conceptFor(ex.skills, teach?.skills ?? []), [ex.skills, teach])
-  const learnMode = guideMode(ex, { firstExposure: Boolean(teach), interview: false })
+  // Needed help on two different days: a learning gap, so the concept opens first again, free.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const relearn = useMemo(() => loaded && !teach && needsRelearn(ex.id, attempts), [ex.id, loaded, teach])
+  const learnMode = guideMode(ex, { firstExposure: Boolean(teach) || relearn, interview: false })
   // The problem this rep builds toward, and where this rep sits among its building blocks.
   const toward = useMemo(() => {
     const target = targetOfRep(ex.id)
@@ -605,7 +611,9 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
 
   const viewSolution = () => {
     setSolutionShown(true)
+    setSolutionPeek(true)
     setMoreOpen(false)
+    if (ex.kind === 'code') setCode(blankStarter(ex))
     const a = ensureAttempt()
     persist({ ...a, solutionViewed: true, updatedAt: new Date().toISOString() })
   }
@@ -936,7 +944,7 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
                 something, collapsed and counted as help when opened. Never in Interview mode. */}
             {concept && !interview && learnMode !== 'hidden' && (
               <div className="flex flex-col gap-3" data-testid={teach ? 'teach' : undefined}>
-                <ConceptGuide key={`${ex.id}:${learnMode}`} concept={concept} mode={learnMode} onAssisted={() => countHint()} />
+                <ConceptGuide key={`${ex.id}:${learnMode}`} concept={concept} mode={learnMode} label={relearn ? 'Needed help twice · read this first' : undefined} onAssisted={() => countHint()} />
                 {teach && ex.teaching && (
                   <div className="rounded-xl bg-surface px-4 py-3">
                     <Markdown text={ex.teaching.concept} className="!text-[14px] !leading-relaxed" />
@@ -955,6 +963,7 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
 
             <Markdown text={ex.prompt} />
             {ex.code && ex.kind !== 'code' && <CodeView code={ex.code} />}
+            {!interview && <WordingFlagButton key={ex.id} exerciseId={ex.id} />}
             {/* On first exposure the plain-English contract is on the page too, not behind Basics. */}
             {teach && !interview && BRIEFS[ex.id] && !showBasics && (
               <div className="rounded-xl px-4 py-3 shadow-[inset_0_0_0_1px_var(--line)]" data-testid="teach-brief">
@@ -1135,8 +1144,16 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
               </section>
             )}
 
-            {solutionShown && !passed && (
-              <section className="rise-in flex flex-col gap-2">
+            {solutionShown && !passed && ex.kind === 'code' && !solutionPeek && (
+              <p className="flex flex-wrap items-center gap-2 text-[12.5px] text-muted" data-testid="solution-hidden">
+                Solution hidden while you rebuild it from memory.
+                <button type="button" className="btn btn-ghost btn-sm" onClick={() => setSolutionPeek(true)}>
+                  Look again
+                </button>
+              </p>
+            )}
+            {solutionShown && !passed && (ex.kind !== 'code' || solutionPeek) && (
+              <section className="rise-in flex flex-col gap-2" data-testid="solution">
                 <p className="label">Solution</p>
                 {ex.solution && ex.kind !== 'choice' && ex.kind !== 'output' && <CodeView code={ex.solution} />}
                 {ex.kind === 'output' && <pre className="code-view">{ex.expectedOutput}</pre>}
@@ -1144,7 +1161,9 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
                 <p className="text-[12.5px] text-muted">
                   {ex.cleanPass && !session
                     ? 'Read it, close it, then write it yourself. This is a check rep: a pass with the solution open does not count. Run it back clean to clear it.'
-                    : 'Read it, close it, then write it yourself. This rep now earns reduced credit.'}
+                    : ex.kind === 'code'
+                      ? 'Read it, then rebuild it in the editor, which is back at the start. It hides as soon as you type. This rep now counts as assisted.'
+                      : 'Read it, close it, then write it yourself. This rep now earns reduced credit.'}
                 </p>
               </section>
             )}
@@ -1221,7 +1240,11 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
               {ex.kind === 'code' && (
                 <CodeEditor
                   value={code}
-                  onChange={setCode}
+                  onChange={(v) => {
+                    // The editor echoes programmatic resets back; only the learner's own typing hides the solution.
+                    if (solutionPeek && v !== code) setSolutionPeek(false)
+                    setCode(v)
+                  }}
                   onRun={onRun}
                   onSubmit={onSubmit}
                   assist={!interview}

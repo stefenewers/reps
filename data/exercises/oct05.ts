@@ -151,7 +151,7 @@ while n > 1:
           id: 'd05-while-halvings',
           title: 'Count the halvings',
           skills: ['while_loop', 'accumulator'],
-          prompt: "`n` is a whole number, 1 or larger. Write `halvings(n)` returning how many times you can replace `n` with `n // 2` (halve it, rounding down) before it reaches 1.\n\n`halvings(8)` → `3` (8 → 4 → 2 → 1). `halvings(1)` → `0`: it is already 1.",
+          prompt: "`n` is a whole number, 1 or larger.\n\nWrite `halvings(n)`. Keep replacing `n` with `n // 2` (half of it, rounded down) until it reaches 1. Return how many times you did that.\n\n`halvings(8)` → `3` (8 → 4 → 2 → 1)\n`halvings(1)` → `0` (it is already 1)",
           starterCode: `def halvings(n):\n    pass\n`,
           solution: `def halvings(n):
     count = 0
@@ -169,7 +169,7 @@ while n > 1:
           id: 'd05-while-dbg-bounds',
           title: 'Debug: scan to the first negative',
           skills: ['while_loop', 'list_index'],
-          prompt: "`nums` is a list of numbers (it may be empty). `first_negative(nums)` should return the index of the first negative value, or `-1` if there is none: `first_negative([3, 0, -2, 5])` → `2`. It crashes on some inputs. Fix it.",
+          prompt: "`nums` is a list of numbers, and it may be empty. `first_negative(nums)` should return the index of the first negative value. If there is none, it should return `-1`.\n\n`first_negative([3, 0, -2, 5])` → `2`\n\nIt crashes on some inputs. Fix it.",
           brokenCode: `def first_negative(nums):
     i = 0
     while nums[i] >= 0 and i < len(nums):
@@ -191,7 +191,7 @@ while n > 1:
           id: 'd05-while-first-at-least',
           title: 'First index at least target (slow way)',
           skills: ['while_loop', 'list_index'],
-          prompt: "`nums` is a list of numbers **sorted ascending**: smallest first. Repeats are allowed and it may be empty. Write `first_at_least(nums, target)` with a while loop: return the first index `i` where `nums[i] >= target`, or `len(nums)` if every value is smaller.\n\n`first_at_least([1, 3, 5, 7], 4)` → `2` (5 is the first value that is at least 4). `first_at_least([1, 3, 5, 7], 9)` → `4`.\n\nWalking one index at a time is O(n). Later today you will get the same answer in O(log n).",
+          prompt: "`nums` is a list of numbers **sorted ascending**, smallest first. It may have repeats, and it may be empty.\n\nWrite `first_at_least(nums, target)` with a while loop. Return the first index `i` where `nums[i] >= target`. If every value is smaller than `target`, return `len(nums)`.\n\n`first_at_least([1, 3, 5, 7], 4)` → `2` (5 is the first value that is at least 4)\n`first_at_least([1, 3, 5, 7], 9)` → `4` (every value is smaller, so it is `len(nums)`)\n\nWalking one index at a time is O(n). Later today you will get the same answer in O(log n).",
           note: "The index you return is where `target` would have to be inserted to keep the list sorted. It has a name you will meet again today: the **lower bound** of `target`.",
           starterCode: `def first_at_least(nums, target):\n    pass\n`,
           solution: `def first_at_least(nums, target):
@@ -218,7 +218,7 @@ while n > 1:
           id: 'd05-bs-trace-found',
           title: 'Trace: lo, hi, mid',
           skills: ['binary_search', 'mid_calc'],
-          prompt: "**Binary search** finds a value in a **sorted** list without reading every item. `lo` and `hi` are the first and last index that could still hold `target`; the indexes from `lo` to `hi` are the **search space**. `mid` is the index halfway between them. Because the list is sorted, one look at `nums[mid]` rules out half of the search space.\n\nPredict the output. Each pass prints `lo hi mid`; keep all three on paper.",
+          prompt: "**Binary search** finds a value in a **sorted** list without reading every item.\n\n`lo` and `hi` are the first and last index where `target` could still be. The indexes from `lo` to `hi` are the **search space**. `mid` is the index halfway between them. The list is sorted, so one look at `nums[mid]` rules out half of the search space.\n\nPredict the output. Each pass prints `lo hi mid`. Write all three down on paper as you go.",
           code: `nums = [1, 3, 5, 7, 9, 11, 13]
 target = 11
 lo, hi = 0, len(nums) - 1
@@ -244,7 +244,7 @@ while lo <= hi:
           title: 'Write the loop',
           style: 'finish',
           skills: ['binary_search', 'mid_calc', 'search_invariant'],
-          prompt: "`nums` is a list of numbers sorted ascending and `target` is the value to find. `search(nums, target)` returns the index of `target`, or `-1` if it is not in the list: `search([-3, 0, 4, 8, 12], 8)` → `3`.\n\nThe setup and the final `return -1` are given. Write the while loop. Keep the invariant true on every pass: `target`, if it is there at all, is at an index from `lo` to `hi`, both included.",
+          prompt: "`nums` is a list of numbers sorted ascending, and `target` is the value to find. `search(nums, target)` returns the index of `target`, or `-1` if it isn't in the list.\n\n`search([-3, 0, 4, 8, 12], 8)` → `3`\n\nThe setup and the final `return -1` are given. Write the while loop. On every pass, keep this rule (the **invariant**) true: if `target` is in the list, its index is from `lo` to `hi`, both included.",
           note: "**The loop ends when** `lo` has moved past `hi`: no index is left in the search space, so `target` is not in the list. Every pass must shrink the range, which is why `lo` and `hi` move **past** `mid`, never onto it.",
           starterCode: `def search(nums, target):
     lo, hi = 0, len(nums) - 1
@@ -274,7 +274,7 @@ while lo <= hi:
           id: 'd05-bs-contains',
           title: 'Contains, from a signature',
           skills: ['binary_search', 'mid_calc', 'search_invariant'],
-          prompt: "`nums` is a list of numbers sorted ascending (it may be empty). Write `contains(nums, target)` returning `True` if `target` is in `nums` and `False` if it is not, in O(log n): do not read every item.",
+          prompt: "`nums` is a list of numbers sorted ascending, and it may be empty.\n\nWrite `contains(nums, target)`. Return `True` if `target` is in `nums` and `False` if it isn't. It must run in O(log n), so don't read every item.\n\n`contains([1, 4, 9, 12], 9)` → `True`\n`contains([], 5)` → `False` (an empty list has nothing in it)",
           starterCode: `def contains(nums, target):\n    pass\n`,
           solution: `def contains(nums, target):
     lo, hi = 0, len(nums) - 1
@@ -297,7 +297,7 @@ while lo <= hi:
           id: 'd05-bs-dbg-lt',
           title: 'Debug: misses some targets',
           skills: ['binary_search', 'search_invariant'],
-          prompt: '`search(nums, target)` should return the index of `target` in the sorted list `nums`, or -1. It returns -1 for some targets that are in the list. Fix it.',
+          prompt: "`search(nums, target)` should return the index of `target` in the sorted list `nums`, or -1 if it isn't there. It returns -1 for some targets that are in the list. Fix it.",
           brokenCode: `def search(nums, target):
     lo, hi = 0, len(nums) - 1
     while lo < hi:
@@ -334,7 +334,7 @@ while lo <= hi:
           title: 'Optimize: linear scan → binary search',
           style: 'optimize',
           skills: ['binary_search', 'mid_calc', 'search_invariant'],
-          prompt: "`nums` is sorted ascending with no repeats. `index_of(nums, target)` returns the index of `target`, or `-1` if it is missing. It works, but it reads every item. Rewrite it so it reads only about log2(n) of them: a hidden test counts how many times you index into `nums` and allows 40 reads for a list of 10,000.",
+          prompt: "`nums` is sorted ascending with no repeats. `index_of(nums, target)` returns the index of `target`, or `-1` if it is missing.\n\nIt works, but it reads every item. Rewrite it so it reads only about log2(n) of them. A hidden test counts how many times you index into `nums`. For a list of 10,000 it allows 40 reads.",
           starterCode: `def index_of(nums, target):
     for i in range(len(nums)):
         if nums[i] == target:
@@ -382,7 +382,7 @@ assert Probe.reads <= 40, f"{Probe.reads} reads to rule out a value"`,
           id: 'd05-bs-dbg-index',
           title: 'Debug: wrong thing compared',
           skills: ['binary_search', 'mid_calc'],
-          prompt: '`find(nums, target)` should return the index of `target` in the sorted list `nums`, or -1. It returns -1 for values that are clearly there. Fix it.',
+          prompt: "`find(nums, target)` should return the index of `target` in the sorted list `nums`, or -1 if it isn't there. It returns -1 for values that are clearly in the list. Fix it.",
           brokenCode: `def find(nums, target):
     lo, hi = 0, len(nums) - 1
     while lo <= hi:
@@ -417,7 +417,7 @@ assert Probe.reads <= 40, f"{Probe.reads} reads to rule out a value"`,
           title: 'Write the test that catches it',
           style: 'write-test',
           skills: ['binary_search', 'search_invariant', 'edge_cases'],
-          prompt: "`search(nums, target)` should return the index of `target` in the sorted list `nums`, or `-1`. Somebody wrote it with `while lo < hi`:\n\n```python\ndef search(nums, target):\n    lo, hi = 0, len(nums) - 1\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if nums[mid] == target:\n            return mid\n        elif nums[mid] < target:\n            lo = mid + 1\n        else:\n            hi = mid - 1\n    return -1\n```\n\nWrite `test_search(search)`. Its argument `search` is the **function being tested**: the checker calls your `test_search` once with a correct search and once with the version above. Inside, write at least three `assert search(...) == ...` lines (an `assert` raises an error when its condition is false). Every assert must pass for a correct search, and at least one must fail for the version above.",
+          prompt: "`search(nums, target)` should return the index of `target` in the sorted list `nums`, or `-1` if it isn't there. Somebody wrote it with `while lo < hi`:\n\n```python\ndef search(nums, target):\n    lo, hi = 0, len(nums) - 1\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if nums[mid] == target:\n            return mid\n        elif nums[mid] < target:\n            lo = mid + 1\n        else:\n            hi = mid - 1\n    return -1\n```\n\nWrite `test_search(search)`. Its argument `search` is the **function being tested**. The checker calls your `test_search` twice: once with a correct search and once with the version above.\n\nInside, write at least three lines like `assert search(...) == ...`. An `assert` raises an error when its condition is false. Every assert must pass for a correct search. At least one must fail for the version above.\n\nWith a correct search, `test_search` finishes without an error. With the version above, one of your asserts fails.",
           starterCode: `def test_search(search):\n    pass\n`,
           solution: `def test_search(search):
     assert search([1, 3, 5], 3) == 1
@@ -481,7 +481,7 @@ else:
           title: 'Search insert position',
           ...pattern,
           skills: ['binary_search', 'search_invariant'],
-          prompt: "`nums` is sorted ascending with no repeats (it may be empty). Write `insert_at(nums, target)`: the index of `target` if it is in the list; otherwise its **insert position**, the index where it would have to go to keep the list sorted. O(log n).\n\n`insert_at([1, 3, 5, 6], 5)` → `2`. `insert_at([1, 3, 5, 6], 2)` → `1`. `insert_at([1, 3, 5, 6], 7)` → `4`, one past the end.\n\nWhen the usual `lo <= hi` loop ends without a match, `lo` is one past `hi`: everything left of `lo` is smaller than `target`, and everything from `lo` onward is larger.",
+          prompt: "`nums` is sorted ascending with no repeats, and it may be empty.\n\nWrite `insert_at(nums, target)`. If `target` is in the list, return its index. If it isn't, return its **insert position**: the index where it would go to keep the list sorted. It must run in O(log n).\n\n`insert_at([1, 3, 5, 6], 5)` → `2` (5 is at index 2)\n`insert_at([1, 3, 5, 6], 2)` → `1` (2 would go between 1 and 3)\n`insert_at([1, 3, 5, 6], 7)` → `4` (one past the end)\n\nRun the usual `lo <= hi` loop. If it ends without a match, `lo` is one past `hi`. Everything left of `lo` is smaller than `target`, and everything from `lo` on is larger.",
           starterCode: `def insert_at(nums, target):\n    pass\n`,
           solution: `def insert_at(nums, target):
     lo, hi = 0, len(nums) - 1
@@ -506,7 +506,7 @@ else:
           title: 'First occurrence',
           ...pattern,
           skills: ['binary_search', 'search_invariant'],
-          prompt: "`nums` is sorted ascending and may contain repeats. Write `first_index(nums, target)` returning the **leftmost** index of `target`, or `-1` if it is not there. O(log n).\n\n`first_index([1, 2, 2, 2, 3], 2)` → `1`.",
+          prompt: "`nums` is sorted ascending and may contain repeats.\n\nWrite `first_index(nums, target)`. Return the **leftmost** index of `target`, or `-1` if it isn't there. It must run in O(log n).\n\n`first_index([1, 2, 2, 2, 3], 2)` → `1` (2 is at indexes 1, 2 and 3)\n`first_index([1, 2, 2, 2, 3], 4)` → `-1` (4 isn't in the list)",
           starterCode: `def first_index(nums, target):\n    pass\n`,
           solution: `def first_index(nums, target):
     lo, hi = 0, len(nums) - 1
@@ -533,7 +533,7 @@ else:
           ...pattern,
           style: 'modify',
           skills: ['binary_search', 'search_invariant'],
-          prompt: "`nums` is sorted ascending and may contain repeats. The code below returns the **leftmost** index of `target`. Change it so `last_index` returns the **rightmost** index, or `-1` if `target` is not there: `last_index([1, 2, 2, 2, 3], 2)` → `3`.",
+          prompt: "`nums` is sorted ascending and may contain repeats. The code below returns the **leftmost** index of `target`. Change it so `last_index` returns the **rightmost** index instead, or `-1` if `target` isn't there.\n\n`last_index([1, 2, 2, 2, 3], 2)` → `3`",
           starterCode: `def last_index(nums, target):
     lo, hi = 0, len(nums) - 1
     ans = -1
@@ -571,7 +571,7 @@ else:
           id: 'd05-var-dbg-first',
           title: 'Debug: not the first one',
           skills: ['binary_search', 'search_invariant'],
-          prompt: "`first_pos(nums, target)` should return the **leftmost** index of `target` in a sorted list that may contain repeats, or `-1` if it is not there: `first_pos([1, 2, 2, 2, 3], 2)` → `1`. Some answers are too far right. Fix it.",
+          prompt: "`first_pos(nums, target)` should return the **leftmost** index of `target` in a sorted list that may contain repeats. If `target` isn't there, it should return `-1`.\n\n`first_pos([1, 2, 2, 2, 3], 2)` → `1`\n\nSome of its answers are too far right. Fix it.",
           brokenCode: `def first_pos(nums, target):
     lo, hi = 0, len(nums) - 1
     while lo <= hi:
@@ -607,7 +607,7 @@ else:
           id: 'd05-var-dbg-lower',
           title: 'Debug: half-open lower bound',
           skills: ['binary_search', 'search_invariant', 'mid_calc'],
-          prompt: "`nums` is sorted ascending. `lower_bound(nums, target)` should return the **lower bound** of `target`: the first index `i` with `nums[i] >= target`, or `len(nums)` if every value is smaller. `lower_bound([1, 3, 3, 7], 3)` → `1`.\n\nIt is written in the **half-open** style: the search space is `[lo, hi)`, meaning `lo` is still a candidate but `hi` is not. That is why it loops `while lo < hi` and uses `hi = mid` where the inclusive style uses `hi = mid - 1`. One answer is wrong. Fix it.",
+          prompt: "`nums` is sorted ascending. `lower_bound(nums, target)` should return the **lower bound** of `target`. That is the first index `i` where `nums[i] >= target`, or `len(nums)` if every value is smaller.\n\n`lower_bound([1, 3, 3, 7], 3)` → `1`\n\nIt is written in the **half-open** style. The search space is `[lo, hi)`: `lo` is still a candidate, but `hi` isn't. That is why it loops `while lo < hi` and sets `hi = mid`. The inclusive style sets `hi = mid - 1` instead.\n\nOne answer is wrong. Fix it.",
           note: "Two ways to write a range of indexes. **Inclusive** `[lo, hi]`: both ends are candidates; it is empty when `lo > hi`. **Half-open** `[lo, hi)`: `lo` is a candidate, `hi` is not; it is empty when `lo == hi`. `range(lo, hi)` and slices are half-open too. Pick one style per function and keep its rules.",
           brokenCode: `def lower_bound(nums, target):
     lo, hi = 0, len(nums) - 1
@@ -641,7 +641,7 @@ else:
           ...pattern,
           difficulty: 3,
           skills: ['binary_search', 'mid_calc', 'search_invariant'],
-          prompt: "`x` is a whole number, 0 or larger (it can be in the billions). Write `floor_sqrt(x)`: the largest whole number `r` with `r * r <= x`. No `**0.5` and no `math`.\n\n`floor_sqrt(16)` → `4`. `floor_sqrt(15)` → `3`, because 3 × 3 = 9 fits and 4 × 4 = 16 does not.\n\nThere is no list here. Binary search over the possible answers instead: the search space is the numbers `0` to `x`, and `mid` is a guess for `r`.",
+          prompt: "`x` is a whole number, 0 or larger. It can be in the billions.\n\nWrite `floor_sqrt(x)`. Return the largest whole number `r` where `r * r <= x`. Don't use `**0.5` or `math`.\n\n`floor_sqrt(16)` → `4`\n`floor_sqrt(15)` → `3` (3 × 3 = 9 fits, but 4 × 4 = 16 is too big)\n`floor_sqrt(0)` → `0`\n\nThere is no list here. Binary search over the possible answers instead. The search space is the numbers `0` to `x`, and `mid` is a guess for `r`.",
           note: "Binary search needs something ordered, not necessarily a list. Here every small guess passes the test `r * r <= x` and every large guess fails it, and you want the last guess that passes.",
           starterCode: `def floor_sqrt(x):\n    pass\n`,
           solution: `def floor_sqrt(x):
@@ -666,7 +666,7 @@ else:
           title: "First True",
           ...pattern,
           skills: ['binary_search', 'search_invariant'],
-          prompt: "`flags` is a list of booleans in which every `False` comes before every `True`, like `[False, False, True, True]`. Either part may be absent, and the list may be empty.\n\nWrite `first_true(flags)` returning the index of the first `True`, or `len(flags)` if there is no `True`.\n\n`first_true([False, False, True, True])` → `2`. `first_true([False, False])` → `2`. `first_true([True])` → `0`.\n\nThe list can be very long: your solution must take O(log n) time, so checking the items one by one is not allowed.",
+          prompt: "`flags` is a list of booleans where every `False` comes before every `True`, like `[False, False, True, True]`. It may have no `False`s or no `True`s, and it may be empty.\n\nWrite `first_true(flags)`. Return the index of the first `True`, or `len(flags)` if there is no `True`.\n\n`first_true([False, False, True, True])` → `2`\n`first_true([False, False])` → `2` (no `True`, so it is `len(flags)`)\n`first_true([True])` → `0`\n\nThe list can be very long. Your solution must take O(log n) time, so you can't check the items one by one.",
           transfer: true,
           starterCode: `def first_true(flags):\n    pass\n`,
           solution: `def first_true(flags):
@@ -704,7 +704,7 @@ else:
           problemId: 'binary-search',
           title: 'Binary Search',
           skills: ['binary_search', 'mid_calc', 'search_invariant', 'while_loop'],
-          prompt: 'You get a list of distinct integers in increasing order and a value to look for. Return the position of that value in the list, or -1 if it is not there.\n\nYour solution must take O(log n) time, so a linear scan is not allowed.',
+          prompt: "You get a list of distinct integers in increasing order, and a value to look for. Return the position of that value in the list, or -1 if it isn't there.\n\nYour solution must take O(log n) time, so a linear scan is not allowed.\n\n`search([-1, 0, 3, 5, 9, 12], 9)` → `4`\n`search([-1, 0, 3, 5, 9, 12], 2)` → `-1` (2 isn't in the list)",
           starterCode: `def search(nums: List[int], target: int) -> int:\n    pass\n`,
           solution: `def search(nums: List[int], target: int) -> int:
     lo, hi = 0, len(nums) - 1
@@ -766,7 +766,7 @@ else:
           title: 'Follow-up: where would it go?',
           style: 'modify',
           skills: ['binary_search', 'search_invariant', 'mid_calc'],
-          prompt: '**Interviewer follow-up.** `search` returns -1 when the target is missing. Now return the index where the target **would be inserted** to keep the list sorted (its index if it is already there). Still O(log n). Adapt it as `insert_at(nums, target)`.',
+          prompt: "**Interviewer follow-up.** `search` returns -1 when the target is missing. Change that: return the index where the target **would be inserted** to keep the list sorted. If the target is already there, return its index. It must still run in O(log n). Write it as `insert_at(nums, target)`.\n\n`insert_at([1, 3, 5, 6], 2)` → `1` (2 would go between 1 and 3)",
           starterCode: `def insert_at(nums, target):
     lo, hi = 0, len(nums) - 1
     while lo <= hi:
@@ -826,7 +826,7 @@ print(node)`,
           id: 'd05-ll-to-array',
           title: 'Write list_to_array yourself',
           skills: ['linked_list_traversal', 'list_append'],
-          prompt: "`head` is the first node of a linked list, or `None` if the list is empty. Write `values(head)` returning the node values as a Python list, in order: for 4 -> 8 -> 15 it returns `[4, 8, 15]`, and for `None` it returns `[]`.\n\nReps already has a helper that does exactly this, `list_to_array(node)`, and later tests use it to show you a linked list. Do not call it here: write the walk yourself.",
+          prompt: "`head` is the first node of a linked list, or `None` if the list is empty.\n\nWrite `values(head)`. Return the node values as a Python list, in order.\n\n`values(build_list([4, 8, 15]))` → `[4, 8, 15]`\n`values(None)` → `[]` (an empty list has no nodes)\n\nReps already has a helper that does exactly this, `list_to_array(node)`. Later tests use it to show you a linked list. Don't call it here: write the walk yourself.",
           starterCode: `def values(head):\n    pass\n`,
           solution: `def values(head):
     out = []
@@ -907,7 +907,7 @@ print(a.val, b.val)`,
           title: 'Translate: Python list → linked list',
           style: 'translate',
           skills: ['linked_list_traversal', 'conditionals'],
-          prompt: "`count_greater(nums, x)` counts the values larger than `x` in a Python list. Write `count_greater_ll(head, x)` that does the same for a linked list, where `head` is its first node, or `None` if it is empty. Walk the nodes; do not convert to a Python list first.",
+          prompt: "`count_greater(nums, x)` counts the values larger than `x` in a Python list.\n\nWrite `count_greater_ll(head, x)`, which does the same for a linked list. `head` is the list's first node, or `None` if the list is empty. Walk the nodes. Don't turn the linked list into a Python list first.\n\n`count_greater_ll(build_list([5, 1, 8]), 4)` → `2` (5 and 8 are larger than 4)",
           starterCode: `def count_greater(nums, x):
     count = 0
     for v in nums:
@@ -965,7 +965,7 @@ def count_greater_ll(head, x):
           id: 'd05-ll-last',
           title: 'Last value',
           skills: ['linked_list_traversal'],
-          prompt: "The last node of a linked list is its **tail**: the one node whose `.next` is `None`. Write `last_value(head)` returning the tail’s value, or `None` when the list is empty (`head` is `None`). For 1 -> 2 -> 3 it returns `3`.\n\nThis time loop with `while node.next`, on purpose: it stops **on** the last node instead of running past it.",
+          prompt: "The last node of a linked list is its **tail**: the one node whose `.next` is `None`.\n\nWrite `last_value(head)`. Return the tail’s value. If the list is empty (`head` is `None`), return `None`.\n\n`last_value(build_list([1, 2, 3]))` → `3`\n`last_value(None)` → `None` (the list is empty)\n\nThis time, loop with `while node.next` on purpose. It stops **on** the last node instead of running past it.",
           starterCode: `def last_value(head):\n    pass\n`,
           solution: `def last_value(head):
     if head is None:
@@ -986,7 +986,7 @@ def count_greater_ll(head, x):
           ...combine,
           difficulty: 3,
           skills: ['linked_list_traversal', 'while_loop', 'accumulator'],
-          prompt: "`head` is the first node of a linked list with at least one node. Write `middle_value(head)`: the value at position `length // 2`, counting from 0. 1 -> 2 -> 3 → `2`; 1 -> 2 -> 3 -> 4 → `3` (the third node). Two passes is fine: count the nodes, then walk.",
+          prompt: "`head` is the first node of a linked list with at least one node.\n\nWrite `middle_value(head)`. Number the nodes from 0, and return the value of node number `length // 2`.\n\n`middle_value(build_list([1, 2, 3]))` → `2`\n`middle_value(build_list([1, 2, 3, 4]))` → `3` (4 // 2 is 2, the third node)\n`middle_value(build_list([7]))` → `7` (one node is its own middle)\n\nTwo passes is fine: count the nodes, then walk to the middle.",
           starterCode: `def middle_value(head):\n    pass\n`,
           solution: `def middle_value(head):
     n = 0
@@ -1017,7 +1017,7 @@ def count_greater_ll(head, x):
           id: 'd05-rw-insert-after',
           title: 'Insert after head',
           skills: ['linked_list_reassignment', 'listnode'],
-          prompt: "`head` is the first node of a linked list (never `None` here). Write `insert_second(head, val)`: make a new node holding `val`, put it right after the head, and return `head`. 1 -> 3 with `val = 2` becomes 1 -> 2 -> 3.\n\n`ListNode(val)` makes a node whose `.next` is `None`; `ListNode(val, other)` makes one whose `.next` is already `other`. The tests show your result with `list_to_array(...)`, which turns a linked list into a Python list.",
+          prompt: "`head` is the first node of a linked list. It is never `None` here.\n\nWrite `insert_second(head, val)`. Make a new node holding `val`, put it right after the head, and return `head`.\n\n`insert_second(build_list([1, 3]), 2)` → `1 -> 2 -> 3`\n`insert_second(build_list([5]), 6)` → `5 -> 6` (the new node becomes the tail)\n\n`ListNode(val)` makes a node whose `.next` is `None`. `ListNode(val, other)` makes one whose `.next` is already `other`. The tests show your result with `list_to_array(...)`, which turns a linked list into a Python list.",
           starterCode: `def insert_second(head, val):\n    pass\n`,
           solution: `def insert_second(head, val):
     head.next = ListNode(val, head.next)

@@ -21,7 +21,7 @@ export interface PlanUnit {
 /** Minutes of practice per local date: time in Reps reps plus minutes logged on LeetCode solves. */
 export function activityByDate(attempts: Attempt[], solves: SolveEntry[]): Record<string, number> {
   const out: Record<string, number> = {}
-  for (const a of attempts) if (a.durationSeconds) out[a.date] = (out[a.date] ?? 0) + a.durationSeconds / 60
+  for (const a of attempts) if (a.durationSeconds) out[a.date] = (out[a.date] ?? 0) + Math.min(30, a.durationSeconds / 60)
   for (const s of solves) out[s.date] = (out[s.date] ?? 0) + (s.minutes ?? 0)
   return out
 }
