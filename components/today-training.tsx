@@ -9,6 +9,7 @@ import type { useTodayPlan } from '@/components/use-today-plan'
 import { trainingKey, type useTraining } from '@/components/use-training'
 import { conceptFor, type Concept } from '@/data/concepts'
 import { EXERCISE_BY_ID } from '@/data/curriculum'
+import { practiceSite } from '@/data/problem-urls'
 import { shortDate } from '@/lib/dates'
 import { createSession } from '@/lib/sessions'
 import type { ItemKind, PlanItem } from '@/lib/today-plan'
@@ -107,7 +108,7 @@ export default function TodayTraining({ plan, training, lcUrl, forecast }: { pla
     )
   ) : next?.lc ? (
     <a href={hrefFor(next)} {...(next.kind === 'problem' ? { target: '_blank', rel: 'noreferrer' } : {})} className="btn btn-accent btn-lg" data-testid="training-start">
-      {next.kind === 'problem' ? `Open LC ${next.lc} on LeetCode` : 'Go to the re-solves'} {next.kind === 'problem' ? <IconExternal size={14} /> : <IconArrowRight size={15} />}
+      {next.kind === 'problem' ? `Practice LC ${next.lc} on ${practiceSite(next.lc)}` : 'Go to the re-solves'} {next.kind === 'problem' ? <IconExternal size={14} /> : <IconArrowRight size={15} />}
     </a>
   ) : null
 

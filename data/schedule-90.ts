@@ -279,7 +279,7 @@ export const PLAN_WHEN_AHEAD: { lc: number; title: string; difficulty: string; p
   "pattern": "Binary search rotated",
   "unit": "Binary search",
   "video": "https://www.youtube.com/watch?v=U8XENwh8Oy8",
-  "url": "https://leetcode.com/problems/search-in-rotated-sorted-array/"
+  "url": "https://neetcode.io/problems/find-target-in-rotated-sorted-array"
  },
  {
   "lc": 73,
@@ -288,7 +288,7 @@ export const PLAN_WHEN_AHEAD: { lc: number; title: string; difficulty: string; p
   "pattern": "Matrix in-place markers",
   "unit": "Matrix",
   "video": "https://www.youtube.com/watch?v=T41rL0L3Pnw",
-  "url": "https://leetcode.com/problems/set-matrix-zeroes/"
+  "url": "https://neetcode.io/problems/set-zeroes-in-matrix"
  },
  {
   "lc": 435,
@@ -297,7 +297,7 @@ export const PLAN_WHEN_AHEAD: { lc: number; title: string; difficulty: string; p
   "pattern": "Intervals greedy",
   "unit": "Intervals",
   "video": "https://www.youtube.com/watch?v=nONCGxWoUfM",
-  "url": "https://leetcode.com/problems/non-overlapping-intervals/"
+  "url": "https://neetcode.io/problems/non-overlapping-intervals"
  },
  {
   "lc": 79,
@@ -306,7 +306,7 @@ export const PLAN_WHEN_AHEAD: { lc: number; title: string; difficulty: string; p
   "pattern": "Grid backtracking",
   "unit": "Backtracking",
   "video": "https://www.youtube.com/watch?v=pfiQ_PS1g8E",
-  "url": "https://leetcode.com/problems/word-search/"
+  "url": "https://neetcode.io/problems/search-for-word"
  },
  {
   "lc": 5,
@@ -315,7 +315,7 @@ export const PLAN_WHEN_AHEAD: { lc: number; title: string; difficulty: string; p
   "pattern": "Expand around center",
   "unit": "Dynamic programming",
   "video": "https://www.youtube.com/watch?v=XYQecbcd6_c",
-  "url": "https://leetcode.com/problems/longest-palindromic-substring/"
+  "url": "https://neetcode.io/problems/longest-palindromic-substring"
  },
  {
   "lc": 143,
@@ -324,7 +324,7 @@ export const PLAN_WHEN_AHEAD: { lc: number; title: string; difficulty: string; p
   "pattern": "Linked list combo",
   "unit": "Linked lists",
   "video": "https://www.youtube.com/watch?v=S5bfdUTrKLM",
-  "url": "https://leetcode.com/problems/reorder-list/"
+  "url": "https://neetcode.io/problems/reorder-linked-list"
  },
  {
   "lc": 261,
@@ -333,7 +333,7 @@ export const PLAN_WHEN_AHEAD: { lc: number; title: string; difficulty: string; p
   "pattern": "Union-find / DFS tree check",
   "unit": "Graphs",
   "video": "https://www.youtube.com/watch?v=bXsUuownnoQ",
-  "url": "https://neetcode.io/problems/valid-tree/question"
+  "url": "https://neetcode.io/problems/valid-tree"
  },
  {
   "lc": 1143,
@@ -342,7 +342,7 @@ export const PLAN_WHEN_AHEAD: { lc: number; title: string; difficulty: string; p
   "pattern": "2D DP strings",
   "unit": "Dynamic programming",
   "video": "https://www.youtube.com/watch?v=Ua0GhsJSlWM",
-  "url": "https://leetcode.com/problems/longest-common-subsequence/"
+  "url": "https://neetcode.io/problems/longest-common-subsequence"
  },
  {
   "lc": 105,
@@ -351,7 +351,7 @@ export const PLAN_WHEN_AHEAD: { lc: number; title: string; difficulty: string; p
   "pattern": "Tree construction",
   "unit": "Recursion + trees",
   "video": "https://www.youtube.com/watch?v=ihj4IQGZ2zc",
-  "url": "https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/"
+  "url": "https://neetcode.io/problems/binary-tree-from-preorder-and-inorder-traversal"
  },
  {
   "lc": 417,
@@ -360,7 +360,7 @@ export const PLAN_WHEN_AHEAD: { lc: number; title: string; difficulty: string; p
   "pattern": "Reverse multi-source DFS",
   "unit": "Graphs",
   "video": "https://www.youtube.com/watch?v=s-VkcjHqkGI",
-  "url": "https://leetcode.com/problems/pacific-atlantic-water-flow/"
+  "url": "https://neetcode.io/problems/pacific-atlantic-water-flow"
  },
  {
   "lc": 271,
@@ -369,7 +369,7 @@ export const PLAN_WHEN_AHEAD: { lc: number; title: string; difficulty: string; p
   "pattern": "String encoding",
   "unit": "Hashing",
   "video": "https://www.youtube.com/watch?v=B1k_sxOSgv8",
-  "url": "https://neetcode.io/problems/string-encode-and-decode/question"
+  "url": "https://neetcode.io/problems/string-encode-and-decode"
  },
  {
   "lc": 23,
@@ -378,7 +378,7 @@ export const PLAN_WHEN_AHEAD: { lc: number; title: string; difficulty: string; p
   "pattern": "Heap merge",
   "unit": "Linked lists",
   "video": "https://www.youtube.com/watch?v=q5a5OiGbT6Q",
-  "url": "https://leetcode.com/problems/merge-k-sorted-lists/"
+  "url": "https://neetcode.io/problems/merge-k-sorted-linked-lists"
  },
  {
   "lc": 124,
@@ -387,7 +387,7 @@ export const PLAN_WHEN_AHEAD: { lc: number; title: string; difficulty: string; p
   "pattern": "Tree DFS return-two-things",
   "unit": "Recursion + trees",
   "video": "https://www.youtube.com/watch?v=Hr5cWUld4vU",
-  "url": "https://leetcode.com/problems/binary-tree-maximum-path-sum/"
+  "url": "https://neetcode.io/problems/binary-tree-maximum-path-sum"
  },
  {
   "lc": 76,
@@ -396,7 +396,7 @@ export const PLAN_WHEN_AHEAD: { lc: number; title: string; difficulty: string; p
   "pattern": "Sliding window + need counts",
   "unit": "Sliding window",
   "video": "https://www.youtube.com/watch?v=jSto0O4AJbM",
-  "url": "https://leetcode.com/problems/minimum-window-substring/"
+  "url": "https://neetcode.io/problems/minimum-window-with-characters"
  },
  {
   "lc": 91,
@@ -405,7 +405,7 @@ export const PLAN_WHEN_AHEAD: { lc: number; title: string; difficulty: string; p
   "pattern": "1D DP on prefixes",
   "unit": "Dynamic programming",
   "video": "https://www.youtube.com/watch?v=6aEyTjOwlJU",
-  "url": "https://leetcode.com/problems/decode-ways/"
+  "url": "https://neetcode.io/problems/decode-ways"
  }
 ]
 
@@ -470,7 +470,7 @@ export const PLAN_90 = [
     "type": "review1",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=3OamzN90kPg",
-    "url": "https://leetcode.com/problems/contains-duplicate/"
+    "url": "https://neetcode.io/problems/duplicate-integer"
    },
    {
     "lc": 387,
@@ -480,7 +480,7 @@ export const PLAN_90 = [
     "type": "review1",
     "mode": null,
     "video": null,
-    "url": "https://leetcode.com/problems/first-unique-character-in-a-string/"
+    "url": "https://neetcode.io/problems/first-unique-character-in-a-string"
    }
   ],
   "minutes": 82,
@@ -544,7 +544,7 @@ export const PLAN_90 = [
     "type": "review1",
     "mode": null,
     "video": null,
-    "url": "https://leetcode.com/problems/majority-element/"
+    "url": "https://neetcode.io/problems/majority-element"
    }
   ],
   "minutes": 81,
@@ -599,7 +599,7 @@ export const PLAN_90 = [
     "type": "review1",
     "mode": null,
     "video": null,
-    "url": "https://leetcode.com/problems/ransom-note/"
+    "url": "https://neetcode.io/problems/ransom-note"
    }
   ],
   "minutes": 85,
@@ -652,7 +652,7 @@ export const PLAN_90 = [
     "type": "review1",
     "mode": null,
     "video": null,
-    "url": "https://leetcode.com/problems/contains-duplicate-ii/"
+    "url": "https://neetcode.io/problems/contains-duplicate-ii"
    },
    {
     "lc": 242,
@@ -662,7 +662,7 @@ export const PLAN_90 = [
     "type": "review1",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=9UtInBqnCgA",
-    "url": "https://leetcode.com/problems/valid-anagram/"
+    "url": "https://neetcode.io/problems/is-anagram"
    }
   ],
   "minutes": 84,
@@ -713,7 +713,7 @@ export const PLAN_90 = [
     "type": "new",
     "mode": "attempt-first",
     "video": "https://www.youtube.com/watch?v=vzdNOK2oB2E",
-    "url": "https://leetcode.com/problems/group-anagrams/"
+    "url": "https://neetcode.io/problems/anagram-groups"
    }
   ],
   "minutes": 85,
@@ -760,7 +760,7 @@ export const PLAN_90 = [
     "type": "review1",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=KLlXCFG5TnA",
-    "url": "https://leetcode.com/problems/two-sum/"
+    "url": "https://neetcode.io/problems/two-integer-sum"
    },
    {
     "lc": 128,
@@ -770,7 +770,7 @@ export const PLAN_90 = [
     "type": "new",
     "mode": "bridge-first",
     "video": "https://www.youtube.com/watch?v=P6RZZMu_maU",
-    "url": "https://leetcode.com/problems/longest-consecutive-sequence/"
+    "url": "https://neetcode.io/problems/longest-consecutive-sequence"
    }
   ],
   "minutes": 78,
@@ -832,7 +832,7 @@ export const PLAN_90 = [
     "type": "review1",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=vzdNOK2oB2E",
-    "url": "https://leetcode.com/problems/group-anagrams/"
+    "url": "https://neetcode.io/problems/anagram-groups"
    },
    {
     "lc": 238,
@@ -842,7 +842,7 @@ export const PLAN_90 = [
     "type": "new",
     "mode": "bridge-first",
     "video": "https://www.youtube.com/watch?v=bNvIQI2wAjk",
-    "url": "https://leetcode.com/problems/product-of-array-except-self/"
+    "url": "https://neetcode.io/problems/products-of-array-discluding-self"
    }
   ],
   "minutes": 132,
@@ -918,7 +918,7 @@ export const PLAN_90 = [
     "type": "review1",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=P6RZZMu_maU",
-    "url": "https://leetcode.com/problems/longest-consecutive-sequence/"
+    "url": "https://neetcode.io/problems/longest-consecutive-sequence"
    }
   ],
   "minutes": 132,
@@ -1026,7 +1026,7 @@ export const PLAN_90 = [
     "type": "review1",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=bNvIQI2wAjk",
-    "url": "https://leetcode.com/problems/product-of-array-except-self/"
+    "url": "https://neetcode.io/problems/products-of-array-discluding-self"
    },
    {
     "lc": 217,
@@ -1036,7 +1036,7 @@ export const PLAN_90 = [
     "type": "review2",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=3OamzN90kPg",
-    "url": "https://leetcode.com/problems/contains-duplicate/"
+    "url": "https://neetcode.io/problems/duplicate-integer"
    },
    {
     "lc": 242,
@@ -1046,7 +1046,7 @@ export const PLAN_90 = [
     "type": "review2",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=9UtInBqnCgA",
-    "url": "https://leetcode.com/problems/valid-anagram/"
+    "url": "https://neetcode.io/problems/is-anagram"
    }
   ],
   "minutes": 124,
@@ -1099,7 +1099,7 @@ export const PLAN_90 = [
     "type": "review2",
     "mode": null,
     "video": null,
-    "url": "https://leetcode.com/problems/first-unique-character-in-a-string/"
+    "url": "https://neetcode.io/problems/first-unique-character-in-a-string"
    },
    {
     "lc": 169,
@@ -1109,7 +1109,7 @@ export const PLAN_90 = [
     "type": "review2",
     "mode": null,
     "video": null,
-    "url": "https://leetcode.com/problems/majority-element/"
+    "url": "https://neetcode.io/problems/majority-element"
    }
   ],
   "minutes": 141,
@@ -1159,7 +1159,7 @@ export const PLAN_90 = [
     "type": "review2",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=KLlXCFG5TnA",
-    "url": "https://leetcode.com/problems/two-sum/"
+    "url": "https://neetcode.io/problems/two-integer-sum"
    },
    {
     "lc": 383,
@@ -1169,7 +1169,7 @@ export const PLAN_90 = [
     "type": "review2",
     "mode": null,
     "video": null,
-    "url": "https://leetcode.com/problems/ransom-note/"
+    "url": "https://neetcode.io/problems/ransom-note"
    },
    {
     "lc": 11,
@@ -1179,7 +1179,7 @@ export const PLAN_90 = [
     "type": "new",
     "mode": "bridge-first",
     "video": "https://www.youtube.com/watch?v=UuiTKBwPgAo",
-    "url": "https://leetcode.com/problems/container-with-most-water/"
+    "url": "https://neetcode.io/problems/max-water-container"
    }
   ],
   "minutes": 82,
@@ -1239,7 +1239,7 @@ export const PLAN_90 = [
     "type": "review1",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=1pkOgXD63yU",
-    "url": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock/"
+    "url": "https://neetcode.io/problems/buy-and-sell-crypto"
    },
    {
     "lc": 125,
@@ -1249,7 +1249,7 @@ export const PLAN_90 = [
     "type": "review1",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=jJXJ16kPFWg",
-    "url": "https://leetcode.com/problems/valid-palindrome/"
+    "url": "https://neetcode.io/problems/is-palindrome"
    },
    {
     "lc": 167,
@@ -1259,7 +1259,7 @@ export const PLAN_90 = [
     "type": "review1",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=cQ1Oz4ckceM",
-    "url": "https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/"
+    "url": "https://neetcode.io/problems/two-integer-sum-ii"
    },
    {
     "lc": 15,
@@ -1269,7 +1269,7 @@ export const PLAN_90 = [
     "type": "new",
     "mode": "bridge-first",
     "video": "https://www.youtube.com/watch?v=jzZsG8n2R9A",
-    "url": "https://leetcode.com/problems/3sum/"
+    "url": "https://neetcode.io/problems/three-integer-sum"
    }
   ],
   "minutes": 130,
@@ -1325,7 +1325,7 @@ export const PLAN_90 = [
     "type": "review2",
     "mode": null,
     "video": null,
-    "url": "https://leetcode.com/problems/contains-duplicate-ii/"
+    "url": "https://neetcode.io/problems/contains-duplicate-ii"
    },
    {
     "lc": 11,
@@ -1335,7 +1335,7 @@ export const PLAN_90 = [
     "type": "review1",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=UuiTKBwPgAo",
-    "url": "https://leetcode.com/problems/container-with-most-water/"
+    "url": "https://neetcode.io/problems/max-water-container"
    },
    {
     "lc": 49,
@@ -1345,7 +1345,7 @@ export const PLAN_90 = [
     "type": "review2",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=vzdNOK2oB2E",
-    "url": "https://leetcode.com/problems/group-anagrams/"
+    "url": "https://neetcode.io/problems/anagram-groups"
    }
   ],
   "minutes": 135,
@@ -1401,7 +1401,7 @@ export const PLAN_90 = [
     "type": "review2",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=P6RZZMu_maU",
-    "url": "https://leetcode.com/problems/longest-consecutive-sequence/"
+    "url": "https://neetcode.io/problems/longest-consecutive-sequence"
    }
   ],
   "minutes": 137,
@@ -1453,7 +1453,7 @@ export const PLAN_90 = [
     "type": "review1",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=jzZsG8n2R9A",
-    "url": "https://leetcode.com/problems/3sum/"
+    "url": "https://neetcode.io/problems/three-integer-sum"
    },
    {
     "lc": 238,
@@ -1463,7 +1463,7 @@ export const PLAN_90 = [
     "type": "review2",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=bNvIQI2wAjk",
-    "url": "https://leetcode.com/problems/product-of-array-except-self/"
+    "url": "https://neetcode.io/problems/products-of-array-discluding-self"
    }
   ],
   "minutes": 127,
@@ -1516,7 +1516,7 @@ export const PLAN_90 = [
     "type": "new",
     "mode": "bridge-first",
     "video": "https://www.youtube.com/watch?v=gqXU1UyA8pk",
-    "url": "https://leetcode.com/problems/longest-repeating-character-replacement/"
+    "url": "https://neetcode.io/problems/longest-repeating-substring-with-replacement"
    }
   ],
   "minutes": 137,
@@ -1570,7 +1570,7 @@ export const PLAN_90 = [
     "type": "review1",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=wiGpQwVHdE0",
-    "url": "https://leetcode.com/problems/longest-substring-without-repeating-characters/"
+    "url": "https://neetcode.io/problems/longest-substring-without-duplicates"
    }
   ],
   "minutes": 84,
@@ -1642,7 +1642,7 @@ export const PLAN_90 = [
     "type": "review1",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=gqXU1UyA8pk",
-    "url": "https://leetcode.com/problems/longest-repeating-character-replacement/"
+    "url": "https://neetcode.io/problems/longest-repeating-substring-with-replacement"
    },
    {
     "lc": 121,
@@ -1652,7 +1652,7 @@ export const PLAN_90 = [
     "type": "review2",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=1pkOgXD63yU",
-    "url": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock/"
+    "url": "https://neetcode.io/problems/buy-and-sell-crypto"
    },
    {
     "lc": 125,
@@ -1662,7 +1662,7 @@ export const PLAN_90 = [
     "type": "review2",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=jJXJ16kPFWg",
-    "url": "https://leetcode.com/problems/valid-palindrome/"
+    "url": "https://neetcode.io/problems/is-palindrome"
    }
   ],
   "minutes": 133,
@@ -1729,7 +1729,7 @@ export const PLAN_90 = [
     "type": "review2",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=cQ1Oz4ckceM",
-    "url": "https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/"
+    "url": "https://neetcode.io/problems/two-integer-sum-ii"
    },
    {
     "lc": 11,
@@ -1739,7 +1739,7 @@ export const PLAN_90 = [
     "type": "review2",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=UuiTKBwPgAo",
-    "url": "https://leetcode.com/problems/container-with-most-water/"
+    "url": "https://neetcode.io/problems/max-water-container"
    }
   ],
   "minutes": 143,
@@ -1858,7 +1858,7 @@ export const PLAN_90 = [
     "type": "review1",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=WTzjTskDFMg",
-    "url": "https://leetcode.com/problems/valid-parentheses/"
+    "url": "https://neetcode.io/problems/validate-parentheses"
    },
    {
     "lc": 15,
@@ -1868,7 +1868,7 @@ export const PLAN_90 = [
     "type": "review2",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=jzZsG8n2R9A",
-    "url": "https://leetcode.com/problems/3sum/"
+    "url": "https://neetcode.io/problems/three-integer-sum"
    }
   ],
   "minutes": 125,
@@ -1926,7 +1926,7 @@ export const PLAN_90 = [
     "type": "new",
     "mode": "bridge-first",
     "video": "https://www.youtube.com/watch?v=nIVW4P8b1VA",
-    "url": "https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/"
+    "url": "https://neetcode.io/problems/find-minimum-in-rotated-sorted-array"
    }
   ],
   "minutes": 139,
@@ -1991,7 +1991,7 @@ export const PLAN_90 = [
     "type": "review1",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=s4DPM8ct1pI",
-    "url": "https://leetcode.com/problems/binary-search/"
+    "url": "https://neetcode.io/problems/binary-search"
    },
    {
     "lc": 3,
@@ -2001,7 +2001,7 @@ export const PLAN_90 = [
     "type": "review2",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=wiGpQwVHdE0",
-    "url": "https://leetcode.com/problems/longest-substring-without-repeating-characters/"
+    "url": "https://neetcode.io/problems/longest-substring-without-duplicates"
    }
   ],
   "minutes": 87,
@@ -2082,7 +2082,7 @@ export const PLAN_90 = [
     "type": "review1",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=nIVW4P8b1VA",
-    "url": "https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/"
+    "url": "https://neetcode.io/problems/find-minimum-in-rotated-sorted-array"
    },
    {
     "lc": 424,
@@ -2092,7 +2092,7 @@ export const PLAN_90 = [
     "type": "review2",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=gqXU1UyA8pk",
-    "url": "https://leetcode.com/problems/longest-repeating-character-replacement/"
+    "url": "https://neetcode.io/problems/longest-repeating-substring-with-replacement"
    }
   ],
   "minutes": 164,
@@ -2154,7 +2154,7 @@ export const PLAN_90 = [
     "type": "review1",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=G0_I-ZF0S38",
-    "url": "https://leetcode.com/problems/reverse-linked-list/"
+    "url": "https://neetcode.io/problems/reverse-a-linked-list"
    },
    {
     "lc": 141,
@@ -2164,7 +2164,7 @@ export const PLAN_90 = [
     "type": "new",
     "mode": "bridge-first",
     "video": "https://www.youtube.com/watch?v=gBTe7lFR3vc",
-    "url": "https://leetcode.com/problems/linked-list-cycle/"
+    "url": "https://neetcode.io/problems/linked-list-cycle-detection"
    },
    {
     "lc": 19,
@@ -2174,7 +2174,7 @@ export const PLAN_90 = [
     "type": "new",
     "mode": "bridge-first",
     "video": "https://www.youtube.com/watch?v=XVuQxVej6y8",
-    "url": "https://leetcode.com/problems/remove-nth-node-from-end-of-list/"
+    "url": "https://neetcode.io/problems/remove-node-from-end-of-linked-list"
    }
   ],
   "minutes": 165,
@@ -2253,7 +2253,7 @@ export const PLAN_90 = [
     "type": "review3",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=3OamzN90kPg",
-    "url": "https://leetcode.com/problems/contains-duplicate/"
+    "url": "https://neetcode.io/problems/duplicate-integer"
    },
    {
     "lc": 242,
@@ -2263,7 +2263,7 @@ export const PLAN_90 = [
     "type": "review3",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=9UtInBqnCgA",
-    "url": "https://leetcode.com/problems/valid-anagram/"
+    "url": "https://neetcode.io/problems/is-anagram"
    },
    {
     "lc": 387,
@@ -2273,7 +2273,7 @@ export const PLAN_90 = [
     "type": "review3",
     "mode": null,
     "video": null,
-    "url": "https://leetcode.com/problems/first-unique-character-in-a-string/"
+    "url": "https://neetcode.io/problems/first-unique-character-in-a-string"
    }
   ],
   "minutes": 161,
@@ -2363,7 +2363,7 @@ export const PLAN_90 = [
     "type": "review1",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=XIdigk956u0",
-    "url": "https://leetcode.com/problems/merge-two-sorted-lists/"
+    "url": "https://neetcode.io/problems/merge-two-sorted-linked-lists"
    },
    {
     "lc": 20,
@@ -2373,7 +2373,7 @@ export const PLAN_90 = [
     "type": "review2",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=WTzjTskDFMg",
-    "url": "https://leetcode.com/problems/valid-parentheses/"
+    "url": "https://neetcode.io/problems/validate-parentheses"
    },
    {
     "lc": 169,
@@ -2383,7 +2383,7 @@ export const PLAN_90 = [
     "type": "review3",
     "mode": null,
     "video": null,
-    "url": "https://leetcode.com/problems/majority-element/"
+    "url": "https://neetcode.io/problems/majority-element"
    }
   ],
   "minutes": 166,
@@ -2460,7 +2460,7 @@ export const PLAN_90 = [
     "type": "review1",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=XVuQxVej6y8",
-    "url": "https://leetcode.com/problems/remove-nth-node-from-end-of-list/"
+    "url": "https://neetcode.io/problems/remove-node-from-end-of-linked-list"
    },
    {
     "lc": 141,
@@ -2470,7 +2470,7 @@ export const PLAN_90 = [
     "type": "review1",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=gBTe7lFR3vc",
-    "url": "https://leetcode.com/problems/linked-list-cycle/"
+    "url": "https://neetcode.io/problems/linked-list-cycle-detection"
    },
    {
     "lc": 1,
@@ -2480,7 +2480,7 @@ export const PLAN_90 = [
     "type": "review3",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=KLlXCFG5TnA",
-    "url": "https://leetcode.com/problems/two-sum/"
+    "url": "https://neetcode.io/problems/two-integer-sum"
    },
    {
     "lc": 383,
@@ -2490,7 +2490,7 @@ export const PLAN_90 = [
     "type": "review3",
     "mode": null,
     "video": null,
-    "url": "https://leetcode.com/problems/ransom-note/"
+    "url": "https://neetcode.io/problems/ransom-note"
    }
   ],
   "minutes": 160,
@@ -2537,7 +2537,7 @@ export const PLAN_90 = [
     "type": "review2",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=s4DPM8ct1pI",
-    "url": "https://leetcode.com/problems/binary-search/"
+    "url": "https://neetcode.io/problems/binary-search"
    },
    {
     "lc": 219,
@@ -2547,7 +2547,7 @@ export const PLAN_90 = [
     "type": "review3",
     "mode": null,
     "video": null,
-    "url": "https://leetcode.com/problems/contains-duplicate-ii/"
+    "url": "https://neetcode.io/problems/contains-duplicate-ii"
    },
    {
     "lc": 572,
@@ -2557,7 +2557,7 @@ export const PLAN_90 = [
     "type": "new",
     "mode": "bridge-first",
     "video": "https://www.youtube.com/watch?v=E36O5SWp-LE",
-    "url": "https://leetcode.com/problems/subtree-of-another-tree/"
+    "url": "https://neetcode.io/problems/subtree-of-a-binary-tree"
    }
   ],
   "minutes": 81,
@@ -2618,7 +2618,7 @@ export const PLAN_90 = [
     "type": "review1",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=vRbbcKXCxOw",
-    "url": "https://leetcode.com/problems/same-tree/"
+    "url": "https://neetcode.io/problems/same-binary-tree"
    },
    {
     "lc": 104,
@@ -2628,7 +2628,7 @@ export const PLAN_90 = [
     "type": "review1",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=hTM3phVI6YQ",
-    "url": "https://leetcode.com/problems/maximum-depth-of-binary-tree/"
+    "url": "https://neetcode.io/problems/depth-of-binary-tree"
    },
    {
     "lc": 226,
@@ -2638,7 +2638,7 @@ export const PLAN_90 = [
     "type": "review1",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=OnSn2XEQ4MY",
-    "url": "https://leetcode.com/problems/invert-binary-tree/"
+    "url": "https://neetcode.io/problems/invert-a-binary-tree"
    },
    {
     "lc": 153,
@@ -2648,7 +2648,7 @@ export const PLAN_90 = [
     "type": "review2",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=nIVW4P8b1VA",
-    "url": "https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/"
+    "url": "https://neetcode.io/problems/find-minimum-in-rotated-sorted-array"
    },
    {
     "lc": 49,
@@ -2658,7 +2658,7 @@ export const PLAN_90 = [
     "type": "review3",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=vzdNOK2oB2E",
-    "url": "https://leetcode.com/problems/group-anagrams/"
+    "url": "https://neetcode.io/problems/anagram-groups"
    },
    {
     "lc": 235,
@@ -2668,7 +2668,7 @@ export const PLAN_90 = [
     "type": "new",
     "mode": "bridge-first",
     "video": "https://www.youtube.com/watch?v=gs2LMfuOR9k",
-    "url": "https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree/"
+    "url": "https://neetcode.io/problems/lowest-common-ancestor-in-binary-search-tree"
    },
    {
     "lc": 98,
@@ -2678,7 +2678,7 @@ export const PLAN_90 = [
     "type": "new",
     "mode": "bridge-first",
     "video": "https://www.youtube.com/watch?v=s6ATEkipzow",
-    "url": "https://leetcode.com/problems/validate-binary-search-tree/"
+    "url": "https://neetcode.io/problems/valid-binary-search-tree"
    }
   ],
   "minutes": 168,
@@ -2741,7 +2741,7 @@ export const PLAN_90 = [
     "type": "review1",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=E36O5SWp-LE",
-    "url": "https://leetcode.com/problems/subtree-of-another-tree/"
+    "url": "https://neetcode.io/problems/subtree-of-a-binary-tree"
    },
    {
     "lc": 206,
@@ -2751,7 +2751,7 @@ export const PLAN_90 = [
     "type": "review2",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=G0_I-ZF0S38",
-    "url": "https://leetcode.com/problems/reverse-linked-list/"
+    "url": "https://neetcode.io/problems/reverse-a-linked-list"
    },
    {
     "lc": 128,
@@ -2761,7 +2761,7 @@ export const PLAN_90 = [
     "type": "review3",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=P6RZZMu_maU",
-    "url": "https://leetcode.com/problems/longest-consecutive-sequence/"
+    "url": "https://neetcode.io/problems/longest-consecutive-sequence"
    },
    {
     "lc": 230,
@@ -2771,7 +2771,7 @@ export const PLAN_90 = [
     "type": "new",
     "mode": "bridge-first",
     "video": "https://www.youtube.com/watch?v=5LUXSvjmGCw",
-    "url": "https://leetcode.com/problems/kth-smallest-element-in-a-bst/"
+    "url": "https://neetcode.io/problems/kth-smallest-integer-in-bst"
    }
   ],
   "minutes": 157,
@@ -2835,7 +2835,7 @@ export const PLAN_90 = [
     "type": "review3",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=bNvIQI2wAjk",
-    "url": "https://leetcode.com/problems/product-of-array-except-self/"
+    "url": "https://neetcode.io/problems/products-of-array-discluding-self"
    }
   ],
   "minutes": 166,
@@ -2894,7 +2894,7 @@ export const PLAN_90 = [
     "type": "review1",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=s6ATEkipzow",
-    "url": "https://leetcode.com/problems/validate-binary-search-tree/"
+    "url": "https://neetcode.io/problems/valid-binary-search-tree"
    },
    {
     "lc": 235,
@@ -2904,7 +2904,7 @@ export const PLAN_90 = [
     "type": "review1",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=gs2LMfuOR9k",
-    "url": "https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree/"
+    "url": "https://neetcode.io/problems/lowest-common-ancestor-in-binary-search-tree"
    },
    {
     "lc": 21,
@@ -2914,7 +2914,7 @@ export const PLAN_90 = [
     "type": "review2",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=XIdigk956u0",
-    "url": "https://leetcode.com/problems/merge-two-sorted-lists/"
+    "url": "https://neetcode.io/problems/merge-two-sorted-linked-lists"
    },
    {
     "lc": 208,
@@ -2924,7 +2924,7 @@ export const PLAN_90 = [
     "type": "new",
     "mode": "bridge-first",
     "video": "https://www.youtube.com/watch?v=oobqoCJlHA0",
-    "url": "https://leetcode.com/problems/implement-trie-prefix-tree/"
+    "url": "https://neetcode.io/problems/implement-prefix-tree"
    }
   ],
   "minutes": 166,
@@ -2985,7 +2985,7 @@ export const PLAN_90 = [
     "type": "review1",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=5LUXSvjmGCw",
-    "url": "https://leetcode.com/problems/kth-smallest-element-in-a-bst/"
+    "url": "https://neetcode.io/problems/kth-smallest-integer-in-bst"
    },
    {
     "lc": 19,
@@ -2995,7 +2995,7 @@ export const PLAN_90 = [
     "type": "review2",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=XVuQxVej6y8",
-    "url": "https://leetcode.com/problems/remove-nth-node-from-end-of-list/"
+    "url": "https://neetcode.io/problems/remove-node-from-end-of-linked-list"
    },
    {
     "lc": 141,
@@ -3005,7 +3005,7 @@ export const PLAN_90 = [
     "type": "review2",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=gBTe7lFR3vc",
-    "url": "https://leetcode.com/problems/linked-list-cycle/"
+    "url": "https://neetcode.io/problems/linked-list-cycle-detection"
    },
    {
     "lc": 211,
@@ -3015,7 +3015,7 @@ export const PLAN_90 = [
     "type": "new",
     "mode": "bridge-first",
     "video": "https://www.youtube.com/watch?v=BTf05gs_8iU",
-    "url": "https://leetcode.com/problems/design-add-and-search-words-data-structure/"
+    "url": "https://neetcode.io/problems/design-word-search-data-structure"
    }
   ],
   "minutes": 158,
@@ -3071,7 +3071,7 @@ export const PLAN_90 = [
     "type": "review3",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=1pkOgXD63yU",
-    "url": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock/"
+    "url": "https://neetcode.io/problems/buy-and-sell-crypto"
    },
    {
     "lc": 125,
@@ -3081,7 +3081,7 @@ export const PLAN_90 = [
     "type": "review3",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=jJXJ16kPFWg",
-    "url": "https://leetcode.com/problems/valid-palindrome/"
+    "url": "https://neetcode.io/problems/is-palindrome"
    }
   ],
   "minutes": 104,
@@ -3156,7 +3156,7 @@ export const PLAN_90 = [
     "type": "review1",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=oobqoCJlHA0",
-    "url": "https://leetcode.com/problems/implement-trie-prefix-tree/"
+    "url": "https://neetcode.io/problems/implement-prefix-tree"
    },
    {
     "lc": 211,
@@ -3166,7 +3166,7 @@ export const PLAN_90 = [
     "type": "review1",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=BTf05gs_8iU",
-    "url": "https://leetcode.com/problems/design-add-and-search-words-data-structure/"
+    "url": "https://neetcode.io/problems/design-word-search-data-structure"
    },
    {
     "lc": 100,
@@ -3176,7 +3176,7 @@ export const PLAN_90 = [
     "type": "review2",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=vRbbcKXCxOw",
-    "url": "https://leetcode.com/problems/same-tree/"
+    "url": "https://neetcode.io/problems/same-binary-tree"
    },
    {
     "lc": 104,
@@ -3186,7 +3186,7 @@ export const PLAN_90 = [
     "type": "review2",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=hTM3phVI6YQ",
-    "url": "https://leetcode.com/problems/maximum-depth-of-binary-tree/"
+    "url": "https://neetcode.io/problems/depth-of-binary-tree"
    },
    {
     "lc": 226,
@@ -3196,7 +3196,7 @@ export const PLAN_90 = [
     "type": "review2",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=OnSn2XEQ4MY",
-    "url": "https://leetcode.com/problems/invert-binary-tree/"
+    "url": "https://neetcode.io/problems/invert-a-binary-tree"
    }
   ],
   "minutes": 105,
@@ -3272,7 +3272,7 @@ export const PLAN_90 = [
     "type": "review3",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=cQ1Oz4ckceM",
-    "url": "https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/"
+    "url": "https://neetcode.io/problems/two-integer-sum-ii"
    },
    {
     "lc": 572,
@@ -3282,7 +3282,7 @@ export const PLAN_90 = [
     "type": "review2",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=E36O5SWp-LE",
-    "url": "https://leetcode.com/problems/subtree-of-another-tree/"
+    "url": "https://neetcode.io/problems/subtree-of-a-binary-tree"
    },
    {
     "lc": 11,
@@ -3292,7 +3292,7 @@ export const PLAN_90 = [
     "type": "review3",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=UuiTKBwPgAo",
-    "url": "https://leetcode.com/problems/container-with-most-water/"
+    "url": "https://neetcode.io/problems/max-water-container"
    }
   ],
   "minutes": 100,
@@ -3350,7 +3350,7 @@ export const PLAN_90 = [
     "type": "review3",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=jzZsG8n2R9A",
-    "url": "https://leetcode.com/problems/3sum/"
+    "url": "https://neetcode.io/problems/three-integer-sum"
    }
   ],
   "minutes": 108,
@@ -3420,7 +3420,7 @@ export const PLAN_90 = [
     "type": "review2",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=s6ATEkipzow",
-    "url": "https://leetcode.com/problems/validate-binary-search-tree/"
+    "url": "https://neetcode.io/problems/valid-binary-search-tree"
    },
    {
     "lc": 235,
@@ -3430,7 +3430,7 @@ export const PLAN_90 = [
     "type": "review2",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=gs2LMfuOR9k",
-    "url": "https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree/"
+    "url": "https://neetcode.io/problems/lowest-common-ancestor-in-binary-search-tree"
    },
    {
     "lc": 230,
@@ -3440,7 +3440,7 @@ export const PLAN_90 = [
     "type": "review2",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=5LUXSvjmGCw",
-    "url": "https://leetcode.com/problems/kth-smallest-element-in-a-bst/"
+    "url": "https://neetcode.io/problems/kth-smallest-integer-in-bst"
    },
    {
     "lc": 3,
@@ -3450,7 +3450,7 @@ export const PLAN_90 = [
     "type": "review3",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=wiGpQwVHdE0",
-    "url": "https://leetcode.com/problems/longest-substring-without-repeating-characters/"
+    "url": "https://neetcode.io/problems/longest-substring-without-duplicates"
    }
   ],
   "minutes": 104,
@@ -3536,7 +3536,7 @@ export const PLAN_90 = [
     "type": "review2",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=oobqoCJlHA0",
-    "url": "https://leetcode.com/problems/implement-trie-prefix-tree/"
+    "url": "https://neetcode.io/problems/implement-prefix-tree"
    },
    {
     "lc": 211,
@@ -3546,7 +3546,7 @@ export const PLAN_90 = [
     "type": "review2",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=BTf05gs_8iU",
-    "url": "https://leetcode.com/problems/design-add-and-search-words-data-structure/"
+    "url": "https://neetcode.io/problems/design-word-search-data-structure"
    },
    {
     "lc": 424,
@@ -3556,7 +3556,7 @@ export const PLAN_90 = [
     "type": "review3",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=gqXU1UyA8pk",
-    "url": "https://leetcode.com/problems/longest-repeating-character-replacement/"
+    "url": "https://neetcode.io/problems/longest-repeating-substring-with-replacement"
    }
   ],
   "minutes": 167,
@@ -3666,7 +3666,7 @@ export const PLAN_90 = [
     "type": "review3",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=WTzjTskDFMg",
-    "url": "https://leetcode.com/problems/valid-parentheses/"
+    "url": "https://neetcode.io/problems/validate-parentheses"
    }
   ],
   "minutes": 170,
@@ -3732,7 +3732,7 @@ export const PLAN_90 = [
     "type": "review1",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=6ZnyEApgFYg",
-    "url": "https://leetcode.com/problems/binary-tree-level-order-traversal/"
+    "url": "https://neetcode.io/problems/level-order-traversal-of-binary-tree"
    }
   ],
   "minutes": 168,
@@ -3797,7 +3797,7 @@ export const PLAN_90 = [
     "type": "review3",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=s4DPM8ct1pI",
-    "url": "https://leetcode.com/problems/binary-search/"
+    "url": "https://neetcode.io/problems/binary-search"
    }
   ],
   "minutes": 168,
@@ -3849,7 +3849,7 @@ export const PLAN_90 = [
     "type": "review1",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=pV2kpPD66nE",
-    "url": "https://leetcode.com/problems/number-of-islands/"
+    "url": "https://neetcode.io/problems/count-number-of-islands"
    }
   ],
   "minutes": 99,
@@ -3918,7 +3918,7 @@ export const PLAN_90 = [
     "type": "review3",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=nIVW4P8b1VA",
-    "url": "https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/"
+    "url": "https://neetcode.io/problems/find-minimum-in-rotated-sorted-array"
    },
    {
     "lc": 206,
@@ -3928,7 +3928,7 @@ export const PLAN_90 = [
     "type": "review3",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=G0_I-ZF0S38",
-    "url": "https://leetcode.com/problems/reverse-linked-list/"
+    "url": "https://neetcode.io/problems/reverse-a-linked-list"
    }
   ],
   "minutes": 159,
@@ -3978,7 +3978,7 @@ export const PLAN_90 = [
     "type": "new",
     "mode": "bridge-first",
     "video": "https://www.youtube.com/watch?v=mQeF6bN8hMk",
-    "url": "https://leetcode.com/problems/clone-graph/"
+    "url": "https://neetcode.io/problems/clone-graph"
    }
   ],
   "minutes": 152,
@@ -4042,7 +4042,7 @@ export const PLAN_90 = [
     "type": "review3",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=XIdigk956u0",
-    "url": "https://leetcode.com/problems/merge-two-sorted-lists/"
+    "url": "https://neetcode.io/problems/merge-two-sorted-linked-lists"
    },
    {
     "lc": 323,
@@ -4052,7 +4052,7 @@ export const PLAN_90 = [
     "type": "new",
     "mode": "bridge-first",
     "video": "https://www.youtube.com/watch?v=8f1XPm4WOUc",
-    "url": "https://neetcode.io/problems/count-connected-components/question"
+    "url": "https://neetcode.io/problems/count-connected-components"
    }
   ],
   "minutes": 169,
@@ -4134,7 +4134,7 @@ export const PLAN_90 = [
     "type": "review1",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=EgI5nU9etnU",
-    "url": "https://leetcode.com/problems/course-schedule/"
+    "url": "https://neetcode.io/problems/course-schedule"
    },
    {
     "lc": 102,
@@ -4144,7 +4144,7 @@ export const PLAN_90 = [
     "type": "review2",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=6ZnyEApgFYg",
-    "url": "https://leetcode.com/problems/binary-tree-level-order-traversal/"
+    "url": "https://neetcode.io/problems/level-order-traversal-of-binary-tree"
    },
    {
     "lc": 19,
@@ -4154,7 +4154,7 @@ export const PLAN_90 = [
     "type": "review3",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=XVuQxVej6y8",
-    "url": "https://leetcode.com/problems/remove-nth-node-from-end-of-list/"
+    "url": "https://neetcode.io/problems/remove-node-from-end-of-linked-list"
    },
    {
     "lc": 141,
@@ -4164,7 +4164,7 @@ export const PLAN_90 = [
     "type": "review3",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=gBTe7lFR3vc",
-    "url": "https://leetcode.com/problems/linked-list-cycle/"
+    "url": "https://neetcode.io/problems/linked-list-cycle-detection"
    }
   ],
   "minutes": 159,
@@ -4228,7 +4228,7 @@ export const PLAN_90 = [
     "type": "review1",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=mQeF6bN8hMk",
-    "url": "https://leetcode.com/problems/clone-graph/"
+    "url": "https://neetcode.io/problems/clone-graph"
    }
   ],
   "minutes": 164,
@@ -4283,7 +4283,7 @@ export const PLAN_90 = [
     "type": "review1",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=8f1XPm4WOUc",
-    "url": "https://neetcode.io/problems/count-connected-components/question"
+    "url": "https://neetcode.io/problems/count-connected-components"
    },
    {
     "lc": 200,
@@ -4293,7 +4293,7 @@ export const PLAN_90 = [
     "type": "review2",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=pV2kpPD66nE",
-    "url": "https://leetcode.com/problems/number-of-islands/"
+    "url": "https://neetcode.io/problems/count-number-of-islands"
    },
    {
     "lc": 100,
@@ -4303,7 +4303,7 @@ export const PLAN_90 = [
     "type": "review3",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=vRbbcKXCxOw",
-    "url": "https://leetcode.com/problems/same-tree/"
+    "url": "https://neetcode.io/problems/same-binary-tree"
    }
   ],
   "minutes": 97,
@@ -4378,7 +4378,7 @@ export const PLAN_90 = [
     "type": "review1",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=XEmy13g1Qxc",
-    "url": "https://leetcode.com/problems/kth-largest-element-in-an-array/"
+    "url": "https://neetcode.io/problems/kth-largest-element-in-an-array"
    },
    {
     "lc": 347,
@@ -4388,7 +4388,7 @@ export const PLAN_90 = [
     "type": "review1",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=YPTqKIgVk-k",
-    "url": "https://leetcode.com/problems/top-k-frequent-elements/"
+    "url": "https://neetcode.io/problems/top-k-elements-in-list"
    },
    {
     "lc": 104,
@@ -4398,7 +4398,7 @@ export const PLAN_90 = [
     "type": "review3",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=hTM3phVI6YQ",
-    "url": "https://leetcode.com/problems/maximum-depth-of-binary-tree/"
+    "url": "https://neetcode.io/problems/depth-of-binary-tree"
    },
    {
     "lc": 226,
@@ -4408,7 +4408,7 @@ export const PLAN_90 = [
     "type": "review3",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=OnSn2XEQ4MY",
-    "url": "https://leetcode.com/problems/invert-binary-tree/"
+    "url": "https://neetcode.io/problems/invert-a-binary-tree"
    },
    {
     "lc": 572,
@@ -4418,7 +4418,7 @@ export const PLAN_90 = [
     "type": "review3",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=E36O5SWp-LE",
-    "url": "https://leetcode.com/problems/subtree-of-another-tree/"
+    "url": "https://neetcode.io/problems/subtree-of-a-binary-tree"
    }
   ],
   "minutes": 157,
@@ -4481,7 +4481,7 @@ export const PLAN_90 = [
     "type": "new",
     "mode": "bridge-first",
     "video": "https://www.youtube.com/watch?v=A8NUOmlwOlM",
-    "url": "https://leetcode.com/problems/insert-interval/"
+    "url": "https://neetcode.io/problems/insert-new-interval"
    },
    {
     "lc": 252,
@@ -4491,7 +4491,7 @@ export const PLAN_90 = [
     "type": "new",
     "mode": "attempt-first",
     "video": "https://www.youtube.com/watch?v=PaJxqZVPhbg",
-    "url": "https://neetcode.io/problems/meeting-schedule/question"
+    "url": "https://neetcode.io/problems/meeting-schedule"
    }
   ],
   "minutes": 168,
@@ -4557,7 +4557,7 @@ export const PLAN_90 = [
     "type": "review3",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=s6ATEkipzow",
-    "url": "https://leetcode.com/problems/validate-binary-search-tree/"
+    "url": "https://neetcode.io/problems/valid-binary-search-tree"
    },
    {
     "lc": 235,
@@ -4567,7 +4567,7 @@ export const PLAN_90 = [
     "type": "review3",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=gs2LMfuOR9k",
-    "url": "https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree/"
+    "url": "https://neetcode.io/problems/lowest-common-ancestor-in-binary-search-tree"
    },
    {
     "lc": 253,
@@ -4577,7 +4577,7 @@ export const PLAN_90 = [
     "type": "new",
     "mode": "bridge-first",
     "video": "https://www.youtube.com/watch?v=FdzJmTCVyJU",
-    "url": "https://neetcode.io/problems/meeting-schedule-ii/question"
+    "url": "https://neetcode.io/problems/meeting-schedule-ii"
    }
   ],
   "minutes": 170,
@@ -4637,7 +4637,7 @@ export const PLAN_90 = [
     "type": "review1",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=44H3cEC2fFM",
-    "url": "https://leetcode.com/problems/merge-intervals/"
+    "url": "https://neetcode.io/problems/merge-intervals"
    },
    {
     "lc": 207,
@@ -4647,7 +4647,7 @@ export const PLAN_90 = [
     "type": "review2",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=EgI5nU9etnU",
-    "url": "https://leetcode.com/problems/course-schedule/"
+    "url": "https://neetcode.io/problems/course-schedule"
    },
    {
     "lc": 230,
@@ -4657,7 +4657,7 @@ export const PLAN_90 = [
     "type": "review3",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=5LUXSvjmGCw",
-    "url": "https://leetcode.com/problems/kth-smallest-element-in-a-bst/"
+    "url": "https://neetcode.io/problems/kth-smallest-integer-in-bst"
    }
   ],
   "minutes": 166,
@@ -4712,7 +4712,7 @@ export const PLAN_90 = [
     "type": "review1",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=A8NUOmlwOlM",
-    "url": "https://leetcode.com/problems/insert-interval/"
+    "url": "https://neetcode.io/problems/insert-new-interval"
    },
    {
     "lc": 252,
@@ -4722,7 +4722,7 @@ export const PLAN_90 = [
     "type": "review1",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=PaJxqZVPhbg",
-    "url": "https://neetcode.io/problems/meeting-schedule/question"
+    "url": "https://neetcode.io/problems/meeting-schedule"
    },
    {
     "lc": 133,
@@ -4732,7 +4732,7 @@ export const PLAN_90 = [
     "type": "review2",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=mQeF6bN8hMk",
-    "url": "https://leetcode.com/problems/clone-graph/"
+    "url": "https://neetcode.io/problems/clone-graph"
    }
   ],
   "minutes": 154,
@@ -4792,7 +4792,7 @@ export const PLAN_90 = [
     "type": "review1",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=FdzJmTCVyJU",
-    "url": "https://neetcode.io/problems/meeting-schedule-ii/question"
+    "url": "https://neetcode.io/problems/meeting-schedule-ii"
    },
    {
     "lc": 323,
@@ -4802,7 +4802,7 @@ export const PLAN_90 = [
     "type": "review2",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=8f1XPm4WOUc",
-    "url": "https://neetcode.io/problems/count-connected-components/question"
+    "url": "https://neetcode.io/problems/count-connected-components"
    },
    {
     "lc": 208,
@@ -4812,7 +4812,7 @@ export const PLAN_90 = [
     "type": "review3",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=oobqoCJlHA0",
-    "url": "https://leetcode.com/problems/implement-trie-prefix-tree/"
+    "url": "https://neetcode.io/problems/implement-prefix-tree"
    },
    {
     "lc": 39,
@@ -4822,7 +4822,7 @@ export const PLAN_90 = [
     "type": "new",
     "mode": "bridge-first",
     "video": "https://www.youtube.com/watch?v=GBKI9VSKdGg",
-    "url": "https://leetcode.com/problems/combination-sum/"
+    "url": "https://neetcode.io/problems/combination-target-sum"
    }
   ],
   "minutes": 104,
@@ -4864,7 +4864,7 @@ export const PLAN_90 = [
     "type": "review1",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=REOH22Xwdkk",
-    "url": "https://leetcode.com/problems/subsets/"
+    "url": "https://neetcode.io/problems/subsets"
    },
    {
     "lc": 215,
@@ -4874,7 +4874,7 @@ export const PLAN_90 = [
     "type": "review2",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=XEmy13g1Qxc",
-    "url": "https://leetcode.com/problems/kth-largest-element-in-an-array/"
+    "url": "https://neetcode.io/problems/kth-largest-element-in-an-array"
    },
    {
     "lc": 347,
@@ -4884,7 +4884,7 @@ export const PLAN_90 = [
     "type": "review2",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=YPTqKIgVk-k",
-    "url": "https://leetcode.com/problems/top-k-frequent-elements/"
+    "url": "https://neetcode.io/problems/top-k-elements-in-list"
    },
    {
     "lc": 211,
@@ -4894,7 +4894,7 @@ export const PLAN_90 = [
     "type": "review3",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=BTf05gs_8iU",
-    "url": "https://leetcode.com/problems/design-add-and-search-words-data-structure/"
+    "url": "https://neetcode.io/problems/design-word-search-data-structure"
    }
   ],
   "minutes": 0,
@@ -4916,7 +4916,7 @@ export const PLAN_90 = [
     "type": "review1",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=GBKI9VSKdGg",
-    "url": "https://leetcode.com/problems/combination-sum/"
+    "url": "https://neetcode.io/problems/combination-target-sum"
    }
   ],
   "minutes": 0,
@@ -4971,7 +4971,7 @@ export const PLAN_90 = [
     "type": "review2",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=44H3cEC2fFM",
-    "url": "https://leetcode.com/problems/merge-intervals/"
+    "url": "https://neetcode.io/problems/merge-intervals"
    },
    {
     "lc": 57,
@@ -4981,7 +4981,7 @@ export const PLAN_90 = [
     "type": "review2",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=A8NUOmlwOlM",
-    "url": "https://leetcode.com/problems/insert-interval/"
+    "url": "https://neetcode.io/problems/insert-new-interval"
    },
    {
     "lc": 252,
@@ -4991,7 +4991,7 @@ export const PLAN_90 = [
     "type": "review2",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=PaJxqZVPhbg",
-    "url": "https://neetcode.io/problems/meeting-schedule/question"
+    "url": "https://neetcode.io/problems/meeting-schedule"
    },
    {
     "lc": 253,
@@ -5001,7 +5001,7 @@ export const PLAN_90 = [
     "type": "review2",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=FdzJmTCVyJU",
-    "url": "https://neetcode.io/problems/meeting-schedule-ii/question"
+    "url": "https://neetcode.io/problems/meeting-schedule-ii"
    }
   ],
   "minutes": 0,
@@ -5070,7 +5070,7 @@ export const PLAN_90 = [
     "type": "review2",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=REOH22Xwdkk",
-    "url": "https://leetcode.com/problems/subsets/"
+    "url": "https://neetcode.io/problems/subsets"
    }
   ],
   "minutes": 164,
@@ -5142,7 +5142,7 @@ export const PLAN_90 = [
     "type": "review2",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=GBKI9VSKdGg",
-    "url": "https://leetcode.com/problems/combination-sum/"
+    "url": "https://neetcode.io/problems/combination-target-sum"
    }
   ],
   "minutes": 167,
@@ -5207,7 +5207,7 @@ export const PLAN_90 = [
     "type": "review3",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=6ZnyEApgFYg",
-    "url": "https://leetcode.com/problems/binary-tree-level-order-traversal/"
+    "url": "https://neetcode.io/problems/level-order-traversal-of-binary-tree"
    },
    {
     "lc": 213,
@@ -5217,7 +5217,7 @@ export const PLAN_90 = [
     "type": "new",
     "mode": "bridge-first",
     "video": "https://www.youtube.com/watch?v=rWAJCfYYOvM",
-    "url": "https://leetcode.com/problems/house-robber-ii/"
+    "url": "https://neetcode.io/problems/house-robber-ii"
    },
    {
     "lc": 53,
@@ -5227,7 +5227,7 @@ export const PLAN_90 = [
     "type": "new",
     "mode": "bridge-first",
     "video": "https://www.youtube.com/watch?v=5WZl3MMT0Eg",
-    "url": "https://leetcode.com/problems/maximum-subarray/"
+    "url": "https://neetcode.io/problems/maximum-subarray"
    }
   ],
   "minutes": 164,
@@ -5280,7 +5280,7 @@ export const PLAN_90 = [
     "type": "review1",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=Y0lT9Fck7qI",
-    "url": "https://leetcode.com/problems/climbing-stairs/"
+    "url": "https://neetcode.io/problems/climbing-stairs"
    },
    {
     "lc": 55,
@@ -5290,7 +5290,7 @@ export const PLAN_90 = [
     "type": "new",
     "mode": "bridge-first",
     "video": "https://www.youtube.com/watch?v=Yan0cv2cLy8",
-    "url": "https://leetcode.com/problems/jump-game/"
+    "url": "https://neetcode.io/problems/jump-game"
    },
    {
     "lc": 322,
@@ -5300,7 +5300,7 @@ export const PLAN_90 = [
     "type": "new",
     "mode": "bridge-first",
     "video": "https://www.youtube.com/watch?v=H9bfqozjoqs",
-    "url": "https://leetcode.com/problems/coin-change/"
+    "url": "https://neetcode.io/problems/coin-change"
    }
   ],
   "minutes": 164,
@@ -5355,7 +5355,7 @@ export const PLAN_90 = [
     "type": "review1",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=73r3KWiEvyk",
-    "url": "https://leetcode.com/problems/house-robber/"
+    "url": "https://neetcode.io/problems/house-robber"
    },
    {
     "lc": 53,
@@ -5365,7 +5365,7 @@ export const PLAN_90 = [
     "type": "review1",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=5WZl3MMT0Eg",
-    "url": "https://leetcode.com/problems/maximum-subarray/"
+    "url": "https://neetcode.io/problems/maximum-subarray"
    },
    {
     "lc": 213,
@@ -5375,7 +5375,7 @@ export const PLAN_90 = [
     "type": "review1",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=rWAJCfYYOvM",
-    "url": "https://leetcode.com/problems/house-robber-ii/"
+    "url": "https://neetcode.io/problems/house-robber-ii"
    },
    {
     "lc": 139,
@@ -5385,7 +5385,7 @@ export const PLAN_90 = [
     "type": "new",
     "mode": "bridge-first",
     "video": "https://www.youtube.com/watch?v=Sx9NNgInc3A",
-    "url": "https://leetcode.com/problems/word-break/"
+    "url": "https://neetcode.io/problems/word-break"
    }
   ],
   "minutes": 104,
@@ -5445,7 +5445,7 @@ export const PLAN_90 = [
     "type": "review1",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=Yan0cv2cLy8",
-    "url": "https://leetcode.com/problems/jump-game/"
+    "url": "https://neetcode.io/problems/jump-game"
    },
    {
     "lc": 322,
@@ -5455,7 +5455,7 @@ export const PLAN_90 = [
     "type": "review1",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=H9bfqozjoqs",
-    "url": "https://leetcode.com/problems/coin-change/"
+    "url": "https://neetcode.io/problems/coin-change"
    },
    {
     "lc": 200,
@@ -5465,7 +5465,7 @@ export const PLAN_90 = [
     "type": "review3",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=pV2kpPD66nE",
-    "url": "https://leetcode.com/problems/number-of-islands/"
+    "url": "https://neetcode.io/problems/count-number-of-islands"
    },
    {
     "lc": 300,
@@ -5475,7 +5475,7 @@ export const PLAN_90 = [
     "type": "new",
     "mode": "bridge-first",
     "video": "https://www.youtube.com/watch?v=cjWnW0hdF1Y",
-    "url": "https://leetcode.com/problems/longest-increasing-subsequence/"
+    "url": "https://neetcode.io/problems/longest-increasing-subsequence"
    }
   ],
   "minutes": 110,
@@ -5525,7 +5525,7 @@ export const PLAN_90 = [
     "type": "review1",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=Sx9NNgInc3A",
-    "url": "https://leetcode.com/problems/word-break/"
+    "url": "https://neetcode.io/problems/word-break"
    },
    {
     "lc": 62,
@@ -5535,7 +5535,7 @@ export const PLAN_90 = [
     "type": "new",
     "mode": "bridge-first",
     "video": "https://www.youtube.com/watch?v=IlEsdxuD4lY",
-    "url": "https://leetcode.com/problems/unique-paths/"
+    "url": "https://neetcode.io/problems/count-paths"
    }
   ],
   "minutes": 110,
@@ -5596,7 +5596,7 @@ export const PLAN_90 = [
     "type": "review3",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=EgI5nU9etnU",
-    "url": "https://leetcode.com/problems/course-schedule/"
+    "url": "https://neetcode.io/problems/course-schedule"
    }
   ],
   "minutes": 96,
@@ -5648,7 +5648,7 @@ export const PLAN_90 = [
     "type": "review1",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=cjWnW0hdF1Y",
-    "url": "https://leetcode.com/problems/longest-increasing-subsequence/"
+    "url": "https://neetcode.io/problems/longest-increasing-subsequence"
    },
    {
     "lc": 70,
@@ -5658,7 +5658,7 @@ export const PLAN_90 = [
     "type": "review2",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=Y0lT9Fck7qI",
-    "url": "https://leetcode.com/problems/climbing-stairs/"
+    "url": "https://neetcode.io/problems/climbing-stairs"
    },
    {
     "lc": 133,
@@ -5668,7 +5668,7 @@ export const PLAN_90 = [
     "type": "review3",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=mQeF6bN8hMk",
-    "url": "https://leetcode.com/problems/clone-graph/"
+    "url": "https://neetcode.io/problems/clone-graph"
    }
   ],
   "minutes": 90,
@@ -5722,7 +5722,7 @@ export const PLAN_90 = [
     "type": "review1",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=IlEsdxuD4lY",
-    "url": "https://leetcode.com/problems/unique-paths/"
+    "url": "https://neetcode.io/problems/count-paths"
    },
    {
     "lc": 198,
@@ -5732,7 +5732,7 @@ export const PLAN_90 = [
     "type": "review2",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=73r3KWiEvyk",
-    "url": "https://leetcode.com/problems/house-robber/"
+    "url": "https://neetcode.io/problems/house-robber"
    },
    {
     "lc": 323,
@@ -5742,7 +5742,7 @@ export const PLAN_90 = [
     "type": "review3",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=8f1XPm4WOUc",
-    "url": "https://neetcode.io/problems/count-connected-components/question"
+    "url": "https://neetcode.io/problems/count-connected-components"
    },
    {
     "lc": 48,
@@ -5752,7 +5752,7 @@ export const PLAN_90 = [
     "type": "new",
     "mode": "bridge-first",
     "video": "https://www.youtube.com/watch?v=fMSJSS7eO1w",
-    "url": "https://leetcode.com/problems/rotate-image/"
+    "url": "https://neetcode.io/problems/rotate-matrix"
    }
   ],
   "minutes": 100,
@@ -5789,7 +5789,7 @@ export const PLAN_90 = [
     "type": "review2",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=5WZl3MMT0Eg",
-    "url": "https://leetcode.com/problems/maximum-subarray/"
+    "url": "https://neetcode.io/problems/maximum-subarray"
    },
    {
     "lc": 213,
@@ -5799,7 +5799,7 @@ export const PLAN_90 = [
     "type": "review2",
     "mode": null,
     "video": "https://www.youtube.com/watch?v=rWAJCfYYOvM",
-    "url": "https://leetcode.com/problems/house-robber-ii/"
+    "url": "https://neetcode.io/problems/house-robber-ii"
    },
    {
     "lc": 54,
@@ -5809,7 +5809,7 @@ export const PLAN_90 = [
     "type": "new",
     "mode": "bridge-first",
     "video": "https://www.youtube.com/watch?v=BJnMZNwUk1M",
-    "url": "https://leetcode.com/problems/spiral-matrix/"
+    "url": "https://neetcode.io/problems/spiral-matrix"
    }
   ],
   "minutes": 74,

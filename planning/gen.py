@@ -56,12 +56,13 @@ MAX_NEW_LC = 2                          # new LeetCode problems in one day, what
 SPINE_EARLY = {'output': 1, 'choice': 1, 'reorder': 1, 'write': 2, 'scratch': 4, 'debug': 2, 'explain': 0}
 SPINE_LATE = {'output': 1, 'choice': 1, 'reorder': 1, 'write': 1, 'scratch': 3, 'debug': 2, 'explain': 0}
 EARLY_UNITS = 5
-# LeetCode Premium problems: locked without a subscription, so the link goes to the same problem on NeetCode, which is free.
-# (Checked Oct 12, 2026 against LeetCode's isPaidOnly flag and NeetCode's sitemap.)
-FREE_URL = {252: 'https://neetcode.io/problems/meeting-schedule/question', 253: 'https://neetcode.io/problems/meeting-schedule-ii/question',
-            323: 'https://neetcode.io/problems/count-connected-components/question', 261: 'https://neetcode.io/problems/valid-tree/question',
-            271: 'https://neetcode.io/problems/string-encode-and-decode/question'}
-def problem_url(lc, title): return FREE_URL.get(lc) or f"https://leetcode.com/problems/{slug(title)}/"
+# Practice links: NeetCode, where solves sync to GitHub, from the one mapping the app also reads (data/problem-urls.json).
+# A problem with no NeetCode page keeps its LeetCode link; the app labels it "LeetCode only".
+PROBLEM_URLS = json.load(open(os.path.join(os.path.dirname(__file__), '..', 'data', 'problem-urls.json')))
+def problem_url(lc, title):
+    m = PROBLEM_URLS.get(str(lc))
+    if m is None: raise SystemExit(f'LC {lc} ({title}) has no entry in data/problem-urls.json')
+    return m['neetcode'] or m['leetcode']
 # Teaching comes before testing. Whatever the spine trims, a ladder section always keeps:
 #   - the first rep to carry a skill (a first exposure: exported as `first`);
 #   - the unlabeled transfer rep before a capstone (`transfer`);

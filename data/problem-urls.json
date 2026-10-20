@@ -1,0 +1,372 @@
+{
+  "217": {
+    "title": "Contains Duplicate",
+    "leetcode": "https://leetcode.com/problems/contains-duplicate/",
+    "neetcode": "https://neetcode.io/problems/duplicate-integer"
+  },
+  "242": {
+    "title": "Valid Anagram",
+    "leetcode": "https://leetcode.com/problems/valid-anagram/",
+    "neetcode": "https://neetcode.io/problems/is-anagram"
+  },
+  "1": {
+    "title": "Two Sum",
+    "leetcode": "https://leetcode.com/problems/two-sum/",
+    "neetcode": "https://neetcode.io/problems/two-integer-sum"
+  },
+  "125": {
+    "title": "Valid Palindrome",
+    "leetcode": "https://leetcode.com/problems/valid-palindrome/",
+    "neetcode": "https://neetcode.io/problems/is-palindrome"
+  },
+  "121": {
+    "title": "Best Time to Buy and Sell Stock",
+    "leetcode": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock/",
+    "neetcode": "https://neetcode.io/problems/buy-and-sell-crypto"
+  },
+  "167": {
+    "title": "Two Sum II – Input Array Is Sorted",
+    "leetcode": "https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/",
+    "neetcode": "https://neetcode.io/problems/two-integer-sum-ii"
+  },
+  "3": {
+    "title": "Longest Substring Without Repeating Characters",
+    "leetcode": "https://leetcode.com/problems/longest-substring-without-repeating-characters/",
+    "neetcode": "https://neetcode.io/problems/longest-substring-without-duplicates"
+  },
+  "20": {
+    "title": "Valid Parentheses",
+    "leetcode": "https://leetcode.com/problems/valid-parentheses/",
+    "neetcode": "https://neetcode.io/problems/validate-parentheses"
+  },
+  "704": {
+    "title": "Binary Search",
+    "leetcode": "https://leetcode.com/problems/binary-search/",
+    "neetcode": "https://neetcode.io/problems/binary-search"
+  },
+  "206": {
+    "title": "Reverse Linked List",
+    "leetcode": "https://leetcode.com/problems/reverse-linked-list/",
+    "neetcode": "https://neetcode.io/problems/reverse-a-linked-list"
+  },
+  "21": {
+    "title": "Merge Two Sorted Lists",
+    "leetcode": "https://leetcode.com/problems/merge-two-sorted-lists/",
+    "neetcode": "https://neetcode.io/problems/merge-two-sorted-linked-lists"
+  },
+  "104": {
+    "title": "Maximum Depth of Binary Tree",
+    "leetcode": "https://leetcode.com/problems/maximum-depth-of-binary-tree/",
+    "neetcode": "https://neetcode.io/problems/depth-of-binary-tree"
+  },
+  "100": {
+    "title": "Same Tree",
+    "leetcode": "https://leetcode.com/problems/same-tree/",
+    "neetcode": "https://neetcode.io/problems/same-binary-tree"
+  },
+  "226": {
+    "title": "Invert Binary Tree",
+    "leetcode": "https://leetcode.com/problems/invert-binary-tree/",
+    "neetcode": "https://neetcode.io/problems/invert-a-binary-tree"
+  },
+  "102": {
+    "title": "Binary Tree Level Order Traversal",
+    "leetcode": "https://leetcode.com/problems/binary-tree-level-order-traversal/",
+    "neetcode": "https://neetcode.io/problems/level-order-traversal-of-binary-tree"
+  },
+  "200": {
+    "title": "Number of Islands",
+    "leetcode": "https://leetcode.com/problems/number-of-islands/",
+    "neetcode": "https://neetcode.io/problems/count-number-of-islands"
+  },
+  "1971": {
+    "title": "Find if Path Exists in Graph",
+    "leetcode": "https://leetcode.com/problems/find-if-path-exists-in-graph/",
+    "neetcode": null
+  },
+  "547": {
+    "title": "Number of Provinces",
+    "leetcode": "https://leetcode.com/problems/number-of-provinces/",
+    "neetcode": "https://neetcode.io/problems/number-of-provinces"
+  },
+  "207": {
+    "title": "Course Schedule",
+    "leetcode": "https://leetcode.com/problems/course-schedule/",
+    "neetcode": "https://neetcode.io/problems/course-schedule"
+  },
+  "347": {
+    "title": "Top K Frequent Elements",
+    "leetcode": "https://leetcode.com/problems/top-k-frequent-elements/",
+    "neetcode": "https://neetcode.io/problems/top-k-elements-in-list"
+  },
+  "215": {
+    "title": "Kth Largest Element in an Array",
+    "leetcode": "https://leetcode.com/problems/kth-largest-element-in-an-array/",
+    "neetcode": "https://neetcode.io/problems/kth-largest-element-in-an-array"
+  },
+  "56": {
+    "title": "Merge Intervals",
+    "leetcode": "https://leetcode.com/problems/merge-intervals/",
+    "neetcode": "https://neetcode.io/problems/merge-intervals"
+  },
+  "78": {
+    "title": "Subsets",
+    "leetcode": "https://leetcode.com/problems/subsets/",
+    "neetcode": "https://neetcode.io/problems/subsets"
+  },
+  "70": {
+    "title": "Climbing Stairs",
+    "leetcode": "https://leetcode.com/problems/climbing-stairs/",
+    "neetcode": "https://neetcode.io/problems/climbing-stairs"
+  },
+  "198": {
+    "title": "House Robber",
+    "leetcode": "https://leetcode.com/problems/house-robber/",
+    "neetcode": "https://neetcode.io/problems/house-robber"
+  },
+  "33": {
+    "title": "Search in Rotated Sorted Array",
+    "leetcode": "https://leetcode.com/problems/search-in-rotated-sorted-array/",
+    "neetcode": "https://neetcode.io/problems/find-target-in-rotated-sorted-array"
+  },
+  "73": {
+    "title": "Set Matrix Zeroes",
+    "leetcode": "https://leetcode.com/problems/set-matrix-zeroes/",
+    "neetcode": "https://neetcode.io/problems/set-zeroes-in-matrix"
+  },
+  "435": {
+    "title": "Non-overlapping Intervals",
+    "leetcode": "https://leetcode.com/problems/non-overlapping-intervals/",
+    "neetcode": "https://neetcode.io/problems/non-overlapping-intervals"
+  },
+  "79": {
+    "title": "Word Search",
+    "leetcode": "https://leetcode.com/problems/word-search/",
+    "neetcode": "https://neetcode.io/problems/search-for-word"
+  },
+  "5": {
+    "title": "Longest Palindromic Substring",
+    "leetcode": "https://leetcode.com/problems/longest-palindromic-substring/",
+    "neetcode": "https://neetcode.io/problems/longest-palindromic-substring"
+  },
+  "143": {
+    "title": "Reorder List",
+    "leetcode": "https://leetcode.com/problems/reorder-list/",
+    "neetcode": "https://neetcode.io/problems/reorder-linked-list"
+  },
+  "261": {
+    "title": "Graph Valid Tree",
+    "leetcode": "https://leetcode.com/problems/graph-valid-tree/",
+    "neetcode": "https://neetcode.io/problems/valid-tree"
+  },
+  "1143": {
+    "title": "Longest Common Subsequence",
+    "leetcode": "https://leetcode.com/problems/longest-common-subsequence/",
+    "neetcode": "https://neetcode.io/problems/longest-common-subsequence"
+  },
+  "105": {
+    "title": "Construct Binary Tree from Preorder and Inorder Traversal",
+    "leetcode": "https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/",
+    "neetcode": "https://neetcode.io/problems/binary-tree-from-preorder-and-inorder-traversal"
+  },
+  "417": {
+    "title": "Pacific Atlantic Water Flow",
+    "leetcode": "https://leetcode.com/problems/pacific-atlantic-water-flow/",
+    "neetcode": "https://neetcode.io/problems/pacific-atlantic-water-flow"
+  },
+  "271": {
+    "title": "Encode and Decode Strings",
+    "leetcode": "https://leetcode.com/problems/encode-and-decode-strings/",
+    "neetcode": "https://neetcode.io/problems/string-encode-and-decode"
+  },
+  "23": {
+    "title": "Merge k Sorted Lists",
+    "leetcode": "https://leetcode.com/problems/merge-k-sorted-lists/",
+    "neetcode": "https://neetcode.io/problems/merge-k-sorted-linked-lists"
+  },
+  "124": {
+    "title": "Binary Tree Maximum Path Sum",
+    "leetcode": "https://leetcode.com/problems/binary-tree-maximum-path-sum/",
+    "neetcode": "https://neetcode.io/problems/binary-tree-maximum-path-sum"
+  },
+  "76": {
+    "title": "Minimum Window Substring",
+    "leetcode": "https://leetcode.com/problems/minimum-window-substring/",
+    "neetcode": "https://neetcode.io/problems/minimum-window-with-characters"
+  },
+  "91": {
+    "title": "Decode Ways",
+    "leetcode": "https://leetcode.com/problems/decode-ways/",
+    "neetcode": "https://neetcode.io/problems/decode-ways"
+  },
+  "387": {
+    "title": "First Unique Character in a String",
+    "leetcode": "https://leetcode.com/problems/first-unique-character-in-a-string/",
+    "neetcode": "https://neetcode.io/problems/first-unique-character-in-a-string"
+  },
+  "169": {
+    "title": "Majority Element",
+    "leetcode": "https://leetcode.com/problems/majority-element/",
+    "neetcode": "https://neetcode.io/problems/majority-element"
+  },
+  "383": {
+    "title": "Ransom Note",
+    "leetcode": "https://leetcode.com/problems/ransom-note/",
+    "neetcode": "https://neetcode.io/problems/ransom-note"
+  },
+  "219": {
+    "title": "Contains Duplicate II",
+    "leetcode": "https://leetcode.com/problems/contains-duplicate-ii/",
+    "neetcode": "https://neetcode.io/problems/contains-duplicate-ii"
+  },
+  "49": {
+    "title": "Group Anagrams",
+    "leetcode": "https://leetcode.com/problems/group-anagrams/",
+    "neetcode": "https://neetcode.io/problems/anagram-groups"
+  },
+  "128": {
+    "title": "Longest Consecutive Sequence",
+    "leetcode": "https://leetcode.com/problems/longest-consecutive-sequence/",
+    "neetcode": "https://neetcode.io/problems/longest-consecutive-sequence"
+  },
+  "238": {
+    "title": "Product of Array Except Self",
+    "leetcode": "https://leetcode.com/problems/product-of-array-except-self/",
+    "neetcode": "https://neetcode.io/problems/products-of-array-discluding-self"
+  },
+  "11": {
+    "title": "Container With Most Water",
+    "leetcode": "https://leetcode.com/problems/container-with-most-water/",
+    "neetcode": "https://neetcode.io/problems/max-water-container"
+  },
+  "15": {
+    "title": "3Sum",
+    "leetcode": "https://leetcode.com/problems/3sum/",
+    "neetcode": "https://neetcode.io/problems/three-integer-sum"
+  },
+  "424": {
+    "title": "Longest Repeating Character Replacement",
+    "leetcode": "https://leetcode.com/problems/longest-repeating-character-replacement/",
+    "neetcode": "https://neetcode.io/problems/longest-repeating-substring-with-replacement"
+  },
+  "153": {
+    "title": "Find Minimum in Rotated Sorted Array",
+    "leetcode": "https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/",
+    "neetcode": "https://neetcode.io/problems/find-minimum-in-rotated-sorted-array"
+  },
+  "141": {
+    "title": "Linked List Cycle",
+    "leetcode": "https://leetcode.com/problems/linked-list-cycle/",
+    "neetcode": "https://neetcode.io/problems/linked-list-cycle-detection"
+  },
+  "19": {
+    "title": "Remove Nth Node From End of List",
+    "leetcode": "https://leetcode.com/problems/remove-nth-node-from-end-of-list/",
+    "neetcode": "https://neetcode.io/problems/remove-node-from-end-of-linked-list"
+  },
+  "572": {
+    "title": "Subtree of Another Tree",
+    "leetcode": "https://leetcode.com/problems/subtree-of-another-tree/",
+    "neetcode": "https://neetcode.io/problems/subtree-of-a-binary-tree"
+  },
+  "235": {
+    "title": "Lowest Common Ancestor of a Binary Search Tree",
+    "leetcode": "https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree/",
+    "neetcode": "https://neetcode.io/problems/lowest-common-ancestor-in-binary-search-tree"
+  },
+  "98": {
+    "title": "Validate Binary Search Tree",
+    "leetcode": "https://leetcode.com/problems/validate-binary-search-tree/",
+    "neetcode": "https://neetcode.io/problems/valid-binary-search-tree"
+  },
+  "230": {
+    "title": "Kth Smallest Element in a BST",
+    "leetcode": "https://leetcode.com/problems/kth-smallest-element-in-a-bst/",
+    "neetcode": "https://neetcode.io/problems/kth-smallest-integer-in-bst"
+  },
+  "208": {
+    "title": "Implement Trie (Prefix Tree)",
+    "leetcode": "https://leetcode.com/problems/implement-trie-prefix-tree/",
+    "neetcode": "https://neetcode.io/problems/implement-prefix-tree"
+  },
+  "211": {
+    "title": "Design Add and Search Words Data Structure",
+    "leetcode": "https://leetcode.com/problems/design-add-and-search-words-data-structure/",
+    "neetcode": "https://neetcode.io/problems/design-word-search-data-structure"
+  },
+  "133": {
+    "title": "Clone Graph",
+    "leetcode": "https://leetcode.com/problems/clone-graph/",
+    "neetcode": "https://neetcode.io/problems/clone-graph"
+  },
+  "323": {
+    "title": "Number of Connected Components in an Undirected Graph",
+    "leetcode": "https://leetcode.com/problems/number-of-connected-components-in-an-undirected-graph/",
+    "neetcode": "https://neetcode.io/problems/count-connected-components"
+  },
+  "57": {
+    "title": "Insert Interval",
+    "leetcode": "https://leetcode.com/problems/insert-interval/",
+    "neetcode": "https://neetcode.io/problems/insert-new-interval"
+  },
+  "252": {
+    "title": "Meeting Rooms",
+    "leetcode": "https://leetcode.com/problems/meeting-rooms/",
+    "neetcode": "https://neetcode.io/problems/meeting-schedule"
+  },
+  "253": {
+    "title": "Meeting Rooms II",
+    "leetcode": "https://leetcode.com/problems/meeting-rooms-ii/",
+    "neetcode": "https://neetcode.io/problems/meeting-schedule-ii"
+  },
+  "39": {
+    "title": "Combination Sum",
+    "leetcode": "https://leetcode.com/problems/combination-sum/",
+    "neetcode": "https://neetcode.io/problems/combination-target-sum"
+  },
+  "213": {
+    "title": "House Robber II",
+    "leetcode": "https://leetcode.com/problems/house-robber-ii/",
+    "neetcode": "https://neetcode.io/problems/house-robber-ii"
+  },
+  "53": {
+    "title": "Maximum Subarray",
+    "leetcode": "https://leetcode.com/problems/maximum-subarray/",
+    "neetcode": "https://neetcode.io/problems/maximum-subarray"
+  },
+  "55": {
+    "title": "Jump Game",
+    "leetcode": "https://leetcode.com/problems/jump-game/",
+    "neetcode": "https://neetcode.io/problems/jump-game"
+  },
+  "322": {
+    "title": "Coin Change",
+    "leetcode": "https://leetcode.com/problems/coin-change/",
+    "neetcode": "https://neetcode.io/problems/coin-change"
+  },
+  "139": {
+    "title": "Word Break",
+    "leetcode": "https://leetcode.com/problems/word-break/",
+    "neetcode": "https://neetcode.io/problems/word-break"
+  },
+  "300": {
+    "title": "Longest Increasing Subsequence",
+    "leetcode": "https://leetcode.com/problems/longest-increasing-subsequence/",
+    "neetcode": "https://neetcode.io/problems/longest-increasing-subsequence"
+  },
+  "62": {
+    "title": "Unique Paths",
+    "leetcode": "https://leetcode.com/problems/unique-paths/",
+    "neetcode": "https://neetcode.io/problems/count-paths"
+  },
+  "48": {
+    "title": "Rotate Image",
+    "leetcode": "https://leetcode.com/problems/rotate-image/",
+    "neetcode": "https://neetcode.io/problems/rotate-matrix"
+  },
+  "54": {
+    "title": "Spiral Matrix",
+    "leetcode": "https://leetcode.com/problems/spiral-matrix/",
+    "neetcode": "https://neetcode.io/problems/spiral-matrix"
+  }
+}

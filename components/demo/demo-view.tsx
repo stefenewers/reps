@@ -33,7 +33,7 @@ const PLAN = PLAN_UNITS.map((u, i) => {
     reps: reps.length,
     builds: [...new Set(u.sections.map((s) => SECTION_TITLE.get(s)).filter((t): t is string => Boolean(t) && !/^Capstone/.test(t!)))].slice(0, 6),
     check: Boolean(u.check),
-    problems: [...capstones.map((p) => ({ lc: p.number, title: p.title, url: p.leetcode, video: null as string | null })), ...u.leetcode.flatMap((n) => (LC.has(n) ? [{ lc: n, title: LC.get(n)!.title, url: LC.get(n)!.url, video: LC.get(n)!.video }] : []))],
+    problems: [...capstones.map((p) => ({ lc: p.number, title: p.title, url: p.practice, video: null as string | null })), ...u.leetcode.flatMap((n) => (LC.has(n) ? [{ lc: n, title: LC.get(n)!.title, url: LC.get(n)!.url, video: LC.get(n)!.video }] : []))],
   }
 })
 const TOTAL_REPS = PLAN_DAYS.reduce((n, d) => n + dayExercises(d).length, 0)
