@@ -2,8 +2,9 @@ import type { ReactNode } from 'react'
 import CodeView from '@/components/code-view'
 
 /**
- * Markdown-lite for prompts, hints and explanations: paragraphs, bullet lists,
- * fenced code blocks, `inline code`, **bold** and *italic*. Nothing else, no HTML.
+ * Markdown-lite for prompts, hints, lessons and labs: paragraphs, bullet and
+ * numbered lists, tables (| a | b | with a |---| row), fenced code blocks,
+ * `inline code`, **bold** and *italic*. Nothing else, no HTML.
  */
 
 function inline(text: string, keyBase: string): ReactNode[] {
@@ -32,6 +33,8 @@ export default function Markdown({ text, className = '', inline: asInline = fals
   const lines = text.replace(/\r\n/g, '\n').split('\n')
   let para: string[] = []
   let list: string[] = []
+  let ordered = false
+  let table: string[][] = []
   let k = 0
 
   const flushPara = () => {
@@ -39,19 +42,52 @@ export default function Markdown({ text, className = '', inline: asInline = fals
     para = []
   }
   const flushList = () => {
-    if (list.length)
-      blocks.push(
-        <ul key={k++}>
-          {list.map((li, i) => (
-            <li key={i}>{inline(li, `l${k}-${i}`)}</li>
-          ))}
-        </ul>,
-      )
+    if (list.length) {
+      const items = list.map((li, i) => <li key={i}>{inline(li, `l${k}-${i}`)}</li>)
+      blocks.push(ordered ? <ol key={k++}>{items}</ol> : <ul key={k++}>{items}</ul>)
+    }
     list = []
   }
+  const flushTable = () => {
+    if (table.length) {
+      const [head, ...body] = table
+      blocks.push(
+        <div key={k++} className="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                {head.map((c, i) => (
+                  <th key={i}>{inline(c, `th${k}-${i}`)}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {body.map((row, r) => (
+                <tr key={r}>
+                  {row.map((c, i) => (
+                    <td key={i}>{inline(c, `td${k}-${r}-${i}`)}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>,
+      )
+    }
+    table = []
+  }
+  const cells = (line: string) => line.trim().replace(/^\|/, '').replace(/\|$/, '').split('|').map((c) => c.trim())
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i]
+    // A table: | a | b | lines; the |---|---| separator row is skipped.
+    if (/^\s*\|.*\|\s*$/.test(line)) {
+      flushPara()
+      flushList()
+      if (!/^\s*\|[\s:|-]+\|\s*$/.test(line)) table.push(cells(line))
+      continue
+    }
+    flushTable()
     if (line.trim().startsWith('```')) {
       flushPara()
       flushList()
@@ -63,7 +99,16 @@ export default function Markdown({ text, className = '', inline: asInline = fals
     }
     if (/^\s*[-*] /.test(line)) {
       flushPara()
+      if (list.length && ordered) flushList()
+      ordered = false
       list.push(line.replace(/^\s*[-*] /, ''))
+      continue
+    }
+    if (/^\s*\d+[.)] /.test(line)) {
+      flushPara()
+      if (list.length && !ordered) flushList()
+      ordered = true
+      list.push(line.replace(/^\s*\d+[.)] /, ''))
       continue
     }
     if (!line.trim()) {
@@ -76,5 +121,6 @@ export default function Markdown({ text, className = '', inline: asInline = fals
   }
   flushPara()
   flushList()
+  flushTable()
   return <div className={`prose-reps ${className}`}>{blocks}</div>
 }

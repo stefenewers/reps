@@ -54,3 +54,13 @@ test('worked examples rebuild through a real rep; every course rep reads in plai
   for (const l of LESSONS) assert.ok(l.sections.length >= 2 && l.mistakes.length >= 2, l.id)
   for (const e of COURSE_REPS) assert.deepEqual(wordingProblems(e), [], e.id)
 })
+
+import { renderToStaticMarkup } from 'react-dom/server'
+import { createElement } from 'react'
+import Markdown from '@/components/markdown'
+
+test('Markdown renders numbered lists and tables (the Solve Map steps, variable traces and lab specs)', () => {
+  const html = renderToStaticMarkup(createElement(Markdown, { text: '1. Contract\n2. Example\n\n| step | total |\n|---|---|\n| 1 | 5 |\n| 2 | 9 |' }))
+  assert.match(html, /<ol><li>Contract<\/li><li>Example<\/li><\/ol>/)
+  assert.match(html, /<table><thead><tr><th>step<\/th><th>total<\/th><\/tr><\/thead><tbody><tr><td>1<\/td><td>5<\/td><\/tr>/)
+})

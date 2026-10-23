@@ -23,6 +23,7 @@ import ConceptGuide from '@/components/concept-guide'
 import WordingFlagButton from '@/components/rep/wording-flag'
 import ApproachNoteField from '@/components/course/approach-note'
 import { conceptFor, guideMode } from '@/data/concepts'
+import { creditReason, qualifies, type CreditReason } from '@/lib/course/credit'
 import { GATE_BY_ID, GATE_OF_EXERCISE } from '@/data/course/gates'
 import { UNIT_OF_EXERCISE } from '@/data/course'
 import { LABS } from '@/data/course/lessons'
@@ -97,6 +98,17 @@ type Phase = 'idle' | 'running' | 'passed' | 'failed'
 /** Where each authored rep sits in the curriculum, for stepping back to something earlier. */
 const ORDER = new Map(ALL_EXERCISES.map((e, i) => [e.id, i] as const))
 const interviewMode = (m: Mode) => m === 'interview'
+
+/** Why a pass did not earn a rep today, said plainly. */
+const CREDIT_REASON_LABEL: Record<CreditReason, string> = {
+  counts: '+1 rep',
+  'not-passed': 'Not passed',
+  'solution-shown': 'Not counted · the solution was shown',
+  'rebuilt-same-day': 'Not counted today · rebuilt right after the solution',
+  'not-production': 'Not counted · recognition only',
+  lab: 'Lab build · counts toward the lab',
+  'unknown-rep': 'Practice rep',
+}
 
 const DRAFT_KEY = (id: string) => `reps-draft:${id}`
 function localDraft(id: string): string | undefined {
@@ -808,6 +820,18 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
   // ── render ─────────────────────────────────────────────────────────────────
 
   const passed = phase === 'passed'
+  // What this pass earns today, by the one credit rule (lib/course/credit.ts): the badge never says more than that.
+  const passCredit = (() => {
+    if (!passed) return null
+    const mine = attempts.filter((a) => a.exerciseId === ex.id && a.date === today && a.passed && a.completedAt).sort((x, y) => (x.completedAt ?? '').localeCompare(y.completedAt ?? ''))
+    const history = attempts.filter((a) => a.exerciseId === ex.id)
+    const latest = mine[mine.length - 1]
+    if (!latest) return null
+    const counting = mine.find((a) => qualifies(a, ex, history))
+    if (counting && counting.id !== latest.id) return { counted: true, label: 'Counted earlier today' }
+    const why = creditReason(latest, ex, history)
+    return why === 'counts' ? { counted: true, label: '+1 rep' } : { counted: false, label: CREDIT_REASON_LABEL[why] }
+  })()
   // An unlabeled transfer rep, a mastery check or a capstone does not say which technique to use: the page does not either, until it is passed.
   const unlabeled = (Boolean(ex.transfer) || Boolean(ex.cleanPass) || Boolean(ex.gate) || UNIT_OF_EXERCISE[ex.id] === 'w13-transfer' || ex.repType === 'capstone') && !passed
   // Suggest a call to the rep's own function, e.g. `two_sum(...)`.
@@ -1390,9 +1414,11 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
                   <div className="min-w-0">
                     <p className="flex items-center gap-2 text-[14.5px] font-semibold text-ink">
                       Rep complete{runItBack ? ' · reconstructed' : ''}
-                      <span className="pop-in inline-flex items-center gap-1 rounded-full bg-ink px-2 py-px text-[11px] font-semibold text-white [animation-delay:160ms]">
-                        <RepsBars width={9} bar={1.5} gap={1} color="#fff" /> +1 rep
-                      </span>
+                      {passCredit && (
+                        <span className={`pop-in inline-flex items-center gap-1 rounded-full px-2 py-px text-[11px] font-semibold [animation-delay:160ms] ${passCredit.counted ? 'bg-ink text-white' : 'bg-surface-2 text-ink-2'}`} data-testid="pass-credit" data-counted={passCredit.counted ? 'true' : 'false'}>
+                          {passCredit.counted && <RepsBars width={9} bar={1.5} gap={1} color="#fff" />} {passCredit.label}
+                        </span>
+                      )}
                     </p>
                     <p className="mt-1 flex flex-wrap items-center gap-1.5 text-[12px] text-muted">
                       {runnable && testsTotal ? <span className="mr-1 font-medium">{testsTotal}/{testsTotal} tests</span> : null}
