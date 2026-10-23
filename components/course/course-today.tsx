@@ -65,7 +65,8 @@ export default function CourseToday({ plan, training, cd, lcUrl }: { plan: Plan;
   const { day, week, progress } = cd
   const target = day.type === 'training' ? day.target : day.optionalTarget
   const done = cd.doneToday
-  const complete = day.type === 'training' && done >= target
+  // The one contract (lib/course/contract.ts): reps AND every lab, checkpoint, target and repair due today.
+  const complete = day.type === 'training' && cd.dayContract.complete
   const left = plan.items.filter((i) => !i.done)
   const next = left[0]
   const session = training.session
@@ -200,6 +201,16 @@ export default function CourseToday({ plan, training, cd, lcUrl }: { plan: Plan;
         <p className={`mt-4 max-w-[680px] text-[15px] leading-relaxed ${line.tone === 'celebrate' ? 'font-medium text-ink' : 'text-ink-2'}`} data-testid="motivation" data-tone={line.tone}>
           {line.text}
         </p>
+        {day.type === 'training' && !complete && cd.dayContract.remaining.length > 0 && (
+          <div className="mt-4 rounded-xl bg-surface px-4 py-3" data-testid="still-due">
+            <p className="label">Done for today when</p>
+            <ul className="mt-1 flex flex-col gap-0.5 text-[13.5px] text-ink-2">
+              {cd.dayContract.remaining.map((r) => (
+                <li key={r}>· {r}</li>
+              ))}
+            </ul>
+          </div>
+        )}
         {milestone && complete && (
           <p className="celebrate-in mt-2 inline-flex items-center gap-1.5 rounded-full bg-flame-soft px-3 py-1 text-[13px] font-medium text-flame" data-testid="milestone">
             🔥 {milestone} qualifying problems

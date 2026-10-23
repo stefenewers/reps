@@ -93,7 +93,6 @@ export function WeekCard({ cd }: { cd: CourseDayState }) {
 /** The Road-to-Ready snapshot: where February readiness stands, per domain, without false precision. */
 export function ReadinessCard({ cd }: { cd: CourseDayState }) {
   const r = cd.readiness
-  const shown = r.domains.filter((d) => d.status !== 'not-started').slice(0, 5)
   return (
     <section aria-labelledby="ready-h" className="panel p-6" data-testid="readiness-card" data-track={r.track}>
       <div className="flex flex-wrap items-baseline justify-between gap-2">
@@ -106,20 +105,12 @@ export function ReadinessCard({ cd }: { cd: CourseDayState }) {
       </div>
       <p className="mt-1 text-[13px] text-muted">{r.why[0]}</p>
       <ul className="mt-4 flex flex-col gap-1.5">
-        {(shown.length ? shown : r.domains.slice(0, 3)).map((d) => (
-          <li key={d.id} className="flex items-baseline justify-between gap-3 text-[13.5px]">
+        {r.dimensions.map((d) => (
+          <li key={d.id} className="flex items-baseline justify-between gap-3 text-[13.5px]" data-dimension={d.id} title={d.why}>
             <span className="text-ink">{d.title}</span>
             <span className={`text-[12px] font-semibold uppercase tracking-wide ${DOMAIN_TONE[d.status]}`}>{DOMAIN_LABEL[d.status]}</span>
           </li>
         ))}
-        <li className="flex items-baseline justify-between gap-3 text-[13.5px]">
-          <span className="text-ink">Independent transfer</span>
-          <span className={`text-[12px] font-semibold uppercase tracking-wide ${DOMAIN_TONE[r.transfer]}`}>{DOMAIN_LABEL[r.transfer]}</span>
-        </li>
-        <li className="flex items-baseline justify-between gap-3 text-[13.5px]">
-          <span className="text-ink">Interview execution</span>
-          <span className={`text-[12px] font-semibold uppercase tracking-wide ${DOMAIN_TONE[r.interview]}`}>{DOMAIN_LABEL[r.interview]}</span>
-        </li>
       </ul>
       <Link href="/progress#readiness" className="mt-4 inline-flex items-center gap-1 text-[13px] font-medium text-ink hover:underline">
         The full readiness report <IconArrowRight size={12} />
