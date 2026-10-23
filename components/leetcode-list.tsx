@@ -134,7 +134,7 @@ export default function LeetcodeList({ day, items: given, heading = 'On LeetCode
                   </p>
                 )}
               </div>
-              <div className="flex shrink-0 flex-wrap items-center gap-1.5">
+              <div className="flex min-w-0 max-w-full flex-wrap items-center gap-1.5 sm:shrink-0">
                 {i.video && (
                   <a href={i.video} target="_blank" rel="noreferrer" className="btn btn-ghost btn-sm" title={state ? learnAdvice(state.target, state.ready) : 'Only after a real attempt from a blank editor.'}>
                     <IconPlay size={10} /> Walkthrough
