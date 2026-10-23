@@ -1,6 +1,6 @@
 # Reps V2.1 — handoff (read this first)
 
-Last updated: Oct 23, 2026 (evening), during Phase A. Spec: `planning/REPS_2_1_SPEC.md` (the V2.1 request, verbatim in substance). V2 architecture: `docs/reps-2.md`. Original V2 spec: `REPS_2_MASTER_SPEC.md`.
+Last updated: Oct 23, 2026 (late), PAUSED by the user to save usage. Both workflows were STOPPED; all outputs are saved in `planning/v21-artifacts/`. Spec: `planning/REPS_2_1_SPEC.md` (the V2.1 request, verbatim in substance). V2 architecture: `docs/reps-2.md`. Original V2 spec: `REPS_2_MASTER_SPEC.md`.
 
 **Do not merge anything into `main`.** `main` = `e3ae928` is V2, live on Vercel (https://reps-five-jade.vercel.app). The course switches Today/Plan/Progress to course mode on **Mon Oct 26, 2026** automatically.
 
@@ -28,6 +28,7 @@ Worktree setup notes (already done; redo only if recreating):
 | `29f7e42` | `v21-work` | `lib/course/contract.ts` (the authoritative day/week contract, §9.2) + `lib/course/contract.test.ts` (5 tests) + `data/course/capstones.ts` (`CAPSTONE_LC`). Not yet wired into the UI. |
 | `6970cda` | `v21-work` | Markdown tables + numbered lists (`components/markdown.tsx`, CSS in `app/globals.css`, render test in `lib/course/content.test.ts`); rep pass badge uses `creditReason` (`pass-credit` testid). |
 | `8278ffb` | `v21-work` | Real mock gating (Phase F). |
+| `8feee37` | `v21-work` | Demo engine + reference two-pointer demo (Phase C part 1). |
 | `0c4d13b` | `v21-work` | Progress V2 + course rail (Phase E). Readiness report no longer renders week summaries (Progress does, from the contract). |
 | `ba80f69` | `v21-work` | Readiness rewritten per §9.3 (seven dimensions, exact evidence, contract-derived track, lab evidence, stricter final decision) + `lib/course/readiness.test.ts` (6 tests); `use-course-day` builds contracts (streak, flame = blaze only when contract complete, week status, readiness); Today's Day complete reads `dayContract.complete` and shows a "Done for today when" list (`still-due`). |
 
@@ -38,7 +39,7 @@ Worktree setup notes (already done; redo only if recreating):
 | Audit (spec §27) | **Done** (9 auditors, 148 findings). Adversarial verification was ~25% through (30 verdicts) when this was written — see §6. |
 | A — truth and curriculum math | **In progress.** Done: credit semantics, outside-problem model + UI, routing deadlock, curated-path model, stricter labs, schedule types. Not done: curation integration (paths + schedule), the authoritative day/week contract, readiness evidence rewrite, Progress/Today wiring of the contract, tests for daily/week completion and curriculum fit. |
 | B — Today command center | Not started (design in §9). |
-| C — interactive demo engine + visualizers | Not started (design in §9). |
+| C — interactive demo engine + visualizers | **Started** (`8feee37`): engine + player + array view + reference two-pointer demo + `/demo/[id]` + generic determinism tests. Remaining: 10 visualizers (sliding window, binary search, linked lists, recursion, trees+BFS, graphs, backtracking, DP, heaps, intervals), each = `lib/demos/<id>.ts` (copy `two-pointers.ts`), `components/demos/views/<id>-view.tsx`, register in `lib/demos/index.ts` + `components/demos/registry.tsx`, correctness test in `lib/demos/demos.test.ts`; then embed on concept pages, worked examples and Today's WATCH step. |
 | D — worked examples Weeks 3–12 | Not started. |
 | E — Progress V2 | **Done** (`0c4d13b`): `components/course/course-progress.tsx` replaces Progress in course mode; header rail = course output (`lib/course/rail.ts`). |
 | F — readiness + labs | **Done**: readiness (`ba80f69`), real mock gating (`8278ffb`, `components/use-mock-gate.ts`, used by `interview-view.tsx` and `mock-session.tsx`). |
@@ -64,22 +65,18 @@ Worktree setup notes (already done; redo only if recreating):
 
 ## 5. Tests
 
-In the worktree at the contract commit: `npm run lint` clean, `npx tsc --noEmit -p .` clean, `npm test` **285 / 285 pass** (incl. `lib/course/contract.test.ts`, run against the DERIVED schedule — re-check after curation fills `CURATED`). Not run on this commit yet: `verify:content`, `verify:pyodide`, `audit:curriculum`, `audit:migration` (may need updating: it imports `unitReps`, still exported), e2e, build.
+In the worktree at the contract commit: `npm run lint` clean, `npx tsc --noEmit -p .` clean, `npm test` **288 / 288 pass** (at `8feee37`) (incl. `lib/course/contract.test.ts`, run against the DERIVED schedule — re-check after curation fills `CURATED`). Not run on this commit yet: `verify:content`, `verify:pyodide`, `audit:curriculum`, `audit:migration` (may need updating: it imports `unitReps`, still exported), e2e, build.
 
 Known test gaps the spec requires (§29) that do not exist yet: curriculum fit per week, daily/week completion contract, readiness classification + upgrade + lab evidence, Today visibility/CTA, demo determinism, Week 13 leakage on Today titles.
 
-## 6. Workflows (outputs saved in `planning/v21-artifacts/`)
+## 6. Workflows (STOPPED; outputs saved in `planning/v21-artifacts/`)
 
-| Workflow | Run id | Script (copy) | Saved output | Status |
+| Workflow | Run id | Script (copy) | Saved output | Final status |
 |---|---|---|---|---|
-| Audit (9 auditors → verify each finding → completeness critic) | `wf_5717e09e-a38` | `planning/v21-artifacts/audit-workflow.js` | `audit-journal.json` (raw journal), **`AUDIT_FINDINGS.md`** (readable: every finding, evidence, suggested fix, verdict if reached) | All 9 audits done; verification ~30/148; critic not run |
-| Curation (per week: curate → review → revise) | `wf_721590a7-2c9` | `planning/v21-artifacts/curate-workflow.js` | `curate-journal.json`; inputs in `inventories/inventory-w1..w14.json` | 8 curators running (weeks 1–8), 0 finished when written; weeks 9–14 not started |
+| Audit | `wf_5717e09e-a38` | `audit-workflow.js` | `audit-journal.json`, **`AUDIT_FINDINGS.md`** | **Complete except the critic**: 9 audits, 148 findings, 146 CONFIRMED / 2 refuted. Do NOT re-run. |
+| Curation | `wf_721590a7-2c9` | `curate-workflow.js` | `curate-journal.json`, **`CURATION_PARTIAL.json`** (plan + review per week) | Stopped with 12 of 14 weeks done (see §8). |
 
-**Resuming:** `Workflow({ scriptPath, resumeFromRunId })` only works in the SAME Claude session. A new session must re-run instead:
-- Curation: copy `planning/v21-artifacts/curate-workflow.js`, change `REPO` to the repo path and `INV` to `<repo>/planning/v21-artifacts/inventories` (the scratchpad path in the script will not exist), run it with the Workflow tool. Integrate its output as described in §8.
-- Audit: no need to re-run the auditors (findings are in `AUDIT_FINDINGS.md`). Optionally re-run only the verify stage on UNVERIFIED critical/major findings; most are independently confirmed by reading the code (several were re-checked by hand, see §7).
-
-If the workflows finish in this session, their final outputs are written to `planning/v21-artifacts/` (curation as `CURATION.json` + summary) and this file is updated.
+Resuming in a new session: the Workflow tool's `resumeFromRunId` only works in the same session, so re-run what is missing. For curation, copy `planning/v21-artifacts/curate-workflow.js`, set `REPO` to the repo path, `INV` to `<repo>/planning/v21-artifacts/inventories`, and change `const weeks = ...` to `[3, 4]` only. Usage was the reason for stopping; weeks 3 and 4 alone are cheap.
 
 ## 7. Audit findings that matter (full list: `planning/v21-artifacts/AUDIT_FINDINGS.md`)
 
@@ -100,7 +97,24 @@ Confirmed by hand while implementing (true regardless of verifier status):
 
 ## 8. Week curation — status and how to integrate
 
-Status (latest check): curators finished for weeks 1, 5, 6, 7, 9, 10, 11, 12; weeks 2, 3, 4, 8, 13, 14 still curating; reviews/revisions follow. Nothing integrated yet.
+Per-week status (from `CURATION_PARTIAL.json`; every budget fits):
+
+| Week | Path | Gate needs | Required targets | Load / limit | Review |
+|---|---:|---:|---:|---|---|
+| 1 | 31 | 8 | 0 | 39 / 42 | pass |
+| 2 | 37 | 11 | 0 | 48 / 51 | **FAIL**: g-contract checks skill `explanation` but no path rep produces it. Fix: in `data/course/gates.ts` change g-contract `skills` to `['edge_cases', 'conditionals']` (or add an explanation-producing code rep to the w2 path). Everything else passed. |
+| 3 | — | — | — | — | **not curated** (re-run) |
+| 4 | — | — | — | — | **not curated** (re-run) |
+| 5 | 38 | 4 | 0 | 42 / 63 | pass |
+| 6 | 13 | 4 | 2 | 19 / 63 | pass |
+| 7 | 44 | 2 | 1 | 47 / 63 | pass |
+| 8 | 53 | 6 | 0 | 59 / 63 | pass |
+| 9 | 38 | 4 | 0 | 42 / 51 | pass |
+| 10 | 20 | 2 | 0 | 22 / 38 | revised plan; review FAIL on one typo: path id `d9-iv-fu-touching-apart` must be `d9-fu-touching-apart`. Fix while integrating. |
+| 11 | 49 | 4 | 0 | 53 / 63 | pass |
+| 12 | 39 | 4 | 5 | 48 / 63 | pass |
+| 13 | 48 | 0 | 0 | 48 / 51 | pass |
+| 14 | 42 | 0 | 0 | 42 / 63 | pass |
 
 Budget rule (curators and the tests must use exactly this):
 - `allowance = ceil(0.15 × weekTarget)` reserved for warm-ups, retrieval, re-solves.
@@ -168,11 +182,11 @@ Ordered stack for the day: REPAIR (if any, first) → LEARN (lesson of the focus
 - Week 13 required path ⊆ the 48 `c13-t-*` transfer reps; October `o11-*` interview reps live in Week 14.
 - `main` is untouched; deliver V2.1 as a branch and ask before merging.
 
-## 10. Exact next task
+## 10. Exact next task (when usage allows)
 
-1. Wait for (or re-run) the curation workflow; write its output to `planning/v21-artifacts/CURATION.json`.
-2. Integrate curation into `data/course/units.ts` (`path`, `optional`, `stretch`, `retrieval`, `targets`, `readinessTargets`) and `data/course/schedule.ts` (`CURATED`).
-3. DONE: `lib/course/contract.ts` (`createContracts(input)` → `dayContract(date)`, `weekContract(week, date)`, `streak(date)`, memoised snapshots as of each date) + tests. STILL TO DO: `lib/course/curriculum-fit.test.ts` (§8 step 3, incl. the perfect-learner simulation) once paths are curated.
-4. DONE (`ba80f69`): readiness per §9.3 + tests. Still to do for F: real mock gating on `/interview` (course mode).
-5. Wire Today/week card/streak/flame/Saturday copy to the contract (Phase B), then E, C, D, F, G, H.
-6. Update this file at each phase boundary.
+1. Re-curate weeks 3 and 4 only (§6), then write the full curation into `planning/v21-artifacts/CURATION.json`.
+2. Integrate (§8): `unit.path` / `optional` / `stretch` / `retrieval` / `targets` / `readinessTargets` in `data/course/units.ts`; `CURATED` in `data/course/schedule.ts` (dates, focusUnits, gatesDue, labsDue, targetsDue, theme); apply the week 2 gate-skill fix and the week 10 id fix.
+3. Add `lib/course/curriculum-fit.test.ts` (budget per week; every gate/lab/target scheduled once; ids valid; perfect-learner 14-week simulation ends with every week complete). Re-run `lib/course/contract.test.ts` (it was written against the derived schedule).
+4. Phase B: Today command center per §9.4 on top of `useCourseDay()` (which already exposes `dayContract`, `weekContract`, `contracts`).
+5. Phase C remaining visualizers (see §3 row C), Phase D worked examples (Weeks 3–12, each with a demo id), Phase G (motivation events, milestones, Winston), Phase H (full verify: lint, type-check, test, verify:content, verify:pyodide, audit:curriculum, audit:migration, e2e on port 3211, build; desktop + mobile review).
+6. Keep this file current; never merge to `main` without the user.
