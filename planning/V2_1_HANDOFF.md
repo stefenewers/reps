@@ -25,7 +25,8 @@ Worktree setup notes (already done; redo only if recreating):
 |---|---|---|
 | `fcd16b4` | `v21-work` | V2.1 phase A (part 1): credit, outside-problem semantics, routing without the Day 2 stall, stricter labs, schedule types, the spec file |
 | `e3953df` | `v21-work` | this handoff + `planning/v21-artifacts/` (workflow outputs) |
-| (this) | `v21-work` | `lib/course/contract.ts` (the authoritative day/week contract, §9.2) + `lib/course/contract.test.ts` (5 tests) + `data/course/capstones.ts` (`CAPSTONE_LC`). Not yet wired into the UI. |
+| `29f7e42` | `v21-work` | `lib/course/contract.ts` (the authoritative day/week contract, §9.2) + `lib/course/contract.test.ts` (5 tests) + `data/course/capstones.ts` (`CAPSTONE_LC`). Not yet wired into the UI. |
+| `ba80f69` | `v21-work` | Readiness rewritten per §9.3 (seven dimensions, exact evidence, contract-derived track, lab evidence, stricter final decision) + `lib/course/readiness.test.ts` (6 tests); `use-course-day` builds contracts (streak, flame = blaze only when contract complete, week status, readiness); Today's Day complete reads `dayContract.complete` and shows a "Done for today when" list (`still-due`). |
 
 ## 3. Phases
 
@@ -60,7 +61,7 @@ Worktree setup notes (already done; redo only if recreating):
 
 ## 5. Tests
 
-In the worktree at the contract commit: `npm run lint` clean, `npx tsc --noEmit -p .` clean, `npm test` **281 / 281 pass** (incl. `lib/course/contract.test.ts`, run against the DERIVED schedule — re-check after curation fills `CURATED`). Not run on this commit yet: `verify:content`, `verify:pyodide`, `audit:curriculum`, `audit:migration` (may need updating: it imports `unitReps`, still exported), e2e, build.
+In the worktree at the contract commit: `npm run lint` clean, `npx tsc --noEmit -p .` clean, `npm test` **284 / 284 pass** (incl. `lib/course/contract.test.ts`, run against the DERIVED schedule — re-check after curation fills `CURATED`). Not run on this commit yet: `verify:content`, `verify:pyodide`, `audit:curriculum`, `audit:migration` (may need updating: it imports `unitReps`, still exported), e2e, build.
 
 Known test gaps the spec requires (§29) that do not exist yet: curriculum fit per week, daily/week completion contract, readiness classification + upgrade + lab evidence, Today visibility/CTA, demo determinism, Week 13 leakage on Today titles.
 
@@ -169,6 +170,6 @@ Ordered stack for the day: REPAIR (if any, first) → LEARN (lesson of the focus
 1. Wait for (or re-run) the curation workflow; write its output to `planning/v21-artifacts/CURATION.json`.
 2. Integrate curation into `data/course/units.ts` (`path`, `optional`, `stretch`, `retrieval`, `targets`, `readinessTargets`) and `data/course/schedule.ts` (`CURATED`).
 3. DONE: `lib/course/contract.ts` (`createContracts(input)` → `dayContract(date)`, `weekContract(week, date)`, `streak(date)`, memoised snapshots as of each date) + tests. STILL TO DO: `lib/course/curriculum-fit.test.ts` (§8 step 3, incl. the perfect-learner simulation) once paths are curated.
-4. Rewrite readiness per §9.3 + tests.
+4. DONE (`ba80f69`): readiness per §9.3 + tests. Still to do for F: real mock gating on `/interview` (course mode).
 5. Wire Today/week card/streak/flame/Saturday copy to the contract (Phase B), then E, C, D, F, G, H.
 6. Update this file at each phase boundary.
