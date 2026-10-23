@@ -28,9 +28,11 @@ const KIND: Record<ItemKind, string> = {
   problem: 'LeetCode',
   resolve: 'Re-solve',
   cold: 'Cold rep',
+  gate: 'Checkpoint',
+  repair: 'Repair',
 }
 /** The block a kind belongs to in a training session (the chip on the rep page). */
-const BLOCK: Record<ItemKind, string> = { warm: 'reactivate', redo: 'drill', learn: 'learn', drill: 'drill', combine: 'combine', transfer: 'prove', prove: 'prove', problem: 'prove', resolve: 'maintain', cold: 'maintain' }
+const BLOCK: Record<ItemKind, string> = { warm: 'reactivate', redo: 'drill', learn: 'learn', drill: 'drill', combine: 'combine', transfer: 'prove', prove: 'prove', problem: 'prove', resolve: 'maintain', cold: 'maintain', gate: 'prove', repair: 'drill' }
 const WHY: Record<ItemKind, string> = {
   warm: 'You already learned this. A quick rep warms it back up before today leans on it.',
   redo: 'This needed help last time. Write it again from blank.',
@@ -42,6 +44,8 @@ const WHY: Record<ItemKind, string> = {
   problem: 'Every move it needs is one you have already written. Now assemble them.',
   resolve: 'Brought back before it fades.',
   cold: 'Brought back before it fades.',
+  gate: 'A checkpoint: cold, no lesson panel, no solution. Passing it unlocks what comes next.',
+  repair: 'The smallest piece the checkpoint showed was missing. Then a fresh checkpoint.',
 }
 
 /** The concepts today's work is about, most-used first. */

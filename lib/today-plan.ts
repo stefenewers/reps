@@ -15,7 +15,7 @@ import type { CapacityPhase } from '@/lib/training-capacity'
  * train today?". Missed days never add to it.
  */
 
-export type ItemKind = 'warm' | 'redo' | 'learn' | 'drill' | 'combine' | 'transfer' | 'prove' | 'problem' | 'resolve' | 'cold'
+export type ItemKind = 'warm' | 'redo' | 'learn' | 'drill' | 'combine' | 'transfer' | 'prove' | 'problem' | 'resolve' | 'cold' | 'gate' | 'repair'
 
 export interface Candidate {
   /** An exercise id, or `lc:<number>:<type>` for a LeetCode problem. */
@@ -28,6 +28,8 @@ export interface Candidate {
   lc?: number
   /** A new LeetCode problem whose building blocks are in place. */
   ready?: boolean
+  /** Reps 2.0: required by the course (a gate variant, a repair): not limited by the foundation share for checks. */
+  required?: boolean
 }
 
 export interface PlanItem extends Candidate {
@@ -64,7 +66,7 @@ export const FOUNDATION_CHECKS = 0.3
 /** The internal load (heavier reps weigh more) may run this far over the rep count. It never shows; it keeps a day from getting too heavy. */
 export const LOAD_HEADROOM = 1.3
 
-const CORE: ItemKind[] = ['learn', 'drill', 'combine']
+const CORE: ItemKind[] = ['learn', 'drill', 'combine', 'repair']
 export const isCore = (k: ItemKind) => CORE.includes(k)
 export const loadLimit = (reps: number) => Math.round(reps * LOAD_HEADROOM)
 
@@ -115,12 +117,12 @@ export function prescribe(input: TodayInput): TodayPlan {
   let checks = [...done.values()].filter((c) => !isCore(c.kind)).length
   const open = (c: Candidate) => !taken.has(c.key) && !done.has(c.key)
   // A heavy rep fits only if every slot after it can still be filled with a light one.
-  const fits = (c: Candidate) => count < N && (c.units <= 1 || load + c.units + (N - count - 1) <= maxLoad) && (isCore(c.kind) || checks < checksMax)
+  const fits = (c: Candidate) => count < N && (c.units <= 1 || load + c.units + (N - count - 1) <= maxLoad) && (isCore(c.kind) || c.required || checks < checksMax)
   const take = (c: Candidate) => {
     taken.add(c.key)
     count++
     load += c.units
-    if (!isCore(c.kind)) checks++
+    if (!isCore(c.kind) && !c.required) checks++
   }
 
   // The plan, in queue order. A new LeetCode problem is only prescribed once the foundation weeks are over and

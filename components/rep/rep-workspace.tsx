@@ -21,7 +21,11 @@ import { RepsBars } from '@/components/motif'
 import BasicsPanel, { BriefView } from '@/components/rep/basics-panel'
 import ConceptGuide from '@/components/concept-guide'
 import WordingFlagButton from '@/components/rep/wording-flag'
+import ApproachNoteField from '@/components/course/approach-note'
 import { conceptFor, guideMode } from '@/data/concepts'
+import { GATE_BY_ID, GATE_OF_EXERCISE } from '@/data/course/gates'
+import { UNIT_OF_EXERCISE } from '@/data/course'
+import { LABS } from '@/data/course/lessons'
 import { primersFor } from '@/data/primers'
 import { movesFor } from '@/data/primers/moves'
 import { BRIEFS } from '@/data/briefs'
@@ -805,7 +809,7 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
 
   const passed = phase === 'passed'
   // An unlabeled transfer rep, a mastery check or a capstone does not say which technique to use: the page does not either, until it is passed.
-  const unlabeled = (Boolean(ex.transfer) || Boolean(ex.cleanPass) || ex.repType === 'capstone') && !passed
+  const unlabeled = (Boolean(ex.transfer) || Boolean(ex.cleanPass) || Boolean(ex.gate) || UNIT_OF_EXERCISE[ex.id] === 'w13-transfer' || ex.repType === 'capstone') && !passed
   // Suggest a call to the rep's own function, e.g. `two_sum(...)`.
   const customPlaceholder = `${/def\s+([A-Za-z_]\w*)\s*\(/.exec(code)?.[1] ?? 'my_function'}(...)`
   /** A check rep passed with the solution open: it does not count until it is run back clean. */
@@ -815,6 +819,14 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
   const mm = String(Math.floor(elapsed / 60)).padStart(2, '0')
   const ss = String(elapsed % 60).padStart(2, '0')
   const interview = mode === 'interview'
+  // Reps 2.0: a course checkpoint is cold (no lesson panel, no hints, no solution) until it is passed;
+  // a Week 13 transfer rep shows no labels before it is attempted.
+  const gateId = ex.gate || GATE_OF_EXERCISE[ex.id] ? (GATE_OF_EXERCISE[ex.id] ?? null) : null
+  const checkpoint = Boolean(ex.gate || gateId) && !passed
+  const transferWeek = UNIT_OF_EXERCISE[ex.id] === 'w13-transfer' && !passed
+  // No assistance on the page: interview mode, a checkpoint, or the unlabeled transfer week.
+  const bare = interview || checkpoint || transferWeek
+  const labOf = ex.lab ? LABS.find((l) => l.buildExerciseId === ex.id || l.changeRequest.exerciseId === ex.id) : undefined
   const isDebug = ex.style === 'debug'
   const kind = kindOf(ex)
   const crumbDay = day ? shortDate(day.date) : null
@@ -915,7 +927,7 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
                 {retrievalType === 'cold' && !runItBack && kind.badge !== 'Cold Rep' && <span className="badge">Cold</span>}
                 {!interview && <span className="text-[12px] text-faint">~{Math.round(ex.minutes)} min</span>}
                 {prior.length > 0 && !passed && <span className="text-[12px] text-faint">· done {prior.length}× before</span>}
-                {!interview && primers.length > 0 && (
+                {!bare && primers.length > 0 && (
                   <button
                     type="button"
                     onClick={openBasics}
@@ -934,7 +946,7 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
               </h1>
             </div>
 
-            {missing.length > 0 && !passed && !interview && (
+            {missing.length > 0 && !passed && !bare && (
               <p className="rounded-lg bg-warn-soft px-3.5 py-2.5 text-[13px] leading-relaxed text-warn">
                 Not practiced yet: {missing.slice(0, 5).map(skillName).join(', ')}
                 {missing.length > 5 ? ` +${missing.length - 5}` : ''}. Try it anyway, or do those reps first.
@@ -943,7 +955,25 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
 
             {/* The Learn layer: open on a first exposure, one click away while practising, and on a rep that proves
                 something, collapsed and counted as help when opened. Never in Interview mode. */}
-            {concept && !interview && learnMode !== 'hidden' && (
+            {checkpoint && (
+              <div className="rounded-xl bg-cold-soft px-4 py-3 shadow-[inset_2px_0_0_var(--cold)]" data-testid="checkpoint">
+                <p className="eyebrow text-cold">Checkpoint{gateId ? ` · ${GATE_BY_ID[gateId]?.title}` : ''}</p>
+                <p className="mt-1 text-[13.5px] leading-relaxed text-ink-2">
+                  Cold: no lesson panel, no hints, no solution. {gateId ? GATE_BY_ID[gateId]?.proves : ''} If it does not go cleanly, that is information: a short repair comes next, then a fresh checkpoint.
+                </p>
+              </div>
+            )}
+            {UNIT_OF_EXERCISE[ex.id] === 'w13-transfer' && !interview && <ApproachNoteField exerciseId={ex.id} passed={passed} />}
+            {labOf && (
+              <p className="text-[13px] text-muted" data-testid="lab-part">
+                Part of the lab{' '}
+                <Link href={`/lab/${labOf.id}`} className="font-medium text-ink underline underline-offset-4">
+                  {labOf.title}
+                </Link>
+                . Labs are done or not done; their builds are not counted as reps.
+              </p>
+            )}
+            {concept && !bare && learnMode !== 'hidden' && (
               <div className="flex flex-col gap-3" data-testid={teach ? 'teach' : undefined}>
                 <ConceptGuide key={`${ex.id}:${learnMode}`} concept={concept} mode={learnMode} label={relearn ? 'Needed help twice · read this first' : undefined} onAssisted={() => countHint()} />
                 {teach && ex.teaching && (
@@ -966,7 +996,7 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
             {ex.code && ex.kind !== 'code' && <CodeView code={ex.code} />}
             {!interview && <WordingFlagButton key={ex.id} exerciseId={ex.id} />}
             {/* On first exposure the plain-English contract is on the page too, not behind Basics. */}
-            {teach && !interview && BRIEFS[ex.id] && !showBasics && (
+            {teach && !bare && BRIEFS[ex.id] && !showBasics && (
               <div className="rounded-xl px-4 py-3 shadow-[inset_0_0_0_1px_var(--line)]" data-testid="teach-brief">
                 <BriefView brief={BRIEFS[ex.id]} />
               </div>
@@ -989,7 +1019,7 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
               </div>
             )}
 
-            {!interview && (block || (toward && toward.block >= 0 && !toward.isTarget)) && (
+            {!bare && (block || (toward && toward.block >= 0 && !toward.isTarget)) && (
               <p className="rounded-xl bg-surface px-4 py-2.5 text-[12.5px] leading-relaxed text-muted" data-testid="toward">
                 {block && (
                   <>
@@ -1012,7 +1042,7 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
               </p>
             )}
 
-            {walk && !interview && (
+            {walk && !bare && (
               <a
                 href={walk.url}
                 target="_blank"
@@ -1410,7 +1440,7 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
               </div>
             ) : (
               <div className="flex shrink-0 flex-wrap items-center gap-2 bg-bg py-3 pl-3 pr-3 max-lg:sticky max-lg:bottom-0 max-lg:z-10 lg:pr-24" data-testid="action-bar" style={{ boxShadow: '0 -1px 0 var(--line)' }}>
-                {!interview && (
+                {!bare && (
                   <button type="button" className="btn btn-ghost" onClick={nextHint} disabled={coachBusy !== null}>
                     <IconBulb size={14} />
                     {coachBusy === 'hint' ? 'Thinking…' : hints.length && hintsShown < hints.length ? `Hint ${hintsShown + 1}/${hints.length}` : 'Hint'}
@@ -1456,7 +1486,7 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
                       )}
                       {ex.complexity && <MenuItem onClick={() => (setShowComplexity(true), setMoreOpen(false))}>Complexity</MenuItem>}
                       <div className="my-1 h-px bg-line" />
-                      {!solutionShown && <MenuItem onClick={viewSolution}>{ex.cleanPass && !session ? 'Show solution (won’t count)' : 'Show solution'}</MenuItem>}
+                      {!solutionShown && !checkpoint && <MenuItem onClick={viewSolution}>{ex.cleanPass && !session ? 'Show solution (won’t count)' : 'Show solution'}</MenuItem>}
                       <MenuItem onClick={() => (setMoreOpen(false), router.push(nextHref))}>Skip for now</MenuItem>
                     </div>
                   )}

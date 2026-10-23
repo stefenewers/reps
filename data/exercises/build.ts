@@ -26,6 +26,10 @@ interface Base {
   style?: RepStyle
   /** Unlabeled transfer: the prompt does not name the technique. */
   transfer?: boolean
+  /** Reps 2.0: a course gate variant (cold, no lesson panel, no solution). */
+  gate?: boolean
+  /** Reps 2.0: part of a lab build; never counts as a daily rep. */
+  lab?: boolean
 }
 
 function prereqsFor(skills: string[]): string[] {
@@ -55,6 +59,8 @@ function base(b: Base, defaults: { stage: Stage; repType: RepType; difficulty: 1
     complexity: b.complexity,
     ...(b.style ? { style: b.style } : {}),
     ...(b.transfer ? { transfer: true } : {}),
+    ...(b.gate ? { gate: true } : {}),
+    ...(b.lab ? { lab: true } : {}),
   }
 }
 

@@ -4,9 +4,12 @@ import { useMemo } from 'react'
 import { useReps } from '@/components/reps-provider'
 import { useCapacity } from '@/components/use-capacity'
 import { useCredits } from '@/components/use-credits'
+import { useCourse } from '@/components/use-course'
+import { PROBLEM_URLS } from '@/data/problem-urls'
+import type { QueuePurpose } from '@/lib/course/routing'
 import { COURSE_START } from '@/data/course/calendar'
 import type { usePacing } from '@/components/use-pacing'
-import { useSolveLog } from '@/components/use-solve-log'
+import { lcMeta, useSolveLog } from '@/components/use-solve-log'
 import { useTargets } from '@/components/use-targets'
 import type { useTraining } from '@/components/use-training'
 import { ALL_EXERCISES, DAY_OF_EXERCISE, EXERCISE_BY_ID } from '@/data/curriculum'
@@ -17,6 +20,9 @@ import { practiceBySkill, repPurpose } from '@/lib/training-state'
 import type { LeetcodeItem } from '@/lib/types'
 
 type Pace = ReturnType<typeof usePacing>
+
+/** How a course queue item shows in today's list. */
+const COURSE_KIND: Record<QueuePurpose, ItemKind> = { learn: 'learn', guided: 'learn', drill: 'drill', combine: 'combine', transfer: 'transfer', gate: 'gate', repair: 'repair', capstone: 'prove', problem: 'problem' }
 type Training = ReturnType<typeof useTraining>
 type DueLc = LeetcodeItem & { solveId: string }
 
@@ -31,6 +37,7 @@ export function useTodayPlan(pace: Pace, training: Training, dueLc: DueLc[]) {
   const { byLc } = useTargets()
   const capacity = useCapacity()
   const credits = useCredits()
+  const course = useCourse()
 
   return useMemo(() => {
     const passed = passedSet(attempts)
@@ -49,8 +56,17 @@ export function useTodayPlan(pace: Pace, training: Training, dueLc: DueLc[]) {
     const prep: Candidate[] = training.pending
       ? []
       : training.plan.blocks.filter((b) => b.extra && b.kind !== 'maintain').flatMap((b) => b.reps.map((id) => rep(id, b.kind === 'reactivate' ? 'warm' : 'redo')))
+    // From Oct 26 the plan is the course queue (units, placement, gates, repairs, targets); before it, the 90-day queue.
+    const coursePlan: Candidate[] | null =
+      today >= COURSE_START
+        ? course.queue.slice(0, 80).map((q) =>
+            q.lc
+              ? { key: q.key, kind: 'problem' as const, title: `LC ${q.lc} · ${lcMeta(q.lc)?.title ?? PROBLEM_URLS[q.lc]?.title ?? ''}`, units: 3, lc: q.lc, ready: Boolean(byLc.get(q.lc)?.ready ?? true) }
+              : { ...rep(q.exerciseId!, COURSE_KIND[q.purpose]), required: q.purpose === 'gate' || q.purpose === 'repair' },
+          )
+        : null
     // The plan: the canonical queue from where you are, reps and new problems in order.
-    const plan: Candidate[] = pace.queue
+    const plan: Candidate[] = coursePlan ?? pace.queue
       .filter((q) => (q.kind === 'rep' ? !passed.has(q.key) : !solvedLc.has(q.lc!.lc)))
       .slice(0, 80)
       .map((q) =>
@@ -78,5 +94,5 @@ export function useTodayPlan(pace: Pace, training: Training, dueLc: DueLc[]) {
     const counted = today >= COURSE_START ? new Set((credits.items[today] ?? []).map((c) => c.key)) : null
     const t = prescribe({ capacity: capacity.requiredReps, phase: capacity.phase, doneToday: counted ? doneToday.filter((d) => counted.has(d.key)) : doneToday, prep, plan, resolves, cold })
     return { ...t, capacityInfo: capacity }
-  }, [attempts, entries, mastery, reviews, today, pace.queue, training, dueLc, byLc, capacity, credits])
+  }, [attempts, entries, mastery, reviews, today, pace.queue, training, dueLc, byLc, capacity, credits, course])
 }

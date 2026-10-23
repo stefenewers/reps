@@ -558,7 +558,8 @@ export const UNITS: LearningUnit[] = [
     prerequisites: ['w12-dp-greedy', 'w12-matrix-tries'],
     lessonIds: [],
     workedExampleIds: [],
-    sections: ['c13-transfer', 'o11-mixed', 'o11-cold'],
+    // Only the unlabeled bank: the October interview reps name their techniques in titles, so they live in Week 14.
+    sections: ['c13-transfer'],
     gateIds: [],
     labIds: ['lab-fde-workflow'],
     targets: [],
@@ -575,7 +576,7 @@ export const UNITS: LearningUnit[] = [
     prerequisites: ['w13-transfer'],
     lessonIds: [],
     workedExampleIds: [],
-    sections: ['o11-speed', 'o11-debug'],
+    sections: ['o11-speed', 'o11-debug', 'o11-cold', 'o11-mixed'],
     gateIds: [],
     labIds: [],
     targets: [],
