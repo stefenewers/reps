@@ -26,6 +26,9 @@ Worktree setup notes (already done; redo only if recreating):
 | `fcd16b4` | `v21-work` | V2.1 phase A (part 1): credit, outside-problem semantics, routing without the Day 2 stall, stricter labs, schedule types, the spec file |
 | `e3953df` | `v21-work` | this handoff + `planning/v21-artifacts/` (workflow outputs) |
 | `29f7e42` | `v21-work` | `lib/course/contract.ts` (the authoritative day/week contract, §9.2) + `lib/course/contract.test.ts` (5 tests) + `data/course/capstones.ts` (`CAPSTONE_LC`). Not yet wired into the UI. |
+| `6970cda` | `v21-work` | Markdown tables + numbered lists (`components/markdown.tsx`, CSS in `app/globals.css`, render test in `lib/course/content.test.ts`); rep pass badge uses `creditReason` (`pass-credit` testid). |
+| `8278ffb` | `v21-work` | Real mock gating (Phase F). |
+| `0c4d13b` | `v21-work` | Progress V2 + course rail (Phase E). Readiness report no longer renders week summaries (Progress does, from the contract). |
 | `ba80f69` | `v21-work` | Readiness rewritten per §9.3 (seven dimensions, exact evidence, contract-derived track, lab evidence, stricter final decision) + `lib/course/readiness.test.ts` (6 tests); `use-course-day` builds contracts (streak, flame = blaze only when contract complete, week status, readiness); Today's Day complete reads `dayContract.complete` and shows a "Done for today when" list (`still-due`). |
 
 ## 3. Phases
@@ -37,8 +40,8 @@ Worktree setup notes (already done; redo only if recreating):
 | B — Today command center | Not started (design in §9). |
 | C — interactive demo engine + visualizers | Not started (design in §9). |
 | D — worked examples Weeks 3–12 | Not started. |
-| E — Progress V2 | Not started (audit lists every legacy section to remove). |
-| F — readiness + labs | Design done (§9), not implemented. |
+| E — Progress V2 | **Done** (`0c4d13b`): `components/course/course-progress.tsx` replaces Progress in course mode; header rail = course output (`lib/course/rail.ts`). |
+| F — readiness + labs | **Done**: readiness (`ba80f69`), real mock gating (`8278ffb`, `components/use-mock-gate.ts`, used by `interview-view.tsx` and `mock-session.tsx`). |
 | G — motivation / gamification wiring | Not started. |
 | H — QA | Not started. |
 
@@ -61,7 +64,7 @@ Worktree setup notes (already done; redo only if recreating):
 
 ## 5. Tests
 
-In the worktree at the contract commit: `npm run lint` clean, `npx tsc --noEmit -p .` clean, `npm test` **284 / 284 pass** (incl. `lib/course/contract.test.ts`, run against the DERIVED schedule — re-check after curation fills `CURATED`). Not run on this commit yet: `verify:content`, `verify:pyodide`, `audit:curriculum`, `audit:migration` (may need updating: it imports `unitReps`, still exported), e2e, build.
+In the worktree at the contract commit: `npm run lint` clean, `npx tsc --noEmit -p .` clean, `npm test` **285 / 285 pass** (incl. `lib/course/contract.test.ts`, run against the DERIVED schedule — re-check after curation fills `CURATED`). Not run on this commit yet: `verify:content`, `verify:pyodide`, `audit:curriculum`, `audit:migration` (may need updating: it imports `unitReps`, still exported), e2e, build.
 
 Known test gaps the spec requires (§29) that do not exist yet: curriculum fit per week, daily/week completion contract, readiness classification + upgrade + lab evidence, Today visibility/CTA, demo determinism, Week 13 leakage on Today titles.
 
@@ -97,7 +100,7 @@ Confirmed by hand while implementing (true regardless of verifier status):
 
 ## 8. Week curation — status and how to integrate
 
-Status: weeks 1–8 curating, 9–14 queued (none finished at writing time). Nothing integrated.
+Status (latest check): curators finished for weeks 1, 5, 6, 7, 9, 10, 11, 12; weeks 2, 3, 4, 8, 13, 14 still curating; reviews/revisions follow. Nothing integrated yet.
 
 Budget rule (curators and the tests must use exactly this):
 - `allowance = ceil(0.15 × weekTarget)` reserved for warm-ups, retrieval, re-solves.
