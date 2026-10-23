@@ -110,9 +110,19 @@ All eight final quality commands passed on the frozen implementation:
 | `npm run audit:curriculum` | All guardrails pass |
 | `npm run build` | Pass; 106 static pages generated |
 
-The definitive fresh 33-case browser run is tracked in the handoff's latest
-status. Earlier targeted runs passed all seven added cases. An interrupted
-partial run is not claimed as full verification.
+| `npm run test:e2e` (`--workers=1`) | **33 passed, zero failed** (fresh full run) |
+
+The full browser suite passed fresh on one worker. Getting there needed two
+test-only fixes in `e2e/course.spec.ts`, and no product changes:
+- Several cases imported app modules with `await import('@/...')` inside the
+  test; the Playwright transform did not resolve the alias there on macOS.
+  They are now static imports.
+- The malformed-import case read the week count before its first import had
+  landed. It now waits for the import confirmation first.
+
+The earlier two-worker reactivation timeout did not reproduce: the case passes
+alone and in the full single-worker run. Lint, type-check and the 335 unit
+tests were re-run after the test fix and pass.
 
 The production build was browser-reviewed on eight screens at 1440px and 390px:
 16 HTTP 200 results, zero page errors and zero root overflow. The separate
@@ -140,7 +150,6 @@ production learner records or database policies were changed.
 
 ## Handoff status
 
-Implementation and all eight quality checks are complete. Final browser sign-off
-is still open: the two-worker run hit a 5-second navigation timeout in legacy
-reactivation. Earlier single-worker coverage passed that flow. See
-`planning/CLAUDE_CODE_HANDOFF.md` for the exact first task and failure evidence.
+Implementation, all eight quality checks and the full 33-case browser suite
+pass on `v21-work`. Nothing is merged to `main` and nothing is deployed:
+release needs the user's explicit go-ahead.

@@ -1,4 +1,11 @@
 import { test, expect, type Page } from '@playwright/test'
+import { GATE_BY_ID } from '@/data/course/gates'
+import { LAB_BY_ID } from '@/data/course/lessons'
+import { UNITS } from '@/data/course/units'
+import { MOCKS } from '@/data/mocks'
+import { createContracts } from '@/lib/course/contract'
+import { courseStatus } from '@/lib/course/routing'
+import { DEMOS } from '@/lib/demos'
 import { SECTION_BY_ID } from '@/data/course'
 import { EXERCISE_BY_ID } from '@/data/curriculum'
 
@@ -153,7 +160,6 @@ test('learning objects: a lesson, a worked example by subgoals that hands off to
 })
 
 test('Today exposes every due lab, checkpoint and target, including locked and carried work', async ({ page }) => {
-  const { createContracts } = await import('@/lib/course/contract')
   const input = { attempts: [], entries: [], mastery: {}, labStates: {}, exercises: EXERCISE_BY_ID, sections: SECTION_BY_ID }
   for (const date of ['2026-10-27', '2026-10-28', '2026-12-02']) {
     await at(page, `${date}T12:00:00-05:00`)
@@ -205,7 +211,6 @@ test('Saturday shows open work as optional and February shows the final decision
 })
 
 test('every interactive concept loads, steps and resets on a 390px screen with reduced motion', async ({ page }) => {
-  const { DEMOS } = await import('@/lib/demos')
   await page.setViewportSize({ width: 390, height: 844 })
   await page.emulateMedia({ reducedMotion: 'reduce' })
   for (const demo of DEMOS) {
@@ -261,7 +266,6 @@ test('a seen outside solution earns credit only after a rebuild on a later train
 })
 
 test('placement is a working cold session, and a locked Road unit names its prerequisite', async ({ page }) => {
-  const { UNITS } = await import('@/data/course/units')
   const unit = UNITS[1]
   await at(page, '2026-10-27T12:00:00-04:00')
   await page.goto('/')
@@ -288,7 +292,6 @@ test('placement is a working cold session, and a locked Road unit names its prer
 })
 
 test('lab design, build evidence, change evidence and review combine into persisted completion without rep credit', async ({ page }) => {
-  const { LAB_BY_ID } = await import('@/data/course/lessons')
   const lab = LAB_BY_ID['lab-savings-goal']
   await at(page, '2026-10-27T16:00:00-04:00')
   await page.goto('/')
@@ -311,7 +314,6 @@ test('lab design, build evidence, change evidence and review combine into persis
 
 for (const grade of ['red', 'yellow', 'green'] as const) {
   test(`Week 14 ${grade} explains and enforces its mock allowance`, async ({ page }) => {
-    const { MOCKS } = await import('@/data/mocks')
     const bank = SECTION_BY_ID['c13-transfer'].exercises
     const small = bank.filter((e) => e.stage !== 'interview' && e.minutes < 15)
     const chosen = grade === 'green' ? bank : grade === 'yellow' ? small.slice(0, 6) : []
@@ -340,7 +342,10 @@ test('a malformed progress file is rejected visibly and leaves saved progress in
   await at(page, '2026-10-26T16:00:00-04:00')
   await page.goto('/')
   await page.getByLabel('Import progress file').setInputFiles(bundle([{ id: WEEK1[0], date: '2026-10-26' }]))
+  // The import must land before the page is left, or "before" is read from an empty store.
+  await expect(page.getByText(/Imported/)).toBeVisible()
   await page.goto('/')
+  await expect(page.getByTestId('week-count')).toHaveText('1 / 50 problems')
   const before = await page.getByTestId('week-count').textContent()
   await page.getByLabel('Import progress file').setInputFiles({ name: 'broken.json', mimeType: 'application/json', buffer: Buffer.from('{broken') })
   await expect(page.getByRole('status').filter({ hasText: 'Import failed:' })).toBeVisible()
@@ -349,11 +354,8 @@ test('a malformed progress file is rejected visibly and leaves saved progress in
 })
 
 test('a failed checkpoint routes real repair, then offers fresh cold variants on the next day', async ({ page }) => {
-  const { UNITS } = await import('@/data/course/units')
-  const { GATE_BY_ID } = await import('@/data/course/gates')
   const gate = GATE_BY_ID['g-loop-control']
   const failedId = gate.pool[0]
-  const { courseStatus } = await import('@/lib/course/routing')
   const history = [...UNITS[0].path!, ...UNITS[1].path!].map((id) => ({ id, date: '2026-10-20' }))
   const file = bundle([
     ...history,

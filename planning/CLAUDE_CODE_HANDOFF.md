@@ -160,3 +160,23 @@ Final wrap status (user requested immediate handoff at 3% usage):
 - Saved quality summary: `planning/v21-artifacts/FINAL_VALIDATION.json`.
 - Saved browser failure: `planning/v21-artifacts/FINAL_E2E_FAILURE.md`.
 - Do not claim final product sign-off until the full browser suite passes.
+
+
+## Resolution (Claude Code, Oct 23)
+
+- The reactivation case passes alone with one worker (30 s); the earlier
+  failure was two-worker timing. No timeout was raised.
+- The first fresh single-worker full run on macOS failed 5 course cases:
+  - 4 from in-test `await import('@/...')` not alias-resolved by the
+    Playwright transform here;
+  - 1 from reading the week count before the first import landed.
+- Both fixed in `e2e/course.spec.ts` only: static imports, and waiting for
+  "Imported". No product code changed.
+- Result: `course.spec.ts` 18/18, then the **full suite 33/33**
+  (`E2E_PORT=3231 npx playwright test --workers=1`). Lint, type-check and
+  335 unit tests re-passed afterwards.
+- Final validation is recorded in `docs/reps-2-completion.md` and
+  `planning/v21-artifacts/FINAL_VALIDATION.json`.
+- Status: ready for the user's review. Not merged, not deployed.
+- Local note: the worktree at `/Users/ruggudile/Desktop/Projects/reps-v21` now
+  has its own `node_modules`, because Turbopack rejects a symlinked one.

@@ -74,16 +74,16 @@ from the curated required path. Content and Python checks must pass afresh.
 
 ## VALIDATION GAP
 
-- [ ] Initial full browser suite, before changes.
-- [ ] Regression tests for C1–C6 and placement/retrieval behavior.
-- [ ] Learner states: pre-start, first day, partial/full day, Sunday/holiday,
+- [x] Initial full browser suite, before changes (26 passed, recorded before product changes).
+- [x] Regression tests for C1–C6 and placement/retrieval behavior.
+- [x] Learner states: pre-start, first day, partial/full day, Sunday/holiday,
   failed/repaired/passed gate, strong placement, lab completion, complete/
   recoverable/off-track week, Week 13, green/yellow/red Week 14, multiweek
   progress and stale return. Cover pure state transitions plus browser actions.
-- [ ] Fresh full lint, types, unit, content, Pyodide, migration, curriculum,
+- [x] Fresh full lint, types, unit, content, Pyodide, migration, curriculum,
   browser and production build checks after implementation.
-- [ ] Desktop/phone review, persistence reload and runtime error inspection.
-- [ ] Read-only production deployment health; distinguish deployed main from
+- [x] Desktop/phone review, persistence reload and runtime error inspection.
+- [x] Read-only production deployment health; distinguish deployed main from
   local branch. No production deploy or merge authorized.
 
 ## Implementation checklist
