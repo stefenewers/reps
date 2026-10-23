@@ -7,6 +7,9 @@ import { DAYS } from '@/data/curriculum'
 import { INTERVIEW_TARGET } from '@/data/program'
 import { programProgress } from '@/lib/progress'
 import ProgramProgress from '@/components/program-progress'
+import { useCredits } from '@/components/use-credits'
+import { COURSE_START } from '@/data/course/calendar'
+import { courseRail } from '@/lib/course/rail'
 import BrandMark from '@/components/brand-mark'
 import { useCallback, useMemo } from 'react'
 import type { SyncStatus } from '@/lib/storage/types'
@@ -50,9 +53,11 @@ function SyncIndicator() {
 /** The Reps mark: three stacked bars, one per rep. */
 export default function Header() {
   const pathname = usePathname() ?? '/'
-  const { attempts, loaded, repo } = useReps()
+  const { attempts, loaded, repo, today } = useReps()
   // The whole-program finish line: canonical curriculum reps only.
-  const program = useMemo(() => programProgress(DAYS, attempts), [attempts])
+  // During the course the rail is qualifying output against the 950-problem course; before it, the old plan.
+  const credits = useCredits()
+  const program = useMemo(() => (today >= COURSE_START ? courseRail(credits.byDate) : programProgress(DAYS, attempts)), [attempts, today, credits])
   const lastLocal = useCallback(() => repo.lastLocalCompletionAt, [repo])
   const pct = Math.round(program.fraction * 100)
   // The public demo has its own minimal top bar and none of the personal navigation.

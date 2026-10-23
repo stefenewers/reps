@@ -1,26 +1,16 @@
 'use client'
 
-import { DOMAIN_LABEL, DOMAIN_TONE, TRACK_LABEL, WEEK_STATUS_LABEL } from '@/components/course/course-cards'
+import { DOMAIN_LABEL, DOMAIN_TONE, TRACK_LABEL } from '@/components/course/course-cards'
 import { useCourseDay } from '@/components/use-course-day'
-import { useReps } from '@/components/reps-provider'
-import { courseWeekOf, weekDates } from '@/data/course/calendar'
-import { LABS } from '@/data/course/lessons'
-import { motivate } from '@/data/course/motivation'
-import { WEEKS } from '@/data/course/weeks'
-import { labKey, labProgress, type LabState } from '@/lib/course/labs'
-import { weekProgress } from '@/lib/course/week-status'
 
 /**
- * The February readiness report (REPS_2_MASTER_SPEC.md §37) and the weekly
- * summaries (§31, §50): evidence by domain, why each stands where it does,
- * and what each finished week moved.
+ * The February readiness report (REPS_2_MASTER_SPEC.md §37; REPS_2_1_SPEC.md §11, §18):
+ * the seven dimensions with their reasons, Core DSA topic by topic, and the
+ * evidence by exact kind. Week summaries live on Progress (components/course/course-progress.tsx).
  */
 export default function ReadinessReport() {
   const cd = useCourseDay()
-  const { attempts, repo, today } = useReps()
   const r = cd.readiness
-  const current = courseWeekOf(today)
-  const finished = WEEKS.filter((w) => w.number < current)
   return (
     <div className="flex flex-col gap-8">
       <section aria-labelledby="readiness" className="panel p-6" data-testid="readiness-report">
@@ -89,47 +79,6 @@ export default function ReadinessReport() {
         <p className="mt-3 text-[12px] text-faint">Each problem counts once, at its strongest: a later independent solve upgrades an earlier assisted one. Full problems only: capstones, checkpoints, unlabeled and interview problems. No single readiness percentage: each line says why.</p>
       </section>
 
-      {finished.length > 0 && (
-        <section aria-labelledby="weeks-h" data-testid="week-summaries">
-          <h2 id="weeks-h" className="h2">
-            Weeks so far
-          </h2>
-          <ol className="mt-3 flex flex-col gap-3">
-            {[...finished].reverse().map((w) => {
-              const p = weekProgress(w.number, weekDates(w.number)[6], cd.credits)
-              const labs = LABS.filter((l) => l.week === w.number).map((l) => ({ l, done: labProgress(l, repo.state<LabState>(labKey(l.id)), attempts).done }))
-              const gates = cd.course.statuses.filter((s) => s.unit.week === w.number).flatMap((s) => s.gates.filter((g) => g.available.length))
-              const complete = p.done >= p.target && labs.filter((x) => !x.l.optional).every((x) => x.done) && gates.every((g) => g.cleared)
-              return (
-                <li key={w.number} className="panel p-5" data-week={w.number}>
-                  <div className="flex flex-wrap items-baseline justify-between gap-2">
-                    <p className="text-[16px] font-semibold tracking-tight text-ink">
-                      Week {w.number} {complete ? 'complete' : `· ${w.title}`}
-                    </p>
-                    <span className="text-[12px] font-semibold uppercase tracking-wide text-muted">{WEEK_STATUS_LABEL[p.status]}</span>
-                  </div>
-                  <p className="num mt-1 text-[14px] text-ink-2">
-                    {p.daysComplete} training day{p.daysComplete === 1 ? '' : 's'} complete · {p.done} / {p.target} qualifying problems
-                  </p>
-                  <ul className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[13px]">
-                    {labs.map(({ l, done }) => (
-                      <li key={l.id} className={done ? 'text-green-ink' : 'text-muted'}>
-                        {done ? '✓' : '—'} {l.title}
-                      </li>
-                    ))}
-                    {gates.map((g) => (
-                      <li key={g.gate.id} className={g.cleared ? 'text-cold' : 'text-muted'}>
-                        {g.cleared ? '✓' : '—'} {g.gate.title} checkpoint
-                      </li>
-                    ))}
-                  </ul>
-                  {complete && <p className="mt-2 text-[13.5px] text-ink">{motivate('week-complete', { week: w.number, weekDone: p.done }).text}</p>}
-                </li>
-              )
-            })}
-          </ol>
-        </section>
-      )}
     </div>
   )
 }
