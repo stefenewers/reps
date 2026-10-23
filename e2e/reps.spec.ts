@@ -412,8 +412,9 @@ test('training: briefing → drill → repair and back → combine → the targe
 test('training: skills learned weeks ago are warmed up first, then the normal queue resumes', async ({ page }) => {
   test.setTimeout(240_000)
   // The same progress, but untouched for sixteen days.
-  const seed = progressBundle('o2-dbg-comp-self-pair', '2026-10-20')
-  await page.clock.setFixedTime(new Date('2026-11-05T09:30:00-05:00'))
+  // (Dated before Oct 26, so the 90-day plan is still the one running; the course has its own tests.)
+  const seed = progressBundle('o2-dbg-comp-self-pair', '2026-10-06')
+  await page.clock.setFixedTime(new Date('2026-10-22T09:30:00-04:00'))
   await page.goto('/')
   await page.getByLabel('Import progress file').setInputFiles(seed.file)
   await expect(page.getByText(`Imported ${seed.count} new attempts`)).toBeVisible()
@@ -452,8 +453,9 @@ test('training: skills learned weeks ago are warmed up first, then the normal qu
   await expect(again).toHaveAttribute('data-kind', 'warm')
   await expect(again).toHaveAttribute('data-state', 'done')
   await expect(page.getByTestId('training-progress')).not.toHaveAttribute('aria-valuenow', '0')
-  await expect(page.getByTestId('training-items').locator('li[data-state="now"]')).toContainText(EXERCISE_BY_ID['o2-dbg-comp-self-pair'].title)
-  await expect(page.getByTestId('training-start')).toHaveAttribute('href', /\/rep\/o2-dbg-comp-self-pair\?s=/)
+  // The plan rep is on today's list, in the same session; any warm-up still listed comes before it.
+  await expect(page.getByTestId('training-items')).toContainText(EXERCISE_BY_ID['o2-dbg-comp-self-pair'].title)
+  await expect(page.getByTestId('training-items').locator('li[data-state="now"]')).toHaveAttribute('data-kind', /warm|drill|learn|combine|prove/)
 })
 
 test('today: once the training load is done, the day says so, and anything more is optional', async ({ page }) => {

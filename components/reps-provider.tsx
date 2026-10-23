@@ -1,5 +1,6 @@
 'use client'
 
+import { COURSE_END } from '@/data/course/calendar'
 import { createContext, useContext, useEffect, useMemo, useState, useSyncExternalStore, type ReactNode } from 'react'
 import { SKILLS } from '@/data/skills'
 import { DAY_BY_DATE, FIRST_DAY, LAST_DAY, PLAN_START, REQUIRED_MODULES } from '@/data/curriculum'
@@ -62,8 +63,22 @@ function getRepository(): RepsRepository {
 }
 
 /** The study day: the real local date, held inside Oct 2 – Oct 11. */
+/** Dev only: preview another day with ?asOf=YYYY-MM-DD (kept for the tab). Never in production. */
+function devAsOf(): string | null {
+  if (process.env.NODE_ENV === 'production' || typeof window === 'undefined') return null
+  try {
+    const q = new URLSearchParams(window.location.search).get('asOf')
+    if (q && /^\d{4}-\d{2}-\d{2}$/.test(q)) window.sessionStorage.setItem('reps-as-of', q)
+    if (q === 'off') window.sessionStorage.removeItem('reps-as-of')
+    return window.sessionStorage.getItem('reps-as-of')
+  } catch {
+    return null
+  }
+}
+
 export function studyToday(now = new Date()): string {
-  return clampDate(localDate(now), FIRST_DAY, LAST_DAY)
+  // The calendar runs to the end of the 14-week course (Jan 31), past the old plan's last day.
+  return devAsOf() ?? clampDate(localDate(now), FIRST_DAY, LAST_DAY > COURSE_END ? LAST_DAY : COURSE_END)
 }
 
 export function RepsProvider({ children }: { children: ReactNode }) {

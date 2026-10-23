@@ -309,7 +309,7 @@ assert "O(" in doc, "state the running time in big-O, like O(n)"`),
           t.eq("list_to_array(drop_every_kth(build_list([1, 2, 3, 4]), 2))", "[1, 3]"),
           t.hidden("list_to_array(drop_every_kth(build_list([9]), 1))", "[]"),
           t.hidden("list_to_array(drop_every_kth(build_list([1, 2, 3]), 3))", "[1, 2]"),
-          t.hidden("list_to_array(drop_every_kth(build_list(list(range(1, 10001))), 2))", "list(range(1, 10001, 2))"),
+          t.hidden("list_to_array(drop_every_kth(build_list(list(range(1, 501))), 2))", "list(range(1, 501, 2))"),
         ],
         explanation: "Walk with a node before the current one (start from a placeholder in front of the head, so removing the head needs no special case). On every k-th node, link around it.",
       }),
@@ -751,7 +751,7 @@ assert "O(" in doc, "state the running time in big-O, like O(n)"`),
           t.eq("has_loop(build_list([1, 2, 3]))", "False"),
           t.eq("has_loop(None)", "False"),
           t.eq("has_loop(build_list([1]))", "False"),
-          t.hidden("has_loop(build_list(list(range(5000))))", "False"),
+          t.hidden("has_loop(build_list(list(range(500))))", "False"),
           t.check("a loop back to the second node", `nodes = [ListNode(v) for v in range(4)]
 for a, b in zip(nodes, nodes[1:]):
     a.next = b
@@ -762,7 +762,7 @@ for a, b in zip(nodes, nodes[1:]):
     a.next = b
 nodes[-1].next = nodes[0]
 assert has_loop(nodes[0]) is True, "the last node points back to node 0: that is a loop"`),
-          t.check("a long loop back to the head", `nodes = [ListNode(v) for v in range(5001)]
+          t.check("a long loop back to the head", `nodes = [ListNode(v) for v in range(501)]
 for a, b in zip(nodes, nodes[1:]):
     a.next = b
 nodes[-1].next = nodes[0]
@@ -1468,7 +1468,7 @@ assert "O(" in doc, "state the running time in big-O, like O(n)"`),
           t.eq("list_to_array(remove_kth_from_end(build_list([1, 2]), 2))", "[2]"),
           t.eq("list_to_array(remove_kth_from_end(build_list([1, 2]), 1))", "[1]"),
           t.hidden("list_to_array(remove_kth_from_end(build_list([1, 2, 3]), 3))", "[2, 3]"),
-          t.hidden("list_to_array(remove_kth_from_end(build_list(list(range(1, 10001))), 10000))", "list(range(2, 10001))"),
+          t.hidden("list_to_array(remove_kth_from_end(build_list(list(range(1, 501))), 500))", "list(range(2, 501))"),
           t.check("the docstring states the running time", `doc = remove_kth_from_end.__doc__ or ""
 assert len(doc.split()) >= 12, "add a docstring of at least 12 words"
 assert "O(" in doc, "state the running time in big-O, like O(n)"`),

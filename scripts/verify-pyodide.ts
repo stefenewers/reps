@@ -13,13 +13,14 @@ import { ALL_EXERCISES, MODULES as DAYS, allDayExercises as dayExercises } from 
 import { MOCK_EXERCISES } from '@/data/mocks'
 import { PRIMERS, primerPrograms } from '@/data/primers'
 import { hasBlanks, outputMatches } from '@/lib/answers'
+import { runPythonBatch } from '@/lib/content-check'
 import type { Exercise, TestCase } from '@/lib/types'
 
 const SLOW_MS = 2500
 
 async function main() {
   const only = process.argv[2]
-  const list: Exercise[] = only ? (only === 'mocks' ? MOCK_EXERCISES : dayExercises(DAYS.find((d) => d.date === only)!)) : ALL_EXERCISES
+  const list: Exercise[] = process.env.REPS_ONLY ? ALL_EXERCISES.filter((e) => process.env.REPS_ONLY!.split(',').includes(e.id)) : only ? (only === 'mocks' ? MOCK_EXERCISES : dayExercises(DAYS.find((d) => d.date === only)!)) : ALL_EXERCISES
   const py = await loadPyodide({ indexURL: path.join(process.cwd(), 'node_modules/pyodide') })
   py.runPython(readFileSync(path.join(process.cwd(), 'public/python/harness.py'), 'utf8'))
   const main = py.globals.get('__reps_main')
@@ -31,10 +32,19 @@ async function main() {
     return { r, ms: performance.now() - t }
   }
 
+  // Starters that loop forever (on purpose, in some debug reps): found first with local python3, which has a timeout.
+  const loopy = list.filter((e) => e.starterCode && /\bwhile\b/.test(e.starterCode) && e.tests?.length)
+  const local = runPythonBatch(loopy.map((e) => ({ id: e.id, code: e.starterCode!, tests: e.tests! })))
+  const hangs = new Set(loopy.filter((e) => /time|limit|took too long/i.test(local.get(e.id)?.error ?? '') || (local.get(e.id)?.tests ?? []).some((t) => /time|limit/i.test(t.error ?? ''))).map((e) => e.id))
+  if (hangs.size) console.log(`Skipping ${hangs.size} starter(s) that never finish on purpose: ${[...hangs].join(', ')}`)
+
   const problems: string[] = []
   const slow: string[] = []
   let checked = 0
+  let n = 0
   for (const e of list) {
+    if (++n % 200 === 0) console.log(`  … ${n} of ${list.length} reps`)
+    if (process.env.TRACE_REPS) console.log(`  > ${e.id}`)
     if (e.kind === 'output' && e.code) {
       const { r, ms } = run(e.code)
       checked++
@@ -48,6 +58,8 @@ async function main() {
       if (r.error || bad.length) problems.push(`[${e.id}] solution fails in Pyodide: ${r.error ?? bad.map((t) => `${t.name}: ${t.error ?? `expected ${t.expected} got ${t.actual}`}`).join('; ').slice(0, 300)}`)
       if (ms > SLOW_MS) slow.push(`[${e.id}] solution ${Math.round(ms)} ms`)
       if (e.starterCode && !hasBlanks(e.starterCode)) {
+        // A debug rep's starter may loop forever on purpose (the browser stops it at 5 s); Pyodide here cannot be interrupted.
+        if (hangs.has(e.id)) continue
         const s = run(e.starterCode, e.tests)
         if (!s.r.error && s.r.tests.length && s.r.tests.every((t) => t.passed)) problems.push(`[${e.id}] starter passes every test in Pyodide`)
         if (s.ms > SLOW_MS) slow.push(`[${e.id}] starter ${Math.round(s.ms)} ms (browser stops at 5000 ms)`)
