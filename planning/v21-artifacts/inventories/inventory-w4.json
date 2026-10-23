@@ -1,0 +1,1542 @@
+{
+ "week": 4,
+ "title": "Windows + Stacks",
+ "focus": "Sliding window, stacks",
+ "purpose": "Maintain a valid window as it moves; let the most recent unfinished item go first.",
+ "weekTarget": 75,
+ "dailyTarget": 15,
+ "trainingDays": [
+  "2026-11-16",
+  "2026-11-17",
+  "2026-11-18",
+  "2026-11-19",
+  "2026-11-20"
+ ],
+ "units": [
+  {
+   "id": "w4-windows",
+   "title": "Sliding windows",
+   "purpose": "Two pointers plus maintained state plus a validity rule: enter, repair while invalid, measure.",
+   "prerequisites": [
+    "w3-two-pointers"
+   ],
+   "lessonIds": [
+    "sliding-window"
+   ],
+   "workedExampleIds": [],
+   "targets": [
+    {
+     "lc": 3,
+     "title": "Longest Substring Without Repeating Characters",
+     "solvedInRepsBy": "cap-longest-substring"
+    }
+   ],
+   "readinessTargets": [
+    {
+     "lc": 424,
+     "title": "Longest Repeating Character Replacement"
+    }
+   ],
+   "labs": [
+    {
+     "id": "lab-activity-window",
+     "title": "Activity Window Analyzer",
+     "optional": false
+    }
+   ],
+   "gates": [
+    {
+     "id": "g-fixed-window",
+     "title": "Fixed window",
+     "need": 1,
+     "skills": [
+      "sliding_window",
+      "state_tracking"
+     ],
+     "pool": [
+      "d4w-ck-quietest-start",
+      "d4-cold-avg-window"
+     ]
+    },
+    {
+     "id": "g-variable-window",
+     "title": "Variable window",
+     "need": 2,
+     "skills": [
+      "sliding_window",
+      "window_state"
+     ],
+     "pool": [
+      "d4w-ck-few-misses",
+      "d4w-ck-shortest-reaching",
+      "d4w-ck-all-different",
+      "d4w-ck-fresh-streak",
+      "d4-cold-longest-unique",
+      "d4-cold-shortest"
+     ]
+    }
+   ],
+   "sections": [
+    {
+     "id": "d4-windows",
+     "title": "Windows",
+     "reps": [
+      {
+       "id": "d4-win-trace-slices",
+       "title": "Trace fixed windows",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 2,
+       "difficulty": 1,
+       "skills": [
+        "sliding_window",
+        "slicing",
+        "range"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Each line printed is one **window** of `s`: its left index, its right index, and the characters inside. What does this print?"
+      },
+      {
+       "id": "d4-win-all-windows",
+       "title": "List every window",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "sliding_window",
+        "slicing",
+        "range"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`s` is a string and `k` is a window size (a whole number, 1 or more). A **substring** is a run of neighbouring characters with none skipped. `\"bc\"` is a substring of `\"abcd\"`, but `\"ac\"` isn't. Write `all_windows(s, k)`."
+      },
+      {
+       "id": "d4-win-max-sum-k",
+       "title": "Slide a running sum",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 7,
+       "difficulty": 2,
+       "skills": [
+        "sliding_window",
+        "state_tracking"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of numbers. `max_sum_k(nums, k)` returns the largest sum of any `k` neighbouring values. `max_sum_k([1, 4, 2, 10], 2)` → `12` (`2 + 10`) `max_sum_k([-3, -1, -2], 1)` → `-1` (every value is negative, so t"
+      },
+      {
+       "id": "d4-win-debug-leaving",
+       "title": "Fix the smallest window sum",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "sliding_window",
+        "state_tracking"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of numbers. `min_sum_k(nums, k)` should return the smallest sum of any `k` neighbouring values. It keeps a running sum and slides it one step at a time. `min_sum_k([3, 1, 2, 5], 2)` → `3` (`1 + 2`) Assum"
+      },
+      {
+       "id": "d4-win-max-vowels",
+       "title": "Most vowels in k letters",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 7,
+       "difficulty": 3,
+       "skills": [
+        "sliding_window",
+        "window_state",
+        "conditionals"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`s` is a string of lowercase letters. Write `max_vowels(s, k)`. Return the largest number of vowels (`a e i o u`) in any substring of length `k`. Assume `1 <= k <= len(s)`. `max_vowels(\"abciiidef\", 3)` → `3` (`\"iii\"`) `m"
+      },
+      {
+       "id": "d4-win-trace-variable",
+       "title": "Trace grow and shrink",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 2.5,
+       "difficulty": 2,
+       "skills": [
+        "sliding_window",
+        "while_loop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "The window `nums[left..right]` must keep its total at most `limit`. Each loop adds `nums[right]`, then shrinks the window from the left until the total fits again. Then it prints `right`, `left` and the total. What does "
+      },
+      {
+       "id": "d4-win-longest-under",
+       "title": "Longest run under a limit",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 8,
+       "difficulty": 3,
+       "skills": [
+        "sliding_window",
+        "state_tracking",
+        "while_loop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of **positive** numbers and `limit` is a number. `longest_under(nums, limit)` returns the length of the longest stretch of neighbouring values whose sum is at most `limit`. If not even one value fits, it"
+      },
+      {
+       "id": "d4-win-debug-shrink",
+       "title": "Fix the shortest window",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "sliding_window",
+        "while_loop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of positive numbers. `shortest_at_least(nums, goal)` should return the length of the shortest stretch of neighbouring values whose sum is at least `goal`, or `0` if no stretch reaches it. `shortest_at_le"
+      }
+     ]
+    },
+    {
+     "id": "d4-window-state",
+     "title": "Window state",
+     "reps": [
+      {
+       "id": "d4-ws-trace-set",
+       "title": "Trace a set window",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 2.5,
+       "difficulty": 2,
+       "skills": [
+        "window_state",
+        "sliding_window",
+        "set_add"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "The set `seen` is the **window state**: it should always hold exactly the characters inside the window `s[left..right]`. Each line prints `right`, `left` and the set. What does this print?"
+      },
+      {
+       "id": "d4-ws-remove-one",
+       "title": "Decrement and delete",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "window_state",
+        "dict_lookup",
+        "dict_assign"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`counts` is a dict used as window state. It maps each item in the window to how many copies of it are inside. `key` is an item that is leaving the window, so it is always in `counts`. Write `remove_one(counts, key)`. Low"
+      },
+      {
+       "id": "d4-ws-nearby-dup",
+       "title": "Duplicate within k",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 7,
+       "difficulty": 3,
+       "skills": [
+        "window_state",
+        "set_add",
+        "enumerate"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of numbers and `k` is a whole number, 0 or more. Write `has_nearby_duplicate(nums, k)`: return `True` if two equal values sit at different indexes that are at most `k` apart, otherwise `False`. `has_near"
+      },
+      {
+       "id": "d4-ws-longest-run",
+       "title": "Longest run of one character",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "sliding_window",
+        "string_index",
+        "state_tracking"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `longest_run(s)`: the length of the longest block of one character repeated side by side in the string `s`. An empty string gives `0`. `\"aaabbbbcc\"` → `4` The window is the current block. When the character changes"
+      },
+      {
+       "id": "d4-ws-debug-size",
+       "title": "Fix the rising run",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "sliding_window",
+        "state_tracking"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of numbers. `longest_rising(nums)` should return the length of the longest stretch of neighbouring values where each is strictly bigger than the one before it. A single value is a stretch of 1; an empty "
+      },
+      {
+       "id": "d4-ws-distinct-windows",
+       "title": "Distinct values per window",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 11,
+       "difficulty": 4,
+       "skills": [
+        "window_state",
+        "frequency_map",
+        "sliding_window"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of numbers. Write `distinct_per_window(nums, k)`. For each window of size `k`, from left to right, count how many **distinct** (different) values it holds. Return those counts as a list. If `k > len(nums"
+      },
+      {
+       "id": "d4-ws-debug-no-del",
+       "title": "Fix the distinct counter",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "window_state",
+        "frequency_map"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of numbers. `max_distinct(nums, k)` should return the largest number of **distinct** (different) values in any window of `k` neighbouring items. It keeps its window state in `counts`, a dict from each va"
+      },
+      {
+       "id": "d4-ws-anagram-window",
+       "title": "Hidden anagram",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 11,
+       "difficulty": 4,
+       "skills": [
+        "window_state",
+        "frequency_map",
+        "sliding_window",
+        "dict_get"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`pattern` and `s` are strings of lowercase letters. Write `has_anagram(pattern, s)`: return `True` if some substring of `s` with length `len(pattern)` uses exactly the same letters as `pattern` (same counts, any order). "
+      },
+      {
+       "id": "d4-ws-flip-zeros",
+       "title": "Longest ones with k flips",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 10,
+       "difficulty": 4,
+       "skills": [
+        "sliding_window",
+        "state_tracking",
+        "while_loop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`bits` is a list of 0s and 1s. You may change at most `k` of the zeros into ones. Write `longest_ones(bits, k)` returning the length of the longest unbroken stretch of ones you can end up with. An empty list gives `0`. `"
+      },
+      {
+       "id": "d4-ws-two-kinds",
+       "title": "Longest with at most two kinds",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 10,
+       "difficulty": 4,
+       "skills": [
+        "window_state",
+        "sliding_window",
+        "frequency_map",
+        "state_tracking"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`s` is a string. Write `longest_two_kinds(s)`. Return the length of the longest substring (neighbouring characters, none skipped) that uses **at most two different characters**. An empty string gives `0`. `longest_two_ki"
+      },
+      {
+       "id": "d4-ws-k-kinds",
+       "title": "At most k kinds",
+       "kind": "code",
+       "stage": "reconstruct",
+       "repType": "foundation",
+       "minutes": 8,
+       "difficulty": 3,
+       "skills": [
+        "window_state",
+        "sliding_window",
+        "frequency_map"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`s` is a string and `k` is a whole number, 0 or more. Write `longest_k_kinds(s, k)`. Return the length of the longest substring of `s` that uses at most `k` different characters. When `k` is 0, the answer is `0`. `longes"
+      }
+     ]
+    },
+    {
+     "id": "d4-longest-substring",
+     "title": "Longest Substring",
+     "reps": [
+      {
+       "id": "cap-longest-substring",
+       "title": "Longest Substring Without Repeating Characters",
+       "kind": "code",
+       "stage": "capstone",
+       "repType": "capstone",
+       "minutes": 30,
+       "difficulty": 3,
+       "skills": [
+        "sliding_window",
+        "window_state",
+        "set_membership",
+        "state_tracking"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": 3,
+       "transfer": false,
+       "prompt": "`s` is a string. Return the length of the longest stretch of consecutive characters in which no character appears twice. The stretch must be unbroken. In `\"pwwkew\"`, `\"pwke\"` doesn't count because it skips a character. `"
+      },
+      {
+       "id": "d4-explain-longest-substring",
+       "title": "Explain Longest Substring",
+       "kind": "explain",
+       "stage": "interview",
+       "repType": "interview",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "explanation",
+        "complexity",
+        "sliding_window",
+        "edge_cases"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Explain the window: what is always true about it (its **invariant**), why the nested loop is still O(n), and which inputs you would test."
+      },
+      {
+       "id": "d4-ls-debug-shrink",
+       "title": "Fix the unique window",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "sliding_window",
+        "window_state",
+        "set_membership"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`longest_unique(s)` should return the length of the longest substring with no repeated characters. Make the tests pass."
+      },
+      {
+       "id": "d4-ls-last-seen",
+       "title": "Jump with a last-seen map",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 10,
+       "difficulty": 4,
+       "skills": [
+        "sliding_window",
+        "index_map",
+        "state_tracking"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `longest_unique_jump(s)`. Return the length of the longest substring of `s` with no repeated character. `longest_unique_jump(\"abcabcbb\")` → `3` (`\"abc\"`) `longest_unique_jump(\"abba\")` → `2` This time keep a dict `l"
+      },
+      {
+       "id": "d4-ls-break-jump",
+       "title": "Break the jump",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "sliding_window",
+        "index_map",
+        "edge_cases"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`longest_unique_jump(s)` should return the length of the longest substring with no repeated character. It keeps `last`, a dict from each character to the index where it last appeared. When it sees a repeat, it jumps `lef"
+      },
+      {
+       "id": "d4-ls-return-substring",
+       "title": "Return the substring itself",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 7,
+       "difficulty": 3,
+       "skills": [
+        "sliding_window",
+        "window_state",
+        "slicing"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "This code returns the **length** of the longest substring with no repeated characters. Change `longest_unique_text(s)` to return the substring itself. If several tie for longest, return the one that starts first. An empt"
+      }
+     ]
+    },
+    {
+     "id": "d4w-check",
+     "title": "Sliding window check",
+     "reps": [
+      {
+       "id": "d4w-ck-quietest-start",
+       "title": "Quietest stretch",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 9,
+       "difficulty": 3,
+       "skills": [
+        "sliding_window",
+        "state_tracking",
+        "range"
+       ],
+       "gateVariantOf": "g-fixed-window",
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`noise` is a list of hourly noise readings, and `1 <= k <= len(noise)`. Write `quietest_start(noise, k)`. Look at every stretch of `k` hours in a row. The quietest one is the one with the smallest total. Return the index"
+      },
+      {
+       "id": "d4w-ck-few-misses",
+       "title": "Hot streak",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 10,
+       "difficulty": 3,
+       "skills": [
+        "sliding_window",
+        "while_loop",
+        "state_tracking"
+       ],
+       "gateVariantOf": "g-variable-window",
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`shots` is a string of `'H'` (hit) and `'M'` (miss). Write `longest_few_misses(shots, k)`. Return the length of the longest stretch of shots in a row that has **at most `k`** misses. `longest_few_misses('HHMHHHMH', 1)` →"
+      },
+      {
+       "id": "d4w-ck-shortest-reaching",
+       "title": "Shortest walk to the goal",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 10,
+       "difficulty": 4,
+       "skills": [
+        "sliding_window",
+        "while_loop",
+        "slicing",
+        "state_tracking"
+       ],
+       "gateVariantOf": "g-variable-window",
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`steps` is a list of positive step counts, one per day, and `goal` is a positive number. Write `shortest_reaching(steps, goal)`. Find the **shortest run of days in a row** whose steps add up to at least `goal`. Return th"
+      },
+      {
+       "id": "d4w-ck-all-different",
+       "title": "Codes with no repeats",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 11,
+       "difficulty": 4,
+       "skills": [
+        "window_state",
+        "sliding_window",
+        "frequency_map",
+        "enumerate"
+       ],
+       "gateVariantOf": "g-variable-window",
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`s` is a string and `k >= 1`. Write `count_all_different(s, k)`. Return how many substrings of length `k` have `k` **different** characters. Don't rebuild anything for each substring. `count_all_different('abcab', 3)` → "
+      },
+      {
+       "id": "d4w-ck-fresh-streak",
+       "title": "No song twice",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 9,
+       "difficulty": 3,
+       "skills": [
+        "window_state",
+        "sliding_window",
+        "set_add",
+        "set_membership"
+       ],
+       "gateVariantOf": "g-variable-window",
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`songs` is a list of song names in the order they were played. Write `longest_fresh_streak(songs)`. Return the length of the longest stretch of plays in a row where **no song is played twice**. `longest_fresh_streak(['a'"
+      }
+     ]
+    },
+    {
+     "id": "br-424",
+     "title": "Toward Longest Repeating Character Replacement",
+     "reps": [
+      {
+       "id": "b424-trace-valid",
+       "title": "Trace: how many would have to change",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 2.5,
+       "difficulty": 2,
+       "skills": [
+        "window_counts",
+        "frequency_map"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "This window only grows. Predict the output: for each step, its size, the count of its most common letter, and whether one change is enough to make it all one letter."
+      },
+      {
+       "id": "b424-changes-needed",
+       "title": "Changes to make it one letter",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "window_counts",
+        "frequency_map",
+        "dict_get"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`s` is a string of letters. Write `changes_needed(s)`. You want **every** character of `s` to be the same. Return the smallest number of characters you have to change. An empty string needs `0`. `changes_needed('AABAB')`"
+      },
+      {
+       "id": "b424-fixable-windows",
+       "title": "Which windows can be fixed",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 8,
+       "difficulty": 3,
+       "skills": [
+        "window_counts",
+        "window_state",
+        "sliding_window",
+        "enumerate"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`s` is a string of letters, and `size >= 1`. Write `fixable_windows(s, size, k)`. Look at each substring of length `size`. Count the ones you could turn into one repeated letter by changing **at most `k`** characters. A "
+      },
+      {
+       "id": "b424-dbg-left-order",
+       "title": "Debug: one typo allowed",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 3,
+       "skills": [
+        "window_counts",
+        "sliding_window",
+        "while_loop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`longest_one_typo(s)` should return the length of the longest stretch of `s` that is a single repeated letter except for **at most one** other character. `longest_one_typo('aabcc')` → `3`. Some answers come out too long."
+      },
+      {
+       "id": "b424-longest-agreeing",
+       "title": "Longest near-unanimous run",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 10,
+       "difficulty": 4,
+       "skills": [
+        "window_counts",
+        "sliding_window",
+        "window_state",
+        "state_tracking"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`votes` is a list of answers in the order they were cast. A recount may overturn **at most `k`** of them. Write `longest_agreeing(votes, k)`. Return the length of the longest run of votes in a row that could be made unan"
+      }
+     ]
+    }
+   ],
+   "optionalSections": [
+    {
+     "id": "br-76",
+     "title": "Toward Minimum Window Substring",
+     "reps": [
+      {
+       "id": "b76-need-map",
+       "title": "What is needed",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 3.5,
+       "difficulty": 2,
+       "skills": [
+        "window_counts",
+        "frequency_map",
+        "tuples"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`t` is a string listing the characters a window must contain, repeats included (it can be empty). Write `need_map(t)` that returns two things as a tuple: a dict of character → how many are needed, and **how many differen"
+      },
+      {
+       "id": "b76-covers",
+       "title": "Does the window cover it?",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "window_counts",
+        "dict_get",
+        "early_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`window` and `need` are both dicts of character → count. Write `covers(window, need)`: `True` if the window holds **at least** the needed number of every needed character. Extra characters and spare copies are fine. `cov"
+      },
+      {
+       "id": "b76-add-right",
+       "title": "A character enters",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 3,
+       "skills": [
+        "window_counts",
+        "window_state",
+        "dict_membership"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`window` and `need` are dicts of character → count: what the window holds now, and what is required. Checking every need on every step is slow, so keep a number instead: `formed` = how many needs are met right now. `ch` "
+      },
+      {
+       "id": "b76-drop-left",
+       "title": "A character leaves",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 3,
+       "skills": [
+        "window_counts",
+        "window_state",
+        "dict_membership"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`window` and `need` are dicts of character → count: what the window holds now, and what is required. `formed` is how many needs are met right now. `ch` is in the window and is about to leave from the left. Write `drop_le"
+      },
+      {
+       "id": "b76-dbg-formed-early",
+       "title": "Debug: covered too soon",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 3,
+       "skills": [
+        "window_counts",
+        "frequency_map",
+        "enumerate",
+        "early_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`first_cover_end(s, t)` grows a window from the start of `s` and should return the first index `right` at which `s[0..right]` contains every character of `t`, repeats included. It returns `-1` if that never happens. `t` "
+      },
+      {
+       "id": "b76-shortest-piece",
+       "title": "Keep the shortest so far",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 7,
+       "difficulty": 3,
+       "skills": [
+        "state_tracking",
+        "slicing",
+        "tuples",
+        "window_counts"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`spans` is a list of `(left, right)` pairs, each marking a piece `s[left..right]` with **both ends included**. Write `shortest_piece(s, spans)`: the text of the shortest piece. On a tie, the first one listed. With no spa"
+      },
+      {
+       "id": "b76-shortest-with-all",
+       "title": "Shortest stretch with every required letter",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 16,
+       "difficulty": 5,
+       "skills": [
+        "window_counts",
+        "sliding_window",
+        "window_state",
+        "state_tracking"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`s` is a string (it can be empty) and `required` is a non-empty **set** of characters (each is needed once; there are no repeats to worry about). Write `shortest_with_all(s, required)`: the shortest substring of `s` that"
+      }
+     ]
+    },
+    {
+     "id": "d4-warmup",
+     "title": "Warm-up",
+     "reps": [
+      {
+       "id": "d4-warm-reverse-each",
+       "title": "Reverse each word",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "string_methods",
+        "slicing",
+        "list_append"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `reverse_each(s)`: reverse every word but keep the word order. Words are separated by whitespace; output uses single spaces. `\"abc de\"` → `\"cba ed\"`"
+      },
+      {
+       "id": "d4-warm-profit",
+       "title": "Best profit from memory",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "state_tracking"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `max_profit(prices)`: `prices[i]` is the price on day `i`. Buy once, sell on a later day, return the best profit or `0` if no sale makes money."
+      },
+      {
+       "id": "d4-warm-palindrome",
+       "title": "Valid Palindrome from memory",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 8,
+       "difficulty": 3,
+       "skills": [
+        "two_pointer",
+        "pointer_update",
+        "string_methods"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `is_palindrome(s)`: ignoring case and non-alphanumeric characters, does `s` read the same both ways? Two pointers, no cleaned copy."
+      },
+      {
+       "id": "d4-warm-first-repeat",
+       "title": "First repeated character",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "set_add",
+        "set_membership",
+        "string_iterate"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `first_repeat(s)`: scanning left to right, return the first character you meet for the second time, or `\"\"` if none repeats. `\"abcbad\"` → `\"b\"`"
+      },
+      {
+       "id": "d4-warm-two-sum-ii",
+       "title": "Two Sum II from memory",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 6,
+       "difficulty": 2,
+       "skills": [
+        "two_pointer",
+        "pointer_update"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `two_sum_sorted(numbers, target)` for sorted input with exactly one answer. Return 1-based positions `[a, b]`. O(1) extra space."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "w4-stacks",
+   "title": "Stacks",
+   "purpose": "The most recent unfinished item matters first.",
+   "prerequisites": [
+    "w1-mutation-references"
+   ],
+   "lessonIds": [
+    "stacks"
+   ],
+   "workedExampleIds": [],
+   "targets": [
+    {
+     "lc": 20,
+     "title": "Valid Parentheses",
+     "solvedInRepsBy": "cap-valid-parentheses"
+    }
+   ],
+   "readinessTargets": [],
+   "labs": [
+    {
+     "id": "lab-undo-redo",
+     "title": "Editor Undo/Redo Engine",
+     "optional": false
+    }
+   ],
+   "gates": [
+    {
+     "id": "g-stack",
+     "title": "Stack",
+     "need": 1,
+     "skills": [
+      "stack_push_pop",
+      "matching_pairs"
+     ],
+     "pool": [
+      "d4-cold-valid",
+      "d4-cold-backspace-equal"
+     ]
+    }
+   ],
+   "sections": [
+    {
+     "id": "d4-stacks",
+     "title": "Stacks",
+     "reps": [
+      {
+       "id": "d4-st-trace",
+       "title": "Trace push and pop",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 2,
+       "difficulty": 1,
+       "skills": [
+        "stack_push_pop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "The list `stack` is used as a stack: items go on and come off at the end of the list only. What does this print?"
+      },
+      {
+       "id": "d4-st-reverse",
+       "title": "Reverse with a stack",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "stack_push_pop",
+        "string_iterate",
+        "while_loop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `reverse_with_stack(s)`. Return the string `s` backwards, without slicing. Use a list as a stack. Push every character with `append`. Then pop until the stack is empty, and join the popped characters in the order t"
+      },
+      {
+       "id": "d4-st-backspace",
+       "title": "Apply backspaces",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 6,
+       "difficulty": 3,
+       "skills": [
+        "stack_push_pop",
+        "conditionals",
+        "string_methods"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`s` is a string of keys typed in order. The key `#` is a backspace: it deletes the most recent character still on screen, or does nothing if the screen is empty. Write `type_out(s)` returning the final text. `\"ab#c\"` → `"
+      },
+      {
+       "id": "d4-st-debug-empty-pop",
+       "title": "Fix the star remover",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "stack_push_pop",
+        "conditionals"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`remove_stars(s)` takes a string of letters and `*`. Read it left to right. Each `*` removes the nearest letter to its left that is still there. A `*` with nothing to remove does nothing. The function should return the l"
+      },
+      {
+       "id": "d4-st-adjacent-pairs",
+       "title": "Cancel adjacent twins",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 6,
+       "difficulty": 3,
+       "skills": [
+        "stack_push_pop",
+        "conditionals"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`s` is a string. Write `cancel_pairs(s)`. Whenever two equal characters sit next to each other, remove both. Removing a pair can bring two more equal characters together. Keep going until no such pair is left, and return"
+      },
+      {
+       "id": "d4-st-round-balanced",
+       "title": "Balanced round brackets",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "stack_push_pop",
+        "conditionals",
+        "early_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`s` contains only `(` and `)`. It is **balanced** when every `(` is closed by a later `)`, and no `)` shows up while nothing is open. Write `balanced(s)`. Return `True` or `False`. An empty string is balanced. `balanced("
+      },
+      {
+       "id": "d4-st-max-depth",
+       "title": "Deepest nesting",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "stack_push_pop",
+        "state_tracking"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`s` is a string with round brackets mixed in with other characters. The brackets are balanced: every `(` is closed by a later `)`. The **nesting depth** at any point is how many brackets are open and not yet closed. Writ"
+      },
+      {
+       "id": "d4-st-debug-postfix",
+       "title": "Fix the postfix calculator",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 5,
+       "difficulty": 3,
+       "skills": [
+        "stack_push_pop",
+        "conditionals",
+        "string_methods"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`expr` is a string of tokens separated by spaces. The tokens are whole numbers (possibly negative) and the operators `+ - *`. They come in **postfix** order: each operator comes after the two values it works on. `eval_po"
+      },
+      {
+       "id": "d4-st-simplify-path",
+       "title": "Simplify a file path",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 7,
+       "difficulty": 3,
+       "skills": [
+        "stack_push_pop",
+        "string_methods",
+        "conditionals"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `simplify(path)` for an absolute Unix-style path. `.` means stay, `..` means go up one folder (staying at `/` if already there), and repeated slashes act like one. Return the clean path starting with `/` and with n"
+      },
+      {
+       "id": "d4-st-next-greater",
+       "title": "Next greater value",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 10,
+       "difficulty": 4,
+       "skills": [
+        "stack_push_pop",
+        "enumerate",
+        "while_loop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Stretch. `nums` is a list of numbers. Write `next_greater(nums)`. Return a list of the same length. Entry `i` is the first value to the right of `nums[i]` that is strictly larger than it. If there is none, entry `i` is `"
+      }
+     ]
+    },
+    {
+     "id": "d4-matching",
+     "title": "Matching pairs",
+     "reps": [
+      {
+       "id": "d4-mp-trace",
+       "title": "Trace a closer lookup",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 2.5,
+       "difficulty": 2,
+       "skills": [
+        "matching_pairs",
+        "stack_push_pop",
+        "dict_membership"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`pairs` maps each closing bracket to the opening bracket it needs. What does this print?"
+      },
+      {
+       "id": "d4-mp-one-line-lookup",
+       "title": "Look up the opener",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "matching_pairs",
+        "dict_get",
+        "dict_lookup"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`pairs` is a dict from each closing bracket to the opening bracket that matches it. Write two lines below the given code: - `opener`: the opening bracket that `ch` needs - `missing`: the opening bracket that `other` need"
+      },
+      {
+       "id": "d4-mp-closes-top",
+       "title": "Does it close the top?",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "matching_pairs",
+        "stack_push_pop",
+        "dict_lookup"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`stack` is a list of opening brackets still waiting to be closed. Its top is the last item. `ch` is one closing bracket: `)`, `]` or `}`. Write `closes_top(stack, ch)`. Return `True` only when the stack isn't empty and i"
+      },
+      {
+       "id": "d4-mp-first-bad",
+       "title": "First bad closer",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 7,
+       "difficulty": 3,
+       "skills": [
+        "matching_pairs",
+        "stack_push_pop",
+        "enumerate",
+        "early_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`s` is a string made only of the brackets `()[]{}`. A closer is **bad** if nothing is open for it to close. It is also bad if the most recently opened bracket is a different kind. Finish `first_bad(s)`. Return the index "
+      },
+      {
+       "id": "d4-mp-pair-positions",
+       "title": "Where does each pair close?",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 6,
+       "difficulty": 3,
+       "skills": [
+        "matching_pairs",
+        "stack_push_pop",
+        "enumerate",
+        "dict_assign"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`s` is a balanced string of `(` and `)`: every opener is closed later, and no closer comes early. Write `pair_positions(s)`. Return a dict from the index of each opener to the index of the closer that matches it. An empt"
+      },
+      {
+       "id": "d4-mp-debug-peek",
+       "title": "Fix the widest pair",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "matching_pairs",
+        "stack_push_pop",
+        "enumerate"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`s` is a balanced string of `(` and `)`. Each opener is matched by the closer that closes it. The **width** of a pair is how many characters it spans, both brackets included: closer index − opener index + 1. `widest_pair"
+      },
+      {
+       "id": "d4-mp-min-to-fix",
+       "title": "Brackets to add",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 7,
+       "difficulty": 3,
+       "skills": [
+        "stack_push_pop",
+        "accumulator",
+        "conditionals"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`s` contains only `(` and `)`. It is **balanced** when every `(` is closed by a later `)` and every `)` closes an earlier `(`. Write `min_to_fix(s)`. Return the smallest number of brackets you would have to insert, anywh"
+      },
+      {
+       "id": "d4-mp-reorder",
+       "title": "Rebuild the bracket checker",
+       "kind": "reorder",
+       "stage": "reconstruct",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "matching_pairs",
+        "stack_push_pop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Put the lines in order. `brackets_ok(s)` takes a string of `()[]{}` and returns `True` when every bracket is closed by the right kind in the right order, otherwise `False`."
+      }
+     ]
+    },
+    {
+     "id": "d4-valid-parentheses",
+     "title": "Valid Parentheses",
+     "reps": [
+      {
+       "id": "cap-valid-parentheses",
+       "title": "Valid Parentheses",
+       "kind": "code",
+       "stage": "capstone",
+       "repType": "capstone",
+       "minutes": 25,
+       "difficulty": 3,
+       "skills": [
+        "stack_push_pop",
+        "matching_pairs",
+        "dict_lookup"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": 20,
+       "transfer": false,
+       "prompt": "`s` is a string made only of the six characters `( ) [ ] { }`. Return `True` if `s` is well formed, otherwise `False`. It is well formed when all of these hold: - every opening bracket is closed by a bracket of the same "
+      },
+      {
+       "id": "d4-explain-valid-parentheses",
+       "title": "Explain Valid Parentheses",
+       "kind": "explain",
+       "stage": "interview",
+       "repType": "interview",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "explanation",
+        "complexity",
+        "edge_cases",
+        "matching_pairs"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Explain why a stack is the right structure, list every way the input can fail, and give the complexity."
+      },
+      {
+       "id": "d4-vp-fix-bug",
+       "title": "Fix the bracket checker",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 6,
+       "difficulty": 3,
+       "skills": [
+        "matching_pairs",
+        "stack_push_pop",
+        "edge_cases"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "A teammate’s `is_valid(s)` takes a string of `()[]{}`. It should return `True` exactly when every bracket is closed by the same kind in the right order, otherwise `False`. It passes `\"()[]\"` but fails on other inputs. Ma"
+      },
+      {
+       "id": "d4-vp-with-text",
+       "title": "Brackets inside code",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 7,
+       "difficulty": 3,
+       "skills": [
+        "matching_pairs",
+        "stack_push_pop",
+        "conditionals"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`s` is a line of code, so its brackets are mixed in with letters, spaces and punctuation. Write `code_brackets_ok(s)`. Return `True` when each bracket `()[]{}` is closed by the same kind in the right order, otherwise `Fa"
+      },
+      {
+       "id": "d4-vp-debug-map-direction",
+       "title": "Fix the bracket map",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "matching_pairs",
+        "dict_lookup",
+        "dict_membership"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`brackets_ok(s)` takes a string of `()[]{}` and should return `True` when every bracket is closed by the same kind in the right order. Make the tests pass."
+      }
+     ]
+    },
+    {
+     "id": "d4-cold",
+     "title": "Cold reps",
+     "reps": [
+      {
+       "id": "d4-cold-longest-unique",
+       "title": "Longest unique, from a signature",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 8,
+       "difficulty": 3,
+       "skills": [
+        "sliding_window",
+        "window_state",
+        "set_membership"
+       ],
+       "gateVariantOf": "g-variable-window",
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `longest_unique(s)`. Return the length of the longest substring with no repeated characters."
+      },
+      {
+       "id": "d4-cold-valid",
+       "title": "Brackets, from a signature",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 8,
+       "difficulty": 3,
+       "skills": [
+        "matching_pairs",
+        "stack_push_pop"
+       ],
+       "gateVariantOf": "g-stack",
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`s` is a string of `()[]{}`. Write `is_valid(s)`. Return `True` if every bracket is closed by the same kind in the right order, otherwise `False`."
+      },
+      {
+       "id": "d4-cold-shortest",
+       "title": "Shortest run, from a signature",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 8,
+       "difficulty": 3,
+       "skills": [
+        "sliding_window",
+        "while_loop",
+        "state_tracking"
+       ],
+       "gateVariantOf": "g-variable-window",
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` holds positive numbers. Write `shortest_at_least(nums, goal)`. Return the length of the shortest run of neighbouring values whose sum is at least `goal`, or `0` if there is none."
+      },
+      {
+       "id": "d4-cold-backspace-equal",
+       "title": "Same after backspaces?",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 7,
+       "difficulty": 2,
+       "skills": [
+        "stack_push_pop",
+        "functions"
+       ],
+       "gateVariantOf": "g-stack",
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`a` and `b` are strings of typed keys, where `#` is a backspace. A backspace with nothing to delete does nothing. Write `same_typed(a, b)`. Return `True` if both strings produce the same final text."
+      },
+      {
+       "id": "d4-cold-avg-window",
+       "title": "Count good runs",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 7,
+       "difficulty": 2,
+       "skills": [
+        "sliding_window",
+        "state_tracking"
+       ],
+       "gateVariantOf": "g-fixed-window",
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `count_windows(nums, k, threshold)`. Return how many stretches of `k` neighbouring values have a sum of at least `threshold`. If `k > len(nums)`, return `0`."
+      }
+     ]
+    }
+   ],
+   "optionalSections": []
+  }
+ ]
+}

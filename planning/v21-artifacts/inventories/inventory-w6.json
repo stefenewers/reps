@@ -1,0 +1,723 @@
+{
+ "week": 6,
+ "title": "Recursion",
+ "focus": "Fast/slow pointers, recursion",
+ "purpose": "Chains of references, then calls that pause and use the answer that comes back.",
+ "weekTarget": 75,
+ "dailyTarget": 15,
+ "trainingDays": [
+  "2026-11-30",
+  "2026-12-01",
+  "2026-12-02",
+  "2026-12-03",
+  "2026-12-04"
+ ],
+ "units": [
+  {
+   "id": "w6-fast-slow",
+   "title": "Fast/slow pointers",
+   "purpose": "Two pointers applied to a chain of references.",
+   "prerequisites": [
+    "w5-linked-lists"
+   ],
+   "lessonIds": [
+    "linked-lists"
+   ],
+   "workedExampleIds": [],
+   "targets": [
+    {
+     "lc": 141,
+     "title": "Linked List Cycle",
+     "solvedInRepsBy": null
+    },
+    {
+     "lc": 19,
+     "title": "Remove Nth Node From End of List",
+     "solvedInRepsBy": null
+    }
+   ],
+   "readinessTargets": [],
+   "labs": [
+    {
+     "id": "lab-route-walker",
+     "title": "Loop Detector / Route Walker",
+     "optional": false
+    }
+   ],
+   "gates": [
+    {
+     "id": "g-fast-slow",
+     "title": "Fast and slow",
+     "need": 2,
+     "skills": [
+      "fast_slow"
+     ],
+     "pool": [
+      "c6-g-fast-slow-a",
+      "c6-g-fast-slow-b",
+      "c6-g-fast-slow-c"
+     ]
+    }
+   ],
+   "sections": [
+    {
+     "id": "br-141",
+     "title": "Toward Linked List Cycle",
+     "reps": [
+      {
+       "id": "b141-middle",
+       "title": "The middle in one pass",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 7,
+       "difficulty": 2,
+       "skills": [
+        "fast_slow",
+        "linked_list_traversal",
+        "while_loop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "You found the middle before with two passes: count, then walk. Now one pass. `slow` moves one node per step and `fast` moves two. When `fast` has run out of list, `slow` is in the middle. Write `middle_one_pass(head)` fo"
+      },
+      {
+       "id": "b141-dbg-check-first",
+       "title": "Debug: every list has a loop",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "fast_slow",
+        "linked_list_traversal",
+        "early_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`has_loop(head)` should return `True` when following `.next` from `head` never reaches `None` (some node points back to an earlier one), and `False` for a list that ends. Make the tests pass."
+      },
+      {
+       "id": "b141-jump-loop",
+       "title": "Does the walk ever stop?",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 9,
+       "difficulty": 3,
+       "skills": [
+        "fast_slow",
+        "while_loop",
+        "list_index"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`jumps` is a non-empty list of whole numbers. Standing on index `i`, your next index is `jumps[i]`; a value of `-1` means stop. Every other value is a valid index of `jumps`. You start on index `0`. Write `loops_forever("
+      }
+     ]
+    },
+    {
+     "id": "br-19",
+     "title": "Toward Remove Nth Node From End of List",
+     "reps": [
+      {
+       "id": "b19-kth-from-end",
+       "title": "k-th value from the end",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 8,
+       "difficulty": 2,
+       "skills": [
+        "fast_slow",
+        "linked_list_traversal",
+        "range"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `kth_from_end(head, k)`: the value of the k-th node counting from the end (`k = 1` is the last node). `k` is always between 1 and the length. One pass, without measuring the length: send a `lead` pointer `k` nodes "
+      },
+      {
+       "id": "b19-dbg-chop",
+       "title": "Debug: cut off the last k",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 6,
+       "difficulty": 2,
+       "skills": [
+        "fast_slow",
+        "dummy_node",
+        "linked_list_reassignment"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`chop_last(head, k)` should cut the final `k` nodes off the list and return the head of what is left, or `None` if nothing is left. `k` is between 1 and the length. Make the tests pass."
+      },
+      {
+       "id": "b19-insert-from-end",
+       "title": "Insert before the k-th from the end",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 11,
+       "difficulty": 3,
+       "skills": [
+        "fast_slow",
+        "dummy_node",
+        "linked_list_reassignment",
+        "linked_list_traversal"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "Write `insert_from_end(head, k, val)`: put a new node holding `val` just in front of the k-th node from the end (`k = 1` is the last node; `k` is between 1 and the length). Return the head of the list. One pass. `1 -> 2 "
+      }
+     ]
+    }
+   ],
+   "optionalSections": [
+    {
+     "id": "br-143",
+     "title": "Toward Reorder List",
+     "reps": [
+      {
+       "id": "b143-weave",
+       "title": "Weave two lists",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 10,
+       "difficulty": 2,
+       "skills": [
+        "linked_list_reassignment",
+        "linked_list_traversal",
+        "while_loop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`a` and `b` are the heads of two linked lists. Either may be `None` (an empty list). `a` is as long as `b`, or one node longer. Write `weave(a, b)` that rewires the existing nodes so they alternate, starting with `a`: a1"
+      },
+      {
+       "id": "b143-dbg-weave",
+       "title": "Debug: the weave that never ends",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "linked_list_reassignment",
+        "linked_list_traversal"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`weave_back(a, b)` should alternate the nodes of two lists starting with **`b`**: b1, a1, b2, a2, … and return the head. `b` is as long as `a`, or one node longer. `a` = `1 -> 2`, `b` = `7 -> 8 -> 9` → `7 -> 1 -> 8 -> 2 "
+      },
+      {
+       "id": "b143-split",
+       "title": "Cut a list in half",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 9,
+       "difficulty": 2,
+       "skills": [
+        "fast_slow",
+        "linked_list_reassignment",
+        "linked_list_traversal"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `split_half(head)` for a non-empty list: cut it into two separate lists and return the head of the **second** one (`None` if there is no second half). With an odd length the first half keeps the extra node. `head` "
+      },
+      {
+       "id": "b143-shuffle-halves",
+       "title": "Second half between the first",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 11,
+       "difficulty": 3,
+       "skills": [
+        "fast_slow",
+        "linked_list_reassignment",
+        "linked_list_traversal",
+        "edge_cases"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`weave` is given. Write `shuffle_halves(head)`, which changes the list **in place** and returns nothing: cut the list in half (the first half keeps the extra node), then weave the second half into the first. `1 -> 2 -> 3"
+      },
+      {
+       "id": "b143-end-pair-sums",
+       "title": "Sums from both ends",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 16,
+       "difficulty": 4,
+       "skills": [
+        "fast_slow",
+        "linked_list_reassignment",
+        "linked_list_traversal",
+        "list_append"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "Write `end_pair_sums(head)` for a non-empty list. Return a Python list of sums: first node + last node, second + second-to-last, and so on. With an odd length the middle node has no partner: put its value on the end by i"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "w6-recursion",
+   "title": "Recursion",
+   "purpose": "Each call owns local work, may pause for a smaller call, and later uses the returned answer.",
+   "prerequisites": [
+    "w1-state-while"
+   ],
+   "lessonIds": [
+    "recursion"
+   ],
+   "workedExampleIds": [],
+   "targets": [],
+   "readinessTargets": [],
+   "labs": [
+    {
+     "id": "lab-nested-analyzer",
+     "title": "Nested Structure Analyzer",
+     "optional": false
+    }
+   ],
+   "gates": [
+    {
+     "id": "g-recursion",
+     "title": "Recursion",
+     "need": 2,
+     "skills": [
+      "recursion_base_case",
+      "recursion_return"
+     ],
+     "pool": [
+      "d06-cold-digits",
+      "c6-g-recursion-a",
+      "c6-g-recursion-b",
+      "c6-g-recursion-c"
+     ]
+    }
+   ],
+   "sections": [
+    {
+     "id": "d06-functions",
+     "title": "Functions",
+     "reps": [
+      {
+       "id": "d06-fn-print-vs-return",
+       "title": "print is not return",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 1.5,
+       "difficulty": 1,
+       "skills": [
+        "functions"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Predict the output."
+      },
+      {
+       "id": "d06-fn-tuple",
+       "title": "Return two things",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "functions",
+        "tuples"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a non-empty list of numbers. Write `low_high(nums)` returning one tuple `(smallest, largest)`, found in a single pass over the list. No `min`/`max` on the whole list. `low_high([3, 9, 1, 4])` is `(1, 9)`. With "
+      },
+      {
+       "id": "d06-fn-dbg-return",
+       "title": "Debug: the average disappears",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "functions"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of numbers. `average(nums)` should return their mean (0 for an empty list) so callers can use it: `average([2, 4])` should be `3.0`. Callers get `None`. Fix it."
+      },
+      {
+       "id": "d06-fn-params",
+       "title": "What a parameter can change",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 2,
+       "difficulty": 1,
+       "skills": [
+        "functions",
+        "list_append"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Predict the output."
+      },
+      {
+       "id": "d06-fn-helper",
+       "title": "Inner helper + shared list",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "functions",
+        "list_append"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of numbers and `limit` is a number. Finish `collect_big(nums, limit)` so it returns a list of the numbers greater than `limit`, in their original order: the inner function `visit(x)` should append `x` to"
+      }
+     ]
+    },
+    {
+     "id": "d06-recursion",
+     "title": "Recursion",
+     "reps": [
+      {
+       "id": "d06-rec-fact-stack",
+       "title": "Call stack: factorial",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 2.5,
+       "difficulty": 1,
+       "skills": [
+        "recursion_base_case",
+        "recursion_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`fact` calls itself: that is **recursion**. `fact(4)` cannot finish until `fact(3)` hands back its answer, so the calls pile up, each one waiting for the next (that pile of unfinished calls is the **call stack**). Then t"
+      },
+      {
+       "id": "d06-rec-sum-to",
+       "title": "Sum 1..n recursively",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "recursion_base_case",
+        "recursion_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`n` is a whole number, 0 or more. Write `sum_to(n)` returning `1 + 2 + ... + n` using recursion: the function calls itself, with no loop and no formula. `sum_to(4)` is `10`. `sum_to(0)` is `0`: there is nothing to add, a"
+      },
+      {
+       "id": "d06-rec-power",
+       "title": "Power, recursively",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "recursion_base_case",
+        "recursion_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`b` is an integer and `e` is a whole number, 0 or more. Write `power(b, e)` returning `b` to the power `e` (`b` multiplied by itself `e` times), recursively. No `**` and no loop. `power(2, 5)` is `32`; `power(7, 0)` is `"
+      },
+      {
+       "id": "d06-rec-dbg-base",
+       "title": "Debug: factorial blows up",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "recursion_base_case"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`fact(n)` should return `n!` (n factorial: `n * (n - 1) * ... * 1`) for every whole number `n >= 0`, where `0!` is 1. It crashes on one input. Fix it."
+      },
+      {
+       "id": "d06-rec-dbg-no-return",
+       "title": "Debug: the result vanishes",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "recursion_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of numbers. `total(nums)` should return their sum recursively: the first item plus the total of the rest (`nums[1:]`), and 0 for an empty list. It crashes on any non-empty list. Fix it."
+      },
+      {
+       "id": "d06-rec-index-param",
+       "title": "Recursion with an index parameter",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "recursion_base_case",
+        "recursion_return",
+        "list_index"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of numbers and `i` is an index from 0 up to `len(nums)`. Write `sum_from(nums, i)` returning the sum of the items from index `i` to the end, recursively, by moving the index forward instead of slicing th"
+      },
+      {
+       "id": "d06-rec-fib",
+       "title": "Two recursive calls: fib",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "recursion_base_case",
+        "recursion_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`n` is a whole number, 0 or more. Write `fib(n)` returning the `n`th number of the sequence `0, 1, 1, 2, 3, 5, 8, 13, ...`, where every number after the first two is the sum of the two before it. `fib(0)` is 0, `fib(1)` "
+      },
+      {
+       "id": "d06-rec-reverse-str",
+       "title": "Reverse a string recursively",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "recursion_base_case",
+        "recursion_return",
+        "slicing"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`s` is a string; it may be empty. Write `rev(s)` returning `s` reversed, using recursion: no `[::-1]`, no `reversed`, no loop. `rev(\"abc\")` is `\"cba\"`; `rev(\"\")` is `\"\"`. Two questions to answer: which strings are so sho"
+      },
+      {
+       "id": "d06-rec-list-len",
+       "title": "Linked list length, recursively",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "recursion_base_case",
+        "recursion_return",
+        "listnode"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`head` is the first node of a linked list, or `None` for an empty list. Write `size(head)` returning the number of nodes, recursively (no loop). An empty list has size 0. A linked list is \"one node, then a smaller linked"
+      },
+      {
+       "id": "d06-rec-translate",
+       "title": "Translate: loop → recursion",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "recursion_base_case",
+        "recursion_return",
+        "linked_list_traversal"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`head` is the first node of a linked list (or `None`) and `x` is a number. Here is a loop that counts the nodes whose value is greater than `x`: ```python def count_greater(head, x): count = 0 node = head while node: if "
+      },
+      {
+       "id": "d06-rec-pal",
+       "title": "Palindrome, recursively",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 7,
+       "difficulty": 2,
+       "skills": [
+        "recursion_base_case",
+        "recursion_return",
+        "two_pointer"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`s` is a string; `i` and `j` are indexes into it. Write `pal(s, i, j)` returning `True` if the part of `s` from index `i` through index `j` (both included) is a **palindrome**, meaning it reads the same forwards and back"
+      }
+     ]
+    }
+   ],
+   "optionalSections": [
+    {
+     "id": "d06-warmup",
+     "title": "Warm-up",
+     "reps": [
+      {
+       "id": "d06-warm-bs",
+       "title": "Binary search, cold",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 6,
+       "difficulty": 2,
+       "skills": [
+        "binary_search",
+        "mid_calc",
+        "search_invariant"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `find(nums, x)` for a sorted list: index of `x` or -1, in O(log n)."
+      },
+      {
+       "id": "d06-warm-reverse",
+       "title": "Reverse a linked list, cold",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 6,
+       "difficulty": 2,
+       "skills": [
+        "linked_list_reassignment",
+        "linked_list_traversal"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `reverse(head)` that reverses a linked list in place and returns the new head."
+      },
+      {
+       "id": "d06-warm-from-values",
+       "title": "Dummy head, cold",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 6,
+       "difficulty": 2,
+       "skills": [
+        "dummy_node",
+        "linked_list_traversal"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `doubled(head)` returning a **new** linked list whose values are each original value times two. Use a dummy node."
+      },
+      {
+       "id": "d06-warm-anagram",
+       "title": "Same letters (frequency map)",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 6,
+       "difficulty": 2,
+       "skills": [
+        "frequency_map",
+        "dict_get"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `same_letters(a, b)` returning `True` if the two strings use exactly the same letters the same number of times. Build counts with `.get()`; no `sorted` or `Counter`."
+      },
+      {
+       "id": "d06-warm-profit",
+       "title": "Best single trade (running min)",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "state_tracking",
+        "for_loop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `best_gain(prices)`: the largest `prices[j] - prices[i]` with `i < j`, or 0 if no gain is possible."
+      },
+      {
+       "id": "d06-warm-unique-window",
+       "title": "Longest run without repeats",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 8,
+       "difficulty": 3,
+       "skills": [
+        "sliding_window",
+        "window_state",
+        "set_membership"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `longest_unique(s)`: the length of the longest substring with no repeated character. Variable-size window with a set."
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,1466 @@
+{
+ "week": 9,
+ "title": "Dependencies + Heaps",
+ "focus": "Graph cycles, heaps",
+ "purpose": "Order dependencies and always know the next priority item.",
+ "weekTarget": 60,
+ "dailyTarget": 15,
+ "trainingDays": [
+  "2026-12-21",
+  "2026-12-22",
+  "2026-12-23",
+  "2026-12-24"
+ ],
+ "units": [
+  {
+   "id": "w9-cycles",
+   "title": "Dependencies and cycles",
+   "purpose": "Unseen, visiting, done: a dependency loop is a node you meet again while still visiting it.",
+   "prerequisites": [
+    "w8-graphs"
+   ],
+   "lessonIds": [
+    "graphs"
+   ],
+   "workedExampleIds": [],
+   "targets": [
+    {
+     "lc": 207,
+     "title": "Course Schedule",
+     "solvedInRepsBy": "cap-course-schedule"
+    }
+   ],
+   "readinessTargets": [],
+   "labs": [
+    {
+     "id": "lab-dependency-planner",
+     "title": "Dependency Planner",
+     "optional": false
+    }
+   ],
+   "gates": [
+    {
+     "id": "g-directed-cycle",
+     "title": "Directed cycle",
+     "need": 2,
+     "skills": [
+      "cycle_detection"
+     ],
+     "pool": [
+      "o8-cold-cycle",
+      "c9-g-cycle-a",
+      "c9-g-cycle-b"
+     ]
+    }
+   ],
+   "sections": [
+    {
+     "id": "o8-cycles",
+     "title": "Directed cycles",
+     "reps": [
+      {
+       "id": "o8-y-trace-states",
+       "title": "Trace three states",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "cycle_detection",
+        "graph_dfs"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "In a directed graph, a **cycle** is a route that follows the arrows and arrives back where it began, like 0 → 1 → 2 → 0. This `dfs` returns `True` if it finds one. Each node has one of three states in `state`: `0` = not "
+      },
+      {
+       "id": "o8-y-has-cycle",
+       "title": "Directed cycle from edges",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 14,
+       "difficulty": 3,
+       "skills": [
+        "cycle_detection",
+        "graph_adjacency",
+        "graph_dfs"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Nodes are `0` to `n-1`; each `[a, b]` in `edges` is a directed edge a → b. Write `has_cycle(n, edges)` returning `True` if the graph contains a cycle, otherwise `False`. An edge from a node to itself, like `[0, 0]`, is a"
+      },
+      {
+       "id": "o8-y-dbg-no-visiting",
+       "title": "Debug: the cycle nobody saw",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 6,
+       "difficulty": 2,
+       "skills": [
+        "cycle_detection",
+        "visited_set"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`graph` is a directed graph as an adjacency list (a dict: node → list of nodes it points to; every node is a key). `has_loop(graph)` should return `True` if it contains a cycle, otherwise `False`. Make the tests pass."
+      },
+      {
+       "id": "o8-y-dbg-never-done",
+       "title": "Debug: cycles that are not there",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "cycle_detection",
+        "graph_dfs"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`cyclic(n, edges)` should return `True` exactly when the directed graph on `0..n-1` (`[a, b]` = a → b) has a cycle. It reports cycles in some graphs that have none. Make the tests pass."
+      },
+      {
+       "id": "o8-y-wt-diamond",
+       "title": "Break it: the naive detector",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "cycle_detection",
+        "visited_set"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`naive_cycle` says \"cycle\" whenever it meets a node it has seen before. Write `breaking_graph()` returning a directed graph (a dict: node → list of nodes it points to; every node is a key) that has **no** cycle but on wh"
+      },
+      {
+       "id": "o8-y-reachable-cycle",
+       "title": "Can this start loop forever?",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 11,
+       "difficulty": 3,
+       "skills": [
+        "cycle_detection",
+        "graph_dfs"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "A machine is always in exactly one named mode. `graph` is a dict: each mode name (a string) maps to the list of modes the machine may switch to next. Every mode is a key, and a mode with `[]` is a dead end where the mach"
+      },
+      {
+       "id": "o8-y-kahn-write",
+       "title": "Kahn's algorithm",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 15,
+       "difficulty": 4,
+       "skills": [
+        "cycle_detection",
+        "graph_bfs",
+        "queue_deque"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "A second way to find a directed cycle, with a queue instead of recursion (**Kahn's algorithm**). Nodes are `0` to `n-1`; each `[a, b]` in `edges` is a directed edge a → b. A node's **in-degree** is the number of edges po"
+      }
+     ]
+    },
+    {
+     "id": "o8-cap-course-schedule",
+     "title": "Course Schedule",
+     "reps": [
+      {
+       "id": "cap-course-schedule",
+       "title": "Can every course be finished?",
+       "kind": "code",
+       "stage": "capstone",
+       "repType": "capstone",
+       "minutes": 30,
+       "difficulty": 4,
+       "skills": [
+        "cycle_detection",
+        "graph_adjacency",
+        "graph_dfs"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": 207,
+       "transfer": false,
+       "prompt": "You must take `num_courses` courses labeled `0..num_courses-1`. Each pair `[a, b]` in `prerequisites` says course `b` must be completed before course `a`. Return `True` if there is some order that completes every course,"
+      },
+      {
+       "id": "o8-explain-course-schedule",
+       "title": "Explain course schedule",
+       "kind": "explain",
+       "stage": "interview",
+       "repType": "interview",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "explanation",
+        "cycle_detection",
+        "complexity"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Explain your course schedule solution as in an interview. Include why a plain visited set is not enough, and mention the alternative approach."
+      }
+     ]
+    },
+    {
+     "id": "o8-cold",
+     "title": "Cold reps",
+     "reps": [
+      {
+       "id": "o8-cold-build",
+       "title": "Graph from edges, cold",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "graph_adjacency"
+       ],
+       "gateVariantOf": "g-graph-traversal",
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Nodes `0..n-1`, `edges` a list of `[a, b]` pairs. Write `adj(n, edges, directed)`: a dict from every node to its list of neighbors. If `directed` is `True`, `[a, b]` means a → b only; if `False`, it goes both ways."
+      },
+      {
+       "id": "o8-cold-components",
+       "title": "Components, cold",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 12,
+       "difficulty": 3,
+       "skills": [
+        "connected_components",
+        "graph_dfs",
+        "visited_set"
+       ],
+       "gateVariantOf": "g-graph-traversal",
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Nodes `0..n-1`, `edges` a list of undirected `[a, b]` pairs. Write `num_groups(n, edges)`: how many separate groups of linked nodes there are. A node with no edges is a group of one."
+      },
+      {
+       "id": "o8-cold-cycle",
+       "title": "Cycle check, cold",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 10,
+       "difficulty": 3,
+       "skills": [
+        "cycle_detection"
+       ],
+       "gateVariantOf": "g-directed-cycle",
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Directed graph as a dict of lists over nodes `0..n-1` (every node has a key). Write `cyclic(graph)`: `True` if it has a cycle, else `False`."
+      },
+      {
+       "id": "o8-cold-grid-steps",
+       "title": "Fewest moves on a grid",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 13,
+       "difficulty": 3,
+       "skills": [
+        "bfs",
+        "grid_neighbors",
+        "visited_set"
+       ],
+       "gateVariantOf": "g-grid",
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`grid` is a list of strings: `\".\"` open, `\"#\"` wall. Write `steps(grid, start, goal)` where `start` and `goal` are `(r, c)` tuples: the fewest up/down/left/right moves from `start` to `goal` through open cells, or `-1` i"
+      }
+     ]
+    }
+   ],
+   "optionalSections": [
+    {
+     "id": "br-261",
+     "title": "Toward Graph Valid Tree",
+     "reps": [
+      {
+       "id": "b261-reach-all",
+       "title": "Does node 0 reach everyone?",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 10,
+       "difficulty": 3,
+       "skills": [
+        "graph_tree_check",
+        "graph_adjacency",
+        "graph_dfs",
+        "visited_set"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Nodes are numbered `0` to `n - 1` (`n` is at least 1) and `edges` is a list of undirected `[a, b]` pairs. Write `reaches_all(n, edges)` that returns `True` if a walk starting at node `0` visits all `n` nodes. `reaches_al"
+      },
+      {
+       "id": "b261-dbg-edges-only",
+       "title": "Debug: counting edges is not enough",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 3,
+       "skills": [
+        "graph_tree_check",
+        "graph_dfs",
+        "conditionals"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "A graph on nodes `0` to `n - 1` is a **tree** when it is in one piece and has no cycle. `is_tree(n, edges)` should return `True` only for trees. The helper `reached(n, edges)` is correct: it returns how many nodes a walk"
+      },
+      {
+       "id": "b261-spare-cables-mini",
+       "title": "How many cables are spare?",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 12,
+       "difficulty": 3,
+       "skills": [
+        "graph_tree_check",
+        "graph_adjacency",
+        "graph_dfs",
+        "visited_set"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "An office has computers `0` to `n - 1` (`n` is at least 1) and a list of `cables`, each an `[a, b]` pair joining two computers in both directions. No cable is listed twice. Write `spare_cables(n, cables)`. If some comput"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "w9-heaps",
+   "title": "Sorting keys and heaps",
+   "purpose": "You do not need everything sorted, only the next most important item.",
+   "prerequisites": [
+    "w2-hashing"
+   ],
+   "lessonIds": [
+    "heaps"
+   ],
+   "workedExampleIds": [],
+   "targets": [
+    {
+     "lc": 215,
+     "title": "Kth Largest Element in an Array",
+     "solvedInRepsBy": "cap-kth-largest"
+    },
+    {
+     "lc": 347,
+     "title": "Top K Frequent Elements",
+     "solvedInRepsBy": "cap-top-k-frequent"
+    }
+   ],
+   "readinessTargets": [],
+   "labs": [
+    {
+     "id": "lab-priority-queue",
+     "title": "Priority Support Queue",
+     "optional": true
+    }
+   ],
+   "gates": [
+    {
+     "id": "g-heap",
+     "title": "Heap invariant",
+     "need": 2,
+     "skills": [
+      "heap_push_pop",
+      "top_k",
+      "sort_key"
+     ],
+     "pool": [
+      "d9h-c-cheapest-first",
+      "d9h-c-rank-teams",
+      "d9h-c-under-limit",
+      "d9h-c-k-tallest",
+      "d9h-c-busiest-hours",
+      "d9-cold-kth-smallest",
+      "d9-cold-last-rock"
+     ]
+    }
+   ],
+   "sections": [
+    {
+     "id": "d9-sorting",
+     "title": "Sorting",
+     "reps": [
+      {
+       "id": "d9-sort-returns-none",
+       "title": "What does .sort() return?",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 1.5,
+       "difficulty": 1,
+       "skills": [
+        "sorting"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Predict the three lines this prints. Watch what each sorting call hands back."
+      },
+      {
+       "id": "d9-sort-inplace-desc",
+       "title": "Sort in place, largest first",
+       "kind": "code",
+       "stage": "recall",
+       "repType": "foundation",
+       "minutes": 1.5,
+       "difficulty": 1,
+       "skills": [
+        "sorting"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of numbers. Write one line that sorts `nums` **in place** from largest to smallest. In place means the list `nums` itself ends up reordered; you do not build a new list."
+      },
+      {
+       "id": "d9-sort-second-largest",
+       "title": "Second largest distinct value",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "sorting",
+        "set_create"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of integers. It may be empty and may contain repeats. Write `second_largest(nums)` that returns the second largest **distinct** value (repeats count once), or `None` if there are fewer than two distinct "
+      },
+      {
+       "id": "d9-sort-median",
+       "title": "Median without touching the input",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "sorting",
+        "list_index"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a non-empty list of numbers in any order. Write `median(nums)`: the middle value once the numbers are sorted, or the average of the two middle values when the length is even. `[3, 1, 2]` gives `2`; `[4, 1, 3, 2"
+      },
+      {
+       "id": "d9-sort-min-gap",
+       "title": "Smallest gap between two values",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "sorting",
+        "list_index"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of at least two integers, in any order. Write `min_gap(nums)` returning the smallest difference between any two of its values (never negative). `[10, 3, 7, 1]` gives `2`, from 3 and 1. Sort first: once t"
+      },
+      {
+       "id": "d9-sort-dbg-assign-none",
+       "title": "Debug: consecutive run check",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "sorting"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of integers in any order. `is_consecutive(nums)` should return `True` when the values, put in order, form a run with no gaps or repeats (like `[6, 4, 5]`), otherwise `False`. It must not reorder the call"
+      },
+      {
+       "id": "d9-sort-dbg-discarded",
+       "title": "Debug: duplicate check by sorting",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "sorting"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of numbers in any order. `has_duplicate(nums)` should return `True` if any value appears more than once, otherwise `False`. Its plan is to sort the values and then compare neighbours. It gives wrong answ"
+      },
+      {
+       "id": "d9-sort-group-anagrams",
+       "title": "Group anagrams by sorted letters",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 7,
+       "difficulty": 3,
+       "skills": [
+        "sorting",
+        "string_methods",
+        "dict_assign"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`words` is a list of strings. Two words are **anagrams** when one is a rearrangement of the other's letters, like `'eat'` and `'tea'`. Write `group_anagrams(words)` returning a list of groups (a list of lists), where eac"
+      }
+     ]
+    },
+    {
+     "id": "d9-keys",
+     "title": "Sort keys",
+     "reps": [
+      {
+       "id": "d9-key-len-stable",
+       "title": "Sorting by length, with ties",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 2,
+       "difficulty": 1,
+       "skills": [
+        "sort_key"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Predict the output. `key=len` means: compare the words by their length instead of by their letters. Python sorting is **stable**: items whose keys are equal keep their original order."
+      },
+      {
+       "id": "d9-sort-tuples",
+       "title": "How tuples sort",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 1.5,
+       "difficulty": 1,
+       "skills": [
+        "sorting",
+        "tuples"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`pairs` is a list of tuples. Predict the output."
+      },
+      {
+       "id": "d9-key-age-desc",
+       "title": "Oldest first, in place",
+       "kind": "code",
+       "stage": "recall",
+       "repType": "foundation",
+       "minutes": 2.5,
+       "difficulty": 2,
+       "skills": [
+        "sort_key",
+        "tuples"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`people` is a list of `(name, age)` tuples, so `p[1]` is one person's age. Write one line that sorts `people` in place (the list itself is reordered), oldest first."
+      },
+      {
+       "id": "d9-key-len-then-alpha",
+       "title": "Shortest words first, ties alphabetical",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "sort_key",
+        "tuples"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`words` is a list of strings. Write `order_words(words)` that returns a new list with the words sorted by length (shortest first), and equal-length words in alphabetical order. `['pear', 'fig', 'kiwi']` gives `['fig', 'k"
+      },
+      {
+       "id": "d9-key-records",
+       "title": "Names by age, then name",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 3.5,
+       "difficulty": 2,
+       "skills": [
+        "sort_key",
+        "dict_lookup",
+        "list_comprehension"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`people` is a list of dicts like `{'name': 'ana', 'age': 31}`. Write `names_by_age(people)` that returns a list of just the names, youngest first; people of the same age go alphabetically by name. cy (40), bo (22), al (4"
+      },
+      {
+       "id": "d9-key-distance",
+       "title": "Points by distance, with a named key",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "sort_key",
+        "functions"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`points` is a list of `[x, y]` pairs. Write `by_distance(points)` that returns the points sorted by distance from `(0, 0)`, closest first. Compare by `x*x + y*y` (the squared distance: it orders points the same way the r"
+      },
+      {
+       "id": "d9-key-dict-by-value",
+       "title": "Dict keys by value, highest first",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 3.5,
+       "difficulty": 2,
+       "skills": [
+        "sort_key",
+        "dict_items"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`counts` is a dict mapping names (strings) to numbers. Write `by_value_desc(counts)` that returns a list of the **keys** ordered by their value, largest value first. Break ties alphabetically by key. `{'a': 1, 'b': 5, 'c"
+      },
+      {
+       "id": "d9-key-dbg-wrong-index",
+       "title": "Debug: rank by score",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "sort_key",
+        "tuples"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`results` is a list of `(name, score)` tuples. `by_score(results)` should return a list of the names ordered by score, lowest score first: `[('zed', 1), ('amy', 9), ('kim', 5)]` gives `['zed', 'kim', 'amy']`. Fix it."
+      },
+      {
+       "id": "d9-key-dbg-reverse-ties",
+       "title": "Debug: leaderboard ties",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3.5,
+       "difficulty": 2,
+       "skills": [
+        "sort_key",
+        "tuples"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`scores` is a list of `(name, points)` tuples. `leaderboard(scores)` should return the same tuples, highest points first; players with equal points must be listed A to Z. `[('bo', 5), ('al', 5), ('cy', 9)]` gives `[('cy'"
+      }
+     ]
+    },
+    {
+     "id": "d9-freq-sort",
+     "title": "Frequency + sort",
+     "reps": [
+      {
+       "id": "d9-freq-most-common",
+       "title": "Most common character",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "frequency_map",
+        "sort_key"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`s` is a non-empty string. Write `most_common(s)` that returns the character that appears most often in `s`. If several tie, return the alphabetically smallest of them. `'banana'` gives `'a'`; `'abab'` gives `'a'`."
+      },
+      {
+       "id": "d9-freq-topk-by-sort",
+       "title": "Top k by sorting the counts",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "frequency_map",
+        "sort_key",
+        "slicing"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of integers and `k` is at most the number of distinct values. Write `top_k_by_sort(nums, k)` returning a list of the `k` most frequent values, most frequent first (no two values have the same count in th"
+      },
+      {
+       "id": "d9-freq-dbg-pairs",
+       "title": "Debug: most frequent values",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3.5,
+       "difficulty": 2,
+       "skills": [
+        "frequency_map",
+        "sort_key",
+        "dict_items"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of integers. `most_frequent(nums, k)` should return a list of the `k` most frequent **values**, most frequent first: `most_frequent([4, 4, 4, 2, 2, 9], 2)` should give `[4, 2]`. Fix it."
+      },
+      {
+       "id": "d9-freq-sort-chars",
+       "title": "Rebuild a string by frequency",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 7,
+       "difficulty": 3,
+       "skills": [
+        "frequency_map",
+        "sort_key"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`s` is a string (it may be empty). Write `by_frequency(s)` that returns a string with the same characters as `s`, regrouped so all copies of the most frequent character come first, then the next most frequent, and so on."
+      }
+     ]
+    },
+    {
+     "id": "d9-heapq",
+     "title": "heapq",
+     "reps": [
+      {
+       "id": "d9-heap-push-trace",
+       "title": "Pushing onto a heap",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 1.5,
+       "difficulty": 1,
+       "skills": [
+        "heap_push_pop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Predict the output. `h` is an ordinary list that `heapq` keeps arranged as a **heap**: the smallest value is always at `h[0]`. `heappush` adds a value; `heappop` removes and returns the smallest one."
+      },
+      {
+       "id": "d9-heap-smallest-k",
+       "title": "k smallest by popping",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "heap_push_pop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of numbers in any order and `0 <= k <= len(nums)`. Write `smallest_k(nums, k)` that returns a list of the `k` smallest values in ascending order. `smallest_k([5, 1, 4, 2], 2)` gives `[1, 2]`. `heapq.heap"
+      },
+      {
+       "id": "d9-heap-sort",
+       "title": "Heap sort with push and pop",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "heap_push_pop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of numbers. Write `heap_sort(nums)` that returns a new ascending list by pushing every value onto an empty heap, then popping until the heap is empty. No `sorted` or `.sort()`. Nothing is pre-imported, s"
+      },
+      {
+       "id": "d9-heap-ropes",
+       "title": "Join ropes as cheaply as possible",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 7,
+       "difficulty": 3,
+       "skills": [
+        "heap_push_pop",
+        "while_loop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`lengths` is a list of positive integers, one per rope. Joining two ropes of lengths `a` and `b` costs `a + b` and leaves one rope of length `a + b`, which can be joined again. Write `join_cost(lengths)` returning the ch"
+      },
+      {
+       "id": "d9-heap-run-order",
+       "title": "Run tasks by priority",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 6,
+       "difficulty": 2,
+       "skills": [
+        "heap_push_pop",
+        "tuples"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`tasks` is a list of `(priority, name)` tuples; a lower priority number runs first, and equal priorities run alphabetically by name. Write `run_order(tasks)` that returns a list of the names in run order, using a heap. T"
+      },
+      {
+       "id": "d9-heap-dbg-slice",
+       "title": "Debug: three smallest",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "heap_push_pop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of at least three numbers. `three_smallest(nums)` should return a list of the three smallest values in ascending order, without changing `nums`. Fix it."
+      }
+     ]
+    },
+    {
+     "id": "d9-max-heap",
+     "title": "Max-heap",
+     "reps": [
+      {
+       "id": "d9-maxheap-trace",
+       "title": "Negation trace",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 2,
+       "difficulty": 1,
+       "skills": [
+        "heap_push_pop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Predict the output. Every value is pushed **negated**, so the largest original value becomes the smallest thing in the heap."
+      },
+      {
+       "id": "d9-maxheap-k-largest-desc",
+       "title": "k largest, biggest first",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "heap_push_pop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of numbers and `k <= len(nums)`. Write `largest_first(nums, k)` that returns a list of the `k` largest values, biggest first. `largest_first([4, 9, 1, 7], 2)` gives `[9, 7]`. `heapq` pops the smallest, s"
+      },
+      {
+       "id": "d9-maxheap-dbg-no-negate",
+       "title": "Debug: heaviest items",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "heap_push_pop",
+        "tuples"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`items` is a list of `(weight, name)` tuples. `heaviest(items, k)` should return a list of the names of the `k` heaviest items, heaviest first: with a box (3), a piano (9) and a desk (5), `k = 2` gives `['piano', 'desk']"
+      },
+      {
+       "id": "d9-maxheap-smash",
+       "title": "Smash the two heaviest",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 9,
+       "difficulty": 3,
+       "skills": [
+        "heap_push_pop",
+        "while_loop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`weights` is a list of positive integers, one per rock (it may be empty). Repeatedly take the two heaviest rocks. If they weigh the same, both vanish. Otherwise the lighter one vanishes and the heavier one goes back with"
+      }
+     ]
+    },
+    {
+     "id": "d9-top-k",
+     "title": "Top-k",
+     "reps": [
+      {
+       "id": "d9-topk-trace",
+       "title": "Size-k heap trace",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 2,
+       "difficulty": 1,
+       "skills": [
+        "top_k",
+        "heap_push_pop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Predict the output. The heap is never allowed to keep more than `k` values: whenever it holds more, the smallest one is popped."
+      },
+      {
+       "id": "d9-topk-kth-by-sort",
+       "title": "k-th largest, the sorting way",
+       "kind": "code",
+       "stage": "recall",
+       "repType": "foundation",
+       "minutes": 2,
+       "difficulty": 1,
+       "skills": [
+        "sorting",
+        "list_index"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a non-empty list of numbers and `1 <= k <= len(nums)`. The **k-th largest** is the value at position `k` when the list is written largest first: `k = 1` is the maximum, `k = 2` the next one down. Repeats each t"
+      },
+      {
+       "id": "d9-topk-optimize",
+       "title": "Optimize: sort everything → size-k heap",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 3,
+       "skills": [
+        "top_k",
+        "heap_push_pop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "This works but sorts all `n` values: O(n log n). Rewrite `k_largest(nums, k)` so it keeps a min-heap of at most `k` items while scanning: O(n log k). Return the `k` largest values in any order. No `sorted` allowed (a tes"
+      },
+      {
+       "id": "d9-topk-dbg-no-trim",
+       "title": "Debug: sum of the k largest",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3.5,
+       "difficulty": 2,
+       "skills": [
+        "top_k",
+        "heap_push_pop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of numbers and `0 <= k <= len(nums)`. `top_k_sum(nums, k)` should return the sum of the `k` largest values (`0` when `k` is `0`), using a min-heap that never holds more than `k` items. `top_k_sum([5, 1, "
+      },
+      {
+       "id": "d9-topk-closest",
+       "title": "k closest points",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 10,
+       "difficulty": 3,
+       "skills": [
+        "top_k",
+        "heap_push_pop",
+        "tuples"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`points` is a list of `[x, y]` pairs and `1 <= k <= len(points)`. Write `k_closest(points, k)` that returns the `k` points nearest to the origin `(0, 0)`, as `[x, y]` lists in any order. Compare points by `x*x + y*y` (th"
+      },
+      {
+       "id": "d9-topk-keys-by-count",
+       "title": "The k keys with the highest counts",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 7,
+       "difficulty": 3,
+       "skills": [
+        "top_k",
+        "heap_push_pop",
+        "dict_items"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`counts` is a dict that maps each item to a whole number: how many times it was seen. `k` is between 1 and the number of keys. Write `top_k_keys(counts, k)` that returns a list of the `k` keys with the highest counts, in"
+      },
+      {
+       "id": "d9-topk-dbg-tuple-order",
+       "title": "Debug: busiest users",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "top_k",
+        "frequency_map",
+        "tuples"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`log` is a list of usernames, one entry per action, so a name appears once for every action that user took. `busiest(log, k)` should return a list of the `k` users with the most actions, in any order: `busiest(['bo', 'al"
+      },
+      {
+       "id": "cap-kth-largest",
+       "title": "K-th largest value",
+       "kind": "code",
+       "stage": "capstone",
+       "repType": "capstone",
+       "minutes": 25,
+       "difficulty": 3,
+       "skills": [
+        "heap_push_pop",
+        "top_k"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": 215,
+       "transfer": false,
+       "prompt": "Given a list of integers `nums` and an integer `k` (`1 <= k <= len(nums)`), return the value that would be at position `k` if the list were sorted from largest to smallest. Duplicates count separately: in `[3, 3, 1]` the"
+      },
+      {
+       "id": "d9-explain-kth-largest",
+       "title": "Explain: k-th largest",
+       "kind": "explain",
+       "stage": "interview",
+       "repType": "interview",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "explanation",
+        "complexity",
+        "top_k"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Explain your k-th largest solution as you would to an interviewer: the baseline, the heap approach, the invariant, the complexity, and edge cases."
+      },
+      {
+       "id": "cap-top-k-frequent",
+       "title": "Most frequent k values",
+       "kind": "code",
+       "stage": "capstone",
+       "repType": "capstone",
+       "minutes": 30,
+       "difficulty": 3,
+       "skills": [
+        "frequency_map",
+        "heap_push_pop",
+        "top_k",
+        "sort_key"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": 347,
+       "transfer": false,
+       "prompt": "Given a list of integers `nums` and an integer `k`, return the `k` values that occur most often. Return them in any order. You may assume the answer is unique (no tie at the cut-off). Try to do better than sorting every "
+      },
+      {
+       "id": "d9-explain-top-k-frequent",
+       "title": "Explain: top k frequent",
+       "kind": "explain",
+       "stage": "interview",
+       "repType": "interview",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "explanation",
+        "complexity",
+        "frequency_map",
+        "top_k"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Explain your top-k-frequent solution out loud: the two phases, why a heap of size k, and the trade-off with sorting."
+      }
+     ]
+    },
+    {
+     "id": "d9h-check",
+     "title": "Sorting + heaps check",
+     "reps": [
+      {
+       "id": "d9h-c-cheapest-first",
+       "title": "Menu, cheapest first",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "sort_key",
+        "tuples",
+        "list_comprehension"
+       ],
+       "gateVariantOf": "g-heap",
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`menu` is a list of `(name, price)` tuples. Write `cheapest_first(menu)` that returns just the names, cheapest first. Equal prices stay in their original order. `cheapest_first([('tea', 3), ('cake', 6), ('water', 1)])` →"
+      },
+      {
+       "id": "d9h-c-rank-teams",
+       "title": "League table",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "sort_key",
+        "sorting",
+        "dict_lookup"
+       ],
+       "gateVariantOf": "g-heap",
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`teams` is a list of dicts like `{'name': 'owls', 'wins': 5, 'losses': 2}`. Write `rank_teams(teams)` that returns the team names: most wins first, and among equal wins, fewest losses first. Owls 5–2, Bats 7–1, Cats 5–1 "
+      },
+      {
+       "id": "d9h-c-under-limit",
+       "title": "Under the limit, smallest first",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 8,
+       "difficulty": 3,
+       "skills": [
+        "heap_push_pop",
+        "while_loop",
+        "list_append"
+       ],
+       "gateVariantOf": "g-heap",
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `under_limit(nums, limit)` that returns every value **smaller than** `limit`, in ascending order. Do not sort: no `sorted`, no `.sort()`. Take values out smallest first and stop as soon as the smallest one left is "
+      },
+      {
+       "id": "d9h-c-k-tallest",
+       "title": "The k tallest",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 8,
+       "difficulty": 3,
+       "skills": [
+        "top_k",
+        "heap_push_pop",
+        "sorting"
+       ],
+       "gateVariantOf": "g-heap",
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `k_tallest(heights, k)` that returns the `k` largest values in ascending order (all of them if there are fewer than `k`). Scan once and never hold more than `k` values in memory besides the input. Nothing is pre-im"
+      },
+      {
+       "id": "d9h-c-busiest-hours",
+       "title": "Busiest hours",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 10,
+       "difficulty": 3,
+       "skills": [
+        "frequency_map",
+        "top_k",
+        "heap_push_pop",
+        "sort_key"
+       ],
+       "gateVariantOf": "g-heap",
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`log` has one entry per customer: the hour (0–23) they arrived. Write `busiest_hours(log, k)` that returns the `k` hours with the most customers, listed from earliest to latest. If two hours are equally busy, the earlier"
+      }
+     ]
+    }
+   ],
+   "optionalSections": [
+    {
+     "id": "d9-warmup",
+     "title": "Warm-up",
+     "reps": [
+      {
+       "id": "d9-warm-word-counts",
+       "title": "Warm-up: count words",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 4,
+       "difficulty": 1,
+       "skills": [
+        "frequency_map",
+        "dict_get"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `count_words(words)` that returns a dict mapping each word to how many times it appears. Use `.get()`."
+      },
+      {
+       "id": "d9-warm-sorted-pair",
+       "title": "Warm-up: pair in a sorted list",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 6,
+       "difficulty": 2,
+       "skills": [
+        "two_pointer",
+        "pointer_update"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is sorted ascending. Write `pair_sum(nums, target)` that returns the **indexes** `[i, j]` (with `i < j`) of the first pair found by two pointers whose values add to `target`, or `[]` if none exists."
+      },
+      {
+       "id": "d9-warm-window-sum",
+       "title": "Warm-up: best window of size k",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 6,
+       "difficulty": 2,
+       "skills": [
+        "sliding_window",
+        "window_state"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `max_window(nums, k)` that returns the largest sum of any `k` consecutive numbers. Assume `1 <= k <= len(nums)`. Keep a running window sum instead of re-summing."
+      },
+      {
+       "id": "d9-warm-lower-bound",
+       "title": "Warm-up: first index at least target",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 6,
+       "difficulty": 3,
+       "skills": [
+        "binary_search",
+        "mid_calc",
+        "search_invariant"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is sorted. Write `first_at_least(nums, target)` that returns the first index whose value is `>= target`, or `len(nums)` if there is none. Use binary search."
+      },
+      {
+       "id": "d9-warm-max-depth",
+       "title": "Warm-up: tree depth",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "tree_dfs",
+        "recursion_base_case",
+        "recursion_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `max_depth(root)` that returns the number of nodes on the longest root-to-leaf path. An empty tree has depth 0."
+      },
+      {
+       "id": "d9-warm-components",
+       "title": "Warm-up: count components",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 8,
+       "difficulty": 3,
+       "skills": [
+        "graph_adjacency",
+        "graph_dfs",
+        "connected_components",
+        "visited_set"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Nodes are `0..n-1` and `edges` is a list of undirected `[a, b]` pairs. Write `count_components(n, edges)` that returns the number of connected groups. Build an adjacency dict first."
+      }
+     ]
+    },
+    {
+     "id": "br-23",
+     "title": "Toward Merge k Sorted Lists",
+     "reps": [
+      {
+       "id": "b23-fold",
+       "title": "Merge them one at a time",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "linked_list_traversal",
+        "list_iterate",
+        "accumulator"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`merge_two(a, b)` is given: it merges two sorted linked lists (either may be `None`). Its last line, `tail.next = a if a else b`, reads \"`a` if `a` is not empty, otherwise `b`\": it attaches whichever list still has nodes"
+      },
+      {
+       "id": "b23-next-round",
+       "title": "One knockout round",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 7,
+       "difficulty": 2,
+       "skills": [
+        "list_index",
+        "range",
+        "list_append",
+        "conditionals"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "One round of a knockout: `scores` is a list of numbers. Pair them off from the left (index 0 with 1, index 2 with 3, …) and keep the larger of each pair. If one is left over at the end, it goes through unpaired. Write `n"
+      },
+      {
+       "id": "b23-dbg-rounds",
+       "title": "Debug: a list goes missing",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 6,
+       "difficulty": 3,
+       "skills": [
+        "list_index",
+        "range",
+        "while_loop",
+        "linked_list_traversal"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`merge_rounds(lists)` should merge any number of sorted linked lists into one, in rounds: each round merges neighbours in pairs, and the rounds repeat until a single list is left. `[]` gives `None`. `merge_two` is correc"
+      },
+      {
+       "id": "b23-merge-arrays",
+       "title": "Many sorted arrays into one",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 16,
+       "difficulty": 4,
+       "skills": [
+        "two_pointer",
+        "list_index",
+        "while_loop",
+        "range",
+        "list_append"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`arrays` is a list of Python lists of numbers, each already sorted ascending. Inner lists may be empty, and `arrays` itself may be empty. Write `merge_sorted_arrays(arrays)` returning one new sorted list holding every va"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

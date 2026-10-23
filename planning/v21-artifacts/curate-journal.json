@@ -1,0 +1,61 @@
+[
+ {
+  "type": "launched"
+ },
+ {
+  "type": "started",
+  "key": "v2:e546dc7fc1653dd7256ef6012d7e42e703bf7fcae19c00a7db01347435640313",
+  "agentId": "abbfac079f266d871",
+  "label": "curate:w1",
+  "phase": "Curate"
+ },
+ {
+  "type": "started",
+  "key": "v2:92a2ef1c6fd08cf4923e0f5e9f9f04c419e634fd366ede68f142802ddd85ac35",
+  "agentId": "a5031059f768049dc",
+  "label": "curate:w2",
+  "phase": "Curate"
+ },
+ {
+  "type": "started",
+  "key": "v2:2187c47305a1e1296225a233bd13ce605b97487df006949cc6747d81e52ee3cb",
+  "agentId": "a7481ac3818da3fc0",
+  "label": "curate:w3",
+  "phase": "Curate"
+ },
+ {
+  "type": "started",
+  "key": "v2:ad8fc82f578543203346cd04fba325c3dfac39149e99a28328a098e6089afdd5",
+  "agentId": "a76009f47627b85c3",
+  "label": "curate:w4",
+  "phase": "Curate"
+ },
+ {
+  "type": "started",
+  "key": "v2:93f28e6ccb6ead533ee40ad099b54c6c382fc18097fc8fdc1dd48135086e03d2",
+  "agentId": "a241b8dff22d635b7",
+  "label": "curate:w5",
+  "phase": "Curate"
+ },
+ {
+  "type": "started",
+  "key": "v2:c74db44e10c93ceac288520b7ccde30c7a6da4d728b2c3d7833c93c50648b9ae",
+  "agentId": "a37ef5dab8905cd39",
+  "label": "curate:w6",
+  "phase": "Curate"
+ },
+ {
+  "type": "started",
+  "key": "v2:5fd8303c3ca96009e3228deeed20797dde5007f3cba09779637bfef93dff76cb",
+  "agentId": "a9d4cb01b9cdfc94d",
+  "label": "curate:w7",
+  "phase": "Curate"
+ },
+ {
+  "type": "started",
+  "key": "v2:13f3508b6ffd8c5942e22bdd76c2cfb77c86e4fb33e39ba4016587075260f00d",
+  "agentId": "a921a560d3388364d",
+  "label": "curate:w8",
+  "phase": "Curate"
+ }
+]

@@ -1,0 +1,884 @@
+{
+ "week": 13,
+ "title": "Independent Transfer",
+ "focus": "Unlabeled problems",
+ "purpose": "No labels: choose the approach yourself and prove it on fresh problems.",
+ "weekTarget": 60,
+ "dailyTarget": 15,
+ "trainingDays": [
+  "2027-01-19",
+  "2027-01-20",
+  "2027-01-21",
+  "2027-01-22"
+ ],
+ "units": [
+  {
+   "id": "w13-transfer",
+   "title": "Independent transfer",
+   "purpose": "No labels, no hints about the pattern: choose the approach yourself.",
+   "prerequisites": [
+    "w12-dp-greedy",
+    "w12-matrix-tries"
+   ],
+   "lessonIds": [],
+   "workedExampleIds": [],
+   "targets": [],
+   "readinessTargets": [],
+   "labs": [
+    {
+     "id": "lab-fde-workflow",
+     "title": "FDE Customer Workflow",
+     "optional": false
+    }
+   ],
+   "gates": [],
+   "sections": [
+    {
+     "id": "c13-transfer",
+     "title": "Transfer bank",
+     "reps": [
+      {
+       "id": "c13-t-01",
+       "title": "First one-time visitor",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 6,
+       "difficulty": 2,
+       "skills": [
+        "frequency_map",
+        "dict_get"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`visitors` is a list of names in the order people walked in. Return the first name that appears exactly once in the whole list. Return `\"\"` if every name repeats. Must run in O(n). `first_single([\"ana\", \"bo\", \"ana\", \"cy\""
+      },
+      {
+       "id": "c13-t-02",
+       "title": "Two sorted feeds",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 15,
+       "difficulty": 2,
+       "skills": [
+        "two_pointer",
+        "pointer_update",
+        "sorted_dedupe"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`a` and `b` are lists of timestamps. Each list is sorted from smallest to largest. Return one sorted list with every timestamp from both lists. A timestamp that appears more than once, in either list, appears once in the"
+      },
+      {
+       "id": "c13-t-03",
+       "title": "Way out of the warehouse",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 10,
+       "difficulty": 3,
+       "skills": [
+        "bfs",
+        "grid_neighbors",
+        "visited_set"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`grid` is a list of equal-length strings. `'.'` is floor and `'#'` is a wall. You start at the top-left cell and want to reach the bottom-right cell. Each move goes one cell up, down, left or right, onto floor. Return th"
+      },
+      {
+       "id": "c13-t-04",
+       "title": "Merged slots go wrong",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 5,
+       "difficulty": 3,
+       "skills": [
+        "interval_overlap",
+        "edge_cases"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`merge(slots)` should take a list of `[start, end]` pairs and combine the ones that overlap or touch. It returns the combined pairs sorted by start. A teammate wrote this, and it is wrong on some inputs: ```python def me"
+      },
+      {
+       "id": "c13-t-05",
+       "title": "Worst slide in price",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 6,
+       "difficulty": 2,
+       "skills": [
+        "state_tracking",
+        "accumulator"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`prices` is a list of daily prices. Return the largest drop from one day's price to a later, lower price. Return `0` if the price never falls. Must run in O(n). `largest_drop([8, 10, 4, 7, 2, 6])` → `8` (from 10 down to "
+      },
+      {
+       "id": "c13-t-06",
+       "title": "Recording studios",
+       "kind": "code",
+       "stage": "interview",
+       "repType": "pattern",
+       "minutes": 20,
+       "difficulty": 3,
+       "skills": [
+        "min_rooms",
+        "heap_push_pop",
+        "sort_key"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`bookings` is a list of `[start, end]` pairs in minutes. A booking holds a studio from `start` up to, but not including, `end`. A studio freed at minute 30 can take a booking that starts at minute 30. Return the fewest s"
+      },
+      {
+       "id": "c13-t-07",
+       "title": "Badge scanned twice",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 9,
+       "difficulty": 2,
+       "skills": [
+        "index_map",
+        "complexity",
+        "explanation"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`badge_ids` is the list of badge scans at a door, in order. `k` is a whole number, 0 or more. Return `True` if the same badge appears at two positions that are at most `k` apart. Otherwise return `False`. Must run in O(n"
+      },
+      {
+       "id": "c13-t-08",
+       "title": "Skip every k-th stop",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 8,
+       "difficulty": 2,
+       "skills": [
+        "linked_list_reassignment",
+        "dummy_node",
+        "linked_list_traversal"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`head` is the first node of a linked list, or `None`. Each node has `.val` and `.next`. `k` is at least 1. Remove the nodes at positions `k`, `2k`, `3k` and so on, counting the head as position 1. Return the head of what"
+      },
+      {
+       "id": "c13-t-09",
+       "title": "Closing tags",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 6,
+       "difficulty": 2,
+       "skills": [
+        "stack_push_pop",
+        "matching_pairs"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`tags` is a list of strings. Each one opens a section, like `\"<b>\"`, or closes one, like `\"</b>\"`. Return `True` if every section is closed. A closing tag must match the most recently opened section that is still open. O"
+      },
+      {
+       "id": "c13-t-10",
+       "title": "Days that net to a target",
+       "kind": "code",
+       "stage": "interview",
+       "repType": "pattern",
+       "minutes": 20,
+       "difficulty": 4,
+       "skills": [
+        "prefix_suffix",
+        "frequency_map",
+        "hash_reasoning"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`changes` is a list of daily balance changes. They can be negative. A **run** is one or more days in a row. Return how many runs add up to exactly `target`. Must run in O(n). `count_target_runs([3, 4, -7, 3, 1, 3], 7)` →"
+      },
+      {
+       "id": "c13-t-11",
+       "title": "Filling a shelf",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 8,
+       "difficulty": 3,
+       "skills": [
+        "recurrence",
+        "dp_table"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "A shelf is `n` units long. You fill it with boxes of length 1, 2 or 3, placed end to end with no gaps. Two fillings are different if their sequences of box lengths differ. Return how many fillings there are. `n` can be a"
+      },
+      {
+       "id": "c13-t-12",
+       "title": "Tests for a dedupe",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 7,
+       "difficulty": 2,
+       "skills": [
+        "sorted_dedupe",
+        "edge_cases"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`dedupe_sorted(nums)` takes a sorted list of whole numbers. It should return the same numbers in order, with each value kept once. Here is one attempt: ```python def dedupe_sorted(nums): out = [] last = 0 for x in nums: "
+      },
+      {
+       "id": "c13-t-13",
+       "title": "Busiest stretch of minutes",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 7,
+       "difficulty": 2,
+       "skills": [
+        "sliding_window",
+        "window_state"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`counts[i]` is how many orders arrived in minute `i`. `k` is between 1 and `len(counts)`. Return the first minute of the `k` back-to-back minutes with the most orders in total. If there is a tie, return the earliest star"
+      },
+      {
+       "id": "c13-t-14",
+       "title": "Infected rack",
+       "kind": "code",
+       "stage": "interview",
+       "repType": "pattern",
+       "minutes": 22,
+       "difficulty": 4,
+       "skills": [
+        "bfs",
+        "grid_neighbors",
+        "queue_deque"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`grid` is a list of equal-length strings showing a server rack. `'X'` is an infected server, `'o'` is a healthy server and `'.'` is an empty slot. Each minute, every infected server infects the healthy servers directly a"
+      },
+      {
+       "id": "c13-t-15",
+       "title": "Busiest day of a launch",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 10,
+       "difficulty": 3,
+       "skills": [
+        "binary_search",
+        "search_invariant",
+        "complexity"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`visits` is a list of daily visitor counts. The counts rise strictly to one highest day, then fall strictly. They may only rise, or only fall. Return the index of the highest day. Must run in O(log n): the list can be ve"
+      },
+      {
+       "id": "c13-t-16",
+       "title": "Boxes inside boxes",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 7,
+       "difficulty": 2,
+       "skills": [
+        "recursion_base_case",
+        "recursion_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`box` is a list. Each item is a whole number or another list, nested to any depth. A number directly inside `box` is at depth 1. A number inside a list inside `box` is at depth 2, and so on. Return the sum of each number"
+      },
+      {
+       "id": "c13-t-17",
+       "title": "Shorter activity log",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 15,
+       "difficulty": 2,
+       "skills": [
+        "state_tracking",
+        "while_loop",
+        "string_methods"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`events` is a list of event names in the order they happened. Collapse each run of the same name in a row into one entry. A run of one stays as the plain name. A longer run becomes the name, a space, `x`, and the count, "
+      },
+      {
+       "id": "c13-t-18",
+       "title": "Friend circles",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 9,
+       "difficulty": 3,
+       "skills": [
+        "connected_components",
+        "graph_adjacency"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "There are `n` people, numbered 0 to `n - 1`. `pairs` is a list of `[a, b]` meaning `a` and `b` know each other. People who know each other are in the same circle. So is anyone linked through a chain of people who know ea"
+      },
+      {
+       "id": "c13-t-19",
+       "title": "Splitting a tag into words",
+       "kind": "code",
+       "stage": "interview",
+       "repType": "pattern",
+       "minutes": 22,
+       "difficulty": 4,
+       "skills": [
+        "dp_prefix_words",
+        "dp_table",
+        "set_membership"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`tag` is a lowercase string with no spaces, like `\"bestcoffeeshop\"`. `words` is a list of lowercase words. Return `True` if `tag` can be cut into pieces that are all in `words`. A word can be used any number of times. An"
+      },
+      {
+       "id": "c13-t-20",
+       "title": "A list that never ends",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 8,
+       "difficulty": 3,
+       "skills": [
+        "fast_slow",
+        "linked_list_traversal",
+        "edge_cases"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`head` is the first node of a linked list, or `None`. Each node has `.val` and `.next`. In a broken list, following `.next` comes back around to an earlier node and never reaches `None`. `has_loop(head)` should return `T"
+      },
+      {
+       "id": "c13-t-21",
+       "title": "Entries in a time range",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 8,
+       "difficulty": 3,
+       "skills": [
+        "binary_search",
+        "search_invariant"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`times` is a list of timestamps sorted from smallest to largest. It may have repeats. Return how many timestamps are at least `start` and at most `end`. If `start > end`, return `0`. Must run in O(log n): `times` can hol"
+      },
+      {
+       "id": "c13-t-22",
+       "title": "Minutes in meetings",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 8,
+       "difficulty": 2,
+       "skills": [
+        "interval_overlap",
+        "sort_key"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`meetings` is a list of `[start, end]` pairs in minutes, in no particular order. Each meeting covers the time from `start` to `end`. Meetings may overlap. Return how many minutes are covered by at least one meeting. Time"
+      },
+      {
+       "id": "c13-t-23",
+       "title": "Ticket number runs",
+       "kind": "code",
+       "stage": "interview",
+       "repType": "pattern",
+       "minutes": 18,
+       "difficulty": 3,
+       "skills": [
+        "sequence_start",
+        "set_membership",
+        "hash_reasoning"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`ids` is a list of ticket numbers in no particular order, possibly with repeats. Return the length of the longest run of consecutive numbers that all appear, like 4, 5, 6, 7. Must run in O(n), so sorting is too slow. `lo"
+      },
+      {
+       "id": "c13-t-24",
+       "title": "Cheapest walk across a field",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 11,
+       "difficulty": 3,
+       "skills": [
+        "dp_grid",
+        "complexity",
+        "explanation"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`costs` is a grid of non-negative numbers, given as a list of rows. You start at the top-left cell and finish at the bottom-right cell. Each step moves one cell right or one cell down. A route costs the sum of every cell"
+      },
+      {
+       "id": "c13-t-25",
+       "title": "Snacks on an exact budget",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 11,
+       "difficulty": 3,
+       "skills": [
+        "backtracking_state",
+        "combination_start"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`prices` is a list of different positive whole numbers, one per snack. `budget` is a positive whole number. Return every way to choose snacks whose prices add up to exactly `budget`, using each snack at most once. Write "
+      },
+      {
+       "id": "c13-t-26",
+       "title": "Waiting for a better price",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 10,
+       "difficulty": 3,
+       "skills": [
+        "stack_push_pop",
+        "state_tracking"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`prices` is a list of daily prices. For each day, count the days you wait until a strictly higher price. Use `0` if no later day is higher. Return the list of counts. Must run in O(n). `days_until_higher([5, 3, 4, 8, 2])"
+      },
+      {
+       "id": "c13-t-27",
+       "title": "Change-making shortcut",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 5,
+       "difficulty": 3,
+       "skills": [
+        "dp_min_choice",
+        "edge_cases"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`fewest_coins(coins, amount)` should return the fewest coins that add up to exactly `amount`. `coins` lists the coin values, and each value can be used any number of times. It returns `-1` if no mix works. A teammate wro"
+      },
+      {
+       "id": "c13-t-28",
+       "title": "Turn the photo",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "matrix_transform",
+        "list_comprehension"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`image` is a list of rows of pixel values, all rows the same length. Return a new image turned 90 degrees clockwise. The first column, read from bottom to top, becomes the first row. Don't change `image`. `rotate_clockwi"
+      },
+      {
+       "id": "c13-t-29",
+       "title": "Job run order",
+       "kind": "code",
+       "stage": "interview",
+       "repType": "pattern",
+       "minutes": 24,
+       "difficulty": 4,
+       "skills": [
+        "cycle_detection",
+        "graph_adjacency",
+        "heap_push_pop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "There are `n` jobs, numbered 0 to `n - 1`. `needs` is a list of `[a, b]` pairs meaning job `a` can only start after job `b` is done. Return an order to run all the jobs. When more than one job is ready, run the smallest-"
+      },
+      {
+       "id": "c13-t-30",
+       "title": "Two gifts under a budget",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 8,
+       "difficulty": 2,
+       "skills": [
+        "two_pointer",
+        "pointer_update"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`prices` is a list of positive item prices, sorted from smallest to largest. You buy exactly two different items. Return the largest total of two items that is at most `budget`. Return `-1` if no two items fit. Must run "
+      },
+      {
+       "id": "c13-t-31",
+       "title": "Runner-up scores",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 10,
+       "difficulty": 3,
+       "skills": [
+        "top_k",
+        "heap_push_pop",
+        "complexity"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`scores` is a list of whole numbers. `k` is between 1 and `len(scores)`. Return the `k`-th highest score, counting repeats. Must run in O(n log k), which is faster than sorting when `k` is small. `kth_highest_score([40, "
+      },
+      {
+       "id": "c13-t-32",
+       "title": "Stepping stones",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 7,
+       "difficulty": 3,
+       "skills": [
+        "greedy_reach",
+        "state_tracking"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "Stones are numbered 0 to `len(hops) - 1`. `hops[i]` is the farthest you can jump forward from stone `i`; you may also jump shorter. You start on stone 0. Return `True` if you can reach the last stone. Must run in O(n). `"
+      },
+      {
+       "id": "c13-t-33",
+       "title": "Badges never scanned",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 15,
+       "difficulty": 1,
+       "skills": [
+        "set_membership",
+        "hash_reasoning",
+        "sorting"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`issued` is a list of different badge ids handed out at a conference. `scans` is the door log. It can repeat ids, and it can include ids that were never issued. Return the issued ids that never appear in `scans`, sorted "
+      },
+      {
+       "id": "c13-t-34",
+       "title": "Heavy routes in a tree",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 9,
+       "difficulty": 3,
+       "skills": [
+        "tree_dfs",
+        "treenode"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`root` is the root of a binary tree of whole numbers, or `None`. Each node has `.val`, `.left` and `.right`. A **route** runs from the root down to a leaf, a node with no children. Return how many routes have a total str"
+      },
+      {
+       "id": "c13-t-35",
+       "title": "Playlist with few artists",
+       "kind": "code",
+       "stage": "interview",
+       "repType": "pattern",
+       "minutes": 20,
+       "difficulty": 4,
+       "skills": [
+        "sliding_window",
+        "window_counts",
+        "frequency_map"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`artists` lists the artist of each song in a playlist, in play order. `k` is at least 1. Return the length of the longest run of back-to-back songs with at most `k` different artists. Must run in O(n). `longest_mix([\"ana"
+      },
+      {
+       "id": "c13-t-36",
+       "title": "Hanging lookup",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 8,
+       "difficulty": 3,
+       "skills": [
+        "binary_search",
+        "search_invariant",
+        "edge_cases"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`nums` is a list sorted from smallest to largest. `first_at_least(nums, x)` should return the index of the first item that is `>= x`. If there is none, it returns `len(nums)`. A teammate's version never finishes on some "
+      },
+      {
+       "id": "c13-t-37",
+       "title": "Balancing a beam",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 7,
+       "difficulty": 2,
+       "skills": [
+        "prefix_suffix",
+        "accumulator"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`weights` is a list of numbers along a beam. A cut goes between two neighbouring items. It splits the list into a non-empty left part and a non-empty right part. Return how many cuts leave both parts with the same total."
+      },
+      {
+       "id": "c13-t-38",
+       "title": "Setup steps",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 11,
+       "difficulty": 3,
+       "skills": [
+        "cycle_detection",
+        "graph_adjacency"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "There are `n` setup steps, numbered 0 to `n - 1`. `rules` is a list of `[a, b]` pairs meaning step `b` must happen before step `a`. Return `True` if all the steps can be done in some order that follows every rule. Otherw"
+      },
+      {
+       "id": "c13-t-39",
+       "title": "Drop a stop near the end",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 10,
+       "difficulty": 3,
+       "skills": [
+        "linked_list_reassignment",
+        "dummy_node",
+        "complexity"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`head` is the first node of a linked list, or `None`. Each node has `.val` and `.next`. `k` is between 1 and the length of the list. Remove the `k`-th node counting from the end, where the last node is 1. Return the head"
+      },
+      {
+       "id": "c13-t-40",
+       "title": "Scrambled tags",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 7,
+       "difficulty": 2,
+       "skills": [
+        "grouping_key",
+        "sorting"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`tags` is a list of lowercase words. Two words belong together if one is a rearrangement of the other's letters, like `\"listen\"` and `\"silent\"`. Return the groups. Sort the words inside each group, then sort the list of "
+      },
+      {
+       "id": "c13-t-41",
+       "title": "Shared manager",
+       "kind": "code",
+       "stage": "interview",
+       "repType": "pattern",
+       "minutes": 20,
+       "difficulty": 4,
+       "skills": [
+        "tree_dfs",
+        "treenode",
+        "tree_global_best"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`root` is the root of an org chart stored as a binary tree. Each node has `.val`, `.left` and `.right`. Values are unique, and the tree is not sorted in any way. `a` and `b` are two values in the tree. Return the value o"
+      },
+      {
+       "id": "c13-t-42",
+       "title": "Most reported bugs",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 8,
+       "difficulty": 2,
+       "skills": [
+        "top_k",
+        "frequency_map",
+        "sort_key"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`reports` is a list of bug ids, one per report, and ids may repeat. `k` is at least 1. Return the `k` ids reported most often, most reported first. Break ties by putting the smaller id first. If there are fewer than `k` "
+      },
+      {
+       "id": "c13-t-43",
+       "title": "Tests for the best block",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 7,
+       "difficulty": 2,
+       "skills": [
+        "window_state",
+        "edge_cases"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`best_total(nums, k)` should return the largest total of `k` neighbouring items in `nums`. `k` is between 1 and `len(nums)`. Here is one attempt: ```python def best_total(nums, k): total = sum(nums[:k]) best = total for "
+      },
+      {
+       "id": "c13-t-44",
+       "title": "Bracket depth",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 15,
+       "difficulty": 1,
+       "skills": [
+        "matching_pairs",
+        "accumulator"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`formula` is a string that may contain `(` and `)` among other characters. Return the deepest level of brackets: `\"(a)\"` has depth 1 and `\"((a))\"` has depth 2. Return `-1` if the brackets don't match up. That means a `)`"
+      },
+      {
+       "id": "c13-t-45",
+       "title": "Longest calm stretch",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 8,
+       "difficulty": 3,
+       "skills": [
+        "sliding_window",
+        "window_state"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`levels` is a list of non-negative noise readings, one per second. Return the length of the longest run of back-to-back seconds whose readings add up to at most `limit`. Return `0` if no single second fits. Must run in O"
+      },
+      {
+       "id": "c13-t-46",
+       "title": "Row totals",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 7,
+       "difficulty": 2,
+       "skills": [
+        "bfs_levels",
+        "treenode"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`root` is the root of a binary tree of numbers, or `None`. Each node has `.val`, `.left` and `.right`. The root is row 0, its children are row 1, and so on. Return a list with the total of each row, from the top row down"
+      },
+      {
+       "id": "c13-t-47",
+       "title": "One clean network",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 11,
+       "difficulty": 3,
+       "skills": [
+        "graph_tree_check",
+        "connected_components",
+        "complexity"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "There are `n` computers, numbered 0 to `n - 1`, with `n` at least 1. `links` is a list of `[a, b]` cables. Each cable joins two different computers, and works both ways. Return `True` if every computer can reach every ot"
+      },
+      {
+       "id": "c13-t-48",
+       "title": "Truck capacity",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 12,
+       "difficulty": 4,
+       "skills": [
+        "binary_search",
+        "search_invariant"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`packages` lists package weights in the order they must ship. Each day the truck takes the next packages in order, as many as fit within its capacity. Return the smallest whole-number capacity that ships everything withi"
+      }
+     ]
+    }
+   ],
+   "optionalSections": []
+  }
+ ]
+}

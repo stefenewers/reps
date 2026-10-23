@@ -1,0 +1,1076 @@
+{
+ "week": 3,
+ "title": "Pointers + State",
+ "focus": "Two pointers, running state, prefix/suffix",
+ "purpose": "Coordinate positions and keep only the history that future work needs.",
+ "weekTarget": 75,
+ "dailyTarget": 15,
+ "trainingDays": [
+  "2026-11-09",
+  "2026-11-10",
+  "2026-11-11",
+  "2026-11-12",
+  "2026-11-13"
+ ],
+ "units": [
+  {
+   "id": "w3-two-pointers",
+   "title": "Two pointers",
+   "purpose": "Which pointer moves, and why it is safe to discard the region you just ruled out.",
+   "prerequisites": [
+    "w1-loop-control",
+    "w1-state-while"
+   ],
+   "lessonIds": [
+    "two-pointers"
+   ],
+   "workedExampleIds": [],
+   "targets": [
+    {
+     "lc": 125,
+     "title": "Valid Palindrome",
+     "solvedInRepsBy": "cap-valid-palindrome"
+    },
+    {
+     "lc": 167,
+     "title": "Two Sum II – Input Array Is Sorted",
+     "solvedInRepsBy": "cap-two-sum-ii"
+    }
+   ],
+   "readinessTargets": [
+    {
+     "lc": 11,
+     "title": "Container With Most Water"
+    }
+   ],
+   "labs": [
+    {
+     "id": "lab-sorted-match",
+     "title": "Sorted Match Engine",
+     "optional": false
+    }
+   ],
+   "gates": [
+    {
+     "id": "g-pointer-mechanics",
+     "title": "Pointer mechanics",
+     "need": 2,
+     "skills": [
+      "two_pointer",
+      "pointer_update"
+     ],
+     "pool": [
+      "d3-cold-pair-exists",
+      "d3-cold-letter-pal",
+      "c3-g-pointer-a",
+      "c3-g-pointer-b"
+     ]
+    },
+    {
+     "id": "g-pointer-movement",
+     "title": "Pointer movement",
+     "need": 2,
+     "skills": [
+      "pointer_update",
+      "two_pointer"
+     ],
+     "pool": [
+      "c3-g-movement-a",
+      "c3-g-movement-b",
+      "c3-g-movement-c"
+     ]
+    }
+   ],
+   "sections": [
+    {
+     "id": "d3-two-pointers",
+     "title": "Two pointers",
+     "reps": [
+      {
+       "id": "d3-tp-trace-pairs",
+       "title": "Trace pointers on \"racecar\"",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 2,
+       "difficulty": 1,
+       "skills": [
+        "two_pointer",
+        "while_loop",
+        "string_index"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "What does this print?"
+      },
+      {
+       "id": "d3-tp-palindrome-plain",
+       "title": "Palindrome with pointers",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "two_pointer",
+        "while_loop",
+        "string_index",
+        "early_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "This palindrome check uses a `for` loop and a computed mirror index: ```python def is_pal(s): for i in range(len(s) // 2): if s[i] != s[len(s) - 1 - i]: return False return True ``` `s` is a string; the function returns "
+      },
+      {
+       "id": "d3-tp-debug-step",
+       "title": "Fix the pointer walk",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "two_pointer",
+        "while_loop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`s` is a string. `is_pal(s)` should return `True` when `s` reads the same in both directions (a palindrome, like `\"abba\"`), comparing characters exactly, and `False` otherwise. An empty string is a palindrome. It uses tw"
+      },
+      {
+       "id": "d3-tp-swap-reverse",
+       "title": "Reverse a list in place",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "two_pointer",
+        "list_index",
+        "tuples"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list (it may be empty). Write `reverse_in_place(nums)`. Reverse the list **in place**, then return it. In place means you change the list you were given instead of building a new one. Afterwards the caller’s "
+      },
+      {
+       "id": "d3-tp-mismatches",
+       "title": "Changes to make a palindrome",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "two_pointer",
+        "while_loop",
+        "accumulator"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`s` is a string. The starter code is the two-pointer palindrome check under a new name. It returns `True` or `False`. Change it so `changes_needed(s)` returns a **number** instead: how many characters you would have to c"
+      },
+      {
+       "id": "d3-tp-reverse-of",
+       "title": "Is one the reverse of the other?",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 6,
+       "difficulty": 3,
+       "skills": [
+        "two_pointer",
+        "while_loop",
+        "len",
+        "early_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`a` and `b` are strings. Write `is_reverse_of(a, b)`. Return `True` if `a` is exactly `b` backwards, otherwise `False`. Strings of different lengths are never reverses. Two empty strings are. Walk one pointer forward thr"
+      }
+     ]
+    },
+    {
+     "id": "d3-pointer-updates",
+     "title": "Move one pointer",
+     "reps": [
+      {
+       "id": "d3-pu-trace-sorted-sum",
+       "title": "Trace a sorted pair search",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 2.5,
+       "difficulty": 2,
+       "skills": [
+        "pointer_update",
+        "two_pointer",
+        "while_loop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "What does this print?"
+      },
+      {
+       "id": "d3-pu-has-pair",
+       "title": "Sorted pair search",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 6,
+       "difficulty": 2,
+       "skills": [
+        "pointer_update",
+        "two_pointer",
+        "conditionals"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of numbers sorted from smallest to largest (it may be empty). `target` is a number. Write `has_pair(nums, target)`. Return `True` if the values at two different positions add up to `target`, otherwise `F"
+      },
+      {
+       "id": "d3-pu-debug-swapped",
+       "title": "Fix the pair finder",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "pointer_update",
+        "two_pointer"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of numbers sorted from smallest to largest, and `target` is a number. `pair_values(nums, target)` should find two values, at different positions, that add up to `target`. It returns them as a tuple `(sma"
+      },
+      {
+       "id": "d3-pu-count-pairs",
+       "title": "Count pairs with a sum",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 7,
+       "difficulty": 3,
+       "skills": [
+        "pointer_update",
+        "two_pointer",
+        "accumulator"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`nums` is a list of numbers sorted from smallest to largest. **No value appears twice.** `target` is a number. Write `count_pairs(nums, target)`. Return how many pairs of values, from two different positions, add up to `"
+      },
+      {
+       "id": "d3-pu-skip-spaces",
+       "title": "Palindrome, skipping spaces",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 7,
+       "difficulty": 3,
+       "skills": [
+        "pointer_update",
+        "two_pointer",
+        "while_loop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`s` is a string that may contain spaces. Finish `is_pal_ignoring_spaces(s)` using two pointers. Return `True` if `s` reads the same backwards once you skip the spaces, otherwise `False`. Every other character must match "
+      },
+      {
+       "id": "d3-pu-count-below",
+       "title": "Count pairs below a target",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 9,
+       "difficulty": 4,
+       "skills": [
+        "pointer_update",
+        "two_pointer",
+        "accumulator"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of numbers sorted from smallest to largest. Values may repeat. `target` is a number. Write `count_below(nums, target)`. Count the pairs of positions `i < j` where `nums[i] + nums[j]` is strictly less tha"
+      }
+     ]
+    },
+    {
+     "id": "d3-pointer-patterns",
+     "title": "Pointer patterns",
+     "reps": [
+      {
+       "id": "d3-pp-subsequence",
+       "title": "Is it a subsequence?",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 6,
+       "difficulty": 3,
+       "skills": [
+        "two_pointer",
+        "pointer_update",
+        "while_loop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`small` and `big` are strings. `small` is a **subsequence** of `big` if you can get it by deleting zero or more characters of `big` without reordering the rest: its characters appear in `big` in the same order, not neces"
+      },
+      {
+       "id": "d3-pp-merge",
+       "title": "Merge two sorted lists",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 8,
+       "difficulty": 3,
+       "skills": [
+        "two_pointer",
+        "pointer_update",
+        "list_append",
+        "while_loop",
+        "list_create"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`a` and `b` are lists of numbers, each already sorted from smallest to largest; either may be empty. Write `merge_sorted(a, b)` that returns one new sorted list containing everything from both (repeated values are all ke"
+      },
+      {
+       "id": "d3-pp-debug-common",
+       "title": "Fix the common values",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "two_pointer",
+        "pointer_update"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`common(a, b)` takes two sorted lists and should return the values found in both, in order. Each match uses up one item from each list, so `common([2, 2], [2])` is `[2]`. Make the tests pass."
+      },
+      {
+       "id": "d3-pp-dedupe",
+       "title": "Dedupe a sorted list in place",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 7,
+       "difficulty": 3,
+       "skills": [
+        "two_pointer",
+        "pointer_update",
+        "list_index"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of numbers sorted from smallest to largest, so equal values sit next to each other. Write `dedupe_sorted(nums)`. Rearrange the list **in place** (change `nums` itself, do not build a new list) so that it"
+      }
+     ]
+    },
+    {
+     "id": "d3-valid-palindrome",
+     "title": "Valid Palindrome",
+     "reps": [
+      {
+       "id": "cap-valid-palindrome",
+       "title": "Valid Palindrome",
+       "kind": "code",
+       "stage": "capstone",
+       "repType": "capstone",
+       "minutes": 25,
+       "difficulty": 3,
+       "skills": [
+        "two_pointer",
+        "pointer_update",
+        "string_index",
+        "string_methods",
+        "while_loop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": 125,
+       "transfer": false,
+       "prompt": "`s` is a phrase. Only its letters and digits count. Upper and lower case are treated the same. Spaces, punctuation and symbols are ignored completely. Return `True` if the remaining characters read the same from both end"
+      },
+      {
+       "id": "d3-explain-valid-palindrome",
+       "title": "Explain Valid Palindrome",
+       "kind": "explain",
+       "stage": "interview",
+       "repType": "interview",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "explanation",
+        "complexity",
+        "edge_cases",
+        "two_pointer"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Explain your solution as you would to an interviewer: the approach, why the pointers never go wrong, the complexity, and the edge cases you checked."
+      },
+      {
+       "id": "d3-vp-debug-case",
+       "title": "Fix the mirror check: case",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "string_methods",
+        "two_pointer"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`is_palindrome(s)` should ignore case and skip every character that isn’t a letter or digit. It returns `True` if what is left reads the same both ways, otherwise `False`. Make the tests pass."
+      },
+      {
+       "id": "d3-vp-debug-guard",
+       "title": "Fix the mirror check: junk",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "two_pointer",
+        "pointer_update",
+        "while_loop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`is_palindrome(s)` should ignore case and skip every character that isn’t a letter or digit. A string with nothing left to compare is a palindrome. Make the tests pass."
+      },
+      {
+       "id": "d3-vp-one-deletion",
+       "title": "Palindrome after one deletion",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 11,
+       "difficulty": 4,
+       "skills": [
+        "two_pointer",
+        "pointer_update",
+        "functions",
+        "slicing"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "A palindrome reads the same backwards as forwards, like `\"aba\"`. `s` is a string (it may be empty). Write `almost_palindrome(s)`. Return `True` if `s` is already a palindrome, or becomes one after deleting **at most one*"
+      }
+     ]
+    },
+    {
+     "id": "d3-two-sum-ii",
+     "title": "Two Sum II",
+     "reps": [
+      {
+       "id": "cap-two-sum-ii",
+       "title": "Two Sum II (sorted input)",
+       "kind": "code",
+       "stage": "capstone",
+       "repType": "capstone",
+       "minutes": 25,
+       "difficulty": 3,
+       "skills": [
+        "two_pointer",
+        "pointer_update",
+        "while_loop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": 167,
+       "transfer": false,
+       "prompt": "`numbers` is sorted from smallest to largest, and values may repeat. Exactly one pair of different positions adds up to `target`. Return their positions as a list `[a, b]`, with `a < b`. Use **1-based** positions: the fi"
+      },
+      {
+       "id": "d3-explain-two-sum-ii",
+       "title": "Explain Two Sum II",
+       "kind": "explain",
+       "stage": "interview",
+       "repType": "interview",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "explanation",
+        "complexity",
+        "two_pointer",
+        "hash_reasoning"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Explain why moving a single pointer can never skip the answer, and compare this with the hash map Two Sum (one pass, a dict of the numbers already passed)."
+      },
+      {
+       "id": "d3-tsii-debug-positions",
+       "title": "Fix the positions",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "two_pointer",
+        "pointer_update"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`numbers` is a sorted list with exactly one pair that adds up to `target`. `two_sum_sorted(numbers, target)` should return that pair’s positions as `[a, b]`. Positions are **1-based**: the first item is position 1. Make "
+      },
+      {
+       "id": "d3-tsii-optimize-diff",
+       "title": "Pair with a difference",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 9,
+       "difficulty": 4,
+       "skills": [
+        "two_pointer",
+        "pointer_update",
+        "while_loop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "This works but is O(n²): ```python def has_diff(nums, k): for i in range(len(nums)): for j in range(i + 1, len(nums)): if nums[j] - nums[i] == k: return True return False ``` `nums` is a list of numbers sorted from small"
+      },
+      {
+       "id": "d3-tsii-triplet",
+       "title": "Three numbers to a target",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 11,
+       "difficulty": 4,
+       "skills": [
+        "two_pointer",
+        "pointer_update",
+        "sorting",
+        "range"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Stretch. `nums` is a list of numbers in no particular order. It is **not** sorted. `target` is a number. Write `has_triplet(nums, target)`. Return `True` if three numbers at three different positions add up to `target`, "
+      }
+     ]
+    }
+   ],
+   "optionalSections": []
+  },
+  {
+   "id": "w3-running-prefix",
+   "title": "Running state and prefix/suffix",
+   "purpose": "Carry the best so far through one pass; precompute what is to the left and right of each index.",
+   "prerequisites": [
+    "w1-running-state"
+   ],
+   "lessonIds": [
+    "running-state"
+   ],
+   "workedExampleIds": [],
+   "targets": [
+    {
+     "lc": 121,
+     "title": "Best Time to Buy and Sell Stock",
+     "solvedInRepsBy": "cap-best-time-stock"
+    },
+    {
+     "lc": 238,
+     "title": "Product of Array Except Self",
+     "solvedInRepsBy": null
+    }
+   ],
+   "readinessTargets": [],
+   "labs": [
+    {
+     "id": "lab-trend-analyzer",
+     "title": "Trend Analyzer",
+     "optional": false
+    }
+   ],
+   "gates": [
+    {
+     "id": "g-prefix-suffix",
+     "title": "Prefix and suffix",
+     "need": 2,
+     "skills": [
+      "prefix_suffix",
+      "state_tracking"
+     ],
+     "pool": [
+      "c3-g-prefix-a",
+      "c3-g-prefix-b",
+      "c3-g-prefix-c",
+      "d3-cold-sell-today"
+     ]
+    }
+   ],
+   "sections": [
+    {
+     "id": "d3-stock",
+     "title": "Stock profit",
+     "reps": [
+      {
+       "id": "cap-best-time-stock",
+       "title": "Best Time to Buy and Sell Stock",
+       "kind": "code",
+       "stage": "capstone",
+       "repType": "capstone",
+       "minutes": 25,
+       "difficulty": 3,
+       "skills": [
+        "state_tracking",
+        "list_iterate",
+        "accumulator"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": 121,
+       "transfer": false,
+       "prompt": "`prices[i]` is a share's price on day `i`. The list may be empty. You may buy once and sell once. The sale must be on a later day than the purchase. Return the largest profit you could make. If no trade makes money, retu"
+      },
+      {
+       "id": "d3-explain-stock",
+       "title": "Explain Stock profit",
+       "kind": "explain",
+       "stage": "interview",
+       "repType": "interview",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "explanation",
+        "complexity",
+        "state_tracking"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Explain why one pass is enough, what each variable means, and how you handle a list that only goes down."
+      },
+      {
+       "id": "d3-stock-debug-order",
+       "title": "Fix the profit calculator",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "state_tracking"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`max_profit(prices)` should return the best profit from buying once and selling on a **later** day. If no trade makes money, it returns `0`. An empty list also gives `0`. Make the tests pass."
+      },
+      {
+       "id": "d3-stock-days",
+       "title": "Which days to trade?",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 8,
+       "difficulty": 3,
+       "skills": [
+        "state_tracking",
+        "enumerate",
+        "tuples"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`prices` is a list of numbers. `prices[i]` is a share’s price on day `i`. The list may be empty. You buy on one day and sell on a **later** day. Write `best_days(prices)`. Return a tuple `(buy_day, sell_day)` of the two "
+      }
+     ]
+    },
+    {
+     "id": "br-238",
+     "title": "Toward Product of Array Except Self",
+     "reps": [
+      {
+       "id": "b238-sums-before",
+       "title": "The total before each position",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "prefix_suffix",
+        "accumulator",
+        "list_append"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of numbers (it can be empty). Write `sums_before(nums)`: a list the same length as `nums` where entry `i` is the sum of everything **before** position `i` (not including `nums[i]` itself). `sums_before(["
+      },
+      {
+       "id": "b238-dbg-products-before",
+       "title": "The product before each position",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "prefix_suffix",
+        "accumulator",
+        "list_append"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`products_before(nums)` should return a list where entry `i` is everything **before** position `i` multiplied together. Nothing comes before position 0, and a product of nothing is `1`. `products_before([2, 3, 4])` → `[1"
+      },
+      {
+       "id": "b238-products-after",
+       "title": "The product after each position",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5.5,
+       "difficulty": 3,
+       "skills": [
+        "prefix_suffix",
+        "range",
+        "list_index",
+        "accumulator"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Now from the other side. `nums` is a list of numbers. Write `products_after(nums)`: entry `i` is everything **after** position `i` multiplied together (`1` when nothing is after it). `products_after([2, 3, 4])` → `[12, 4"
+      },
+      {
+       "id": "b238-dbg-overwrite",
+       "title": "The total of everything else",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 3.5,
+       "difficulty": 3,
+       "skills": [
+        "prefix_suffix",
+        "list_index",
+        "range"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`sum_of_others(nums)` should return a list where entry `i` is the sum of every value **except** `nums[i]`. It makes two passes over one list: first what is before each position, then what is after. `sum_of_others([3, 1, "
+      },
+      {
+       "id": "b238-best-rival",
+       "title": "The best of everyone else",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 9,
+       "difficulty": 3,
+       "skills": [
+        "prefix_suffix",
+        "state_tracking",
+        "range",
+        "list_index"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`scores` holds one score per player (at least two players). Write `best_rival(scores)`: a list where entry `i` is the highest score among all the **other** players, leaving out player `i`. The list can be long: do not re"
+      }
+     ]
+    },
+    {
+     "id": "br-11",
+     "title": "Toward Container With Most Water",
+     "reps": [
+      {
+       "id": "b11-area",
+       "title": "Area between two walls",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "two_pointer",
+        "list_index",
+        "functions"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`heights` holds the heights of walls standing one unit apart. `left` and `right` are the indexes of two of them, and `left < right`. Write `area(heights, left, right)`. Return the area of the rectangle that fits between "
+      },
+      {
+       "id": "b11-dbg-move-taller",
+       "title": "Walk inward, giving up the shorter wall",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3.5,
+       "difficulty": 3,
+       "skills": [
+        "pointer_update",
+        "two_pointer",
+        "list_append"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`walk_in(heights)` starts with the two outermost walls and steps inward until the indexes meet. At each step it records the area between the current pair, then moves the index standing at the **shorter** wall one step to"
+      },
+      {
+       "id": "b11-best-banner",
+       "title": "The biggest banner",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 8,
+       "difficulty": 3,
+       "skills": [
+        "two_pointer",
+        "pointer_update",
+        "state_tracking"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`posts` holds the heights of fence posts standing one metre apart. You hang a rectangular banner between two posts. It is as wide as the gap between them and as tall as the **shorter** of the two. Write `best_banner(post"
+      }
+     ]
+    }
+   ],
+   "optionalSections": [
+    {
+     "id": "br-15",
+     "title": "Toward 3Sum",
+     "reps": [
+      {
+       "id": "b15-next-different",
+       "title": "Step past the repeats",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "sorted_dedupe",
+        "while_loop",
+        "list_index"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is sorted, so equal values sit next to each other. `i` is a valid index. Write `next_different(nums, i)`. Start just after `i` and walk right. Return the first index whose value is different from `nums[i]`. If you"
+      },
+      {
+       "id": "b15-distinct-sorted",
+       "title": "Each value once, by sorting",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "sorted_dedupe",
+        "sorting",
+        "range",
+        "list_append"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of numbers in any order, possibly empty. Write `distinct_sorted(nums)`. Return each different value in `nums` once, smallest first. Sort first, then compare each value with the one just before it. Do not"
+      },
+      {
+       "id": "b15-dbg-first-index",
+       "title": "Where each value begins",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "sorted_dedupe",
+        "range",
+        "list_index"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is sorted. `group_starts(nums)` should return the index where each different value first appears. `group_starts([2, 2, 5, 5, 5, 9])` → `[0, 2, 5]` `group_starts([4, 4, 4])` → `[0]` It gets the first example right "
+      },
+      {
+       "id": "b15-unique-pairs",
+       "title": "Every different pair, once",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 11,
+       "difficulty": 4,
+       "skills": [
+        "sorted_dedupe",
+        "two_pointer",
+        "pointer_update",
+        "list_append"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is sorted and may contain repeats. Write `unique_pairs(nums, target)`. Return every **different** pair of values `[a, b]` that adds up to `target`. The two values come from two different positions, and `a <= b`. L"
+      },
+      {
+       "id": "b15-count-baskets",
+       "title": "Three prices, one gift card",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 15,
+       "difficulty": 4,
+       "skills": [
+        "sorted_dedupe",
+        "two_pointer",
+        "sorting",
+        "pointer_update"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "A shop has one of each item on a shelf. `prices` lists their prices in any order, and prices can repeat. A gift card is worth exactly `budget`. Write `count_baskets(prices, budget)`. A basket is three different items who"
+      }
+     ]
+    },
+    {
+     "id": "d3-warmup",
+     "title": "Warm-up",
+     "reps": [
+      {
+       "id": "d3-warm-char-counts",
+       "title": "Count characters",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "frequency_map",
+        "dict_get",
+        "string_iterate"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `char_counts(s)` that returns a dict mapping each character of `s` to how many times it appears."
+      },
+      {
+       "id": "d3-warm-most-common",
+       "title": "Most common item",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 7,
+       "difficulty": 3,
+       "skills": [
+        "frequency_map",
+        "dict_items",
+        "state_tracking"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `most_common(items)` returning the item that appears most often. On a tie, return the one that appeared first in `items`. Empty list → `None`."
+      },
+      {
+       "id": "d3-warm-has-dup",
+       "title": "Any duplicate?",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "set_add",
+        "set_membership",
+        "early_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `has_duplicate(nums)`: return `True` as soon as a value repeats, otherwise `False`. One pass, using a set."
+      },
+      {
+       "id": "d3-warm-first-index",
+       "title": "First index of each value",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "index_map",
+        "enumerate",
+        "dict_membership"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `first_index(nums)` returning a dict from each value to the index where it **first** appears."
+      },
+      {
+       "id": "d3-warm-two-sum",
+       "title": "Two Sum from memory",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 6,
+       "difficulty": 3,
+       "skills": [
+        "index_map",
+        "complement",
+        "enumerate",
+        "dict_membership",
+        "hash_reasoning"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `two_sum(nums, target)` returning the indexes `[i, j]` (i < j) of the two numbers that add to `target`. Exactly one answer exists. One pass with a dict."
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

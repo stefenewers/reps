@@ -1,0 +1,1423 @@
+{
+ "week": 7,
+ "title": "Trees",
+ "focus": "Trees, BST",
+ "purpose": "What a function promises about the subtree rooted at each node.",
+ "weekTarget": 75,
+ "dailyTarget": 15,
+ "trainingDays": [
+  "2026-12-07",
+  "2026-12-08",
+  "2026-12-09",
+  "2026-12-10",
+  "2026-12-11"
+ ],
+ "units": [
+  {
+   "id": "w7-trees",
+   "title": "Trees",
+   "purpose": "For any node: what does this function promise to return about the tree rooted there?",
+   "prerequisites": [
+    "w6-recursion"
+   ],
+   "lessonIds": [
+    "trees"
+   ],
+   "workedExampleIds": [],
+   "targets": [
+    {
+     "lc": 104,
+     "title": "Maximum Depth of Binary Tree",
+     "solvedInRepsBy": "cap-max-depth"
+    },
+    {
+     "lc": 100,
+     "title": "Same Tree",
+     "solvedInRepsBy": "cap-same-tree"
+    },
+    {
+     "lc": 226,
+     "title": "Invert Binary Tree",
+     "solvedInRepsBy": "cap-invert-tree"
+    },
+    {
+     "lc": 572,
+     "title": "Subtree of Another Tree",
+     "solvedInRepsBy": null
+    }
+   ],
+   "readinessTargets": [],
+   "labs": [
+    {
+     "id": "lab-org-hierarchy",
+     "title": "Organization Hierarchy Analyzer",
+     "optional": false
+    }
+   ],
+   "gates": [
+    {
+     "id": "g-tree-contract",
+     "title": "Tree contract",
+     "need": 2,
+     "skills": [
+      "tree_dfs",
+      "recursion_return"
+     ],
+     "pool": [
+      "d06-cold-tree-sum",
+      "d06-cold-height",
+      "d06-cold-same",
+      "d06-cold-mirror",
+      "d06-cold-postorder"
+     ]
+    }
+   ],
+   "sections": [
+    {
+     "id": "d06-treenode",
+     "title": "TreeNode",
+     "reps": [
+      {
+       "id": "d06-tn-level-order",
+       "title": "Read a level-order list",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 2,
+       "difficulty": 1,
+       "skills": [
+        "treenode"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "A **binary tree** is made of **nodes**. Each node holds a value (`.val`) and has up to two **children**, `.left` and `.right`; each is another node, or `None` when that child is missing. The single node at the top is the"
+      },
+      {
+       "id": "d06-tn-is-leaf",
+       "title": "is_leaf",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "treenode",
+        "conditionals"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`node` is a `TreeNode`, or `None`. A **leaf** is a node with no children: its `.left` and `.right` are both `None`. Write `is_leaf(node)` returning `True` if `node` is a leaf, otherwise `False`. `TreeNode(1)` makes a sin"
+      },
+      {
+       "id": "d06-tn-children-sum",
+       "title": "Sum the children",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "treenode",
+        "conditionals"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`node` is a `TreeNode` (never `None`). Write `children_sum(node)` returning the sum of the values of its two direct children, `node.left` and `node.right` only, nothing deeper. A missing child adds 0. For the root of `bu"
+      },
+      {
+       "id": "d06-tn-dbg-none",
+       "title": "Debug: left leaf check",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "treenode",
+        "conditionals"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`node` is a `TreeNode` (never `None`). `has_left_leaf(node)` should return `True` when `node` has a left child and that child is a leaf (a node with no children of its own), otherwise `False`. It crashes on some trees. F"
+      }
+     ]
+    },
+    {
+     "id": "d06-dfs",
+     "title": "Tree DFS",
+     "reps": [
+      {
+       "id": "d06-dfs-pre-trace",
+       "title": "Preorder trace",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 2,
+       "difficulty": 1,
+       "skills": [
+        "tree_dfs"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "The tree is: ```python # 1 # / \\ # 2 3 # / \\ # 4 5 ``` `pre` visits every node once; visiting every node is called a **traversal**. Notice the order it goes in: all the way down one branch before it starts the next. That"
+      },
+      {
+       "id": "d06-dfs-preorder",
+       "title": "Preorder into a list",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 6,
+       "difficulty": 2,
+       "skills": [
+        "tree_dfs",
+        "list_append",
+        "functions"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`root` is the top node of a binary tree, or `None` for an empty tree. Finish `preorder(root)` so it returns a list of the values in **preorder**: a node’s own value first, then everything in its left subtree, then everyt"
+      },
+      {
+       "id": "d06-dfs-count",
+       "title": "Count nodes",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "tree_dfs",
+        "recursion_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`root` is the top node of a binary tree, or `None` if the tree is empty. Each node has `.left` and `.right`, which are themselves nodes or `None`. Write `count_nodes(root)` returning how many nodes the tree has. An empty"
+      },
+      {
+       "id": "d06-dfs-modify-count",
+       "title": "Modify: count only big values",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "tree_dfs",
+        "recursion_return",
+        "conditionals"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`root` is the top node of a binary tree (or `None`) and `x` is a number. The code below counts **every** node. Change it so `count_above(root, x)` counts only the nodes whose value is greater than `x`. An empty tree stil"
+      },
+      {
+       "id": "d06-dfs-dbg-ignore",
+       "title": "Debug: tree sum",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "tree_dfs",
+        "recursion_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`root` is the top node of a binary tree, or `None`. `tree_sum(root)` should return the sum of every value in the tree (0 for an empty tree): `build_tree([1, 2, 3, 4])` should give `10`. It only gets one value right. Fix "
+      },
+      {
+       "id": "d06-dfs-max",
+       "title": "Largest value",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 6,
+       "difficulty": 2,
+       "skills": [
+        "tree_dfs",
+        "recursion_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`root` is the top node of a binary tree, or `None`. Write `tree_max(root)` returning the largest value anywhere in the tree. Values may be negative. For an empty tree return `float(\"-inf\")`, negative infinity, which is s"
+      },
+      {
+       "id": "d06-dfs-leaves",
+       "title": "Count leaves",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 6,
+       "difficulty": 2,
+       "skills": [
+        "tree_dfs",
+        "recursion_base_case"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`root` is the top node of a binary tree, or `None`. Write `count_leaves(root)` returning how many **leaves** the tree has. A leaf is a node with no children. A node with at least one child is not a leaf and is not counte"
+      },
+      {
+       "id": "d06-dfs-dbg-leaf-base",
+       "title": "Debug: leaf values",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "tree_dfs",
+        "recursion_base_case"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`root` is the top node of a binary tree, or `None`. `leaf_sum(root)` should return the sum of the values of all the leaves (nodes with no children), and 0 for an empty tree. It crashes on some trees. Fix it."
+      },
+      {
+       "id": "d06-dfs-contains",
+       "title": "Is the value in the tree?",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "tree_dfs",
+        "recursion_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`root` is the top node of a binary tree, or `None` for an empty tree. The values are in no particular order. Write `has(root, x)` returning `True` if any node in the tree holds the value `x`, otherwise `False`. An empty "
+      },
+      {
+       "id": "d06-dfs-inorder-return",
+       "title": "Inorder by returning lists",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 6,
+       "difficulty": 2,
+       "skills": [
+        "tree_dfs",
+        "recursion_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`root` is the top node of a binary tree, or `None`. Write `inorder(root)` returning a list of the values in **inorder**: everything in the left subtree first, then the node’s own value, then everything in the right subtr"
+      },
+      {
+       "id": "d06-dfs-at-depth",
+       "title": "Values at depth d",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 8,
+       "difficulty": 2,
+       "skills": [
+        "tree_dfs",
+        "list_append"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`root` is the top node of a binary tree (or `None`) and `d` is a whole number, 0 or more. A node’s **depth** here is how many steps it is below the root: the root is at depth 0, its children at depth 1, their children at"
+      },
+      {
+       "id": "d06-dfs-path-sum",
+       "title": "Root-to-leaf sum",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 10,
+       "difficulty": 3,
+       "skills": [
+        "tree_dfs",
+        "recursion_base_case",
+        "recursion_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`root` is the top node of a binary tree (or `None`) and `target` is an integer. A **root-to-leaf path** starts at the root and steps down one child at a time until it reaches a **leaf** (a node with no children). Write `"
+      },
+      {
+       "id": "d06-dfs-dbg-path",
+       "title": "Debug: path sum stops too early",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "tree_dfs",
+        "recursion_base_case"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`path_to_leaf(root, target)` should return `True` only if the values along some path from the root down to a **leaf** (a node with no children) add up to `target`; an empty tree is `False`. It says `True` for paths that "
+      },
+      {
+       "id": "d06-dfs-translate-stack",
+       "title": "Translate: recursion → explicit stack",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 8,
+       "difficulty": 3,
+       "skills": [
+        "tree_dfs",
+        "stack_push_pop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Recursion keeps its unfinished calls on the call stack. Write `preorder_iter(root)` that returns the same preorder list (node, then its left subtree, then its right subtree) using your **own** list as a stack and a loop,"
+      },
+      {
+       "id": "d06-dfs-dbg-depth",
+       "title": "Debug: height is too small",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "tree_dfs",
+        "recursion_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`root` is the top node of a binary tree, or `None`. `height(root)` should return the number of **nodes** on the longest path from the root down to a leaf: 0 for an empty tree, 1 for a single node, 2 for a root with one c"
+      }
+     ]
+    },
+    {
+     "id": "d06-cap-depth",
+     "title": "Capstone: Max Depth",
+     "reps": [
+      {
+       "id": "cap-max-depth",
+       "title": "Maximum Depth of Binary Tree",
+       "kind": "code",
+       "stage": "capstone",
+       "repType": "capstone",
+       "minutes": 25,
+       "difficulty": 3,
+       "skills": [
+        "tree_dfs",
+        "recursion_base_case",
+        "recursion_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": 104,
+       "transfer": false,
+       "prompt": "Given the root of a binary tree, return how many nodes lie on the longest path from the root down to any leaf. An empty tree has depth 0."
+      },
+      {
+       "id": "d06-explain-depth",
+       "title": "Explain max depth",
+       "kind": "explain",
+       "stage": "interview",
+       "repType": "interview",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "explanation",
+        "tree_dfs",
+        "complexity"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Explain your max-depth solution: base case, what each call returns, how answers combine, and the time and space cost (including the call stack)."
+      },
+      {
+       "id": "d06-fu-min-depth",
+       "title": "Follow-up: shallowest leaf",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "tree_dfs",
+        "recursion_base_case",
+        "recursion_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "**Interviewer follow-up.** Your maximum-depth solution works: it is in the editor, already renamed `min_depth`. Now make it return the depth of the **shallowest leaf**: the fewest nodes on any path from the root down to "
+      }
+     ]
+    },
+    {
+     "id": "d06-pairs",
+     "title": "Two trees at once",
+     "reps": [
+      {
+       "id": "d06-pair-lists",
+       "title": "Equal linked lists, recursively",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 6,
+       "difficulty": 2,
+       "skills": [
+        "recursion_base_case",
+        "recursion_return",
+        "listnode"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`a` and `b` are each the first node of a linked list, or `None` for an empty list. Write `same_list(a, b)` returning `True` if the two lists hold the same values in the same order (so they are also the same length), othe"
+      },
+      {
+       "id": "d06-pair-dbg-order",
+       "title": "Debug: same shape",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "recursion_base_case",
+        "tree_dfs"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`a` and `b` are the roots of two binary trees; either may be `None`. `same_shape(a, b)` should return `True` when the two trees have exactly the same **shape**: wherever one has a node, so does the other. The values are "
+      },
+      {
+       "id": "d06-pair-bigger",
+       "title": "Every node bigger?",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 7,
+       "difficulty": 2,
+       "skills": [
+        "tree_dfs",
+        "recursion_base_case",
+        "recursion_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`a` and `b` are the roots of two binary trees; either may be `None`. Write `all_bigger(a, b)` returning `True` if the trees have the same shape **and** every node of `a` holds a strictly larger value than the node in the"
+      },
+      {
+       "id": "d06-pair-dbg-values",
+       "title": "Debug: values match, trees don’t",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "tree_dfs",
+        "recursion_base_case"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`a` and `b` are the roots of two binary trees; either may be `None`. `trees_equal(a, b)` should return `True` only when both trees have the same shape **and** the same value in every matching position. It says `True` for"
+      },
+      {
+       "id": "d06-pair-mirror",
+       "title": "Mirror images",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 7,
+       "difficulty": 3,
+       "skills": [
+        "tree_dfs",
+        "recursion_base_case",
+        "recursion_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`a` and `b` are the roots of two binary trees; either may be `None`. Write `is_mirror(a, b)` returning `True` if `b` is the **mirror image** of `a`: what you would see holding `a` up to a mirror. The two roots hold the s"
+      }
+     ]
+    },
+    {
+     "id": "d06-cap-same",
+     "title": "Capstone: Same Tree",
+     "reps": [
+      {
+       "id": "cap-same-tree",
+       "title": "Same Tree",
+       "kind": "code",
+       "stage": "capstone",
+       "repType": "capstone",
+       "minutes": 25,
+       "difficulty": 3,
+       "skills": [
+        "tree_dfs",
+        "recursion_base_case",
+        "recursion_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": 100,
+       "transfer": false,
+       "prompt": "Given the roots of two binary trees, decide whether they are identical: the same shape, with equal values in every matching position. Return `True` or `False`."
+      },
+      {
+       "id": "d06-explain-same",
+       "title": "Explain Same Tree",
+       "kind": "explain",
+       "stage": "interview",
+       "repType": "interview",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "explanation",
+        "recursion_base_case",
+        "complexity"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Explain your solution: the base cases and why their order matters, the recursive step, and the complexity."
+      }
+     ]
+    },
+    {
+     "id": "d06-mutate",
+     "title": "Changing trees",
+     "reps": [
+      {
+       "id": "d06-mut-swap",
+       "title": "Tuple swap",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 1.5,
+       "difficulty": 1,
+       "skills": [
+        "treenode"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`tree_to_array(root)` is provided: it is the reverse of `build_tree`, turning a tree back into its level-order list. Predict the output."
+      },
+      {
+       "id": "d06-mut-dbg-swap",
+       "title": "Debug: swap the root’s children",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "treenode",
+        "linked_list_reassignment"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`root` is the top node of a binary tree, or `None`. `swap_top(root)` should swap the root’s two children with each other (only those two; nothing deeper changes) and return `root`. `None` stays `None`. So the tree `[1, 2"
+      },
+      {
+       "id": "d06-mut-add-one",
+       "title": "Add one everywhere",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "tree_dfs",
+        "recursion_base_case"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`root` is the top node of a binary tree, or `None` for an empty tree. Every node holds a number in `.val`. Write `add_one(root)` that adds 1 to every value in the tree **in place**, meaning it changes the existing nodes "
+      },
+      {
+       "id": "d06-mut-copy",
+       "title": "Copy a tree",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 6,
+       "difficulty": 2,
+       "skills": [
+        "tree_dfs",
+        "recursion_return",
+        "treenode"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`root` is the top node of a binary tree, or `None`. Write `copy_tree(root)` returning the root of a **brand-new** tree with the same shape and values. Every node of the copy is a new `TreeNode`, so changing the copy neve"
+      },
+      {
+       "id": "d06-mut-dbg-mirror",
+       "title": "Debug: mirrored copy",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "tree_dfs",
+        "recursion_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`root` is the top node of a binary tree, or `None`. `mirror(root)` should turn the tree into its **mirror image** in place (at every node the left and right subtrees trade places; no new nodes) and return the root. The t"
+      }
+     ]
+    },
+    {
+     "id": "d06-cap-invert",
+     "title": "Capstone: Invert Tree",
+     "reps": [
+      {
+       "id": "cap-invert-tree",
+       "title": "Invert Binary Tree",
+       "kind": "code",
+       "stage": "capstone",
+       "repType": "capstone",
+       "minutes": 25,
+       "difficulty": 3,
+       "skills": [
+        "tree_dfs",
+        "recursion_base_case",
+        "treenode"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": 226,
+       "transfer": false,
+       "prompt": "Turn a binary tree into its mirror image: at every node, the left and right subtrees trade places. Return the root of the mirrored tree."
+      },
+      {
+       "id": "d06-explain-invert",
+       "title": "Explain inversion",
+       "kind": "explain",
+       "stage": "interview",
+       "repType": "interview",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "explanation",
+        "tree_dfs",
+        "complexity"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Explain your inversion: the base case, what happens at each node, why no child gets lost, what you return, and the complexity."
+      }
+     ]
+    },
+    {
+     "id": "d06-cold",
+     "title": "Cold reps",
+     "reps": [
+      {
+       "id": "d06-cold-digits",
+       "title": "Digit sum, recursively",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "recursion_base_case",
+        "recursion_return"
+       ],
+       "gateVariantOf": "g-recursion",
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `digit_sum(n)` for `n >= 0` recursively: `digit_sum(4096)` is 19. Use `% 10` and `// 10`."
+      },
+      {
+       "id": "d06-cold-tree-sum",
+       "title": "Tree sum, cold",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "tree_dfs",
+        "recursion_return"
+       ],
+       "gateVariantOf": "g-tree-contract",
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `total(root)`: the sum of all values in a binary tree."
+      },
+      {
+       "id": "d06-cold-postorder",
+       "title": "Postorder, cold",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 6,
+       "difficulty": 2,
+       "skills": [
+        "tree_dfs",
+        "list_append"
+       ],
+       "gateVariantOf": "g-tree-contract",
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `postorder(root)` returning the values in postorder (left, right, node)."
+      },
+      {
+       "id": "d06-cold-height",
+       "title": "Height, cold",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "tree_dfs",
+        "recursion_base_case",
+        "recursion_return"
+       ],
+       "gateVariantOf": "g-tree-contract",
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `height(root)`: number of nodes on the longest root-to-leaf path (0 for empty)."
+      },
+      {
+       "id": "d06-cold-same",
+       "title": "Same tree, cold",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "tree_dfs",
+        "recursion_base_case",
+        "recursion_return"
+       ],
+       "gateVariantOf": "g-tree-contract",
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `equal(a, b)`: `True` if the two trees have the same shape and the same values."
+      },
+      {
+       "id": "d06-cold-mirror",
+       "title": "Mirror, cold",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 6,
+       "difficulty": 2,
+       "skills": [
+        "tree_dfs",
+        "treenode"
+       ],
+       "gateVariantOf": "g-tree-contract",
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `flip_tree(root)` that inverts a binary tree in place and returns the root."
+      }
+     ]
+    },
+    {
+     "id": "br-572",
+     "title": "Toward Subtree of Another Tree",
+     "reps": [
+      {
+       "id": "b572-count-starts",
+       "title": "Count the nodes where a shape starts",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "tree_dfs",
+        "recursion_return",
+        "recursion_base_case"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`root` and `shape` are the roots of two binary trees (`root` can be `None`: an empty tree has no nodes). `same_shape(a, b)` is given: it says whether two trees have exactly the same shape (values ignored). Write `count_s"
+      },
+      {
+       "id": "b572-dbg-two-levels",
+       "title": "Debug: the shape is deeper down",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "tree_dfs",
+        "recursion_return",
+        "recursion_base_case"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`has_shape(root, shape)` should return `True` when **any** node of `root`, however deep, has a subtree with the same shape as `shape`. It misses some trees. Fix it."
+      },
+      {
+       "id": "b572-mirror-inside",
+       "title": "A mirror image somewhere inside",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 10,
+       "difficulty": 3,
+       "skills": [
+        "tree_dfs",
+        "recursion_base_case",
+        "recursion_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`root` and `other` are the roots of two binary trees; either can be `None`. Write `has_mirror_of(root, other)`: `True` if some node of `root` has a subtree (that node and everything below it) that is the **mirror image**"
+      }
+     ]
+    }
+   ],
+   "optionalSections": []
+  },
+  {
+   "id": "w7-bst",
+   "title": "Binary search trees",
+   "purpose": "Ordering lets you discard whole subtrees.",
+   "prerequisites": [
+    "w7-trees"
+   ],
+   "lessonIds": [
+    "trees"
+   ],
+   "workedExampleIds": [],
+   "targets": [
+    {
+     "lc": 235,
+     "title": "Lowest Common Ancestor of a Binary Search Tree",
+     "solvedInRepsBy": null
+    }
+   ],
+   "readinessTargets": [
+    {
+     "lc": 98,
+     "title": "Validate Binary Search Tree"
+    },
+    {
+     "lc": 230,
+     "title": "Kth Smallest Element in a BST"
+    }
+   ],
+   "labs": [
+    {
+     "id": "lab-category-tree",
+     "title": "Searchable Category Tree",
+     "optional": false
+    }
+   ],
+   "gates": [],
+   "sections": [
+    {
+     "id": "br-235",
+     "title": "Toward Lowest Common Ancestor of a BST",
+     "reps": [
+      {
+       "id": "b235-bst-has",
+       "title": "Search a BST, one way only",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 6,
+       "difficulty": 2,
+       "skills": [
+        "bst_property",
+        "while_loop",
+        "treenode"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "A **binary search tree** (BST) keeps everything smaller than a node in its left subtree and everything bigger in its right subtree. ```python # 8 # / \\ # 3 10 # / \\ \\ # 1 6 14 # / \\ # 4 7 ``` Write `bst_has(root, x)`: `T"
+      },
+      {
+       "id": "b235-floor",
+       "title": "The biggest value that is not above x",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 7,
+       "difficulty": 2,
+       "skills": [
+        "bst_property",
+        "while_loop",
+        "state_tracking"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `floor_in_bst(root, x)`: the **largest** value in the BST that is `<= x`, or `None` if every value is bigger than `x`. ```python # 8 # / \\ # 3 10 # / \\ \\ # 1 6 14 # / \\ # 4 7 ``` Example: `x = 5` → `4`. The walk is"
+      },
+      {
+       "id": "b235-dbg-or",
+       "title": "Debug: the first node between two values",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "bst_property",
+        "conditionals",
+        "while_loop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`first_between(root, a, b)` walks down a BST from the root and should return the value of the **first** node it meets that lies between `a` and `b` (inclusive, and `a`, `b` can come in either order). While both numbers a"
+      },
+      {
+       "id": "b235-shared-steps",
+       "title": "How long do two searches travel together?",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 8,
+       "difficulty": 3,
+       "skills": [
+        "bst_property",
+        "while_loop",
+        "conditionals"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`root` is the root of a BST: at every node, smaller values are in its left subtree and bigger values in its right. `a` and `b` are two values that are both in it (they can be equal). Searching for each one starts at the "
+      }
+     ]
+    },
+    {
+     "id": "br-98",
+     "title": "Toward Validate Binary Search Tree",
+     "reps": [
+      {
+       "id": "b98-all-between",
+       "title": "Is every value inside the bounds?",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "bst_property",
+        "tree_dfs",
+        "recursion_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `all_between(root, low, high)`: `True` if **every** value in the tree is strictly between `low` and `high`. Any tree, not just a BST. An empty tree is fine. Example: `all_between([5, 3, 8], 0, 10)` → `True`; `all_b"
+      },
+      {
+       "id": "b98-window",
+       "title": "The window a value has to live in",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 7,
+       "difficulty": 2,
+       "skills": [
+        "bst_property",
+        "while_loop",
+        "tuples"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Every step of a BST search narrows what the values further down can be: going **left** from 8 means everything below is under 8; going **right** from 3 means everything below is over 3. Write `window_at(root, x)`. `x` is"
+      },
+      {
+       "id": "b98-dbg-children",
+       "title": "Debug: is this a search tree?",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 6,
+       "difficulty": 3,
+       "skills": [
+        "bst_property",
+        "tree_dfs",
+        "recursion_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`is_ordered(root)` should return `True` only when the tree is a valid search tree: for **every** node, everything in its left subtree is smaller and everything in its right subtree is bigger (no duplicates). It accepts s"
+      },
+      {
+       "id": "b98-descending",
+       "title": "A search tree sorted the other way",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 8,
+       "difficulty": 3,
+       "skills": [
+        "bst_property",
+        "tree_dfs",
+        "recursion_base_case",
+        "recursion_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "A **flipped** search tree puts the bigger values on the left: for every node, everything in its left subtree is **bigger** and everything in its right subtree is **smaller**. No duplicates. Write `is_flipped(root)` retur"
+      }
+     ]
+    },
+    {
+     "id": "br-230",
+     "title": "Toward Kth Smallest Element in a BST",
+     "reps": [
+      {
+       "id": "b230-trace-inorder",
+       "title": "Trace: left, node, right",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 2,
+       "difficulty": 1,
+       "skills": [
+        "tree_inorder",
+        "tree_dfs"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Predict the output. The tree is a search tree. Follow the calls: a value is printed only after everything to its left is done."
+      },
+      {
+       "id": "b230-smallest-k",
+       "title": "The k smallest values",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 7,
+       "difficulty": 2,
+       "skills": [
+        "tree_inorder",
+        "tree_dfs",
+        "list_append"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `smallest_k(root, k)`: a list of the `k` smallest values of a BST, smallest first. If the tree has fewer than `k` values, return all of them. Do not call `sorted`: visit in order, collect into one shared list, and "
+      },
+      {
+       "id": "b230-dbg-counter",
+       "title": "Debug: counting while visiting",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "tree_inorder",
+        "tree_dfs",
+        "accumulator"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`position_of(root, x)` should return the position of `x` when the BST’s values are read in sorted order, starting at 1, or `0` if `x` is not in the tree. It counts nodes as it visits them in order. It crashes. Fix it. ``"
+      },
+      {
+       "id": "b230-kth-largest",
+       "title": "The k-th largest value",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 9,
+       "difficulty": 3,
+       "skills": [
+        "tree_inorder",
+        "tree_dfs",
+        "accumulator",
+        "recursion_base_case"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "Write `kth_largest(root, k)`: the `k`-th **largest** value of a BST (`k = 1` is the largest). `k` is between 1 and the number of nodes. Do not sort, and do not collect every value first: stop as soon as you have the answ"
+      }
+     ]
+    }
+   ],
+   "optionalSections": [
+    {
+     "id": "br-105",
+     "title": "Toward Construct Binary Tree from Preorder and Inorder Traversal",
+     "reps": [
+      {
+       "id": "b105-join",
+       "title": "A root over two finished subtrees",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "tree_build",
+        "treenode"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `join(val, left, right)`: make a new node holding `val`, hang the already-built trees `left` and `right` under it (either can be `None`), and return the new root. Example: `join(1, build_tree([2, 4]), build_tree([3"
+      },
+      {
+       "id": "b105-split-inorder",
+       "title": "Split an in-order list around the root",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "tree_build",
+        "slicing",
+        "tuples"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "An **in-order** list is written left subtree, root, right subtree. So once you know the root’s value, everything before it belongs to the left subtree and everything after it to the right. Write `split_around(inorder, ro"
+      },
+      {
+       "id": "b105-preorder-halves",
+       "title": "Cut a pre-order list by the left size",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 3.5,
+       "difficulty": 2,
+       "skills": [
+        "tree_build",
+        "slicing",
+        "tuples"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "A **pre-order** list is written root, then the whole left subtree, then the whole right subtree. It does not say where the left part ends, unless you know how many nodes the left subtree has. Write `preorder_halves(preor"
+      },
+      {
+       "id": "b105-dbg-slices",
+       "title": "Debug: the four pieces",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "tree_build",
+        "slicing",
+        "list_index"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`four_pieces(preorder, inorder)` takes the pre-order list and the in-order list of the same tree (all values different) and should return `(left_pre, left_in, right_pre, right_in)`: the pre-order and in-order lists of th"
+      },
+      {
+       "id": "b105-from-sorted",
+       "title": "A search tree from a sorted list",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 7,
+       "difficulty": 3,
+       "skills": [
+        "tree_build",
+        "slicing",
+        "recursion_base_case",
+        "recursion_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `from_sorted(nums)`: build a BST from a sorted list of different numbers and return its root. The root is the middle value, `nums[len(nums) // 2]`; the values before it build the left subtree the same way, and the "
+      },
+      {
+       "id": "b105-from-post-in",
+       "title": "Rebuild a tree from post-order and in-order",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 10,
+       "difficulty": 4,
+       "skills": [
+        "tree_build",
+        "slicing",
+        "recursion_base_case",
+        "recursion_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "A **post-order** list is written left subtree, right subtree, root: the root comes **last**. An in-order list is left subtree, root, right subtree. All values are different. Write `from_post_in(postorder, inorder)`: rebu"
+      }
+     ]
+    },
+    {
+     "id": "br-124",
+     "title": "Toward Binary Tree Maximum Path Sum",
+     "reps": [
+      {
+       "id": "b124-trace-two-values",
+       "title": "Trace: what is returned, what is recorded",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 1,
+       "skills": [
+        "tree_global_best",
+        "tree_dfs",
+        "recursion_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Each call prints three numbers for its node: the value, what it **returns** to its parent, and what it **records** as a candidate for `best`. Predict the whole output, including the last line."
+      },
+      {
+       "id": "b124-diameter",
+       "title": "The longest path between any two nodes",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 9,
+       "difficulty": 3,
+       "skills": [
+        "tree_global_best",
+        "tree_dfs",
+        "recursion_return",
+        "state_tracking"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`root` is the top node of a binary tree, or `None`. Write `diameter(root)`: the number of **edges** on the longest path between any two nodes of the tree (an edge is one parent-to-child link). The path may or may not pas"
+      },
+      {
+       "id": "b124-dbg-return-recorded",
+       "title": "Debug: the widest chain of nodes",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 3,
+       "skills": [
+        "tree_global_best",
+        "tree_dfs",
+        "recursion_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`widest(root)` should return the number of **nodes** on the longest path between any two nodes of the tree (a single node counts as a path of 1; an empty tree gives 0). It reports numbers that are too big. Fix it. Exampl"
+      },
+      {
+       "id": "b124-best-down",
+       "title": "The best path straight down",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 6,
+       "difficulty": 2,
+       "skills": [
+        "tree_global_best",
+        "tree_dfs",
+        "recursion_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Values can be negative. Write `best_down(root)`: the largest sum of a path that **starts at the root** and goes downward, one child at a time, stopping wherever it likes. The root is always included. An empty tree gives "
+      },
+      {
+       "id": "b124-through-root",
+       "title": "The best path that bends at the root",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 8,
+       "difficulty": 3,
+       "skills": [
+        "tree_global_best",
+        "tree_dfs",
+        "recursion_return",
+        "functions"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `best_through_root(root)`: the largest sum of a path whose **highest node is the root**. It may run down into the left subtree, down into the right subtree, both, or neither. The tree is not empty and values can be"
+      },
+      {
+       "id": "b124-longest-same",
+       "title": "The longest path of equal values",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 12,
+       "difficulty": 4,
+       "skills": [
+        "tree_global_best",
+        "tree_dfs",
+        "recursion_return",
+        "state_tracking"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "Write `longest_same(root)`: the number of **edges** on the longest path in which every node holds the same value. The path can bend at a node and does not have to pass through the root. An empty tree gives `0`. ```python"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

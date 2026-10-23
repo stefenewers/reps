@@ -1,0 +1,1034 @@
+{
+ "week": 14,
+ "title": "Interview Execution",
+ "focus": "Timed problems, follow-ups, mocks",
+ "purpose": "Perform under interview conditions, gated by readiness.",
+ "weekTarget": 75,
+ "dailyTarget": 15,
+ "trainingDays": [
+  "2027-01-25",
+  "2027-01-26",
+  "2027-01-27",
+  "2027-01-28",
+  "2027-01-29"
+ ],
+ "units": [
+  {
+   "id": "w14-interview",
+   "title": "Interview execution",
+   "purpose": "Clarify, reason, implement, test, debug, explain: under a clock, without help.",
+   "prerequisites": [
+    "w13-transfer"
+   ],
+   "lessonIds": [],
+   "workedExampleIds": [],
+   "targets": [],
+   "readinessTargets": [],
+   "labs": [],
+   "gates": [],
+   "sections": [
+    {
+     "id": "o11-speed",
+     "title": "Python speed round",
+     "reps": [
+      {
+       "id": "o11-speed-count",
+       "title": "Count with .get",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 2.5,
+       "difficulty": 2,
+       "skills": [
+        "frequency_map",
+        "dict_get"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `count_words(words)` returning a dict that maps each word to how many times it appears. Use `.get`, no `Counter`."
+      },
+      {
+       "id": "o11-speed-first-seen",
+       "title": "Trace first-seen indexes",
+       "kind": "output",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 1.5,
+       "difficulty": 1,
+       "skills": [
+        "enumerate",
+        "index_map",
+        "dict_membership"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "What does this print?"
+      },
+      {
+       "id": "o11-speed-last-seen",
+       "title": "Last index of each value",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 2,
+       "difficulty": 2,
+       "skills": [
+        "enumerate",
+        "index_map"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `last_seen(nums)` returning a dict that maps each value to the **last** index where it appears."
+      },
+      {
+       "id": "o11-speed-deque",
+       "title": "Pass the parcel",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 2.5,
+       "difficulty": 2,
+       "skills": [
+        "queue_deque",
+        "range"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Players sit in a circle in the order of `names`. Each pass moves the front player to the back. Return who is at the front after `passes` passes. Use a `deque`."
+      },
+      {
+       "id": "o11-cx-pop-front",
+       "title": "pop(0) in a loop",
+       "kind": "choice",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 1,
+       "difficulty": 1,
+       "skills": [
+        "complexity",
+        "queue_deque"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "A deque takes from the front with `popleft()`. Why not a list and `pop(0)`? Time complexity of this for n numbers?"
+      },
+      {
+       "id": "o11-speed-heap-small",
+       "title": "k smallest with heapq",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 2.5,
+       "difficulty": 2,
+       "skills": [
+        "heap_push_pop",
+        "list_comprehension"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `k_smallest(nums, k)` returning the `k` smallest values in ascending order, using `heapq` push and pop. Assume `0 <= k <= len(nums)`."
+      },
+      {
+       "id": "o11-speed-heap-tuples",
+       "title": "Trace a heap of tuples",
+       "kind": "output",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 1.5,
+       "difficulty": 1,
+       "skills": [
+        "heap_push_pop",
+        "tuples"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "What does this print?"
+      },
+      {
+       "id": "o11-speed-sort-key",
+       "title": "Sort by length, then alphabet",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 2,
+       "difficulty": 2,
+       "skills": [
+        "sort_key",
+        "tuples"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `by_length(words)` returning the words sorted shortest first, ties broken alphabetically. One line."
+      },
+      {
+       "id": "o11-speed-slicing",
+       "title": "Slices",
+       "kind": "choice",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 1,
+       "difficulty": 1,
+       "skills": [
+        "slicing"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "What does this print?"
+      },
+      {
+       "id": "o11-speed-leaderboard",
+       "title": "Leaderboard",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 2.5,
+       "difficulty": 2,
+       "skills": [
+        "sort_key",
+        "dict_lookup"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`scores` maps name → score. Return the names, highest score first; equal scores in alphabetical order."
+      },
+      {
+       "id": "o11-speed-neighbors",
+       "title": "In-bounds neighbors",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "grid_neighbors",
+        "grid_nested"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`grid` is a non-empty list of equal-length rows. Return the in-bounds neighbors of cell `(r, c)` (the cells directly up, down, left and right of it) as a list of `(row, col)` tuples in the order up, down, left, right."
+      }
+     ]
+    },
+    {
+     "id": "o11-debug",
+     "title": "Debug sprint",
+     "reps": [
+      {
+       "id": "o11-bug-get",
+       "title": "Character counts",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "cold",
+       "minutes": 2,
+       "difficulty": 2,
+       "skills": [
+        "frequency_map",
+        "dict_get"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Return a dict mapping each character of `s` to how many times it appears."
+      },
+      {
+       "id": "o11-bug-dict-direction",
+       "title": "Pair sum, one pass",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "cold",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "index_map",
+        "complement",
+        "enumerate"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Return the indexes `[i, j]` (with `i < j`) of two numbers that add to `target`, in one pass. Return `[]` if there is no pair."
+      },
+      {
+       "id": "o11-bug-bsearch-hi",
+       "title": "Search the sorted list",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "cold",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "binary_search",
+        "search_invariant",
+        "mid_calc"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Return the index of `target` in the sorted list `nums`, or -1 if it is absent. O(log n)."
+      },
+      {
+       "id": "o11-bug-reverse-order",
+       "title": "Reverse a linked list",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "cold",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "linked_list_reassignment",
+        "linked_list_traversal"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Reverse the linked list in place and return the new head."
+      },
+      {
+       "id": "o11-bug-base-case",
+       "title": "Sum a tree",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "cold",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "recursion_base_case",
+        "tree_dfs",
+        "recursion_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Return the sum of all node values in the binary tree. An empty tree sums to 0."
+      },
+      {
+       "id": "o11-bug-visited-late",
+       "title": "Count reachable cells",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "cold",
+       "minutes": 4,
+       "difficulty": 3,
+       "skills": [
+        "bfs",
+        "visited_set",
+        "grid_neighbors",
+        "queue_deque"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`grid` has `0` for open cells and `1` for walls. Starting from the open cell `(r, c)`, return how many open cells can be reached moving up, down, left or right (including the start). Each cell must be counted once."
+      },
+      {
+       "id": "o11-bug-path-copy",
+       "title": "All subsets",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "cold",
+       "minutes": 2.5,
+       "difficulty": 2,
+       "skills": [
+        "backtracking_state",
+        "recursion_base_case"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Return every subset of `nums` (distinct numbers). The order of subsets does not matter."
+      },
+      {
+       "id": "o11-bug-heap-trim",
+       "title": "k largest",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "cold",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "heap_push_pop",
+        "top_k"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Return the `k` largest values, largest first, using a min-heap that never holds more than `k` items (O(n log k)). `1 <= k <= len(nums)`."
+      },
+      {
+       "id": "o11-bug-unsorted",
+       "title": "Merge meetings",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "cold",
+       "minutes": 2.5,
+       "difficulty": 2,
+       "skills": [
+        "interval_overlap",
+        "sorting",
+        "sort_key"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Merge overlapping (or touching) intervals given in any order. Return the merged intervals sorted by start. Input is non-empty."
+      },
+      {
+       "id": "o11-bug-dummy",
+       "title": "Merge two sorted lists",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "cold",
+       "minutes": 2.5,
+       "difficulty": 2,
+       "skills": [
+        "dummy_node",
+        "linked_list_traversal",
+        "linked_list_reassignment"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Merge two sorted linked lists into one sorted list and return its head."
+      },
+      {
+       "id": "o11-bug-window-left",
+       "title": "Longest run without repeats",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "cold",
+       "minutes": 3.5,
+       "difficulty": 3,
+       "skills": [
+        "sliding_window",
+        "window_state",
+        "index_map"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Return the length of the longest substring of `s` with no repeated characters, in one pass."
+      }
+     ]
+    },
+    {
+     "id": "o11-cold",
+     "title": "Cold capstones",
+     "reps": [
+      {
+       "id": "cold-two-sum",
+       "title": "Capstone: Two Sum (cold)",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 11,
+       "difficulty": 3,
+       "skills": [
+        "enumerate",
+        "index_map",
+        "dict_membership",
+        "dict_lookup",
+        "dict_assign",
+        "complement",
+        "hash_reasoning"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Cold rep. No scaffolding — write it from a blank editor. Given a list of integers `nums` and an integer `target`, return the indexes `[i, j]` (with `i < j`) of the two numbers that add up to target. Exactly one such pair"
+      },
+      {
+       "id": "o11-say-pair-sum",
+       "title": "Brute force to optimal",
+       "kind": "explain",
+       "stage": "interview",
+       "repType": "interview",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "explanation",
+        "hash_reasoning",
+        "complexity"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Prompt: \"Given an unsorted list of numbers and a target, return the indexes of two numbers that add to the target.\" Before any code, say out loud how you get from the obvious solution to the best one. Then write it down."
+      },
+      {
+       "id": "cold-longest-substring",
+       "title": "Longest Substring Without Repeating Characters (cold)",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 15,
+       "difficulty": 3,
+       "skills": [
+        "sliding_window",
+        "window_state",
+        "set_membership",
+        "state_tracking"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Cold rep. No scaffolding — write it from a blank editor. `s` is a string. Return the length of the longest stretch of consecutive characters in which no character appears twice. The stretch must be unbroken. In `\"pwwkew\""
+      },
+      {
+       "id": "o11-cx-window-explain",
+       "title": "Justify the window",
+       "kind": "explain",
+       "stage": "interview",
+       "repType": "interview",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "complexity",
+        "sliding_window",
+        "explanation"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "The interviewer says: \"There is a loop inside a loop, so this is O(n^2), right?\" Answer out loud, then write your answer: time and space, and why."
+      },
+      {
+       "id": "o11-say-dry-run",
+       "title": "Dry-run out loud",
+       "kind": "explain",
+       "stage": "interview",
+       "repType": "interview",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "explanation",
+        "sliding_window",
+        "window_state"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "A set-based version of the window you just wrote. Trace it on `\"abba\"` the way you would for an interviewer: after each character, say `left`, the set, and `best`."
+      },
+      {
+       "id": "cold-valid-parentheses",
+       "title": "Valid Parentheses (cold)",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 15,
+       "difficulty": 3,
+       "skills": [
+        "stack_push_pop",
+        "matching_pairs",
+        "dict_lookup"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Cold rep. No scaffolding — write it from a blank editor. `s` is a string made only of the six characters `( ) [ ] { }`. Return `True` if `s` is well formed, otherwise `False`. It is well formed when all of these hold: - "
+      },
+      {
+       "id": "cold-reverse-linked-list",
+       "title": "Reverse Linked List (cold)",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 11,
+       "difficulty": 3,
+       "skills": [
+        "linked_list_traversal",
+        "linked_list_reassignment",
+        "listnode"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Cold rep. No scaffolding — write it from a blank editor. Given the first node of a singly linked list, turn the list around so the last node comes first, and return the new first node. Rewire the existing nodes in place;"
+      },
+      {
+       "id": "cold-number-of-islands",
+       "title": "Number of islands (cold)",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 20,
+       "difficulty": 3,
+       "skills": [
+        "grid_nested",
+        "grid_neighbors",
+        "visited_set",
+        "bfs"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Cold rep. No scaffolding — write it from a blank editor. A map is a grid of strings: `\"1\"` is land and `\"0\"` is water. Land cells that touch horizontally or vertically (not diagonally) belong to the same island. Everythi"
+      },
+      {
+       "id": "o11-cx-grid-bfs",
+       "title": "Grid traversal",
+       "kind": "choice",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 1,
+       "difficulty": 1,
+       "skills": [
+        "complexity",
+        "bfs"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "You just counted islands. Assume a traversal from every unvisited land cell, marking cells visited when queued. Time complexity on an R × C grid?"
+      },
+      {
+       "id": "cold-level-order",
+       "title": "Level order traversal (cold)",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 20,
+       "difficulty": 3,
+       "skills": [
+        "bfs",
+        "bfs_levels",
+        "queue_deque",
+        "treenode"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Cold rep. No scaffolding — write it from a blank editor. Given the root of a binary tree, return its values grouped by depth: a list of lists, the first holding the root, the next holding the root's children left to righ"
+      },
+      {
+       "id": "cold-course-schedule",
+       "title": "Can every course be finished? (cold)",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 20,
+       "difficulty": 4,
+       "skills": [
+        "cycle_detection",
+        "graph_adjacency",
+        "graph_dfs"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Cold rep. No scaffolding — write it from a blank editor. You must take `num_courses` courses labeled `0..num_courses-1`. Each pair `[a, b]` in `prerequisites` says course `b` must be completed before course `a`. Return `"
+      },
+      {
+       "id": "o11-cx-graph-explain",
+       "title": "Justify a graph traversal",
+       "kind": "explain",
+       "stage": "interview",
+       "repType": "interview",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "complexity",
+        "graph_adjacency",
+        "explanation"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "State the time and space of this function in terms of n courses and e prerequisite pairs, and justify each term."
+      },
+      {
+       "id": "cold-top-k-frequent",
+       "title": "Most frequent k values (cold)",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 15,
+       "difficulty": 3,
+       "skills": [
+        "frequency_map",
+        "heap_push_pop",
+        "top_k",
+        "sort_key"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Cold rep. No scaffolding — write it from a blank editor. Given a list of integers `nums` and an integer `k`, return the `k` values that occur most often. Return them in any order. You may assume the answer is unique (no "
+      },
+      {
+       "id": "cold-merge-intervals",
+       "title": "Merge overlapping ranges (cold)",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 11,
+       "difficulty": 3,
+       "skills": [
+        "sort_key",
+        "interval_overlap",
+        "list_index"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Cold rep. No scaffolding — write it from a blank editor. You get a list of ranges, each `[start, end]` with `start <= end`, in no particular order. Combine every group of ranges that overlap (ranges that only touch at an"
+      },
+      {
+       "id": "o11-say-clarify",
+       "title": "Clarifying questions",
+       "kind": "explain",
+       "stage": "interview",
+       "repType": "interview",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "explanation",
+        "edge_cases"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "You just merged intervals from a blank editor. In the real interview the first two minutes come before the code: write the clarifying questions you would ask for \"combine overlapping time ranges\", and the inputs you woul"
+      },
+      {
+       "id": "cold-subsets",
+       "title": "Every subset (cold)",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 18,
+       "difficulty": 3,
+       "skills": [
+        "backtracking_state",
+        "recursion_base_case"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Cold rep. No scaffolding — write it from a blank editor. Given a list `nums` of distinct integers, return every possible subset (the power set), including the empty one and `nums` itself. No subset may appear twice. The "
+      },
+      {
+       "id": "o11-cx-subsets",
+       "title": "All subsets",
+       "kind": "choice",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 1,
+       "difficulty": 1,
+       "skills": [
+        "complexity",
+        "backtracking_state"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "You just generated every subset. Time complexity of this version for n numbers?"
+      },
+      {
+       "id": "cold-house-robber",
+       "title": "No two neighbours (cold)",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 8,
+       "difficulty": 3,
+       "skills": [
+        "recurrence",
+        "dp_table",
+        "state_tracking"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Cold rep. No scaffolding — write it from a blank editor. A row of houses each holds some non-negative amount of cash, given as `nums`. You may collect from any houses you like, except that you may never collect from two "
+      },
+      {
+       "id": "o11-cx-memo",
+       "title": "Memoized recursion",
+       "kind": "choice",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 1,
+       "difficulty": 1,
+       "skills": [
+        "complexity",
+        "memoization"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "You just solved a one-dimensional DP bottom-up. Here is the top-down version of a similar recurrence: time complexity of `ways(n)`?"
+      }
+     ]
+    },
+    {
+     "id": "o11-mixed",
+     "title": "Mixed patterns",
+     "reps": [
+      {
+       "id": "o11-mix-nearby-repeat",
+       "title": "Nearby repeat",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 5,
+       "difficulty": 3,
+       "skills": [
+        "index_map",
+        "enumerate",
+        "early_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Return `True` if some value appears at two different positions `i` and `j` with `abs(i - j) <= k`."
+      },
+      {
+       "id": "o11-opt-common",
+       "title": "Make it linear",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "hash_reasoning",
+        "set_membership",
+        "complexity"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "This returns the items of `a` that also appear in `b`, in the order of `a` (repeats in `a` kept). It is O(n·m) because `x in b` scans a list. Rewrite it to run in O(n + m) with the same output."
+      },
+      {
+       "id": "o11-mix-sorted-squares",
+       "title": "Squares in order",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 6,
+       "difficulty": 3,
+       "skills": [
+        "two_pointer",
+        "pointer_update",
+        "range"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is sorted ascending and may contain negatives. Return the squares of the numbers, sorted ascending, in O(n) without calling sort."
+      },
+      {
+       "id": "o11-mix-two-kinds",
+       "title": "At most two kinds",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 7,
+       "difficulty": 3,
+       "skills": [
+        "sliding_window",
+        "window_state",
+        "frequency_map"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Return the length of the longest contiguous stretch of `items` that contains at most two distinct values."
+      },
+      {
+       "id": "o11-mix-first-at-least",
+       "title": "First position at least target",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 6,
+       "difficulty": 3,
+       "skills": [
+        "binary_search",
+        "mid_calc",
+        "search_invariant"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is sorted ascending (duplicates allowed). Return the first index `i` with `nums[i] >= target`, or `len(nums)` if there is none. O(log n)."
+      },
+      {
+       "id": "o11-mix-path-sum",
+       "title": "Root-to-leaf total",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 6,
+       "difficulty": 3,
+       "skills": [
+        "tree_dfs",
+        "recursion_base_case",
+        "recursion_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Return `True` if some path from the root down to a **leaf** has values adding up to `target`. An empty tree has no paths."
+      },
+      {
+       "id": "o11-cx-tree-space",
+       "title": "Space of tree recursion",
+       "kind": "choice",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 1,
+       "difficulty": 1,
+       "skills": [
+        "complexity",
+        "tree_dfs"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Your path-sum solution recursed down the tree with no extra data structure. Extra space used by this function (n nodes, height h)?"
+      },
+      {
+       "id": "o11-mix-k-closest",
+       "title": "Closest k points",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 6,
+       "difficulty": 3,
+       "skills": [
+        "top_k",
+        "heap_push_pop",
+        "tuples"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Given points `[x, y]`, return the `k` points closest to `(0, 0)` as a list of `[x, y]` lists, in any order. Aim for better than sorting everything when k is small. Assume there are no distance ties at the cut-off."
+      },
+      {
+       "id": "o11-cx-heap-k",
+       "title": "Size-k heap",
+       "kind": "choice",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 1,
+       "difficulty": 1,
+       "skills": [
+        "complexity",
+        "top_k"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "You just kept a size-k heap for the closest points. Same shape here: n numbers, heap capped at size k. Time complexity?"
+      },
+      {
+       "id": "o11-mix-groups",
+       "title": "Count friend groups",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 7,
+       "difficulty": 3,
+       "skills": [
+        "connected_components",
+        "graph_adjacency",
+        "visited_set"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "There are `n` people labeled `0..n-1`. Each pair in `edges` are friends (both ways). Friends of friends are in the same group. How many groups are there?"
+      },
+      {
+       "id": "o11-mix-cheapest-climb",
+       "title": "Cheapest climb",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 6,
+       "difficulty": 3,
+       "skills": [
+        "recurrence",
+        "dp_table",
+        "state_tracking"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "You stand before a staircase. `cost[i]` is what you pay when you step **off** step `i`. You may start on step 0 or step 1, and each move goes up 1 or 2 steps. Return the minimum total cost to reach the top, just past the"
+      },
+      {
+       "id": "o11-mix-choose",
+       "title": "Pick k of n",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 7,
+       "difficulty": 3,
+       "skills": [
+        "backtracking_state",
+        "recursion_base_case"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Return every way to choose `k` distinct numbers from `1..n`, each as an ascending list. The order of the lists does not matter."
+      },
+      {
+       "id": "o11-mix-fewest-steps",
+       "title": "Fewest steps through a maze",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 8,
+       "difficulty": 4,
+       "skills": [
+        "bfs",
+        "grid_neighbors",
+        "visited_set",
+        "queue_deque"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`grid` has `0` for open cells and `1` for walls. Moving up, down, left or right, return the fewest moves from the top-left cell to the bottom-right cell, or `-1` if it cannot be reached (including when either corner is a"
+      },
+      {
+       "id": "o11-say-stuck",
+       "title": "When you are stuck",
+       "kind": "explain",
+       "stage": "interview",
+       "repType": "interview",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "explanation",
+        "complexity"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "You have a working O(n^2) solution and no idea how to improve it. Write what you would say and do in the next three minutes instead of going silent."
+      }
+     ]
+    }
+   ],
+   "optionalSections": []
+  }
+ ]
+}
