@@ -9,7 +9,6 @@ import { motivate } from '@/data/course/motivation'
 import { WEEKS } from '@/data/course/weeks'
 import { labKey, labProgress, type LabState } from '@/lib/course/labs'
 import { weekProgress } from '@/lib/course/week-status'
-import { passedSet } from '@/lib/progress'
 
 /**
  * The February readiness report (REPS_2_MASTER_SPEC.md §37) and the weekly
@@ -20,7 +19,6 @@ export default function ReadinessReport() {
   const cd = useCourseDay()
   const { attempts, repo, today } = useReps()
   const r = cd.readiness
-  const passed = passedSet(attempts)
   const current = courseWeekOf(today)
   const finished = WEEKS.filter((w) => w.number < current)
   return (
@@ -85,7 +83,7 @@ export default function ReadinessReport() {
           <ol className="mt-3 flex flex-col gap-3">
             {[...finished].reverse().map((w) => {
               const p = weekProgress(w.number, weekDates(w.number)[6], cd.credits)
-              const labs = LABS.filter((l) => l.week === w.number).map((l) => ({ l, done: labProgress(l, repo.state<LabState>(labKey(l.id)), passed).done }))
+              const labs = LABS.filter((l) => l.week === w.number).map((l) => ({ l, done: labProgress(l, repo.state<LabState>(labKey(l.id)), attempts).done }))
               const gates = cd.course.statuses.filter((s) => s.unit.week === w.number).flatMap((s) => s.gates.filter((g) => g.available.length))
               const complete = p.done >= p.target && labs.filter((x) => !x.l.optional).every((x) => x.done) && gates.every((g) => g.cleared)
               return (

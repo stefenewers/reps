@@ -22,7 +22,7 @@ import type { LeetcodeItem } from '@/lib/types'
 type Pace = ReturnType<typeof usePacing>
 
 /** How a course queue item shows in today's list. */
-const COURSE_KIND: Record<QueuePurpose, ItemKind> = { learn: 'learn', guided: 'learn', drill: 'drill', combine: 'combine', transfer: 'transfer', gate: 'gate', repair: 'repair', capstone: 'prove', problem: 'problem' }
+const COURSE_KIND: Record<QueuePurpose, ItemKind> = { learn: 'learn', guided: 'learn', drill: 'drill', combine: 'combine', transfer: 'transfer', retrieve: 'cold', gate: 'gate', repair: 'repair', capstone: 'prove', problem: 'problem', extra: 'drill' }
 type Training = ReturnType<typeof useTraining>
 type DueLc = LeetcodeItem & { solveId: string }
 

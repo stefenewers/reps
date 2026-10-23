@@ -25,12 +25,25 @@ export interface LearningUnit {
   /** Lessons first (data/course/lessons.ts) or concept guides (data/concepts.ts). */
   lessonIds: string[]
   workedExampleIds: string[]
+  /** Inventory: the sections this unit's material lives in (practice and repair; never all required). */
   sections: string[]
+  /**
+   * REQUIRED PATH (REPS_2_1_SPEC.md §8): curated rep ids, in teaching order. Small enough that the
+   * week's required work (paths + gate passes + required targets) fits the weekly target with room
+   * for retrieval. Every other rep of the unit is repair inventory or optional practice.
+   */
+  path?: string[]
+  /** Offered when ahead, never required. */
   optional?: string[]
+  /** Beyond the Feb 1 scope: available, never required, never counted against the week. */
+  stretch?: string[]
+  /** Warm-up and cold sections that are not gates: they come back through spaced retrieval. */
+  retrieval?: string[]
   gateIds: string[]
   labIds: string[]
+  /** REQUIRED target problems (outside), due once the unit is ready. */
   targets: number[]
-  /** Targets attempted only once their readiness is clean. */
+  /** Targets offered once the unit is ready and their bridge is clean; never required. */
   readinessTargets?: number[]
   retrievalSkills: SkillId[]
 }

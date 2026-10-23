@@ -11,7 +11,6 @@ import { EXERCISE_BY_ID } from '@/data/curriculum'
 import { labKey, labProgress, type LabState } from '@/lib/course/labs'
 import { evidenceSummary, readiness } from '@/lib/course/readiness'
 import { courseDay, flameFor, momentum, trainingStreak, weekProgress } from '@/lib/course/week-status'
-import { passedSet } from '@/lib/progress'
 
 /**
  * Everything Today shows about the course, derived: the day, the week, the
@@ -24,8 +23,7 @@ export function useCourseDay() {
   return useMemo(() => {
     const day = courseDay(today, credits.byDate)
     const week = WEEK_BY_NUMBER[day.week] ?? WEEK_BY_NUMBER[1]
-    const passed = passedSet(attempts)
-    const labs = LABS.filter((l) => l.week === week.number).map((lab) => ({ lab, progress: labProgress(lab, repo.state<LabState>(labKey(lab.id)), passed) }))
+    const labs = LABS.filter((l) => l.week === week.number).map((lab) => ({ lab, progress: labProgress(lab, repo.state<LabState>(labKey(lab.id)), attempts) }))
     const required = labs.filter((l) => !l.lab.optional)
     const weekGates = course.statuses.filter((s) => s.unit.week === week.number).flatMap((s) => s.gates.filter((g) => g.available.length))
     const gatesCleared = weekGates.filter((g) => g.cleared).length
