@@ -1,4 +1,5 @@
 import { addDays, daysBetween, parseLocal } from '@/lib/dates'
+import type { CourseDay } from '@/lib/course/week-status'
 
 /**
  * Training capacity: how much to train today. Progressive overload, as in a gym.
@@ -120,6 +121,8 @@ export interface DailyCapacity {
   reason: string
   /** Last week's review, once there is one. */
   review: WeekReview | null
+  /** Reps 2.0: the course day (training, recovery or rest), once the course has started. */
+  course?: CourseDay
 }
 
 /**

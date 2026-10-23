@@ -4,6 +4,9 @@ import { useMemo } from 'react'
 import { useReps } from '@/components/reps-provider'
 import { useSolveLog } from '@/components/use-solve-log'
 import { PLAN_DAYS, PLAN_START } from '@/data/curriculum'
+import { COURSE_START } from '@/data/course/calendar'
+import { courseCapacity } from '@/lib/course/capacity'
+import { useCredits } from '@/components/use-credits'
 import { capacityFor, isSunday, type DailyCapacity, type DayRecord } from '@/lib/training-capacity'
 
 /** The most one attempt adds to a day's minutes. */
@@ -52,5 +55,10 @@ export const isStudyDay = (date: string) => !isSunday(date) && !OFF.has(date)
 export function useCapacity(): DailyCapacity {
   const { today } = useReps()
   const records = useDayRecords()
-  return useMemo(() => capacityFor(today < PLAN_START ? PLAN_START : today, PLAN_START, (d) => records.get(d), isStudyDay), [today, records])
+  const { byDate } = useCredits()
+  return useMemo(
+    // From Oct 26 the course contract (10 / 12 / 15) applies; before it, the earned ramp of the 90-day plan.
+    () => (today >= COURSE_START ? courseCapacity(today, byDate) : capacityFor(today < PLAN_START ? PLAN_START : today, PLAN_START, (d) => records.get(d), isStudyDay)),
+    [today, records, byDate],
+  )
 }

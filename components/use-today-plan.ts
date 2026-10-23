@@ -3,6 +3,8 @@
 import { useMemo } from 'react'
 import { useReps } from '@/components/reps-provider'
 import { useCapacity } from '@/components/use-capacity'
+import { useCredits } from '@/components/use-credits'
+import { COURSE_START } from '@/data/course/calendar'
 import type { usePacing } from '@/components/use-pacing'
 import { useSolveLog } from '@/components/use-solve-log'
 import { useTargets } from '@/components/use-targets'
@@ -28,6 +30,7 @@ export function useTodayPlan(pace: Pace, training: Training, dueLc: DueLc[]) {
   const { entries } = useSolveLog()
   const { byLc } = useTargets()
   const capacity = useCapacity()
+  const credits = useCredits()
 
   return useMemo(() => {
     const passed = passedSet(attempts)
@@ -71,7 +74,9 @@ export function useTodayPlan(pace: Pace, training: Training, dueLc: DueLc[]) {
         .map((a) => ({ key: a.exerciseId, units: repUnits(EXERCISE_BY_ID[a.exerciseId]), title: EXERCISE_BY_ID[a.exerciseId]?.title, kind: a.sessionKind === 'review' ? ('cold' as const) : before.has(a.exerciseId) ? ('warm' as const) : repKind(a.exerciseId) })),
       ...entries.filter((e) => e.date === today && e.lc).map((e) => ({ key: e.id, units: e.kind === 'new' ? 3 : 2, title: `LC ${e.lc} · ${e.title}`, kind: e.kind === 'new' ? ('problem' as const) : ('resolve' as const) })),
     ]
-    const t = prescribe({ capacity: capacity.requiredReps, phase: capacity.phase, doneToday, prep, plan, resolves, cold })
+    // In the course, what counts is decided by lib/course/credit.ts: a revealed solution, a repeat, a lab or a failure earns nothing.
+    const counted = today >= COURSE_START ? new Set((credits.items[today] ?? []).map((c) => c.key)) : null
+    const t = prescribe({ capacity: capacity.requiredReps, phase: capacity.phase, doneToday: counted ? doneToday.filter((d) => counted.has(d.key)) : doneToday, prep, plan, resolves, cold })
     return { ...t, capacityInfo: capacity }
-  }, [attempts, entries, mastery, reviews, today, pace.queue, training, dueLc, byLc, capacity])
+  }, [attempts, entries, mastery, reviews, today, pace.queue, training, dueLc, byLc, capacity, credits])
 }

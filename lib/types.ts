@@ -112,6 +112,10 @@ export interface Exercise {
    * technique to use. Recognising the pattern is part of what it tests.
    */
   transfer?: boolean
+  /** Reps 2.0: part of a lab build. Labs are done or not done; their parts never count as daily reps. */
+  lab?: boolean
+  /** Reps 2.0: a course gate checkpoint (cold, no lesson panel, no solution, no named technique). */
+  gate?: boolean
   /** Generated reps only: the little teaching a first-exposure rep carries (what it is, a tiny example). */
   teaching?: { concept: string; example?: string }
   /** Shown after completion. */
