@@ -143,7 +143,7 @@ for x in nums[1:]:
     id: 'b53-ending-sums',
     title: 'Best sum ending at each index',
     skills: ['kadane', 'list_append', 'state_tracking'],
-    prompt: '`nums` is a list of numbers, and some can be negative. Write `ending_sums(nums)` that returns a list the same length as `nums`: entry `i` is the largest sum of a run of neighbours that **ends exactly at index `i`** (the run must include `nums[i]`).\n\n`ending_sums([4, -6, 3, 2, -1])` → `[4, -2, 3, 5, 4]`',
+    prompt: "`nums` is a list of numbers, and some can be negative. Write `ending_sums(nums)` returning a list the same length as `nums`. Entry `i` is the largest sum of consecutive values that **ends exactly at index `i`**. The run must include `nums[i]`.\n\n`ending_sums([4, -6, 3, 2, -1])` → `[4, -2, 3, 5, 4]`",
     starterCode: `def ending_sums(nums):
     pass`,
     solution: `def ending_sums(nums):

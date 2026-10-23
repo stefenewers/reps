@@ -947,7 +947,7 @@ const meetingRooms = [
     stage: 'combine',
     repType: 'combine',
     prompt:
-      '`meetings` is a list of `[start, end]` pairs in any order, all with different starts. A meeting may begin exactly when another ends.\n\nWrite `first_clash(meetings)`: going through the day in start order, return the first meeting that begins while the one before it is still running, or `None` if there is none.\n\n`first_clash([[0, 30], [15, 20], [5, 10]])` → `[5, 10]`',
+      "`meetings` is a list of `[start, end]` pairs in any order, all with different starts. A meeting may begin exactly when another ends.\n\nWrite `first_clash(meetings)`. Going through the day in start order, return the first meeting that begins while the one before it is still running, or `None` if there is none.\n\n`first_clash([[0, 30], [15, 20], [5, 10]])` → `[5, 10]`",
     starterCode: `def first_clash(meetings):
     pass`,
     solution: `def first_clash(meetings):
@@ -1177,7 +1177,7 @@ const nonOverlapping = [
     title: 'Keep what fits after the last one',
     skills: ['interval_greedy', 'interval_overlap', 'list_append'],
     prompt:
-      '`talks` is a list of `[start, end]` pairs **already sorted by end time**. One room; a talk may start exactly when the previous one ends.\n\nWrite `keep_talks(talks)`: go through them in order and keep a talk whenever it starts at or after the end of the last talk you kept. Return the kept talks.\n\n`keep_talks([[1, 3], [2, 4], [3, 5]])` → `[[1, 3], [3, 5]]`',
+      "`talks` is a list of `[start, end]` pairs **already sorted by end time**. One room; a talk may start exactly when the previous one ends.\n\nWrite `keep_talks(talks)`. Go through them in order and keep a talk whenever it starts at or after the end of the last talk you kept. Return the kept talks.\n\n`keep_talks([[1, 3], [2, 4], [3, 5]])` → `[[1, 3], [3, 5]]`",
     starterCode: `def keep_talks(talks):
     pass`,
     solution: `def keep_talks(talks):

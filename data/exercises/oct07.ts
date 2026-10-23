@@ -169,7 +169,7 @@ print(list(q))
       id: 'o7-dq-drain',
       title: 'Drain a queue',
       skills: ['queue_deque', 'while_loop'],
-      prompt: '`items` is a list. Write `drain(items)`: put everything from `items` into a deque, then keep removing from the front until the deque is empty, collecting each removed item in a list. Return that list.\n\nA queue hands things back in the order they arrived, so `drain([3, 1, 2])` returns `[3, 1, 2]`, and `drain([])` returns `[]`.\n\nNothing is pre-imported: your code needs its own `from collections import deque`.',
+      prompt: "`items` is a list. Write `drain(items)`. Put everything from `items` into a deque, then keep removing from the front until the deque is empty, collecting each removed item in a list. Return that list.\n\nA queue hands things back in the order they arrived, so `drain([3, 1, 2])` returns `[3, 1, 2]`, and `drain([])` returns `[]`.\n\nNothing is pre-imported: your code needs its own `from collections import deque`.",
       note: 'An empty deque counts as false, like an empty list, so `while q:` means "while anything is still waiting".',
       starterCode: 'def drain(items):\n    pass\n',
       solution: `from collections import deque
@@ -414,7 +414,7 @@ print(grid[-1])
       id: 'o7-g-dbg-alias',
       title: 'Debug: identity grid',
       skills: ['grid_nested', 'list_comprehension'],
-      prompt: '`n` is a positive int. `identity(n)` should return an n x n grid (a list of `n` rows, each a list of `n` ints) that is all zeros except for ones on the main diagonal, the cells whose row and column are equal: `identity(2)` is `[[1, 0], [0, 1]]`. Make the tests pass.',
+      prompt: "`n` is a positive int. `identity(n)` should return an n x n grid: `n` rows, each containing `n` integers. Use ones where the row and column indexes are equal, and zeros elsewhere. For example, `identity(2)` is `[[1, 0], [0, 1]]`. Make the tests pass.",
       brokenCode: `def identity(n):
     grid = [[0] * n] * n
     for i in range(n):
@@ -679,7 +679,7 @@ assert land_count_buggy(g, r, c) != _ok(g, r, c), "the buggy function still gets
       stage: 'combine',
       repType: 'combine',
       difficulty: 3,
-      prompt: '`grid` is a list of rows of ints (not strings this time): `1` is land and `0` is water. The land cells form one **island**: a group of land cells joined side to side. Write `perimeter(grid)` returning the length of the island\'s outline. Each cell is a 1 x 1 square, and one of its four sides is part of the outline when what lies on the other side is water or the edge of the grid.\n\nExample: `perimeter([[1]])` is `4`. `perimeter([[1, 1], [1, 1]])` is `8`: each cell has two sides facing out.',
+      prompt: "`grid` is a list of rows of ints (not strings this time): `1` is land and `0` is water. The land cells form one **island**: a group of land cells joined side to side. Write `perimeter(grid)` returning the length of the island's outline. Each cell is a 1 x 1 square. A side counts toward the outline if it borders water or the edge of the grid.\n\nExample: `perimeter([[1]])` is `4`. `perimeter([[1, 1], [1, 1]])` is `8`: each cell has two sides facing out.",
       starterCode: 'def perimeter(grid):\n    pass\n',
       solution: `def perimeter(grid):
     rows, cols = len(grid), len(grid[0])
@@ -989,7 +989,7 @@ def shortest_steps(grid):
       stage: 'pattern',
       repType: 'pattern',
       difficulty: 3,
-      prompt: '**Flood fill** is the paint-bucket tool: click one pixel and the whole patch of that color changes. `image` is a list of rows of ints, each int a color. `(sr, sc)` is the clicked pixel and `color` is the new color. Write `flood_fill(image, sr, sc, color)`: repaint the start pixel and every pixel you can reach from it by stepping up, down, left or right over pixels that have the start pixel\'s original color. Change `image` **in place** (edit its own rows, do not build a new grid) and return it.\n\nExample: `flood_fill([[1, 1, 1], [1, 1, 0], [1, 0, 1]], 1, 1, 2)` returns `[[2, 2, 2], [2, 2, 0], [2, 0, 1]]`. The bottom-right `1` is cut off from the patch, so it stays.\n\nWatch out: what if `color` is already the original color?',
+      prompt: "**Flood fill** is the paint-bucket tool: click one pixel and the whole patch of that color changes. `image` is a list of rows of ints, each int a color. `(sr, sc)` is the clicked pixel and `color` is the new color. Write `flood_fill(image, sr, sc, color)`. Repaint the start pixel and every pixel you can reach from it by stepping up, down, left or right over pixels that have the start pixel's original color. Change `image` **in place** (edit its own rows, do not build a new grid) and return it.\n\nExample: `flood_fill([[1, 1, 1], [1, 1, 0], [1, 0, 1]], 1, 1, 2)` returns `[[2, 2, 2], [2, 2, 0], [2, 0, 1]]`. The bottom-right `1` is cut off from the patch, so it stays.\n\nWatch out: what if `color` is already the original color?",
       starterCode: 'from collections import deque\n\ndef flood_fill(image, sr, sc, color):\n    pass\n',
       solution: `from collections import deque
 
@@ -1035,7 +1035,7 @@ def flood_fill(image, sr, sc, color):
       repType: 'combine',
       style: 'translate',
       difficulty: 3,
-      prompt: 'Below is the BFS `land_reachable`: it counts the land cells (`"1"`) connected to `(sr, sc)`, or returns 0 if the start is water. Under it, write `land_reachable_dfs(grid, sr, sc)` with the same behaviour as an iterative DFS: a loop with a plain list used as a stack (`append` / `pop()`) in place of the deque, and no recursion.',
+      prompt: "Below is the BFS `land_reachable`: it counts the land cells (`\"1\"`) connected to `(sr, sc)`, or returns 0 if the start is water. Under it, write `land_reachable_dfs(grid, sr, sc)` with the same result, using iterative DFS. Replace the deque with a plain list used as a stack (`append` / `pop()`). Use a loop, without recursion.",
       starterCode: `from collections import deque
 
 def land_reachable(grid, sr, sc):
@@ -1505,7 +1505,7 @@ const levelOrderCap = {
       title: 'Level order traversal',
       problemId: 'level-order',
       skills: ['bfs', 'bfs_levels', 'queue_deque', 'treenode'],
-      prompt: 'Given the root of a binary tree, return its values grouped by depth: a list of lists, the first holding the root, the next holding the root\'s children left to right, and so on. An empty tree gives `[]`.',
+      prompt: "Given a binary tree's root, return its values grouped by depth as a list of lists. The first list holds the root. The next holds its children, left to right. Continue one list per depth. An empty tree gives `[]`.",
       starterCode: `from collections import deque
 from typing import List, Optional
 
@@ -1640,7 +1640,7 @@ const islands = {
       stage: 'pattern',
       repType: 'pattern',
       difficulty: 3,
-      prompt: '`grid` is a list of rows of strings: `"1"` is land and `"0"` is water. Two land cells belong to the same island when you can walk from one to the other stepping up, down, left or right over land (never diagonally). `(r, c)` is a cell of the grid.\n\nWrite `sink(grid, r, c)`: if `(r, c)` is land, turn it and every other cell of its island into `"0"`, changing `grid` itself, and return how many cells you changed. If `(r, c)` is water, change nothing and return `0`.\n\nExample: with `grid = [["1", "1", "0"], ["1", "0", "1"]]`, `sink(grid, 0, 0)` returns `3` and leaves `grid` as `[["0", "0", "0"], ["0", "0", "1"]]`. The land on the far right is a different island.',
+      prompt: "`grid` is a list of rows of strings: `\"1\"` is land and `\"0\"` is water. Two land cells belong to the same island when you can walk from one to the other stepping up, down, left or right over land (never diagonally). `(r, c)` is a cell of the grid.\n\nWrite `sink(grid, r, c)`. If `(r, c)` is land, turn it and every other cell of its island into `\"0\"`, changing `grid` itself, and return how many cells you changed. If `(r, c)` is water, change nothing and return `0`.\n\nExample: with `grid = [[\"1\", \"1\", \"0\"], [\"1\", \"0\", \"1\"]]`, `sink(grid, 0, 0)` returns `3` and leaves `grid` as `[[\"0\", \"0\", \"0\"], [\"0\", \"0\", \"1\"]]`. The land on the far right is a different island.",
       transfer: true,
       starterCode: 'def sink(grid, r, c):\n    pass\n',
       solution: `def sink(grid, r, c):

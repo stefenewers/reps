@@ -260,7 +260,7 @@ print(x, length)`,
         title: 'The total before each position',
         skills: ['prefix_suffix', 'accumulator', 'list_append'],
         prompt:
-          '`nums` is a list of numbers (it can be empty).\n\nWrite `sums_before(nums)`: a list the same length as `nums` where entry `i` is the sum of everything **before** position `i` (not including `nums[i]` itself).\n\n`sums_before([3, 1, 4])` → `[0, 3, 4]`',
+          "`nums` is a list of numbers (it can be empty).\n\nWrite `sums_before(nums)`. Return a list the same length as `nums` where entry `i` is the sum of everything **before** position `i` (not including `nums[i]` itself).\n\n`sums_before([3, 1, 4])` → `[0, 3, 4]`",
         starterCode: `def sums_before(nums):
     pass`,
         solution: `def sums_before(nums):
@@ -320,7 +320,7 @@ print(x, length)`,
         skills: ['prefix_suffix', 'range', 'list_index', 'accumulator'],
         difficulty: 3,
         prompt:
-          'Now from the other side. `nums` is a list of numbers. Write `products_after(nums)`: entry `i` is everything **after** position `i` multiplied together (`1` when nothing is after it).\n\n`products_after([2, 3, 4])` → `[12, 4, 1]`\n\nYou cannot append this time: the last entry is known first. Make the full-length list up front and fill it from the right.',
+          "Now from the other side. `nums` is a list of numbers. Write `products_after(nums)`. Return a list where entry `i` is the product of the numbers **after** position `i`. Use `1` when nothing follows it.\n\n`products_after([2, 3, 4])` → `[12, 4, 1]`\n\nYou cannot append this time: the last entry is known first. Make the full-length list up front and fill it from the right.",
         starterCode: `def products_after(nums):
     pass`,
         solution: `def products_after(nums):
@@ -397,7 +397,7 @@ print(x, length)`,
         repType: 'pattern',
         difficulty: 3,
         prompt:
-          '`scores` holds one score per player (at least two players).\n\nWrite `best_rival(scores)`: a list where entry `i` is the highest score among all the **other** players, leaving out player `i`. The list can be long: do not rescan it for every player.\n\n`best_rival([3, 9, 4, 7])` → `[9, 7, 9, 9]`',
+          "`scores` holds one score per player (at least two players).\n\nWrite `best_rival(scores)`. Return a list where entry `i` is the highest score among all the **other** players, leaving out player `i`. The list can be long: do not rescan it for every player.\n\n`best_rival([3, 9, 4, 7])` → `[9, 7, 9, 9]`",
         starterCode: `def best_rival(scores):
     pass`,
         solution: `def best_rival(scores):

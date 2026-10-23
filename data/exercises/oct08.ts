@@ -703,7 +703,7 @@ const graphBfs = {
       id: 'o8-b-order',
       title: 'BFS order from scratch',
       skills: ['graph_bfs', 'queue_deque'],
-      prompt: '**BFS** (breadth-first search) visits nodes nearest first: `start`, then every neighbor of `start`, then the unvisited neighbors of those, and so on. It is the loop you wrote for grid BFS (a `deque` used as a queue, `popleft()`, a visited set); the only change is that a node\'s neighbors come from `graph[node]` instead of a directions list.\n\n`graph` is an adjacency list and `start` is one of its nodes. Write `bfs_order(graph, start)` returning a list of the reachable nodes in the order BFS takes them off the queue, adding neighbors in list order.\n\n```python\nbfs_order({0: [1, 2], 1: [0, 3], 2: [0, 4], 3: [1], 4: [2]}, 0)   # [0, 1, 2, 3, 4]\n```',
+      prompt: "**BFS** (breadth-first search) visits nodes nearest first: `start`, then every neighbor of `start`, then the unvisited neighbors of those, and so on. Reuse the grid BFS loop: a `deque` queue, `popleft()` and a visited set. Here, find each node's neighbors in `graph[node]`, instead of using a directions list.\n\n`graph` is an adjacency list and `start` is one of its nodes. Write `bfs_order(graph, start)` returning a list of the reachable nodes in the order BFS takes them off the queue, adding neighbors in list order.\n\n```python\nbfs_order({0: [1, 2], 1: [0, 3], 2: [0, 4], 3: [1], 4: [2]}, 0)   # [0, 1, 2, 3, 4]\n```",
       note: 'DFS takes the **newest** node waiting (a stack) and runs deep. BFS takes the **oldest** node waiting (a queue), so it finishes everything 1 edge away before anything 2 edges away. That is why BFS is the one that finds fewest edges.',
       starterCode: 'def bfs_order(graph, start):\n    pass\n',
       solution: `from collections import deque
@@ -1324,7 +1324,7 @@ const cycles = {
       id: 'o8-y-trace-states',
       title: 'Trace three states',
       skills: ['cycle_detection', 'graph_dfs'],
-      prompt: 'In a directed graph, a **cycle** is a route that follows the arrows and arrives back where it began, like 0 → 1 → 2 → 0. This `dfs` returns `True` if it finds one.\n\nEach node has one of three states in `state`: `0` = not visited yet, `1` = **visiting** (its `dfs` call has started and not finished, so it is on the route currently being walked), `2` = **done** (its call finished).\n\nThis graph is a diamond: 0 → 1, 0 → 2, 1 → 3, 2 → 3. Node 3 is reached twice, but there is no cycle. What prints?',
+      prompt: "In a directed graph, a **cycle** is a route that follows the arrows and arrives back where it began, like 0 → 1 → 2 → 0. This `dfs` returns `True` if it finds one.\n\nEach node has one of three states in `state`:\n- `0`: not visited yet.\n- `1`: **visiting**. Its `dfs` call started but has not finished, so it is on the current route.\n- `2`: **done**. Its call finished.\n\nThis graph is a diamond: 0 → 1, 0 → 2, 1 → 3, 2 → 3. Node 3 is reached twice, but there is no cycle. What prints?",
       code: `graph = {0: [1, 2], 1: [3], 2: [3], 3: []}
 state = [0] * 4
 
