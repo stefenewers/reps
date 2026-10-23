@@ -64,12 +64,12 @@ test('placement: earlier evidence starts with the cold gate; passing it skips th
   const c = ctx(earlier, '2026-10-26')
   const s = status(c, 'w2-hashing')
   assert.equal(s.state, 'placement')
-  const q = courseQueue(courseStatus(c), c, new Set()).filter((x) => x.unitId === 'w2-hashing')
+  const q = courseQueue(courseStatus(c), c, new Set()).filter((x) => x.unitId === 'w2-hashing' && x.required)
   assert.ok(q.length && q.every((x) => x.purpose === 'gate'), 'the gate is offered first, and only the gate')
   const passedGate = [...earlier, ...q.map((x) => at(x.exerciseId!, '2026-10-26', { retrievalType: 'cold' }))]
   const c2 = ctx(passedGate, '2026-10-26')
   assert.equal(status(c2, 'w2-hashing').state, 'ready')
-  assert.ok(!courseQueue(courseStatus(c2), c2, new Set()).some((x) => x.unitId === 'w2-hashing' && x.exerciseId), 'no teaching reps once placement is passed')
+  assert.ok(!courseQueue(courseStatus(c2), c2, new Set()).some((x) => x.unitId === 'w2-hashing' && x.exerciseId && x.required), 'no required teaching reps once placement is passed')
 })
 
 test('a failed gate routes 2–4 repair reps on the broken skill, then a different variant', () => {
@@ -80,7 +80,7 @@ test('a failed gate routes 2–4 repair reps on the broken skill, then a differe
   const g = status(c, 'w2-hashing').gates[0]
   assert.equal(g.failed, true)
   assert.ok(g.repair.length >= 1 && g.repair.length <= 4)
-  const q = courseQueue(courseStatus(c), c, new Set()).filter((x) => x.unitId === 'w2-hashing')
+  const q = courseQueue(courseStatus(c), c, new Set()).filter((x) => x.unitId === 'w2-hashing' && x.required)
   assert.equal(q[0].purpose, 'repair')
   assert.ok(!q.some((x) => x.purpose === 'gate'), 'no variant until the repair is done')
   const repaired = [...failed, ...g.repair.map((id) => at(id, '2026-10-26'))]

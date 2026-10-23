@@ -5,6 +5,7 @@ import { useReps } from '@/components/reps-provider'
 import { useSolveLog } from '@/components/use-solve-log'
 import { PLAN_DAYS, PLAN_START } from '@/data/curriculum'
 import { COURSE_START } from '@/data/course/calendar'
+import { outsideCredit } from '@/lib/course/credit'
 import { courseCapacity } from '@/lib/course/capacity'
 import { useCredits } from '@/components/use-credits'
 import { capacityFor, isSunday, type DailyCapacity, type DayRecord } from '@/lib/training-capacity'
@@ -40,9 +41,13 @@ export function useDayRecords(): Map<string, DayRecord> {
     }
     for (const e of entries) {
       if (!e.lc) continue
-      const r = get(e.date)
-      r.reps++
-      r.minutes += e.minutes ?? 15
+      get(e.date).minutes += e.minutes ?? 15
+      const credit = outsideCredit(e)
+      if (!credit) continue
+      const key = `${credit.date}:lc:${e.lc}`
+      if (counted.has(key)) continue
+      counted.add(key)
+      get(credit.date).reps++
     }
     return out
   }, [attempts, entries])
@@ -58,7 +63,10 @@ export function useCapacity(): DailyCapacity {
   const { byDate } = useCredits()
   return useMemo(
     // From Oct 26 the course contract (10 / 12 / 15) applies; before it, the earned ramp of the 90-day plan.
-    () => (today >= COURSE_START ? courseCapacity(today, byDate) : capacityFor(today < PLAN_START ? PLAN_START : today, PLAN_START, (d) => records.get(d), isStudyDay)),
-    [today, records, byDate],
+    () =>
+      today >= COURSE_START
+        ? courseCapacity(today, byDate)
+        : capacityFor(today < PLAN_START ? PLAN_START : today, PLAN_START, (d) => records.get(d), isStudyDay),
+    [today, records, byDate]
   )
 }

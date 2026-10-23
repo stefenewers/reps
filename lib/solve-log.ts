@@ -9,7 +9,14 @@ import type { DayModule, LeetcodeItem } from '@/lib/types'
  * Stored in the synced study state under `solve:<id>`, so no schema change.
  */
 
-export type SolveResult = 'unaided' | 'hinted' | 'failed'
+/**
+ * How an outside problem went:
+ * - unaided: solved with no help;
+ * - hinted: a small hint, then finished yourself (counts, as assisted);
+ * - solution: the solution or a walkthrough was seen (counts only once rebuilt from blank on a later day);
+ * - failed: not finished.
+ */
+export type SolveResult = 'unaided' | 'hinted' | 'solution' | 'failed'
 export type SolveKind = LeetcodeItem['type'] | 'outside'
 
 export interface SolveEntry {
@@ -25,8 +32,10 @@ export interface SolveEntry {
   approach?: string
   complexity?: string
   mistake?: string
-  /** A first solve that needed help, written again from a blank editor afterwards. */
+  /** Legacy: a solve that needed help, marked as written again from a blank editor (no date). */
   rebuilt?: boolean
+  /** The local date it was rebuilt from a blank editor, after the solution was seen. */
+  rebuiltOn?: string
   /** ISO timestamp of the last edit. */
   at: string
 }

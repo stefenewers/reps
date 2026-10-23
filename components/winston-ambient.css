@@ -102,3 +102,6 @@
     display: none;
   }
 }
+
+[data-winston-perch][data-mood="rest"] .wa-sprite { animation: none; opacity: .65; }
+[data-winston-perch][data-mood="celebrate"] .wa-perch { filter: drop-shadow(0 0 5px var(--flame)); }

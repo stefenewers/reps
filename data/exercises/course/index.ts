@@ -1,3 +1,4 @@
+import { sections as visualRebuilds } from '@/data/exercises/course/visual-rebuilds'
 import type { Section } from '@/lib/types'
 import { sections as week1 } from '@/data/exercises/course/week1'
 import { sections as week2 } from '@/data/exercises/course/week2'
@@ -13,4 +14,4 @@ import { sections as labsW9W13 } from '@/data/exercises/course/labs-w9w13'
  * 13 transfer bank, lab builds). Referenced by id from data/course/units.ts,
  * gates.ts and labs. Not part of the 90-day calendar, so it never changes the old plan.
  */
-export const COURSE_SECTIONS: Section[] = [...week1, ...week2, ...gatesLater, ...week13, ...labsW1W2, ...labsW3W8, ...labsW9W13]
+export const COURSE_SECTIONS: Section[] = [...week1, ...week2, ...gatesLater, ...week13, ...labsW1W2, ...labsW3W8, ...labsW9W13, ...visualRebuilds]

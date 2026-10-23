@@ -1,0 +1,1385 @@
+{
+ "week": 5,
+ "title": "Search + Linked Lists",
+ "focus": "Binary search, linked lists",
+ "purpose": "Eliminate half the region with an invariant; rewire references safely.",
+ "weekTarget": 75,
+ "dailyTarget": 15,
+ "trainingDays": [
+  "2026-11-23",
+  "2026-11-24",
+  "2026-11-25",
+  "2026-11-26",
+  "2026-11-27"
+ ],
+ "units": [
+  {
+   "id": "w5-binary-search",
+   "title": "Binary search",
+   "purpose": "The answer, if it exists, is still inside this search region.",
+   "prerequisites": [
+    "w1-loop-control"
+   ],
+   "lessonIds": [
+    "binary-search"
+   ],
+   "workedExampleIds": [],
+   "targets": [
+    {
+     "lc": 704,
+     "title": "Binary Search",
+     "solvedInRepsBy": "cap-binary-search"
+    }
+   ],
+   "readinessTargets": [],
+   "labs": [
+    {
+     "id": "lab-product-catalog",
+     "title": "Searchable Product Catalog",
+     "optional": false
+    }
+   ],
+   "gates": [
+    {
+     "id": "g-search-invariant",
+     "title": "Search invariant",
+     "need": 2,
+     "skills": [
+      "binary_search",
+      "search_invariant"
+     ],
+     "pool": [
+      "d05s-ck-page-of",
+      "d05s-ck-count-below",
+      "d05s-ck-last-affordable",
+      "d05s-ck-staircase",
+      "d05-cold-index-of",
+      "d05-cold-first-at-least"
+     ]
+    }
+   ],
+   "sections": [
+    {
+     "id": "d05-bs",
+     "title": "Binary search",
+     "reps": [
+      {
+       "id": "d05-bs-trace-found",
+       "title": "Trace: lo, hi, mid",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 2,
+       "difficulty": 1,
+       "skills": [
+        "binary_search",
+        "mid_calc"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "**Binary search** finds a value in a **sorted** list without reading every item. `lo` and `hi` are the first and last index where `target` could still be. The indexes from `lo` to `hi` are the **search space**. `mid` is "
+      },
+      {
+       "id": "d05-bs-body",
+       "title": "Write the loop",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 7,
+       "difficulty": 2,
+       "skills": [
+        "binary_search",
+        "mid_calc",
+        "search_invariant"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of numbers sorted ascending, and `target` is the value to find. `search(nums, target)` returns the index of `target`, or `-1` if it isn't in the list. `search([-3, 0, 4, 8, 12], 8)` → `3` The setup and t"
+      },
+      {
+       "id": "d05-bs-contains",
+       "title": "Contains, from a signature",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 6,
+       "difficulty": 2,
+       "skills": [
+        "binary_search",
+        "mid_calc",
+        "search_invariant"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of numbers sorted ascending, and it may be empty. Write `contains(nums, target)`. Return `True` if `target` is in `nums` and `False` if it isn't. It must run in O(log n), so don't read every item. `conta"
+      },
+      {
+       "id": "d05-bs-dbg-lt",
+       "title": "Debug: misses some targets",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "binary_search",
+        "search_invariant"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`search(nums, target)` should return the index of `target` in the sorted list `nums`, or -1 if it isn't there. It returns -1 for some targets that are in the list. Fix it."
+      },
+      {
+       "id": "d05-bs-optimize",
+       "title": "Optimize: linear scan → binary search",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 6,
+       "difficulty": 2,
+       "skills": [
+        "binary_search",
+        "mid_calc",
+        "search_invariant"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is sorted ascending with no repeats. `index_of(nums, target)` returns the index of `target`, or `-1` if it is missing. It works, but it reads every item. Rewrite it so it reads only about log2(n) of them. A hidden"
+      },
+      {
+       "id": "d05-bs-dbg-index",
+       "title": "Debug: wrong thing compared",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "binary_search",
+        "mid_calc"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`find(nums, target)` should return the index of `target` in the sorted list `nums`, or -1 if it isn't there. It returns -1 for values that are clearly in the list. Fix it."
+      },
+      {
+       "id": "d05-bs-write-test",
+       "title": "Write the test that catches it",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "binary_search",
+        "search_invariant",
+        "edge_cases"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`search(nums, target)` should return the index of `target` in the sorted list `nums`, or `-1` if it isn't there. Somebody wrote it with `while lo < hi`: ```python def search(nums, target): lo, hi = 0, len(nums) - 1 while"
+      }
+     ]
+    },
+    {
+     "id": "d05-variants",
+     "title": "Search variants",
+     "reps": [
+      {
+       "id": "d05-var-insert",
+       "title": "Search insert position",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 7,
+       "difficulty": 2,
+       "skills": [
+        "binary_search",
+        "search_invariant"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is sorted ascending with no repeats, and it may be empty. Write `insert_at(nums, target)`. If `target` is in the list, return its index. If it isn't, return its **insert position**: the index where it would go to "
+      },
+      {
+       "id": "d05-var-first",
+       "title": "First occurrence",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 8,
+       "difficulty": 2,
+       "skills": [
+        "binary_search",
+        "search_invariant"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is sorted ascending and may contain repeats. Write `first_index(nums, target)`. Return the **leftmost** index of `target`, or `-1` if it isn't there. It must run in O(log n). `first_index([1, 2, 2, 2, 3], 2)` → `1"
+      },
+      {
+       "id": "d05-var-last",
+       "title": "Modify: first → last occurrence",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "binary_search",
+        "search_invariant"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is sorted ascending and may contain repeats. The code below returns the **leftmost** index of `target`. Change it so `last_index` returns the **rightmost** index instead, or `-1` if `target` isn't there. `last_ind"
+      },
+      {
+       "id": "d05-var-dbg-first",
+       "title": "Debug: not the first one",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "binary_search",
+        "search_invariant"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`first_pos(nums, target)` should return the **leftmost** index of `target` in a sorted list that may contain repeats. If `target` isn't there, it should return `-1`. `first_pos([1, 2, 2, 2, 3], 2)` → `1` Some of its answ"
+      },
+      {
+       "id": "d05-var-dbg-lower",
+       "title": "Debug: half-open lower bound",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "binary_search",
+        "search_invariant",
+        "mid_calc"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is sorted ascending. `lower_bound(nums, target)` should return the **lower bound** of `target`. That is the first index `i` where `nums[i] >= target`, or `len(nums)` if every value is smaller. `lower_bound([1, 3, "
+      },
+      {
+       "id": "d05-var-sqrt",
+       "title": "Search on the answer: floor sqrt",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 9,
+       "difficulty": 3,
+       "skills": [
+        "binary_search",
+        "mid_calc",
+        "search_invariant"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`x` is a whole number, 0 or larger. It can be in the billions. Write `floor_sqrt(x)`. Return the largest whole number `r` where `r * r <= x`. Don't use `**0.5` or `math`. `floor_sqrt(16)` → `4` `floor_sqrt(15)` → `3` (3 "
+      },
+      {
+       "id": "d05-var-first-true",
+       "title": "First True",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 7,
+       "difficulty": 2,
+       "skills": [
+        "binary_search",
+        "search_invariant"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`flags` is a list of booleans where every `False` comes before every `True`, like `[False, False, True, True]`. It may have no `False`s or no `True`s, and it may be empty. Write `first_true(flags)`. Return the index of t"
+      }
+     ]
+    },
+    {
+     "id": "d05-cap-search",
+     "title": "Capstone: Binary Search",
+     "reps": [
+      {
+       "id": "cap-binary-search",
+       "title": "Binary Search",
+       "kind": "code",
+       "stage": "capstone",
+       "repType": "capstone",
+       "minutes": 25,
+       "difficulty": 3,
+       "skills": [
+        "binary_search",
+        "mid_calc",
+        "search_invariant",
+        "while_loop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": 704,
+       "transfer": false,
+       "prompt": "You get a list of distinct integers in increasing order, and a value to look for. Return the position of that value in the list, or -1 if it isn't there. Your solution must take O(log n) time, so a linear scan is not all"
+      },
+      {
+       "id": "d05-explain-bs",
+       "title": "Explain binary search",
+       "kind": "explain",
+       "stage": "interview",
+       "repType": "interview",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "explanation",
+        "search_invariant",
+        "complexity"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Explain your binary search out loud as you would to an interviewer: the approach, the invariant, why the loop ends, the complexity and the edge cases."
+      },
+      {
+       "id": "d05-fu-insert-position",
+       "title": "Follow-up: where would it go?",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "binary_search",
+        "search_invariant",
+        "mid_calc"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "**Interviewer follow-up.** `search` returns -1 when the target is missing. Change that: return the index where the target **would be inserted** to keep the list sorted. If the target is already there, return its index. I"
+      }
+     ]
+    },
+    {
+     "id": "d05s-check",
+     "title": "Binary search check",
+     "reps": [
+      {
+       "id": "d05s-ck-page-of",
+       "title": "Find the word",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 8,
+       "difficulty": 3,
+       "skills": [
+        "binary_search",
+        "mid_calc",
+        "search_invariant"
+       ],
+       "gateVariantOf": "g-search-invariant",
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`words` is a list of different words in alphabetical order. Strings compare with `<` and `==` just like numbers. Write `page_of(words, word)`. Return the index of `word`, or `-1` if it isn't there. It must run in O(log n"
+      },
+      {
+       "id": "d05s-ck-count-below",
+       "title": "How many scored lower",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 7,
+       "difficulty": 3,
+       "skills": [
+        "binary_search",
+        "search_invariant",
+        "mid_calc"
+       ],
+       "gateVariantOf": "g-search-invariant",
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`scores` is sorted from low to high and may contain repeats. Write `count_below(scores, cutoff)`. Return how many scores are **strictly less than** `cutoff`. It must run in O(log n). `count_below([10, 20, 20, 30], 20)` →"
+      },
+      {
+       "id": "d05s-ck-last-affordable",
+       "title": "Priciest you can afford",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 8,
+       "difficulty": 3,
+       "skills": [
+        "binary_search",
+        "search_invariant",
+        "state_tracking"
+       ],
+       "gateVariantOf": "g-search-invariant",
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`prices` is sorted from low to high and may contain repeats. Write `last_affordable(prices, budget)`. Return the index of the **last** price that is at most `budget`. If even the cheapest price is more than `budget`, ret"
+      },
+      {
+       "id": "d05s-ck-staircase",
+       "title": "Tallest staircase",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 9,
+       "difficulty": 4,
+       "skills": [
+        "binary_search",
+        "search_invariant",
+        "mid_calc"
+       ],
+       "gateVariantOf": "g-search-invariant",
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "A staircase with `h` steps uses 1 block for the first step, 2 for the second, and so on. That is `h * (h + 1) // 2` blocks in all. `blocks` is a whole number, and `blocks >= 0`. Write `tallest_staircase(blocks)`. Return "
+      }
+     ]
+    }
+   ],
+   "optionalSections": [
+    {
+     "id": "br-153",
+     "title": "Toward Find Minimum in Rotated Sorted Array",
+     "reps": [
+      {
+       "id": "b153-trace-drop",
+       "title": "Trace: closing in on the drop",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 2.5,
+       "difficulty": 2,
+       "skills": [
+        "rotated_search",
+        "search_invariant"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "A sorted list was cut and its front moved to the back. Predict the output: `mid`, then the new `lo` and `hi`, each step."
+      },
+      {
+       "id": "b153-narrow",
+       "title": "One step toward the smallest",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4.5,
+       "difficulty": 2,
+       "skills": [
+        "rotated_search",
+        "mid_calc",
+        "tuples"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a **rotated** sorted list of different values: a sorted list whose front was cut off and moved to the back. For example, `[0, 1, 2, 4, 5, 6, 7]` rotated is `[4, 5, 6, 7, 0, 1, 2]`. The smallest value is somewhe"
+      },
+      {
+       "id": "b153-dbg-skip-mid",
+       "title": "Debug: where the list was cut",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 4.5,
+       "difficulty": 3,
+       "skills": [
+        "rotated_search",
+        "search_invariant",
+        "while_loop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`rotation_point(nums)` takes a rotated sorted list of different values and should return the **index** of its smallest value. A list that was never rotated gives `0`. `rotation_point([6, 7, 0, 1, 2])` → `2`. Fix it."
+      },
+      {
+       "id": "b153-peak-mini",
+       "title": "The reading just before the reset",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 8,
+       "difficulty": 4,
+       "skills": [
+        "rotated_search",
+        "search_invariant",
+        "binary_search",
+        "list_index"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`readings` is a non-empty list of different numbers from a counter. The counter only climbs, but it may have reset to a low value **once** and climbed again from there, like `[4, 5, 6, 7, 0, 1, 2]`. Every reading after t"
+      }
+     ]
+    },
+    {
+     "id": "br-33",
+     "title": "Toward Search in Rotated Sorted Array",
+     "reps": [
+      {
+       "id": "b33-sorted-half",
+       "title": "Which half is sorted",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "rotated_search",
+        "mid_calc",
+        "conditionals"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a rotated sorted list of different values: a sorted list whose front was moved to the back. `lo` and `hi` are the two ends of the range being searched, both included. Cut `nums[lo..hi]` at its middle index `mid"
+      },
+      {
+       "id": "b33-next-bounds",
+       "title": "Keep the half that can hold it",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 8,
+       "difficulty": 4,
+       "skills": [
+        "rotated_search",
+        "search_invariant",
+        "conditionals",
+        "tuples"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a rotated sorted list of different values: a sorted list whose front was moved to the back. You are looking for `target` in `nums[lo..hi]` (both ends included), and you have already checked that `nums[mid]`, th"
+      },
+      {
+       "id": "b33-dbg-equal-end",
+       "title": "Debug: is it in the rotated list?",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 6,
+       "difficulty": 3,
+       "skills": [
+        "rotated_search",
+        "search_invariant",
+        "binary_search"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`in_rotated(nums, target)` should return `True` if `target` is in the rotated sorted list `nums` (different values), otherwise `False`, in O(log n). `in_rotated([4, 5, 6, 7, 0, 1, 2], 4)` → `True`. It misses some values "
+      },
+      {
+       "id": "b33-slot-mini",
+       "title": "Find the hour on a night shift",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 13,
+       "difficulty": 4,
+       "skills": [
+        "rotated_search",
+        "binary_search",
+        "search_invariant",
+        "mid_calc"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "A shift log lists the hours (0 to 23) at which checks were made, in the order they happened. The shift may run past midnight, so the hours rise, may wrap round to a small number once, and rise again: `[14, 18, 22, 3, 7, "
+      }
+     ]
+    },
+    {
+     "id": "d05-warmup",
+     "title": "Warm-up",
+     "reps": [
+      {
+       "id": "d05-warm-first-dup",
+       "title": "First repeated value",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "set_membership",
+        "set_add",
+        "early_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `first_repeat(nums)` that returns the first value that appears a second time while scanning left to right, or `None` if every value is unique."
+      },
+      {
+       "id": "d05-warm-two-sum",
+       "title": "Two Sum, cold",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 6,
+       "difficulty": 2,
+       "skills": [
+        "index_map",
+        "complement",
+        "enumerate"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `two_sum(nums, target)` returning the indexes `[i, j]` (i < j) of the two numbers that add to `target`. Exactly one answer exists. One pass."
+      },
+      {
+       "id": "d05-warm-pal",
+       "title": "Palindrome with two pointers",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "two_pointer",
+        "string_index",
+        "while_loop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `is_pal(s)` with two indexes moving inward (no slicing, no reversing). Return `True` if `s` reads the same both ways."
+      },
+      {
+       "id": "d05-warm-window",
+       "title": "Best window of size k",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 6,
+       "difficulty": 2,
+       "skills": [
+        "sliding_window",
+        "window_state"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `max_window(nums, k)` returning the largest sum of any `k` consecutive numbers. Assume `1 <= k <= len(nums)`. Slide the window: add the new item, drop the old one."
+      },
+      {
+       "id": "d05-warm-brackets",
+       "title": "Balanced brackets",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 6,
+       "difficulty": 2,
+       "skills": [
+        "stack_push_pop",
+        "matching_pairs",
+        "dict_lookup"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `balanced(s)` for strings of `()[]{}`. Return `True` if every bracket closes in the right order."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "w5-linked-lists",
+   "title": "Linked lists",
+   "purpose": "Save what you still need, change the reference, advance.",
+   "prerequisites": [
+    "w1-mutation-references"
+   ],
+   "lessonIds": [
+    "linked-lists"
+   ],
+   "workedExampleIds": [],
+   "targets": [
+    {
+     "lc": 206,
+     "title": "Reverse Linked List",
+     "solvedInRepsBy": "cap-reverse-linked-list"
+    },
+    {
+     "lc": 21,
+     "title": "Merge Two Sorted Lists",
+     "solvedInRepsBy": "cap-merge-two-lists"
+    }
+   ],
+   "readinessTargets": [],
+   "labs": [
+    {
+     "id": "lab-playlist",
+     "title": "Playlist Editor",
+     "optional": false
+    }
+   ],
+   "gates": [
+    {
+     "id": "g-safe-rewiring",
+     "title": "Safe rewiring",
+     "need": 2,
+     "skills": [
+      "linked_list_reassignment",
+      "dummy_node"
+     ],
+     "pool": [
+      "d05-cold-reverse",
+      "d05-cold-merge",
+      "d05-cold-append"
+     ]
+    }
+   ],
+   "sections": [
+    {
+     "id": "d05-listnode",
+     "title": "ListNode + traversal",
+     "reps": [
+      {
+       "id": "d05-ll-walk",
+       "title": "Walk the list",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 1.5,
+       "difficulty": 1,
+       "skills": [
+        "linked_list_traversal",
+        "listnode"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "A **linked list** is a chain of **nodes**. Each node is a `ListNode` with two fields: `.val`, the value it holds, and `.next`, the node after it (or `None` when it is the last one). The first node is called the **head**."
+      },
+      {
+       "id": "d05-ll-to-array",
+       "title": "Write list_to_array yourself",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "linked_list_traversal",
+        "list_append"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`head` is the first node of a linked list, or `None` if the list is empty. Write `values(head)`. Return the node values as a Python list, in order. `values(build_list([4, 8, 15]))` → `[4, 8, 15]` `values(None)` → `[]` (a"
+      },
+      {
+       "id": "d05-ll-alias",
+       "title": "Names are references",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 2,
+       "difficulty": 1,
+       "skills": [
+        "listnode",
+        "linked_list_reassignment"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Predict the output. `ListNode(1)` makes one node whose `.val` is 1 and whose `.next` is `None`."
+      },
+      {
+       "id": "d05-ll-sum",
+       "title": "Sum a list",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "linked_list_traversal",
+        "accumulator"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`head` is the first node of a linked list of numbers, or `None` for an empty list. Write `list_sum(head)` returning the sum of all the values. Empty list → `0`."
+      },
+      {
+       "id": "d05-ll-dbg-max",
+       "title": "Debug: largest value",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "linked_list_traversal"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`head` is the first node of a linked list with at least one node. `list_max(head)` should return the largest value in it. Some answers are wrong. Fix it."
+      },
+      {
+       "id": "d05-ll-translate",
+       "title": "Translate: Python list → linked list",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "linked_list_traversal",
+        "conditionals"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`count_greater(nums, x)` counts the values larger than `x` in a Python list. Write `count_greater_ll(head, x)`, which does the same for a linked list. `head` is the list's first node, or `None` if the list is empty. Walk"
+      },
+      {
+       "id": "d05-ll-kth",
+       "title": "Value at position k",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 6,
+       "difficulty": 2,
+       "skills": [
+        "linked_list_traversal",
+        "while_loop",
+        "list_index"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`head` is the first node of a linked list (or `None`), and `k` is a position counted from 0, so the head is position 0. Write `value_at(head, k)` returning the value of the node at position `k`, or `None` if the list has"
+      },
+      {
+       "id": "d05-ll-last",
+       "title": "Last value",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "linked_list_traversal"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "The last node of a linked list is its **tail**: the one node whose `.next` is `None`. Write `last_value(head)`. Return the tail’s value. If the list is empty (`head` is `None`), return `None`. `last_value(build_list([1, "
+      },
+      {
+       "id": "d05-ll-middle",
+       "title": "Middle value",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 8,
+       "difficulty": 3,
+       "skills": [
+        "linked_list_traversal",
+        "while_loop",
+        "accumulator"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`head` is the first node of a linked list with at least one node. Write `middle_value(head)`. Number the nodes from 0, and return the value of node number `length // 2`. `middle_value(build_list([1, 2, 3]))` → `2` `middl"
+      }
+     ]
+    },
+    {
+     "id": "d05-rewire",
+     "title": "Pointer rewiring",
+     "reps": [
+      {
+       "id": "d05-rw-insert-after",
+       "title": "Insert after head",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "linked_list_reassignment",
+        "listnode"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`head` is the first node of a linked list. It is never `None` here. Write `insert_second(head, val)`. Make a new node holding `val`, put it right after the head, and return `head`. `insert_second(build_list([1, 3]), 2)` "
+      },
+      {
+       "id": "d05-rw-remove-second",
+       "title": "Skip a node",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "linked_list_reassignment"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`head` is the first node of a linked list (never `None` here). Write `remove_second(head)`: take the second node out of the chain if there is one, and return `head`. 1 -> 2 -> 3 becomes 1 -> 3; a single node 4 stays 4. Y"
+      },
+      {
+       "id": "d05-rw-dbg-insert-order",
+       "title": "Debug: insert after a value",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "linked_list_reassignment",
+        "linked_list_traversal"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`insert_after(head, x, val)` should find the first node holding `x` and put a new node with `val` right after it, then return `head`. If `x` is missing, the list is unchanged. For 1 -> 3 -> 4, `insert_after(head, 1, 2)` "
+      },
+      {
+       "id": "d05-rw-reverse-trace",
+       "title": "Trace a reversal",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 2.5,
+       "difficulty": 1,
+       "skills": [
+        "linked_list_reassignment",
+        "linked_list_traversal"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Predict the output. After each pass, `prev` is the head of the part already reversed and `curr` is the head of what is left. `list_to_array(node)` gives the values from `node` onward as a Python list (`[]` for `None`)."
+      },
+      {
+       "id": "d05-rw-finish-reverse",
+       "title": "Finish: the reversal loop",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "linked_list_reassignment",
+        "linked_list_traversal"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`reverse(head)` should turn 1 -> 2 -> 3 into 3 -> 2 -> 1 by rewiring the existing nodes, and return the new first node (`None` for an empty list). Setup and return are given. Write the loop: save the rest, flip the arrow"
+      },
+      {
+       "id": "d05-rw-dbg-lose-next",
+       "title": "Debug: reversal loses nodes",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "linked_list_reassignment"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`reverse(head)` should reverse the list **in place** (by rewiring the existing nodes, not by building new ones) and return the new head. It returns far too few nodes. Fix it."
+      },
+      {
+       "id": "d05-rw-reversed-copy",
+       "title": "Backwards copy",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 6,
+       "difficulty": 2,
+       "skills": [
+        "linked_list_traversal",
+        "listnode"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`head` is the first node of a linked list, or `None` if the list is empty. Write `reversed_copy(head)` returning the head of a **new** linked list that holds the same values in the opposite order. The original list must "
+      },
+      {
+       "id": "d05-rw-dbg-return",
+       "title": "Debug: reversal returns nothing",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "linked_list_reassignment",
+        "linked_list_traversal"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`reverse_in_place(head)` should reverse the list and return its new first node. Callers get an empty list back. Fix it."
+      },
+      {
+       "id": "d05-rw-reorder",
+       "title": "Reassemble reversal",
+       "kind": "reorder",
+       "stage": "reconstruct",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "linked_list_reassignment",
+        "linked_list_traversal"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Put the reversal in order. The four loop lines have exactly one valid order."
+      }
+     ]
+    },
+    {
+     "id": "d05-cap-reverse",
+     "title": "Capstone: Reverse Linked List",
+     "reps": [
+      {
+       "id": "cap-reverse-linked-list",
+       "title": "Reverse Linked List",
+       "kind": "code",
+       "stage": "capstone",
+       "repType": "capstone",
+       "minutes": 25,
+       "difficulty": 3,
+       "skills": [
+        "linked_list_traversal",
+        "linked_list_reassignment",
+        "listnode"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": 206,
+       "transfer": false,
+       "prompt": "Given the first node of a singly linked list, turn the list around so the last node comes first, and return the new first node. Rewire the existing nodes in place; do not create new ones."
+      },
+      {
+       "id": "d05-explain-reverse",
+       "title": "Explain reversal",
+       "kind": "explain",
+       "stage": "interview",
+       "repType": "interview",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "explanation",
+        "linked_list_reassignment",
+        "complexity"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Explain the in-place reversal: what prev and curr mean during the loop, why nxt is needed, what you return, and the complexity."
+      }
+     ]
+    },
+    {
+     "id": "d05-dummy",
+     "title": "Dummy head",
+     "reps": [
+      {
+       "id": "d05-dummy-trace",
+       "title": "dummy + tail",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 1.5,
+       "difficulty": 1,
+       "skills": [
+        "dummy_node"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Building a linked list node by node has an awkward first step: there is nothing yet to attach the first node to. A **dummy head** fixes that. It is a throwaway node placed in front, so there is always a node to attach to"
+      },
+      {
+       "id": "d05-dummy-from-values",
+       "title": "Write build_list yourself",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 6,
+       "difficulty": 2,
+       "skills": [
+        "dummy_node",
+        "for_loop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`values` is a Python list (it may be empty). Write `from_values(values)` that builds a linked list holding the same values in the same order and returns its head, or `None` for an empty list: `[3, 1, 2]` → 3 -> 1 -> 2. T"
+      },
+      {
+       "id": "d05-dummy-dbg-return",
+       "title": "Debug: an extra node",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "dummy_node",
+        "linked_list_traversal"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`head` is the first node of a linked list of whole numbers, or `None`. `keep_odds(head)` should return a **new** linked list holding only the odd values, in order (`None` if there are none): 1 -> 2 -> 3 → 1 -> 3. The res"
+      },
+      {
+       "id": "d05-dummy-evens",
+       "title": "Keep the evens",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 7,
+       "difficulty": 2,
+       "skills": [
+        "dummy_node",
+        "linked_list_traversal",
+        "conditionals"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`head` is the first node of a linked list of whole numbers, or `None`. Write `keep_evens(head)` returning a **new** linked list holding only the even values, in order, or `None` if there are none. 1 -> 2 -> 3 -> 4 -> 6 →"
+      },
+      {
+       "id": "d05-dummy-remove",
+       "title": "Remove every x",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 10,
+       "difficulty": 3,
+       "skills": [
+        "dummy_node",
+        "linked_list_reassignment",
+        "linked_list_traversal"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`head` is the first node of a linked list, or `None` if the list is empty. Write `remove_all(head, x)` that takes every node whose value is `x` out of the list and returns the first node of what remains, or `None` if not"
+      },
+      {
+       "id": "d05-dummy-merge-arrays",
+       "title": "Merge two sorted Python lists",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 8,
+       "difficulty": 2,
+       "skills": [
+        "two_pointer",
+        "list_append",
+        "while_loop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "A bridge to the next capstone, with plain Python lists first. `a` and `b` are lists of numbers, each already sorted ascending (either may be empty). Write `merge_arrays(a, b)` returning one new sorted list with every ite"
+      },
+      {
+       "id": "d05-dummy-dbg-leftover",
+       "title": "Debug: merge drops nodes",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "dummy_node",
+        "linked_list_reassignment"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`a` and `b` are the heads of two linked lists, each sorted ascending (either may be `None`). `merge(a, b)` should join them into one sorted list by rewiring the existing nodes, and return its head: 1 -> 4 and 2 -> 3 → 1 "
+      }
+     ]
+    },
+    {
+     "id": "d05-cap-merge",
+     "title": "Capstone: Merge Two Lists",
+     "reps": [
+      {
+       "id": "cap-merge-two-lists",
+       "title": "Merge Two Sorted Lists",
+       "kind": "code",
+       "stage": "capstone",
+       "repType": "capstone",
+       "minutes": 30,
+       "difficulty": 3,
+       "skills": [
+        "dummy_node",
+        "linked_list_traversal",
+        "linked_list_reassignment"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": 21,
+       "transfer": false,
+       "prompt": "You get the heads of two linked lists, each already in non-decreasing order. Combine them into one sorted list by relinking the existing nodes, and return the head of the combined list."
+      },
+      {
+       "id": "d05-explain-merge",
+       "title": "Explain the merge",
+       "kind": "explain",
+       "stage": "interview",
+       "repType": "interview",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "explanation",
+        "dummy_node",
+        "complexity"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Explain the merge: the role of dummy and tail, what is true after each step, how the leftovers are handled, and the complexity."
+      }
+     ]
+    },
+    {
+     "id": "d05-cold",
+     "title": "Cold reps",
+     "reps": [
+      {
+       "id": "d05-cold-index-of",
+       "title": "Index of x, cold",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 6,
+       "difficulty": 2,
+       "skills": [
+        "binary_search",
+        "mid_calc",
+        "search_invariant"
+       ],
+       "gateVariantOf": "g-search-invariant",
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `index_of(sorted_vals, x)`: the index of `x` or -1, in O(log n)."
+      },
+      {
+       "id": "d05-cold-reverse",
+       "title": "Reverse, cold",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 6,
+       "difficulty": 2,
+       "skills": [
+        "linked_list_reassignment",
+        "linked_list_traversal"
+       ],
+       "gateVariantOf": "g-safe-rewiring",
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `flip(head)` that reverses a linked list in place and returns the new head."
+      },
+      {
+       "id": "d05-cold-append",
+       "title": "Append to the end",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 6,
+       "difficulty": 2,
+       "skills": [
+        "linked_list_traversal",
+        "listnode"
+       ],
+       "gateVariantOf": "g-safe-rewiring",
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `append_value(head, val)` that adds a node at the end and returns the head. The list may be empty."
+      },
+      {
+       "id": "d05-cold-first-at-least",
+       "title": "Lower bound, cold",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 7,
+       "difficulty": 2,
+       "skills": [
+        "binary_search",
+        "search_invariant"
+       ],
+       "gateVariantOf": "g-search-invariant",
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is sorted ascending; repeats allowed. Write `first_at_least(nums, target)`: the first index with `nums[i] >= target`, or `len(nums)` if there is none. O(log n)."
+      },
+      {
+       "id": "d05-cold-merge",
+       "title": "Merge, cold",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 8,
+       "difficulty": 2,
+       "skills": [
+        "dummy_node",
+        "linked_list_reassignment"
+       ],
+       "gateVariantOf": "g-safe-rewiring",
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `merge(a, b)` merging two sorted linked lists (either may be `None`) by relinking nodes. Return the head."
+      }
+     ]
+    }
+   ],
+   "optionalSections": []
+  }
+ ]
+}

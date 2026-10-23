@@ -4,6 +4,7 @@ import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { useEffect, useEffectEvent, useRef, useState } from 'react'
 import { useReps } from '@/components/reps-provider'
+import { useMockGate } from '@/components/use-mock-gate'
 import Markdown from '@/components/markdown'
 import { TestResults } from '@/components/rep/results'
 import { MOCKS } from '@/data/mocks'
@@ -38,6 +39,19 @@ interface ProblemState {
 export default function MockSession({ mockId }: { mockId: string }) {
   const mock = MOCKS.find((m) => m.id === mockId)
   if (!mock) return <main className="mx-auto max-w-[720px] flex-1 px-5 py-16 text-muted">Unknown mock.</main>
+  return <GatedMock mock={mock} />
+}
+
+/** The same gate as the interview page: a direct link cannot skip it. */
+function GatedMock({ mock }: { mock: (typeof MOCKS)[number] }) {
+  const gate = useMockGate()
+  if (!gate.canStart(mock.id))
+    return (
+      <main className="mx-auto w-full max-w-[720px] flex-1 px-5 py-16" data-testid="mock-locked-page">
+        <h1 className="h1">Not yet</h1>
+        <p className="mt-2 text-[15px] leading-relaxed text-ink-2">Mocks open with the evidence, not the calendar. Transfer grade: {gate.grade}. {gate.note}</p>
+      </main>
+    )
   return <MockRunner mock={mock} />
 }
 

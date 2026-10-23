@@ -17,8 +17,8 @@ import { nextReview, redoQueue, resolveQueue, unaidedRate, type SolveEntry, type
  * coming back next, and a form to add or annotate a solve.
  */
 
-const RESULT_LABEL: Record<SolveResult, string> = { unaided: 'Unaided', hinted: 'Hinted', failed: 'Failed' }
-const RESULT_TONE: Record<SolveResult, string> = { unaided: 'text-pass', hinted: 'text-amber', failed: 'text-fail' }
+const RESULT_LABEL: Record<SolveResult, string> = { unaided: 'Unaided', hinted: 'Small hint', solution: 'Saw the solution', failed: 'Not finished' }
+const RESULT_TONE: Record<SolveResult, string> = { unaided: 'text-pass', hinted: 'text-amber', solution: 'text-repair', failed: 'text-fail' }
 const KIND_LABEL: Record<string, string> = { new: 'New', review1: 'Re-solve 1', review2: 'Re-solve 2', review3: 'Re-solve 3', redo: 'Redo', outside: 'Outside the plan', reps: 'Reps capstone' }
 
 interface Row {
@@ -88,7 +88,7 @@ export default function SolveLogView() {
             url: `/rep/${a.exerciseId}`,
             date,
             minutes: a.durationSeconds ? Math.round(a.durationSeconds / 60) : undefined,
-            result: (a.solutionViewed ? 'failed' : a.hintsUsed > 0 ? 'hinted' : 'unaided') as SolveResult,
+            result: (a.solutionViewed ? 'solution' : a.hintsUsed > 0 ? 'hinted' : 'unaided') as SolveResult,
             kind: 'reps',
             next: lc ? (DAYS.find((d) => d.date > date && d.leetcode?.some((x) => x.lc === lc && x.type !== 'new'))?.date ?? null) : null,
             editable: false,
@@ -195,8 +195,9 @@ export default function SolveLogView() {
                   Result
                   <select className="input" {...field('result')}>
                     <option value="unaided">Unaided</option>
-                    <option value="hinted">Hinted</option>
-                    <option value="failed">Failed</option>
+                    <option value="hinted">Small hint (finished it myself)</option>
+                    <option value="solution">Saw the solution</option>
+                    <option value="failed">Not finished</option>
                   </select>
                 </label>
               </div>

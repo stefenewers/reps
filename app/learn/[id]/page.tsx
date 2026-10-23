@@ -1,4 +1,7 @@
 import Link from 'next/link'
+import LearningComplete from '@/components/course/learning-complete'
+import DemoEmbed from '@/components/demos/demo-embed'
+import { demosForConcept } from '@/lib/demos'
 import { notFound } from 'next/navigation'
 import { ConceptBody } from '@/components/concept-guide'
 import LessonBody from '@/components/course/lesson-body'
@@ -24,7 +27,10 @@ function nextSteps(lessonId: string): { href: string; label: string }[] {
   if (later) return [{ href: `/learn/${later}`, label: `Next: ${LESSON_BY_ID[later].title}` }]
   const example = unit.workedExampleIds.map((id) => WORKED_EXAMPLES.find((w) => w.id === id)).find(Boolean)
   const first = unit.sections.map((id) => SECTION_BY_ID[id]?.exercises[0]).find(Boolean)
-  return [...(example ? [{ href: `/example/${example.id}`, label: `Worked example: ${example.title}` }] : []), ...(first ? [{ href: `/rep/${first.id}`, label: 'Start the reps' }] : [])]
+  return [
+    ...(example ? [{ href: `/example/${example.id}`, label: `Worked example: ${example.title}` }] : []),
+    ...(first ? [{ href: `/rep/${first.id}`, label: 'Start the reps' }] : [])
+  ]
 }
 
 /** One concept's full guide. */
@@ -44,6 +50,7 @@ export default async function LearnPage({ params }: { params: Promise<{ id: stri
           <h1 className="mt-2 text-[32px] font-semibold leading-tight tracking-tight">{lesson.title}</h1>
           <div className="panel mt-6 p-6">
             <LessonBody lesson={lesson} next={nextSteps(lesson.id)} />
+            <LearningComplete stateKey={`lesson:${id}`} />
           </div>
         </div>
       </main>
@@ -62,6 +69,12 @@ export default async function LearnPage({ params }: { params: Promise<{ id: stri
         <h1 className="mt-2 text-[32px] font-semibold leading-tight tracking-tight">{c.title}</h1>
         <div className="panel mt-6 p-6">
           <ConceptBody concept={c} full />
+          {demosForConcept(id).map((d) => (
+            <div key={d.id} className="mt-8">
+              <DemoEmbed id={d.id} />
+            </div>
+          ))}
+          <LearningComplete stateKey={`lesson:${id}`} />
         </div>
       </div>
     </main>

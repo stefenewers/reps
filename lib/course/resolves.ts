@@ -10,7 +10,7 @@ import type { LeetcodeItem } from '@/lib/types'
  * needed help. Same solve-log ids as before, so history carries over.
  */
 
-export type CourseLcItem = LeetcodeItem & { solveId: string; redoDue?: string }
+export type CourseLcItem = LeetcodeItem & { solveId: string; redoDue?: string; rebuild?: boolean }
 
 const REVIEWS = [
   { type: 'review1', gap: 3 },
@@ -29,13 +29,21 @@ export function nextTrainingDay(date: string): string {
 export function courseLeetcode(today: string, entries: SolveEntry[], newToday: number[], meta: (lc: number) => LeetcodeItem | undefined): CourseLcItem[] {
   const logged = new Map(entries.map((e) => [e.id, e]))
   const out: CourseLcItem[] = []
-  const add = (lc: number, type: LeetcodeItem['type'], solveId: string, redoDue?: string) => {
+  const add = (lc: number, type: LeetcodeItem['type'], solveId: string, redoDue?: string, rebuild?: boolean) => {
     const m = meta(lc)
-    if (m && !out.some((x) => x.solveId === solveId)) out.push({ ...m, type, mode: type === 'new' ? m.mode : null, solveId, redoDue })
+    if (m && !out.some((x) => x.solveId === solveId)) out.push({ ...m, type, mode: type === 'new' ? m.mode : null, solveId, redoDue, ...(rebuild ? { rebuild: true } : {}) })
+  }
+  // Rebuilds first: a solve where the solution was seen comes back from the next training day until it is
+  // rebuilt from blank (and stays visible on the day it was rebuilt).
+  for (const e of entries) {
+    if (!e.lc || e.result !== 'solution') continue
+    const from = nextTrainingDay(addDays(e.date, 1))
+    if (from <= today && (!e.rebuiltOn || e.rebuiltOn === today)) add(e.lc, e.kind === 'outside' ? 'new' : e.kind, e.id, undefined, true)
   }
   // Redos first: a re-solve that needed help comes back on the next training day.
   for (const e of entries) {
-    if (!e.lc || !isResolve(e.kind) || e.result === 'unaided') continue
+    // A seen solution comes back as a rebuild (below), not as a redo.
+    if (!e.lc || !isResolve(e.kind) || e.result === 'unaided' || e.result === 'solution') continue
     const due = nextTrainingDay(addDays(e.date, 1))
     const id = `redo:${e.lc}:${due}`
     const done = logged.get(id)

@@ -8,7 +8,10 @@ test('the course: 14 weeks from Oct 26 to Jan 31, 950 qualifying problems with h
   assert.equal(WEEKS.length, 14)
   assert.equal(WEEKS[0].startsOn, '2026-10-26')
   assert.equal(WEEKS[13].endsOn, '2027-01-31')
-  assert.deepEqual(WEEKS.map((w) => w.targetProblems), [50, 60, 75, 75, 75, 75, 75, 75, 60, 45, 75, 75, 60, 75])
+  assert.deepEqual(
+    WEEKS.map((w) => w.targetProblems),
+    [50, 60, 75, 75, 75, 75, 75, 75, 60, 45, 75, 75, 60, 75]
+  )
   assert.equal(COURSE_TARGET, 950)
   assert.deepEqual([1, 2, 3, 9, 14].map(dailyTarget), [10, 12, 15, 15, 15])
 })
@@ -60,9 +63,15 @@ import { SECTION_BY_ID, UNIT_OF_EXERCISE, unitPath } from '@/data/course'
 test('the course can be queried: units resolve to existing reps, deterministically', () => {
   const two = UNIT_BY_ID['w3-two-pointers']
   const path = unitPath(two)
-  assert.ok(path.length >= 20)
+  assert.deepEqual(
+    path.map((e) => e.id),
+    two.path
+  )
   assert.equal(path[0].id, SECTION_BY_ID['d3-two-pointers'].exercises[0].id)
-  assert.deepEqual(unitPath(two).map((e) => e.id), path.map((e) => e.id))
+  assert.deepEqual(
+    unitPath(two).map((e) => e.id),
+    path.map((e) => e.id)
+  )
   assert.equal(UNIT_OF_EXERCISE['cap-two-sum'], 'w2-hashing')
   assert.equal(UNIT_OF_EXERCISE['cap-valid-palindrome'], 'w3-two-pointers')
 })

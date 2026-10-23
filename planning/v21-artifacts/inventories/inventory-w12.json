@@ -1,0 +1,1938 @@
+{
+ "week": 12,
+ "title": "Consolidation",
+ "focus": "DP, greedy, matrix, Tier-A cleanup",
+ "purpose": "The last new content: consolidate, repair, and build a small AI workflow.",
+ "weekTarget": 75,
+ "dailyTarget": 15,
+ "trainingDays": [
+  "2027-01-11",
+  "2027-01-12",
+  "2027-01-13",
+  "2027-01-14",
+  "2027-01-15"
+ ],
+ "units": [
+  {
+   "id": "w12-dp-greedy",
+   "title": "DP consolidation and greedy",
+   "purpose": "State, base, recurrence, order, and when a running best is all you need.",
+   "prerequisites": [
+    "w11-dp"
+   ],
+   "lessonIds": [
+    "dynamic-programming"
+   ],
+   "workedExampleIds": [],
+   "targets": [
+    {
+     "lc": 322,
+     "title": "Coin Change",
+     "solvedInRepsBy": null
+    },
+    {
+     "lc": 53,
+     "title": "Maximum Subarray",
+     "solvedInRepsBy": null
+    },
+    {
+     "lc": 55,
+     "title": "Jump Game",
+     "solvedInRepsBy": null
+    }
+   ],
+   "readinessTargets": [
+    {
+     "lc": 139,
+     "title": "Word Break"
+    },
+    {
+     "lc": 62,
+     "title": "Unique Paths"
+    }
+   ],
+   "labs": [
+    {
+     "id": "lab-support-router",
+     "title": "Support Router",
+     "optional": false
+    }
+   ],
+   "gates": [
+    {
+     "id": "g-dp-greedy",
+     "title": "DP and greedy",
+     "need": 2,
+     "skills": [
+      "dp_min_choice",
+      "kadane",
+      "greedy_reach"
+     ],
+     "pool": [
+      "c12-g-dp-greedy-a",
+      "c12-g-dp-greedy-b",
+      "c12-g-dp-greedy-c"
+     ]
+    }
+   ],
+   "sections": [
+    {
+     "id": "br-322",
+     "title": "Toward Coin Change",
+     "reps": [
+      {
+       "id": "b322-makeable",
+       "title": "Can this amount be made?",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 7,
+       "difficulty": 2,
+       "skills": [
+        "dp_min_choice",
+        "dp_table",
+        "recurrence"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "You have scoops of the sizes in `scoops` (positive whole litres) and may use each as many times as you like. `total` is a whole number, 0 or more. Write `can_fill(total, scoops)` returning `True` if exactly `total` litre"
+      },
+      {
+       "id": "b322-trace-inf",
+       "title": "Trace: fewest, with infinity",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 2.5,
+       "difficulty": 1,
+       "skills": [
+        "dp_min_choice",
+        "dp_table"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Predict the output."
+      },
+      {
+       "id": "b322-fewest-each",
+       "title": "Fewest scoops for every amount",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 7.5,
+       "difficulty": 2,
+       "skills": [
+        "dp_min_choice",
+        "dp_table",
+        "range"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Change the question from \"can it be made\" to \"with how few\". `total` is a whole number (0 or more) and `scoops` is a list of positive scoop sizes, each usable any number of times. Write `fewest_table(total, scoops)` retu"
+      },
+      {
+       "id": "b322-dbg-zero-fill",
+       "title": "Debug: every answer is zero",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 4.5,
+       "difficulty": 2,
+       "skills": [
+        "dp_min_choice",
+        "dp_table",
+        "edge_cases"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`total` is a whole number (0 or more) and `stamps` is a list of positive stamp values. `fewest_stamps(total, stamps)` should return the smallest number of stamps (each value may be used many times) whose values add up to"
+      },
+      {
+       "id": "b322-cheapest-packs",
+       "title": "Cheapest way to buy exactly n",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 10,
+       "difficulty": 3,
+       "skills": [
+        "dp_min_choice",
+        "dp_table",
+        "tuples",
+        "edge_cases"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "A shop sells bolts only in packs. `packs` is a list of `(size, price)` tuples (positive whole numbers) and any pack can be bought many times. Write `cheapest_exact(total, packs)` returning the lowest price for **exactly*"
+      }
+     ]
+    },
+    {
+     "id": "br-53",
+     "title": "Toward Maximum Subarray",
+     "reps": [
+      {
+       "id": "b53-trace-ending",
+       "title": "Trace: the best sum ending here",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 2,
+       "difficulty": 1,
+       "skills": [
+        "kadane",
+        "state_tracking"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Predict the output."
+      },
+      {
+       "id": "b53-ending-sums",
+       "title": "Best sum ending at each index",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 6,
+       "difficulty": 2,
+       "skills": [
+        "kadane",
+        "list_append",
+        "state_tracking"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of numbers, and some can be negative. Write `ending_sums(nums)` that returns a list the same length as `nums`: entry `i` is the largest sum of a run of neighbours that **ends exactly at index `i`** (the "
+      },
+      {
+       "id": "b53-dbg-reset-zero",
+       "title": "Debug: a week of losses",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 4.5,
+       "difficulty": 2,
+       "skills": [
+        "kadane",
+        "state_tracking",
+        "edge_cases"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`changes` is a non-empty list of daily balance changes. `best_stretch(changes)` should return the largest total of any stretch of **one or more** days in a row. Make every test pass."
+      },
+      {
+       "id": "b53-worst-stretch",
+       "title": "The deepest dip",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 7,
+       "difficulty": 3,
+       "skills": [
+        "kadane",
+        "state_tracking",
+        "accumulator"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`changes` is a non-empty list of hourly temperature changes (numbers, positive or negative). Write `deepest_dip(changes)` returning the **lowest** total of any stretch of one or more hours in a row. `deepest_dip([3, -4, "
+      }
+     ]
+    },
+    {
+     "id": "br-55",
+     "title": "Toward Jump Game",
+     "reps": [
+      {
+       "id": "b55-farthest",
+       "title": "The farthest landing",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "greedy_reach",
+        "enumerate",
+        "state_tracking"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Lily pads sit in a row, and `pads` is a list of whole numbers (0 or more), one per pad. From pad `i` a frog can hop forward up to `pads[i]` pads, so the farthest it can land from there is index `i + pads[i]`. Write `fart"
+      },
+      {
+       "id": "b55-dbg-no-stop",
+       "title": "Debug: hopping from pads you never reached",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "greedy_reach",
+        "enumerate",
+        "early_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`pads` is a non-empty list of whole numbers (0 or more), one per lily pad in a row. The frog starts on pad 0 and can hop forward up to `pads[i]` pads from pad `i`. `last_reachable(pads)` should return the highest index t"
+      },
+      {
+       "id": "b55-first-unreachable",
+       "title": "Where the frog gets stuck",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 6,
+       "difficulty": 3,
+       "skills": [
+        "greedy_reach",
+        "enumerate",
+        "early_return",
+        "state_tracking"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`pads` is a list of whole numbers (0 or more), one per lily pad in a row. A frog starts on pad 0, and from pad `i` it can hop forward up to `pads[i]` pads. Write `first_unreachable(pads)` returning the index of the **fir"
+      }
+     ]
+    }
+   ],
+   "optionalSections": [
+    {
+     "id": "br-139",
+     "title": "Toward Word Break",
+     "reps": [
+      {
+       "id": "b139-piece-starts",
+       "title": "Where could the last piece start?",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "dp_prefix_words",
+        "slicing",
+        "set_membership",
+        "range"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`s` is a string, `i` is a length (so `s[:i]` is the first `i` characters) and `words` is a **set** of strings. Write `piece_starts(s, i, words)` returning every index `j` below `i`, in increasing order, where the piece f"
+      },
+      {
+       "id": "b139-trace-prefix",
+       "title": "Trace: which prefixes split",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 2.5,
+       "difficulty": 1,
+       "skills": [
+        "dp_prefix_words",
+        "dp_table",
+        "slicing"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Predict the output."
+      },
+      {
+       "id": "b139-prefix-table",
+       "title": "The table of splittable prefixes",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 8,
+       "difficulty": 2,
+       "skills": [
+        "dp_prefix_words",
+        "dp_table",
+        "slicing",
+        "set_create"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`s` is a string and `words` is a **list** of allowed pieces (strings). Write `prefix_table(s, words)` returning a list of `len(s) + 1` booleans: entry `i` is `True` when the first `i` characters of `s` can be cut into al"
+      },
+      {
+       "id": "b139-dbg-no-base",
+       "title": "Debug: nothing ever splits",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "dp_prefix_words",
+        "dp_table",
+        "edge_cases"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`clean_prefix(s, words)` should return the length of the **longest prefix** of the string `s` (a prefix is its first so-many characters) that can be cut entirely into pieces from the list `words` (0 if not even one piece"
+      },
+      {
+       "id": "b139-count-splits",
+       "title": "How many ways to cut it",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 9,
+       "difficulty": 3,
+       "skills": [
+        "dp_prefix_words",
+        "dp_table",
+        "slicing",
+        "accumulator"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`s` is a string and `words` is a list of strings. Write `count_splits(s, words)` returning **how many different ways** `s` can be cut into pieces that are all in the list `words` (pieces may repeat). The empty string can"
+      }
+     ]
+    },
+    {
+     "id": "br-62",
+     "title": "Toward Unique Paths",
+     "reps": [
+      {
+       "id": "b62-border-ones",
+       "title": "A table with its edges filled",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 6.5,
+       "difficulty": 2,
+       "skills": [
+        "dp_grid",
+        "grid_nested",
+        "list_comprehension",
+        "range"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `border_ones(rows, cols)` (both at least 1) returning a table of `rows` rows and `cols` columns that holds `1` everywhere in the first row and the first column, and `0` everywhere else. Each row must be its own lis"
+      },
+      {
+       "id": "b62-dbg-alias",
+       "title": "Debug: every row is the last row",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3.5,
+       "difficulty": 2,
+       "skills": [
+        "dp_grid",
+        "grid_nested",
+        "list_comprehension"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`step_table(rows, cols)` should return a table where the cell in row `r`, column `c` holds `r + c`: the number of moves from the top-left corner going only right or down. Make every test pass."
+      },
+      {
+       "id": "b62-fill-inside",
+       "title": "Each cell from above and from the left",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5.5,
+       "difficulty": 2,
+       "skills": [
+        "dp_grid",
+        "grid_nested",
+        "range"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`table` is a non-empty grid (a list of rows, all the same length) whose first row and first column are already filled in. Write `fill_inside(table)` that sets every other cell to the cell **above** it plus the cell to it"
+      },
+      {
+       "id": "b62-cheapest-walk",
+       "title": "The cheapest walk across a grid",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 11,
+       "difficulty": 3,
+       "skills": [
+        "dp_grid",
+        "grid_nested",
+        "dp_table",
+        "range"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`costs` is a non-empty grid (a list of rows, all the same length) of non-negative numbers. You start on the top-left cell, finish on the bottom-right cell, and may only step right or down. You pay the cost of every cell "
+      }
+     ]
+    },
+    {
+     "id": "br-300",
+     "title": "Toward Longest Increasing Subsequence",
+     "reps": [
+      {
+       "id": "b300-best-before",
+       "title": "The best earlier chain to join",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "dp_lookback",
+        "range",
+        "state_tracking"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "A **rising chain** picks numbers from a list left to right (skipping is fine), each strictly bigger than the one before. `nums` is a list of numbers and `dp` is a list of the same length. `dp[j]` is already filled in for"
+      },
+      {
+       "id": "b300-ending-lengths",
+       "title": "Longest rising chain ending at each index",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 7,
+       "difficulty": 2,
+       "skills": [
+        "dp_lookback",
+        "dp_table",
+        "range"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "A rising chain picks numbers from left to right (skipping is fine), each strictly bigger than the one before. Write `chain_lengths(nums)` returning a list the same length as `nums`: entry `i` is the length of the longest"
+      },
+      {
+       "id": "b300-dbg-last-entry",
+       "title": "Debug: the longest slide",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3.5,
+       "difficulty": 2,
+       "skills": [
+        "dp_lookback",
+        "dp_table",
+        "edge_cases"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`prices` is a list of numbers. `longest_slide(prices)` should return the length of the longest **falling** chain in `prices`: prices picked from left to right (skipping is fine), each strictly lower than the one before. "
+      },
+      {
+       "id": "b300-rising-sum",
+       "title": "The heaviest rising chain",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 9,
+       "difficulty": 3,
+       "skills": [
+        "dp_lookback",
+        "dp_table",
+        "state_tracking",
+        "edge_cases"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`nums` is a list of positive numbers. Pick numbers from left to right (skipping is fine) so each is strictly bigger than the one before. Write `best_rising_sum(nums)` returning the **largest total** such a pick can have."
+      }
+     ]
+    },
+    {
+     "id": "br-1143",
+     "title": "Toward Longest Common Subsequence",
+     "reps": [
+      {
+       "id": "b1143-padded-table",
+       "title": "One extra row, one extra column",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "dp_two_sequences",
+        "grid_nested",
+        "list_comprehension",
+        "len"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`a` and `b` are strings, and either can be empty. A **prefix** is the first so-many characters of a string. A table that compares two strings has a row for every **prefix length** of `a` (0 up to `len(a)`) and a column f"
+      },
+      {
+       "id": "b1143-match-cells",
+       "title": "Mark where the characters match",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 7,
+       "difficulty": 2,
+       "skills": [
+        "dp_two_sequences",
+        "grid_nested",
+        "string_index",
+        "range"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`a` and `b` are strings. Write `match_table(a, b)` returning the padded table (`len(a) + 1` rows, `len(b) + 1` columns) where the cell in row `i`, column `j` is `1` when the **i-th character of `a`** and the **j-th chara"
+      },
+      {
+       "id": "b1143-common-run",
+       "title": "The longest shared run",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 9,
+       "difficulty": 3,
+       "skills": [
+        "dp_two_sequences",
+        "dp_grid",
+        "string_index",
+        "state_tracking"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`a` and `b` are strings. Write `longest_shared_run(a, b)` returning the length of the longest stretch of **neighbouring** characters that appears in both strings (`0` if they share nothing). Use a padded table (`len(a) +"
+      },
+      {
+       "id": "b1143-dbg-index",
+       "title": "Debug: two playlists",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "dp_two_sequences",
+        "dp_grid",
+        "list_index"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`a` and `b` are two playlists (lists). `kept_in_order(a, b)` should return the largest number of songs that appear in **both** playlists in the same order (other songs may sit in between; interviewers call this the longe"
+      },
+      {
+       "id": "b1143-min-deletions",
+       "title": "Delete until two words agree",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 10,
+       "difficulty": 4,
+       "skills": [
+        "dp_two_sequences",
+        "dp_grid",
+        "string_index",
+        "len"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`a` and `b` are words (strings), and either can be empty. You may delete any characters from either word. Write `deletions_to_match(a, b)` returning the **fewest deletions in total** that leave the two words identical (b"
+      }
+     ]
+    },
+    {
+     "id": "br-5",
+     "title": "Toward Longest Palindromic Substring",
+     "reps": [
+      {
+       "id": "b5-spread",
+       "title": "Grow outward while the ends match",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5.5,
+       "difficulty": 2,
+       "skills": [
+        "expand_center",
+        "two_pointer",
+        "while_loop",
+        "slicing"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`s` is a string. `left` and `right` are indexes into it: either the same index, or `right` is `left + 1`. Write `spread(s, left, right)`. Starting from the two given indexes, keep stepping `left` down and `right` up for "
+      },
+      {
+       "id": "b5-dbg-slice",
+       "title": "Debug: one character too wide",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3.5,
+       "difficulty": 2,
+       "skills": [
+        "expand_center",
+        "slicing",
+        "while_loop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`s` is a non-empty string and `i` is an index into it. `widest_at(s, i)` should return the longest piece of `s` that reads the same both ways and has `s[i]` as its exact middle character. Make every test pass."
+      },
+      {
+       "id": "b5-both-centers",
+       "title": "Odd center, even center",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 9,
+       "difficulty": 3,
+       "skills": [
+        "expand_center",
+        "two_pointer",
+        "slicing",
+        "len"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "A mirrored piece (a palindrome: it reads the same both ways) has either one middle character (`\"aba\"`) or a middle gap between two equal characters (`\"abba\"`). `s` is a non-empty string and `i` is an index into it. Write"
+      },
+      {
+       "id": "b5-count-mirrors",
+       "title": "Count every mirrored piece",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 9,
+       "difficulty": 3,
+       "skills": [
+        "expand_center",
+        "two_pointer",
+        "while_loop",
+        "accumulator"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`s` is a string. Write `count_mirrors(s)` returning how many substrings of `s` (pieces made of neighbouring characters, at least one long) read the same both ways. Pieces at different positions count separately even if t"
+      }
+     ]
+    },
+    {
+     "id": "br-91",
+     "title": "Toward Decode Ways",
+     "reps": [
+      {
+       "id": "b91-valid-piece",
+       "title": "Is this piece a letter number?",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "dp_prefix_words",
+        "string_index",
+        "conditionals"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Letters are numbered 1 to 26. `piece` is a string of one or two digits. Write `is_code(piece)` returning `True` when the piece is a letter number written without a leading zero, else `False`. `is_code(\"7\")` → `True`, `is"
+      },
+      {
+       "id": "b91-dbg-leading-zero",
+       "title": "Debug: month numbers",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "dp_prefix_words",
+        "dp_table",
+        "slicing",
+        "edge_cases"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "A string of digits was made by writing month numbers (1 to 12, never with a leading zero) one after another with no gaps. `month_ways(digits)` should return how many different lists of months could have produced it. The "
+      },
+      {
+       "id": "b91-route-ways",
+       "title": "Bus routes run together",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 9,
+       "difficulty": 3,
+       "skills": [
+        "dp_prefix_words",
+        "dp_table",
+        "slicing",
+        "edge_cases"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "A city numbers its bus routes 1 to 35, never with a leading zero. Someone wrote down the routes they rode with no gaps between the numbers, which left one string of digit characters, `digits`. Write `route_ways(digits)` "
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "w12-matrix-tries",
+   "title": "Matrix and tries",
+   "purpose": "Matrix mechanics and the canonical trie, at the level an interview expects.",
+   "prerequisites": [
+    "w8-grids"
+   ],
+   "lessonIds": [
+    "matrix",
+    "tries"
+   ],
+   "workedExampleIds": [],
+   "targets": [
+    {
+     "lc": 54,
+     "title": "Spiral Matrix",
+     "solvedInRepsBy": null
+    },
+    {
+     "lc": 208,
+     "title": "Implement Trie (Prefix Tree)",
+     "solvedInRepsBy": null
+    }
+   ],
+   "readinessTargets": [
+    {
+     "lc": 48,
+     "title": "Rotate Image"
+    }
+   ],
+   "labs": [],
+   "gates": [
+    {
+     "id": "g-matrix",
+     "title": "Matrix mechanics",
+     "need": 2,
+     "skills": [
+      "matrix_transform",
+      "matrix_layers",
+      "matrix_marking"
+     ],
+     "pool": [
+      "mx-c-swap-axes",
+      "mx-c-half-turn",
+      "mx-c-frame",
+      "mx-c-warm-up"
+     ]
+    }
+   ],
+   "sections": [
+    {
+     "id": "mx-transform",
+     "title": "Swap, transpose, reverse",
+     "reps": [
+      {
+       "id": "mx-t-swap-cells",
+       "title": "Swap two cells",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 2,
+       "difficulty": 1,
+       "skills": [
+        "matrix_transform",
+        "grid_nested",
+        "tuples"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`m` is a matrix (a list of rows, each row a list) and `(r, c)` names the cell in row `r`, column `c`. Write `swap_cells(m, r1, c1, r2, c2)` that exchanges the values at `(r1, c1)` and `(r2, c2)` inside `m`. It changes `m"
+      },
+      {
+       "id": "mx-t-transpose",
+       "title": "Flip across the diagonal",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 6,
+       "difficulty": 2,
+       "skills": [
+        "matrix_transform",
+        "grid_nested",
+        "range"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `transpose(m)` for a **square** matrix (as many rows as columns): the value at row `r`, column `c` trades places with the value at row `c`, column `r`. Rows become columns. Change `m` itself and return nothing. `[["
+      },
+      {
+       "id": "mx-t-dbg-twice",
+       "title": "Debug: the table that does not change",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "matrix_transform",
+        "range"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`mirror_table(m)` should flip a square matrix across its diagonal in place, so rows become columns: `[[1, 2], [3, 4]]` should become `[[1, 3], [2, 4]]`. It runs without an error. Fix it."
+      },
+      {
+       "id": "mx-t-reverse-rows",
+       "title": "Mirror left to right",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 3.5,
+       "difficulty": 2,
+       "skills": [
+        "matrix_transform",
+        "list_iterate"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `mirror(m)` that reverses every row of `m` in place, like a mirror standing at the side. Return nothing. The matrix does not have to be square. `[[1, 2, 3], [4, 5, 6]]` becomes `[[3, 2, 1], [6, 5, 4]]`."
+      },
+      {
+       "id": "mx-t-flip-rows",
+       "title": "Turn it upside down",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5.5,
+       "difficulty": 2,
+       "skills": [
+        "matrix_transform",
+        "two_pointer",
+        "while_loop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `flip(m)` that reverses the **order of the rows** in place: the last row becomes the first. Return nothing. Practise the swap: keep a `top` index and a `bottom` index and exchange whole rows while walking them towa"
+      }
+     ]
+    },
+    {
+     "id": "mx-layers",
+     "title": "Walking the edges",
+     "reps": [
+      {
+       "id": "mx-l-trace",
+       "title": "Trace: two edges and two bounds",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 2.5,
+       "difficulty": 1,
+       "skills": [
+        "matrix_layers",
+        "grid_nested"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Four variables fence in the part of the matrix not read yet. Predict the output."
+      },
+      {
+       "id": "mx-l-top-edge",
+       "title": "Read the top edge",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "matrix_layers",
+        "grid_nested",
+        "range"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `top_edge(m, top, left, right)` returning the values of row `top` from column `left` to column `right`, both included, left to right. With `m = [[1, 2, 3], [4, 5, 6]]`, `top_edge(m, 1, 0, 1)` is `[4, 5]`. If `left`"
+      },
+      {
+       "id": "mx-l-bottom-edge",
+       "title": "Read the bottom edge backwards",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4.5,
+       "difficulty": 2,
+       "skills": [
+        "matrix_layers",
+        "grid_nested",
+        "range"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `bottom_edge(m, bottom, left, right)` returning the values of row `bottom` from column `right` back to column `left`, both included, **right to left**. With `m = [[1, 2, 3], [4, 5, 6]]`, `bottom_edge(m, 1, 0, 2)` i"
+      },
+      {
+       "id": "mx-l-left-edge",
+       "title": "Read the left edge upwards",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4.5,
+       "difficulty": 2,
+       "skills": [
+        "matrix_layers",
+        "grid_nested",
+        "range"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `left_edge(m, left, top, bottom)` returning the values of column `left` from row `bottom` up to row `top`, both included, **bottom to top**. With `m = [[1, 2], [3, 4], [5, 6]]`, `left_edge(m, 0, 0, 2)` is `[5, 3, 1"
+      },
+      {
+       "id": "mx-l-dbg-single-row",
+       "title": "Debug: the border read twice",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 6,
+       "difficulty": 3,
+       "skills": [
+        "matrix_layers",
+        "grid_nested",
+        "edge_cases"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`m` is a matrix with at least one row and one column. `border(m)` should return its outside **ring**, meaning the cells on the outer edge, as a list: clockwise from the top-left cell, each cell once. For `[[1, 2, 3], [4,"
+      }
+     ]
+    },
+    {
+     "id": "mx-marking",
+     "title": "Mark first, change after",
+     "reps": [
+      {
+       "id": "mx-m-lines-with",
+       "title": "Which rows and columns hold it?",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 6.5,
+       "difficulty": 2,
+       "skills": [
+        "matrix_marking",
+        "set_add",
+        "grid_nested"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `lines_with(m, x)` returning a pair of sets `(rows, cols)`: the row numbers that contain the value `x` somewhere, and the column numbers that do. `lines_with([[1, 0], [1, 1]], 0)` is `({0}, {1})`: the only `0` sits"
+      },
+      {
+       "id": "mx-m-wipe",
+       "title": "Zero the listed rows and columns",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5.5,
+       "difficulty": 2,
+       "skills": [
+        "matrix_marking",
+        "set_membership",
+        "grid_nested"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `wipe(m, rows, cols)`. `rows` and `cols` are sets of row numbers and column numbers. Set every cell that lies in one of those rows **or** one of those columns to `0`, in place. Return nothing. With `m = [[1, 2], [3"
+      },
+      {
+       "id": "mx-m-dbg-flood",
+       "title": "Debug: stars everywhere",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 7,
+       "difficulty": 3,
+       "skills": [
+        "matrix_marking",
+        "set_add",
+        "grid_nested"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`m` is a matrix of `'.'` and `'*'`. `spread_stars(m)` should turn every cell that shares a row or a column with one of the **original** stars into a star, in place. `[['*', '.', '.'], ['.', '.', '.'], ['.', '.', '.']]` s"
+      },
+      {
+       "id": "mx-m-open-seats",
+       "title": "Seats still open",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 10,
+       "difficulty": 3,
+       "skills": [
+        "matrix_marking",
+        "set_membership",
+        "accumulator",
+        "grid_nested"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`hall` is a list of equal-length strings. `'X'` is a broken seat, `'.'` is a good one. For safety, every row and every column that has a broken seat in it is closed completely. Write `open_seats(hall)` returning how many"
+      }
+     ]
+    },
+    {
+     "id": "mx-check",
+     "title": "Matrix check",
+     "reps": [
+      {
+       "id": "mx-c-swap-axes",
+       "title": "Check: players and rounds",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 6,
+       "difficulty": 3,
+       "skills": [
+        "matrix_transform",
+        "grid_nested",
+        "range"
+       ],
+       "gateVariantOf": "g-matrix",
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "A square score table has one row per player and one column per round. Write `swap_axes(table)` that rearranges it in place so there is one row per **round** and one column per **player**: the score at row `r`, column `c`"
+      },
+      {
+       "id": "mx-c-half-turn",
+       "title": "Check: a half turn",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "matrix_transform",
+        "list_iterate"
+       ],
+       "gateVariantOf": "g-matrix",
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `half_turn(m)` that rotates a matrix by 180 degrees in place, as if the sheet of paper were turned upside down on the desk. Return nothing. The matrix does not have to be square. `[[1, 2, 3], [4, 5, 6]]` becomes `["
+      },
+      {
+       "id": "mx-c-frame",
+       "title": "Check: around the frame, the other way",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 12,
+       "difficulty": 4,
+       "skills": [
+        "matrix_layers",
+        "grid_nested",
+        "range",
+        "edge_cases"
+       ],
+       "gateVariantOf": "g-matrix",
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `frame(m)` returning the outside ring of a matrix, each cell once, **anticlockwise** starting from the top-left cell: down the left side, along the bottom, up the right side, back along the top. `frame([[1, 2, 3], "
+      },
+      {
+       "id": "mx-c-warm-up",
+       "title": "Check: heaters",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 11,
+       "difficulty": 3,
+       "skills": [
+        "matrix_marking",
+        "set_add",
+        "set_membership",
+        "grid_nested"
+       ],
+       "gateVariantOf": "g-matrix",
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "A room is a matrix of temperatures, all positive, except that a `0` marks a heater. Write `warm_up(m)`: every cell that shares a row or a column with a heater goes up by 1. A cell goes up **once**, however many heaters i"
+      }
+     ]
+    },
+    {
+     "id": "br-54",
+     "title": "Toward Spiral Matrix",
+     "reps": [
+      {
+       "id": "b54-dbg-centre",
+       "title": "Debug: the missing middle",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 3,
+       "skills": [
+        "matrix_layers",
+        "while_loop",
+        "accumulator"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`m` is a matrix of numbers with at least one row and one column. A **ring** is the outer edge of what is left once the rings outside it have been taken away. `ring_sums(m)` should return the total of each ring as a list,"
+      },
+      {
+       "id": "b54-spiral-fill",
+       "title": "Number the seats in a spiral",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 15,
+       "difficulty": 4,
+       "skills": [
+        "matrix_layers",
+        "grid_nested",
+        "while_loop",
+        "list_comprehension"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "Write `spiral_fill(rows, cols)` that builds a new matrix with `rows` rows and `cols` columns (a list of rows, each row a list) and writes the numbers 1, 2, 3, ... into it along a clockwise spiral that starts at the top-l"
+      }
+     ]
+    },
+    {
+     "id": "tr-node",
+     "title": "Trie nodes",
+     "reps": [
+      {
+       "id": "tr-nested-trace",
+       "title": "Trace: a dict whose values are dicts",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 2,
+       "difficulty": 1,
+       "skills": [
+        "trie_node",
+        "dict_assign",
+        "dict_membership"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Predict the output. Draw `tree` as a small tree: one box per dict, one arrow per key."
+      },
+      {
+       "id": "tr-add-path",
+       "title": "Walk down, creating as you go",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 6,
+       "difficulty": 2,
+       "skills": [
+        "trie_node",
+        "dict_membership",
+        "dict_assign",
+        "string_iterate"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`tree` is a dict of dicts: each key is one letter, and its value is the dict of letters that may follow it. Write `add_path(tree, word)`: walk down the letters of `word`, creating an empty dict wherever a letter is missi"
+      },
+      {
+       "id": "tr-node-class",
+       "title": "A node of your own",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "trie_node",
+        "dict_create"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "A dict of dicts cannot say \"a word stops here\". So each node of the letter tree (a tree like this is called a **trie**) becomes a small object with **two** fields: `children` (a dict: letter → the next node) and `end` (`"
+      },
+      {
+       "id": "tr-dbg-shared",
+       "title": "Debug: the child that is its own parent",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "trie_node",
+        "dict_assign"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`link(parent, ch)` should hang a fresh, empty node under `parent` for the letter `ch`, and return the new node. After `link(root, 'a')` the root has exactly one child and the new node has none. Make the tests pass."
+      }
+     ]
+    },
+    {
+     "id": "tr-insert",
+     "title": "Inserting words",
+     "reps": [
+      {
+       "id": "tr-step",
+       "title": "One step down",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "trie_node",
+        "dict_membership",
+        "dict_assign"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `step(node, ch)`: return the child of `node` for the letter `ch`. If there is no such child yet, create a new `TrieNode`, store it under `ch`, and return that one. Calling `step(root, 'a')` twice returns the **same"
+      },
+      {
+       "id": "tr-insert",
+       "title": "Insert a word",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 7,
+       "difficulty": 2,
+       "skills": [
+        "trie_node",
+        "string_iterate",
+        "dict_membership"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `insert(root, word)`: start at `root`, move down one node per letter of `word` (creating the nodes that are missing), and mark the node you finish on as the end of a word. It returns nothing. After `insert(root, 't"
+      },
+      {
+       "id": "tr-dbg-no-advance",
+       "title": "Debug: a very flat trie",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "trie_node",
+        "string_iterate"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`add_word(root, word)` should store `word` in the trie: one node per letter, each below the one before, with the last one marked as the end of a word. Make the tests pass."
+      },
+      {
+       "id": "tr-build-trie",
+       "title": "Build a trie from a word list",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 12,
+       "difficulty": 3,
+       "skills": [
+        "trie_node",
+        "string_iterate",
+        "dict_membership",
+        "list_iterate"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "From memory, both halves. Write `class TrieNode` (a `children` dict and an `end` flag), then `build_trie(words)` that returns the root of a trie holding every word in the list. `build_trie(['an', 'at'])` returns a root w"
+      }
+     ]
+    },
+    {
+     "id": "tr-search",
+     "title": "Searching a trie",
+     "reps": [
+      {
+       "id": "tr-find-node",
+       "title": "Where does this text lead?",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 7,
+       "difficulty": 2,
+       "skills": [
+        "trie_search",
+        "early_return",
+        "string_iterate"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`TrieNode` and `insert` are given. Write `find_node(root, text)`: walk down from `root` one letter of `text` at a time and return the node you arrive at. If a letter has no child, return `None` straight away. Never creat"
+      },
+      {
+       "id": "tr-has-word",
+       "title": "Is this whole word stored?",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 7,
+       "difficulty": 2,
+       "skills": [
+        "trie_search",
+        "early_return",
+        "string_iterate"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `has_word(root, word)`: `True` only if exactly `word` was inserted. A stretch of letters that merely leads somewhere is not enough. With `'car'` and `'cart'` inserted: `'car'` → `True`, `'cart'` → `True`, `'ca'` → "
+      },
+      {
+       "id": "tr-dbg-no-end",
+       "title": "Debug: nothing is ever found",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "trie_node",
+        "trie_search"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`add_all(root, words)` should store every word of the list, so that afterwards `has_word` is `True` for exactly those words. `has_word` is correct. Make the tests pass."
+      }
+     ]
+    },
+    {
+     "id": "tr-prefix",
+     "title": "Prefixes",
+     "reps": [
+      {
+       "id": "tr-any-starts-with",
+       "title": "Does anything start with this?",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 7,
+       "difficulty": 2,
+       "skills": [
+        "trie_search",
+        "early_return",
+        "string_iterate"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `any_starts_with(root, prefix)`: `True` if at least one stored word begins with `prefix`. A stored word counts as starting with itself. With `'car'` inserted: `'ca'` → `True`, `'car'` → `True`, `'cars'` → `False`, "
+      },
+      {
+       "id": "tr-dbg-prefix-true",
+       "title": "Debug: the bot obeys half a command",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "trie_search",
+        "trie_node"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "A chat bot keeps its commands in a trie. `is_command(root, text)` should be `True` only when `text` is exactly one of the stored commands. Make the tests pass."
+      },
+      {
+       "id": "tr-count-prefix",
+       "title": "How many words start with this?",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 11,
+       "difficulty": 3,
+       "skills": [
+        "trie_search",
+        "trie_node",
+        "recursion_return",
+        "accumulator"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Two functions. `count_words(node)`: how many stored words end at `node` or anywhere below it. Recursive: this node counts 1 if it is a word end, plus whatever each child reports. `count_with_prefix(root, prefix)`: how ma"
+      },
+      {
+       "id": "tr-words-with-prefix",
+       "title": "Autocomplete",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 13,
+       "difficulty": 3,
+       "skills": [
+        "trie_search",
+        "trie_node",
+        "recursion_base_case",
+        "list_append"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Two functions. `collect(node, text, found)`: `text` is the string of letters that leads to `node`. Append to the list `found` every stored word that ends at `node` or below it. Going down to a child adds that child's let"
+      }
+     ]
+    },
+    {
+     "id": "tr-check",
+     "title": "Tries check",
+     "reps": [
+      {
+       "id": "tr-chk-count-nodes",
+       "title": "How big is the trie?",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 12,
+       "difficulty": 3,
+       "skills": [
+        "trie_node",
+        "string_iterate",
+        "dict_membership",
+        "accumulator"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `class TrieNode` (fields `children` and `end`) and `count_nodes(words)`: build a trie holding every word, and return how many nodes it took, not counting the root. `count_nodes(['tea', 'ten'])` → `4` (t, e, a, n)"
+      },
+      {
+       "id": "tr-chk-only-prefix",
+       "title": "Started but not finished",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 9,
+       "difficulty": 3,
+       "skills": [
+        "trie_search",
+        "trie_node",
+        "early_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `class TrieNode` (fields `children` and `end`) and `is_unfinished(root, text)`: `True` when the non-empty `text` is the beginning of a stored word but is **not** a stored word itself. Otherwise `False`. With `'go'`"
+      },
+      {
+       "id": "tr-chk-longest-word-start",
+       "title": "The longest stored word at the front",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 11,
+       "difficulty": 3,
+       "skills": [
+        "trie_search",
+        "trie_node",
+        "slicing",
+        "enumerate"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `class TrieNode` (fields `children` and `end`) and `longest_stored_start(root, text)`: the longest stored word that `text` begins with, or `''` if there is none. With `'ca'` and `'cat'` stored: `'catalog'` → `'cat'"
+      },
+      {
+       "id": "tr-chk-forget",
+       "title": "Forget a word",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 11,
+       "difficulty": 3,
+       "skills": [
+        "trie_search",
+        "trie_node",
+        "early_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `class TrieNode` (fields `children` and `end`) and `forget(root, word)`: make `word` no longer count as stored, and return `True` if it was stored before the call, `False` if it was not. Leave the nodes where they "
+      }
+     ]
+    },
+    {
+     "id": "br-208",
+     "title": "Toward Implement Trie (Prefix Tree)",
+     "reps": [
+      {
+       "id": "b208-word-set",
+       "title": "A trie inside a class",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 12,
+       "difficulty": 2,
+       "skills": [
+        "trie_node",
+        "trie_search",
+        "string_iterate"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Same moves, new packaging: the trie lives **inside** an object. `WordSet()` creates its own root node in `__init__` and keeps it as `self.root`. The methods start their walk from `self.root` instead of being handed a roo"
+      },
+      {
+       "id": "b208-prefix-tally",
+       "title": "Count by prefix, from a blank class",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 15,
+       "difficulty": 3,
+       "skills": [
+        "trie_node",
+        "trie_search",
+        "string_iterate",
+        "accumulator"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "Write `PrefixTally` from blank classes. `add(word)` records a word; the same word may be added several times and counts every time. `count(prefix)` returns how many recorded words begin with the non-empty `prefix`. `coun"
+      }
+     ]
+    }
+   ],
+   "optionalSections": [
+    {
+     "id": "br-48",
+     "title": "Toward Rotate Image",
+     "reps": [
+      {
+       "id": "b48-trace-two-flips",
+       "title": "Trace: transpose, then reverse each row",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 2.5,
+       "difficulty": 1,
+       "skills": [
+        "matrix_transform",
+        "grid_nested"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Two moves from the ladder, one after the other. Predict the output, then look at where the old top row `1 2 3` ended up."
+      },
+      {
+       "id": "b48-turn-left",
+       "title": "A quarter turn to the left",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 8,
+       "difficulty": 3,
+       "skills": [
+        "matrix_transform",
+        "grid_nested",
+        "range"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "Write `turn_left(m)` that rotates a square matrix (as many rows as columns) a quarter turn **anticlockwise**. Change `m` itself, build no second matrix, and return nothing. `[[1, 2], [3, 4]]` becomes `[[2, 4], [1, 3]]`: "
+      }
+     ]
+    },
+    {
+     "id": "br-73",
+     "title": "Toward Set Matrix Zeroes",
+     "reps": [
+      {
+       "id": "b73-edge-flags",
+       "title": "Do the first row and column hold a zero?",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5.5,
+       "difficulty": 2,
+       "skills": [
+        "matrix_marking",
+        "grid_nested",
+        "for_loop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `edge_flags(m)` returning two booleans: whether the **first row** of `m` contains a `0`, and whether the **first column** contains a `0`. `edge_flags([[1, 0], [1, 1]])` is `(True, False)`. `edge_flags([[0, 1], [1, "
+      },
+      {
+       "id": "b73-dbg-late-flags",
+       "title": "Debug: paint that spills too far",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 3,
+       "skills": [
+        "matrix_marking",
+        "grid_nested",
+        "state_tracking"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "A floor plan is a matrix of `0` (clean) and `1` (paint). `spill(m)` should turn every row and every column that contains an original `1` into all `1`s, in place, without building any extra sets: it uses the first row and"
+      },
+      {
+       "id": "b73-blackout",
+       "title": "Blackout with no extra memory",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 15,
+       "difficulty": 4,
+       "skills": [
+        "matrix_marking",
+        "grid_nested",
+        "state_tracking",
+        "edge_cases"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "A wall of lamps is a matrix of booleans (at least one row and one column): `True` is lit, `False` is a blown lamp. A blown lamp takes out its whole row and its whole column. Write `blackout(lights)` that switches off (`F"
+      }
+     ]
+    },
+    {
+     "id": "br-211",
+     "title": "Toward Design Add and Search Words Data Structure",
+     "reps": [
+      {
+       "id": "b211-has-from",
+       "title": "The search walk, recursively",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 7,
+       "difficulty": 2,
+       "skills": [
+        "trie_search",
+        "recursion_base_case",
+        "string_index"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "So far the search walk was a loop. Write it **recursively**: `has_from(node, word, i)` answers \"starting at `node`, do the letters from position `i` of `word` onward lead to the end of a stored word?\" - when `i` has reac"
+      },
+      {
+       "id": "b211-has-length",
+       "title": "Any letter will do",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 7,
+       "difficulty": 2,
+       "skills": [
+        "trie_wildcard",
+        "recursion_base_case",
+        "early_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Now a search where you do not know the letters at all. Write `has_length(node, n)`: `True` if, starting at `node`, some path of exactly `n` letters ends on a stored word. - `n == 0`: no letters left, so the answer is thi"
+      },
+      {
+       "id": "b211-dbg-first-child",
+       "title": "Debug: the wildcard gives up early",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 6,
+       "difficulty": 2,
+       "skills": [
+        "trie_wildcard",
+        "trie_search",
+        "early_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`matches(node, pattern, i)` should say whether some stored word fits `pattern` from position `i` on. In a pattern, `?` is a wildcard: it stands for any single letter and every other character must match exactly. With `'b"
+      },
+      {
+       "id": "b211-pattern-counter",
+       "title": "How many words fit the pattern?",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 16,
+       "difficulty": 4,
+       "skills": [
+        "trie_wildcard",
+        "trie_node",
+        "trie_search",
+        "recursion_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "Write `PatternCounter` from blank classes. `add(word)` stores a word (adding the same word again changes nothing). `count(pattern)` returns **how many** stored words fit `pattern`, where `?` stands for any single letter "
+      }
+     ]
+    },
+    {
+     "id": "o11-name-it",
+     "title": "Name the pattern",
+     "reps": [
+      {
+       "id": "o11-ni-shared",
+       "title": "Both playlists",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "set_create",
+        "set_membership",
+        "list_append",
+        "hash_reasoning"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`a` and `b` are lists of song ids (ints), possibly with repeats. Return the songs that appear in **both**, in the order they first appear in `a`, each listed once. Lists can hold tens of thousands of songs."
+      },
+      {
+       "id": "o11-ni-two-hops",
+       "title": "Friends of friends",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 7,
+       "difficulty": 3,
+       "skills": [
+        "graph_adjacency",
+        "graph_bfs",
+        "set_membership"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "People are numbered `0..n-1`. `pairs` lists friendships `[a, b]` (friendship goes both ways). Return, sorted, everyone who is a friend of one of `p`'s friends but is neither `p` nor already `p`'s friend."
+      },
+      {
+       "id": "o11-ni-streak",
+       "title": "Longest streak with one slip",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 7,
+       "difficulty": 3,
+       "skills": [
+        "sliding_window",
+        "window_state",
+        "enumerate"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`days` is a list of `1` (practiced) and `0` (missed). One missed day can be forgiven. Return the length of the longest run of **consecutive** days that contains at most one `0`."
+      },
+      {
+       "id": "o11-ni-latest-at-or-before",
+       "title": "Latest reading at or before",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 7,
+       "difficulty": 3,
+       "skills": [
+        "binary_search",
+        "search_invariant"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`times` holds distinct reading times in increasing order. For each time in `queries`, return the **index** of the latest reading at or before it, or `-1` if there is none. There can be hundreds of thousands of readings a"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

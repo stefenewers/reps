@@ -1,0 +1,2000 @@
+{
+ "week": 8,
+ "title": "Graph Modeling",
+ "focus": "Tree BFS, grids, graphs",
+ "purpose": "From queues to levels to cells to nodes and edges.",
+ "weekTarget": 75,
+ "dailyTarget": 15,
+ "trainingDays": [
+  "2026-12-14",
+  "2026-12-15",
+  "2026-12-16",
+  "2026-12-17",
+  "2026-12-18"
+ ],
+ "units": [
+  {
+   "id": "w8-queue-bfs",
+   "title": "Queues and BFS by level",
+   "purpose": "A queue processes things in the order they arrived; one level at a time.",
+   "prerequisites": [
+    "w7-trees"
+   ],
+   "lessonIds": [
+    "bfs"
+   ],
+   "workedExampleIds": [],
+   "targets": [
+    {
+     "lc": 102,
+     "title": "Binary Tree Level Order Traversal",
+     "solvedInRepsBy": "cap-level-order"
+    }
+   ],
+   "readinessTargets": [],
+   "labs": [],
+   "gates": [
+    {
+     "id": "g-queue",
+     "title": "Queue",
+     "need": 2,
+     "skills": [
+      "queue_deque",
+      "bfs_levels"
+     ],
+     "pool": [
+      "o7-c-last-level",
+      "c8-g-queue-a",
+      "c8-g-queue-b"
+     ]
+    }
+   ],
+   "sections": [
+    {
+     "id": "o7-deque",
+     "title": "deque",
+     "reps": [
+      {
+       "id": "o7-dq-why-not-pop0",
+       "title": "Why not list.pop(0)?",
+       "kind": "choice",
+       "stage": "recognize",
+       "repType": "foundation",
+       "minutes": 1,
+       "difficulty": 1,
+       "skills": [
+        "queue_deque"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "A **queue** is a line: items join at the back and leave from the front, so the first one in is the first one out. Suppose you use a plain list as a queue: `items.append(x)` joins the back and `items.pop(0)` takes from th"
+      },
+      {
+       "id": "o7-dq-trace-basic",
+       "title": "Trace append / popleft",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 1.5,
+       "difficulty": 1,
+       "skills": [
+        "queue_deque"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`deque([1, 2])` builds a deque from a list, with 1 at the front (the left). `append` joins the back (the right). `popleft()` removes the front item and hands it back. What does this print?"
+      },
+      {
+       "id": "o7-dq-drain",
+       "title": "Drain a queue",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "queue_deque",
+        "while_loop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`items` is a list. Write `drain(items)`: put everything from `items` into a deque, then keep removing from the front until the deque is empty, collecting each removed item in a list. Return that list. A queue hands thing"
+      },
+      {
+       "id": "o7-dq-dbg-pop-end",
+       "title": "Debug: wrong end of the queue",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "queue_deque",
+        "bfs"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "**Breadth-first search (BFS)** explores outward from a start: everything one step away, then everything two steps away, and so on. A queue gives that order, because whatever was discovered first is handled first. Here th"
+      },
+      {
+       "id": "o7-dq-recent",
+       "title": "Recent events counter",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "queue_deque",
+        "while_loop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`times` is a list of ints: the times at which events happened, already in increasing order (repeats allowed). `window` is a positive int. For each time `t`, count the events whose time falls in `t - window + 1` through `"
+      },
+      {
+       "id": "o7-dq-rotate-elim",
+       "title": "Pass and eliminate",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 6,
+       "difficulty": 2,
+       "skills": [
+        "queue_deque",
+        "while_loop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`names` is a non-empty list of strings: players standing in a queue, with `names[0]` at the front. `k` is an int, at least 1. Repeat until one player remains: move the front player to the back `k - 1` times, then remove "
+      }
+     ]
+    },
+    {
+     "id": "o7-tree-bfs",
+     "title": "BFS by level",
+     "reps": [
+      {
+       "id": "o7-t-trace-levels",
+       "title": "Trace levels",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 2,
+       "difficulty": 1,
+       "skills": [
+        "bfs_levels",
+        "treenode"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`build_tree` is predefined. It makes a binary tree from a list of values written top row first, each row left to right, with `None` where a node is missing. Here 1 is the root, 2 and 3 are its children, 2 has only a left"
+      },
+      {
+       "id": "o7-t-flat",
+       "title": "BFS values",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 9,
+       "difficulty": 2,
+       "skills": [
+        "bfs",
+        "queue_deque",
+        "treenode"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`root` is the top node of a binary tree, or `None` for an empty tree. Each node has `.val`, `.left` and `.right`. Write `bfs_values(root)` returning every value in BFS order as one flat list: the root, then its children "
+      },
+      {
+       "id": "o7-t-dbg-none-child",
+       "title": "Debug: counting leaves",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "bfs",
+        "treenode"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`root` is the top node of a binary tree, or `None`. A **leaf** is a node with no children. `count_leaves(root)` should return how many leaves the tree has, using BFS. An empty tree has 0. Make the tests pass."
+      },
+      {
+       "id": "o7-t-depth",
+       "title": "Depth by BFS",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 10,
+       "difficulty": 2,
+       "skills": [
+        "bfs_levels",
+        "accumulator"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`root` is the top node of a binary tree, or `None`. Write `depth_bfs(root)` returning the number of levels in the tree (a single node is 1, an empty tree is 0), computed with BFS and no recursion. Each pass of the outer "
+      },
+      {
+       "id": "o7-t-sums",
+       "title": "Level sums",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 11,
+       "difficulty": 2,
+       "skills": [
+        "bfs_levels",
+        "accumulator"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`root` is the top node of a binary tree, or `None`. Write `level_sums(root)` returning a list with the sum of the values on each level, top level first. An empty tree gives `[]`. Example: for `build_tree([1, 2, 3, 4, 5, "
+      },
+      {
+       "id": "o7-t-dbg-snapshot",
+       "title": "Debug: levels run together",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 6,
+       "difficulty": 2,
+       "skills": [
+        "bfs_levels",
+        "queue_deque"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`root` is the top node of a binary tree, or `None`. `level_mins(root)` should return a list with the smallest value on each level, top level first (`[]` for an empty tree). Make the tests pass."
+      },
+      {
+       "id": "o7-t-right-view",
+       "title": "Right side view",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 12,
+       "difficulty": 3,
+       "skills": [
+        "bfs_levels",
+        "treenode"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Stand to the right of the tree and look at it: on each level you see only the last node, the one furthest right. Write `right_view(root)` returning those values, top level first. `root` may be `None`; then return `[]`. E"
+      },
+      {
+       "id": "o7-t-min-depth",
+       "title": "Shallowest leaf",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 11,
+       "difficulty": 2,
+       "skills": [
+        "bfs_levels",
+        "early_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`root` is the top node of a binary tree (each node has `.val`, `.left` and `.right`), or `None` for an empty tree. A leaf is a node with no children. Write `min_depth(root)` returning the number of nodes on the shortest "
+      }
+     ]
+    },
+    {
+     "id": "o7-cap-level-order",
+     "title": "Level Order",
+     "reps": [
+      {
+       "id": "cap-level-order",
+       "title": "Level order traversal",
+       "kind": "code",
+       "stage": "capstone",
+       "repType": "capstone",
+       "minutes": 25,
+       "difficulty": 3,
+       "skills": [
+        "bfs",
+        "bfs_levels",
+        "queue_deque",
+        "treenode"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": 102,
+       "transfer": false,
+       "prompt": "Given the root of a binary tree, return its values grouped by depth: a list of lists, the first holding the root, the next holding the root's children left to right, and so on. An empty tree gives `[]`."
+      },
+      {
+       "id": "o7-explain-level-order",
+       "title": "Explain level order",
+       "kind": "explain",
+       "stage": "interview",
+       "repType": "interview",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "explanation",
+        "bfs_levels",
+        "complexity"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Out loud or in writing, as in an interview: explain your level-order solution. Cover the approach, the invariant that makes grouping correct, complexity, and the edge cases you checked."
+      },
+      {
+       "id": "o7-fu-zigzag",
+       "title": "Follow-up: zigzag levels",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "bfs_levels",
+        "queue_deque",
+        "treenode"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "**Interviewer follow-up.** A working level-order solution is in the editor under the name `zigzag`: it returns a list of lists, one per level, each read left to right. Change it so the levels alternate: the root's level "
+      }
+     ]
+    }
+   ],
+   "optionalSections": [
+    {
+     "id": "o7-warmup",
+     "title": "Warm-up",
+     "reps": [
+      {
+       "id": "o7-wu-word-counts",
+       "title": "Count words",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "frequency_map",
+        "dict_get"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `word_counts(words)` returning a dict from each word to how many times it appears. Use `.get()`."
+      },
+      {
+       "id": "o7-wu-pair-sorted",
+       "title": "Pair in sorted list",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 6,
+       "difficulty": 2,
+       "skills": [
+        "two_pointer",
+        "pointer_update"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is sorted ascending. Write `has_pair(nums, target)` returning `True` if two different positions sum to `target`. Use two pointers, O(1) extra space."
+      },
+      {
+       "id": "o7-wu-balanced",
+       "title": "Balanced brackets",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 6,
+       "difficulty": 2,
+       "skills": [
+        "stack_push_pop",
+        "matching_pairs"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `is_balanced(s)` for strings made of `()[]{}`. Return `True` if every closer matches the most recent unmatched opener."
+      },
+      {
+       "id": "o7-wu-max-depth",
+       "title": "Tree depth (DFS)",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "tree_dfs",
+        "recursion_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write recursive `max_depth(root)`: the number of nodes on the longest root-to-leaf path. An empty tree has depth 0."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "w8-grids",
+   "title": "Grids",
+   "purpose": "Each cell is a node; its neighbours are the edges; visited stops you walking in circles.",
+   "prerequisites": [
+    "w8-queue-bfs"
+   ],
+   "lessonIds": [
+    "grids"
+   ],
+   "workedExampleIds": [],
+   "targets": [
+    {
+     "lc": 200,
+     "title": "Number of Islands",
+     "solvedInRepsBy": "cap-number-of-islands"
+    }
+   ],
+   "readinessTargets": [],
+   "labs": [
+    {
+     "id": "lab-evacuation-map",
+     "title": "Building Evacuation Map",
+     "optional": false
+    }
+   ],
+   "gates": [
+    {
+     "id": "g-grid",
+     "title": "Grid traversal",
+     "need": 2,
+     "skills": [
+      "grid_neighbors",
+      "visited_set"
+     ],
+     "pool": [
+      "o7-c-blobs",
+      "o8-cold-grid-steps",
+      "o7-c-neighbors"
+     ]
+    }
+   ],
+   "sections": [
+    {
+     "id": "o7-grids",
+     "title": "Grids",
+     "reps": [
+      {
+       "id": "o7-g-trace-dims",
+       "title": "Rows, cols, cells",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 1.5,
+       "difficulty": 1,
+       "skills": [
+        "grid_nested",
+        "len"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "A **grid** is a list of rows, and each row is a list of cells, all rows the same length. `grid[r]` is one whole row (row 0 is the top). `grid[r][c]` is one cell: row `r` first, then column `c` (column 0 is the left). Wha"
+      },
+      {
+       "id": "o7-g-count",
+       "title": "Count a value",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "grid_nested",
+        "accumulator"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`grid` is a list of rows (a list of lists) with at least one row. The cells may be ints or strings. Write `count_value(grid, target)` returning how many cells are equal to `target`. Example: `count_value([[\"1\", \"0\"], [\"1"
+      },
+      {
+       "id": "o7-g-dbg-dims",
+       "title": "Debug: row maximums",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "grid_nested",
+        "len"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`grid` is a list of rows of ints, with at least one row and one column. `row_maxes(grid)` should return a list holding the largest value of each row, top row first: `row_maxes([[1, 5, 2], [7, 0, 3]])` is `[5, 7]`. It wor"
+      },
+      {
+       "id": "o7-g-find-all",
+       "title": "Coordinates of a value",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "grid_nested",
+        "tuples",
+        "list_append"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`grid` is a list of rows (a list of lists), and `ch` is a value to look for. Write `find_all(grid, ch)` returning a list of `(r, c)` tuples, one for every cell equal to `ch`: top row first, and left to right within a row"
+      },
+      {
+       "id": "o7-g-dbg-alias",
+       "title": "Debug: identity grid",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "grid_nested",
+        "list_comprehension"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`n` is a positive int. `identity(n)` should return an n x n grid (a list of `n` rows, each a list of `n` ints) that is all zeros except for ones on the main diagonal, the cells whose row and column are equal: `identity(2"
+      },
+      {
+       "id": "o7-g-dbg-strings",
+       "title": "Debug: count the land",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "grid_nested",
+        "accumulator"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Grids in interview problems often hold strings, not numbers. Here `grid` is a list of rows of one-character strings: `\"1\"` means land and `\"0\"` means water. `count_land(grid)` should return how many cells are land. Make "
+      }
+     ]
+    },
+    {
+     "id": "o7-neighbors",
+     "title": "Neighbors",
+     "reps": [
+      {
+       "id": "o7-n-trace",
+       "title": "Trace a neighbor loop",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 2,
+       "difficulty": 1,
+       "skills": [
+        "grid_neighbors"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "The **neighbors** of a cell are the cells directly up, down, left and right of it (never diagonal, unless a problem says so). Each `(dr, dc)` pair in the list is one direction: how far the row moves and how far the colum"
+      },
+      {
+       "id": "o7-n-list",
+       "title": "List the neighbors",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "grid_neighbors",
+        "tuples"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`grid` is a list of rows, and `(r, c)` is a cell inside it. Finish `neighbors(grid, r, c)`: return a list of `(row, col)` tuples for the neighbors of `(r, c)` that are inside the grid, in the order up, down, left, right."
+      },
+      {
+       "id": "o7-n-land",
+       "title": "Count land neighbors",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 6,
+       "difficulty": 2,
+       "skills": [
+        "grid_neighbors",
+        "accumulator"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`grid` is a list of rows of strings: `\"1\"` is land and `\"0\"` is water. `(r, c)` is a cell inside the grid. Write `land_neighbors(grid, r, c)` returning how many of the 4 neighbors of `(r, c)` (up, down, left, right) are "
+      },
+      {
+       "id": "o7-n-dbg-bounds",
+       "title": "Debug: neighbors off the edge",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "grid_neighbors"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "There is no grid here, only its size: `rows` rows and `cols` columns. `neighbors4(rows, cols, r, c)` should return the neighbors of cell `(r, c)` that are inside that grid, as `(row, col)` tuples in the order up, down, l"
+      },
+      {
+       "id": "o7-n-dbg-dirs",
+       "title": "Debug: a missing direction",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "grid_neighbors",
+        "tuples"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`grid` is a list of rows of strings: `\".\"` is open and `\"#\"` is blocked. `open_neighbors(grid, r, c)` should return how many of the 4 neighbors of `(r, c)` (up, down, left, right) are open. Make the tests pass."
+      },
+      {
+       "id": "o7-n-wt-wrap",
+       "title": "Break it: negative indexes",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "grid_neighbors",
+        "list_index"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`land_count_buggy` is meant to count the land neighbors of `(r, c)`, but its bounds check is only `nr < rows and nc < cols`. In Python `grid[-1]` does not raise an error: it quietly reads the last row. Write `breaking_in"
+      },
+      {
+       "id": "o7-n-perimeter",
+       "title": "Island perimeter",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 9,
+       "difficulty": 3,
+       "skills": [
+        "grid_neighbors",
+        "grid_nested",
+        "accumulator"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`grid` is a list of rows of ints (not strings this time): `1` is land and `0` is water. The land cells form one **island**: a group of land cells joined side to side. Write `perimeter(grid)` returning the length of the i"
+      }
+     ]
+    },
+    {
+     "id": "o7-grid-bfs",
+     "title": "Grid BFS",
+     "reps": [
+      {
+       "id": "o7-v-trace-order",
+       "title": "BFS visit order",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "bfs",
+        "grid_neighbors"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "This is BFS on a grid, starting at `(0, 0)`. Cells holding `1` are open and `0` is a wall. `visited` is a set of the `(r, c)` cells that have already been put in the queue, so no cell is ever queued twice. The directions"
+      },
+      {
+       "id": "o7-v-finish",
+       "title": "Finish the grid BFS",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 6,
+       "difficulty": 2,
+       "skills": [
+        "bfs",
+        "visited_set",
+        "grid_neighbors"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`grid` is a list of rows of ints: `1` is an open cell and `0` is a wall. `(sr, sc)` is the start cell, and it is open. `reachable(grid, sr, sc)` returns how many open cells you can get to from the start by stepping up, d"
+      },
+      {
+       "id": "o7-v-reachable-strings",
+       "title": "Reachable land, from scratch",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 9,
+       "difficulty": 3,
+       "skills": [
+        "bfs",
+        "visited_set",
+        "grid_neighbors",
+        "queue_deque"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`grid` is a list of rows of strings: `\"1\"` is land and `\"0\"` is water. `(sr, sc)` is a cell inside the grid. Two land cells are **connected** when you can walk from one to the other stepping up, down, left or right over "
+      },
+      {
+       "id": "o7-v-dbg-late-mark",
+       "title": "Debug: cells visited twice",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 6,
+       "difficulty": 2,
+       "skills": [
+        "bfs",
+        "visited_set"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`grid` is a list of rows of ints: `1` is open, `0` is a wall, and `(0, 0)` is open. `visit_order(grid)` should return a list of `(r, c)` tuples: every open cell reachable from `(0, 0)`, each exactly once, in the order BF"
+      },
+      {
+       "id": "o7-v-dbg-tuple",
+       "title": "Debug: what goes in visited",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "visited_set",
+        "tuples"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`grid` is a list of rows of strings: `\".\"` is open and `\"#\"` is blocked. `(sr, sc)` is the start cell, and it is open. `open_area(grid, sr, sc)` should return how many open cells can be reached from the start by moving u"
+      },
+      {
+       "id": "o7-v-shortest",
+       "title": "Fewest steps to the corner",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 12,
+       "difficulty": 3,
+       "skills": [
+        "bfs",
+        "visited_set",
+        "grid_neighbors",
+        "tuples"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`grid` is a list of rows of ints: `0` is open and `1` is a wall. One move takes you to an open neighbor (up, down, left or right). Write `shortest_steps(grid)` returning the fewest moves needed to get from the top-left c"
+      },
+      {
+       "id": "o7-v-flood-fill",
+       "title": "Flood fill (BFS)",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 11,
+       "difficulty": 3,
+       "skills": [
+        "bfs",
+        "grid_neighbors",
+        "queue_deque"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "**Flood fill** is the paint-bucket tool: click one pixel and the whole patch of that color changes. `image` is a list of rows of ints, each int a color. `(sr, sc)` is the clicked pixel and `color` is the new color. Write"
+      },
+      {
+       "id": "o7-v-dfs-stack",
+       "title": "Translate: queue to stack",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 10,
+       "difficulty": 3,
+       "skills": [
+        "stack_push_pop",
+        "visited_set",
+        "grid_neighbors"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Below is the BFS `land_reachable`: it counts the land cells (`\"1\"`) connected to `(sr, sc)`, or returns 0 if the start is water. Under it, write `land_reachable_dfs(grid, sr, sc)` with the same behaviour as an iterative "
+      },
+      {
+       "id": "o7-v-multi-source",
+       "title": "Distance to nearest exit",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 11,
+       "difficulty": 4,
+       "skills": [
+        "bfs",
+        "grid_neighbors",
+        "queue_deque",
+        "grid_nested"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`grid` is a list of rows of ints: `0` marks an exit and `1` an ordinary cell. There is at least one exit. Finish `nearest_exit(grid)`: return a new grid of the same shape where each cell holds the fewest up/down/left/rig"
+      }
+     ]
+    },
+    {
+     "id": "o7-islands",
+     "title": "Number of Islands",
+     "reps": [
+      {
+       "id": "o7-i-sink-dfs",
+       "title": "Sink an island",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 5,
+       "difficulty": 3,
+       "skills": [
+        "grid_neighbors",
+        "tree_dfs",
+        "recursion_base_case"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`grid` is a list of rows of strings: `\"1\"` is land and `\"0\"` is water. Two land cells belong to the same island when you can walk from one to the other stepping up, down, left or right over land (never diagonally). `(r, "
+      },
+      {
+       "id": "o7-i-sink-iter",
+       "title": "Translate: recursion to a stack",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 12,
+       "difficulty": 3,
+       "skills": [
+        "grid_neighbors",
+        "stack_push_pop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "The recursive `sink` below turns the island containing `(r, c)` into `\"0\"` and returns how many cells it changed (0 if `(r, c)` is water). Write `sink_iter(grid, r, c)` with the same result but no recursion: keep the cel"
+      },
+      {
+       "id": "cap-number-of-islands",
+       "title": "Number of islands",
+       "kind": "code",
+       "stage": "capstone",
+       "repType": "capstone",
+       "minutes": 30,
+       "difficulty": 3,
+       "skills": [
+        "grid_nested",
+        "grid_neighbors",
+        "visited_set",
+        "bfs"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": 200,
+       "transfer": false,
+       "prompt": "A map is a grid of strings: `\"1\"` is land and `\"0\"` is water. Land cells that touch horizontally or vertically (not diagonally) belong to the same island. Everything outside the grid is water. Return how many islands the"
+      },
+      {
+       "id": "o7-explain-islands",
+       "title": "Explain number of islands",
+       "kind": "explain",
+       "stage": "interview",
+       "repType": "interview",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "explanation",
+        "complexity",
+        "edge_cases"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Explain your islands solution as you would to an interviewer, then say what changes if you used DFS recursion instead of BFS."
+      },
+      {
+       "id": "o7-i-dbg-count-every",
+       "title": "Debug: too many islands",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 6,
+       "difficulty": 2,
+       "skills": [
+        "visited_set",
+        "grid_nested",
+        "bfs"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`grid` is a list of rows of strings: `\"W\"` is water and `\".\"` is dry ground. A lake is a group of `\"W\"` cells joined up, down, left or right. A teammate's `count_lakes(grid)` should return the number of lakes. It reports"
+      },
+      {
+       "id": "o7-i-max-area",
+       "title": "Largest island area",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 14,
+       "difficulty": 3,
+       "skills": [
+        "grid_nested",
+        "grid_neighbors",
+        "visited_set",
+        "bfs"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`grid` is a list of rows of ints: `1` is land and `0` is water. An island is a group of land cells joined up, down, left or right (not diagonally). Write `max_area(grid)` returning the number of cells in the largest isla"
+      }
+     ]
+    },
+    {
+     "id": "o7-cold",
+     "title": "Cold reps",
+     "reps": [
+      {
+       "id": "o7-c-neighbors",
+       "title": "Neighbors from memory",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "grid_neighbors",
+        "tuples"
+       ],
+       "gateVariantOf": "g-grid",
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "A grid has `rows` rows and `cols` columns. Write `neighbors4(rows, cols, r, c)` returning the neighbors of `(r, c)` that are inside the grid, as `(row, col)` tuples in the order up, down, left, right."
+      },
+      {
+       "id": "o7-c-last-level",
+       "title": "Deepest level",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 12,
+       "difficulty": 2,
+       "skills": [
+        "bfs_levels",
+        "queue_deque"
+       ],
+       "gateVariantOf": "g-queue",
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `deepest_values(root)`: the values on the bottom level, left to right. Empty tree → `[]`."
+      },
+      {
+       "id": "o7-c-blobs",
+       "title": "Count blobs in strings",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 14,
+       "difficulty": 3,
+       "skills": [
+        "grid_nested",
+        "grid_neighbors",
+        "visited_set",
+        "bfs"
+       ],
+       "gateVariantOf": "g-grid",
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "This grid is a list of strings, like `[\"#.#\", \"##.\"]`. `grid[r][c]` still works on strings, but you cannot assign to them. Write `count_blobs(grid)`: the number of groups of `\"#\"` cells joined up, down, left or right. An"
+      }
+     ]
+    }
+   ],
+   "optionalSections": []
+  },
+  {
+   "id": "w8-graphs",
+   "title": "Graph modeling and traversal",
+   "purpose": "What is a node, what is an edge, is it directed, what counts as visited?",
+   "prerequisites": [
+    "w8-grids"
+   ],
+   "lessonIds": [
+    "graphs"
+   ],
+   "workedExampleIds": [],
+   "targets": [
+    {
+     "lc": 1971,
+     "title": "Find if Path Exists in Graph",
+     "solvedInRepsBy": "cap-path-exists"
+    }
+   ],
+   "readinessTargets": [
+    {
+     "lc": 547,
+     "title": "Number of Provinces"
+    }
+   ],
+   "labs": [
+    {
+     "id": "lab-social-network",
+     "title": "Social Network Explorer",
+     "optional": false
+    }
+   ],
+   "gates": [
+    {
+     "id": "g-graph-traversal",
+     "title": "Graph traversal",
+     "need": 2,
+     "skills": [
+      "graph_adjacency",
+      "graph_dfs",
+      "connected_components"
+     ],
+     "pool": [
+      "o8-cold-build",
+      "o8-cold-components",
+      "c8-g-graph-a"
+     ]
+    }
+   ],
+   "sections": [
+    {
+     "id": "o8-adjacency",
+     "title": "Adjacency lists",
+     "reps": [
+      {
+       "id": "o8-a-trace-build",
+       "title": "Trace a build",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 2,
+       "difficulty": 1,
+       "skills": [
+        "graph_adjacency",
+        "dict_items"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "A **graph** is a set of **nodes** (also called vertices) joined by **edges**. Here there are `n` nodes, numbered `0` to `n-1`, and `edges` is an **edge list**: each `[a, b]` says node `a` and node `b` are connected. This"
+      },
+      {
+       "id": "o8-a-build-undirected",
+       "title": "Build undirected",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "graph_adjacency"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`n` is the number of nodes; they are numbered `0` to `n-1`. `edges` is a list of `[a, b]` pairs. Each pair is an **undirected** edge: `a` is a neighbor of `b`, and `b` is a neighbor of `a`. Write `build_undirected(n, edg"
+      },
+      {
+       "id": "o8-a-dbg-one-way",
+       "title": "Debug: friends of a node",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "graph_adjacency"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "The graph has nodes `0` to `n-1` and `edges` is a list of **undirected** `[a, b]` pairs. `neighbors_of(n, edges, node)` should return the neighbors of `node` as a sorted list. Make the tests pass."
+      },
+      {
+       "id": "o8-a-build-directed",
+       "title": "Build directed",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "graph_adjacency"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Now the edges are **directed**: `[a, b]` means you can go from `a` to `b` but not back (written a → b). So `b` is a neighbor of `a`, and `a` is **not** a neighbor of `b`. Write `build_directed(n, edges)` returning a dict"
+      },
+      {
+       "id": "o8-a-dbg-shared-list",
+       "title": "Debug: everyone has the same friends",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "graph_adjacency",
+        "dict_create"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`build(n, edges)` should return the adjacency list (a dict: node → list of neighbors) for nodes `0` to `n-1` and the undirected `[a, b]` pairs in `edges`. Every node has its own list. Make the tests pass."
+      },
+      {
+       "id": "o8-a-in-degree",
+       "title": "In-degrees",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "graph_adjacency",
+        "list_index"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Nodes are `0` to `n-1` and each `[a, b]` in `edges` is a directed edge a → b. The **in-degree** of a node is the number of edges that point **into** it. Write `in_degrees(n, edges)` returning a list of length `n` where e"
+      },
+      {
+       "id": "o8-a-matrix",
+       "title": "Matrix to adjacency list",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 6,
+       "difficulty": 2,
+       "skills": [
+        "graph_adjacency",
+        "grid_nested"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Some problems hand you the graph as a grid instead of an edge list. `m` is an n x n list of lists of `0`s and `1`s. The nodes are `0` to `n-1`, and `m[i][j] == 1` means node `i` and node `j` are connected. Write `matrix_"
+      }
+     ]
+    },
+    {
+     "id": "o8-dfs",
+     "title": "Graph DFS",
+     "reps": [
+      {
+       "id": "o8-d-trace-recursive",
+       "title": "Trace recursive DFS",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 2.5,
+       "difficulty": 1,
+       "skills": [
+        "graph_dfs"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`graph` is the adjacency list of an undirected graph: `graph[node]` is the list of that node's neighbors. `dfs` is a **depth-first search**: from a node, step to its first neighbor, then to that neighbor's first neighbor"
+      },
+      {
+       "id": "o8-d-order",
+       "title": "DFS order (recursive)",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 8,
+       "difficulty": 2,
+       "skills": [
+        "graph_dfs",
+        "recursion_base_case"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`graph` is an adjacency list (a dict: node → list of its neighbors; every node is a key) and `start` is one of its nodes. Node labels can be ints or strings. Write `dfs_order(graph, start)` returning a list of the nodes "
+      },
+      {
+       "id": "o8-v-fix-bounce",
+       "title": "Debug: the bouncing DFS",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "visited_set",
+        "graph_dfs"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "A node is **reachable** from `start` if you can get to it by following edges; `start` itself counts. `graph` is the adjacency list of an undirected graph. `count_from(graph, start)` should return how many nodes are reach"
+      },
+      {
+       "id": "o8-d-stack",
+       "title": "Reachable set (stack)",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 8,
+       "difficulty": 2,
+       "skills": [
+        "graph_dfs",
+        "stack_push_pop",
+        "visited_set"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "DFS does not need recursion. Keep a list as a **stack** of nodes still to explore: pop one, look at its neighbors, and push the ones not visited yet. Stop when the stack is empty. `graph` is an adjacency list and `start`"
+      },
+      {
+       "id": "o8-d-translate",
+       "title": "Translate: stack to recursion",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 7,
+       "difficulty": 2,
+       "skills": [
+        "graph_dfs",
+        "recursion_base_case",
+        "visited_set"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Below is an iterative DFS. Under it, write `component_of_rec(graph, start)` that returns the same sorted list using a recursive inner `dfs(node)` instead of a stack."
+      },
+      {
+       "id": "o8-v-optimize-list",
+       "title": "Optimize: visited as a list",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "visited_set",
+        "set_membership",
+        "graph_dfs"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Graph costs are written with **V** (the number of nodes, \"vertices\") and **E** (the number of edges). `count_reachable_slow` is correct, but `visited` is a list, so every `nxt not in visited` scans it: O(V) per check, O("
+      },
+      {
+       "id": "o8-d-directed-reach",
+       "title": "One-way reachability",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 11,
+       "difficulty": 2,
+       "skills": [
+        "graph_adjacency",
+        "graph_dfs"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "This time you get the raw edge list, not a ready-made graph. Nodes are `0` to `n-1`; each `[a, b]` in `edges` is a **directed** edge a → b. `src` and `dst` are two nodes. Write `can_reach(n, edges, src, dst)` returning `"
+      },
+      {
+       "id": "o8-d-dbg-directed-both",
+       "title": "Debug: downstream count",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "graph_adjacency",
+        "graph_dfs"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Junctions are numbered `0` to `n-1`. `pipes` is a list of `[a, b]` pairs, and pipes are **one-way**: `[a, b]` means water flows from a to b. `downstream(n, pipes, src)` should count the junctions water can reach from `sr"
+      },
+      {
+       "id": "o8-d-path",
+       "title": "Return an actual path",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 9,
+       "difficulty": 3,
+       "skills": [
+        "graph_dfs",
+        "recursion_return",
+        "backtracking_state"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "A **path** is a list of nodes in which each node has an edge to the next one, like `[0, 1, 3]`. `graph` is an adjacency list; `start` and `target` are two of its nodes. Finish the recursive `find_path(graph, start, targe"
+      }
+     ]
+    },
+    {
+     "id": "o8-bfs",
+     "title": "Graph BFS",
+     "reps": [
+      {
+       "id": "o8-b-order",
+       "title": "BFS order from scratch",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 9,
+       "difficulty": 2,
+       "skills": [
+        "graph_bfs",
+        "queue_deque"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "**BFS** (breadth-first search) visits nodes nearest first: `start`, then every neighbor of `start`, then the unvisited neighbors of those, and so on. It is the loop you wrote for grid BFS (a `deque` used as a queue, `pop"
+      },
+      {
+       "id": "o8-b-dbg-pop-end",
+       "title": "Debug: nearest first?",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "graph_bfs",
+        "queue_deque"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`by_distance(graph, start)` should list the nodes reachable from `start` in BFS order: all nodes 1 edge away before any node 2 edges away, neighbors in list order. Make the tests pass."
+      },
+      {
+       "id": "o8-b-distances",
+       "title": "Distance to every node",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 8,
+       "difficulty": 2,
+       "skills": [
+        "graph_bfs",
+        "dict_assign"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "The **distance** from `start` to a node is the fewest edges you must cross to get there. `start` is at distance `0`, its neighbors at `1`. `graph` is an adjacency list. Write `distances(graph, start)` returning a dict fr"
+      },
+      {
+       "id": "o8-b-dbg-late-mark",
+       "title": "Debug: distances that grow",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "graph_bfs",
+        "visited_set"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`graph` is an adjacency list. `hop_counts(graph, start)` should return a dict from each node reachable from `start` to its distance: the fewest edges from `start` to that node. Make the tests pass."
+      },
+      {
+       "id": "o8-b-shortest",
+       "title": "Fewest edges between two nodes",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 13,
+       "difficulty": 3,
+       "skills": [
+        "graph_bfs",
+        "graph_adjacency",
+        "early_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "There are `n` nodes numbered `0` to `n-1`. `edges` is a list of `[a, b]` pairs; each one joins `a` and `b` and can be crossed in either direction. `src` and `dst` are two nodes. Write `fewest_edges(n, edges, src, dst)` r"
+      }
+     ]
+    },
+    {
+     "id": "o8-cap-path-exists",
+     "title": "Path Exists",
+     "reps": [
+      {
+       "id": "cap-path-exists",
+       "title": "Is there a path?",
+       "kind": "code",
+       "stage": "capstone",
+       "repType": "capstone",
+       "minutes": 25,
+       "difficulty": 3,
+       "skills": [
+        "graph_adjacency",
+        "graph_dfs",
+        "visited_set"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": 1971,
+       "transfer": false,
+       "prompt": "There are `n` nodes labeled `0..n-1` and a list of undirected `edges`, each `[a, b]`. Return `True` if you can travel from `source` to `destination` along edges, otherwise `False`. A node can always reach itself."
+      },
+      {
+       "id": "o8-explain-path-exists",
+       "title": "Explain path exists",
+       "kind": "explain",
+       "stage": "interview",
+       "repType": "interview",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "explanation",
+        "complexity",
+        "edge_cases"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Explain your solution as in an interview: representation, traversal, why it terminates, complexity, edge cases. Also say why you chose DFS or BFS."
+      },
+      {
+       "id": "o8-fu-fewest-hops",
+       "title": "Follow-up: fewest hops",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 7,
+       "difficulty": 2,
+       "skills": [
+        "graph_bfs",
+        "queue_deque",
+        "graph_adjacency",
+        "visited_set"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "**Interviewer follow-up.** `valid_path` answers *whether* you can get there. Now return the **fewest edges** on a path from `source` to `destination`, `0` if they are the same node, or `-1` if there is no path. Adapt it "
+      }
+     ]
+    },
+    {
+     "id": "o8-components",
+     "title": "Components",
+     "reps": [
+      {
+       "id": "o8-c-trace",
+       "title": "Trace component starts",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 2.5,
+       "difficulty": 1,
+       "skills": [
+        "connected_components",
+        "graph_dfs"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "A **connected component** is a group of nodes that can all reach each other, with no edge leaving the group. A graph can be several separate components; a node with no edges is a component of one. The loop below starts a"
+      },
+      {
+       "id": "o8-c-count",
+       "title": "Count components",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 14,
+       "difficulty": 3,
+       "skills": [
+        "connected_components",
+        "graph_adjacency",
+        "graph_dfs"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Nodes are `0` to `n-1` and `edges` is a list of undirected `[a, b]` pairs. Write `count_components(n, edges)` returning the number of connected components. A node with no edges is a component by itself, and `n = 0` gives"
+      },
+      {
+       "id": "o8-c-dbg-visited-reset",
+       "title": "Debug: every node is its own group",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 6,
+       "difficulty": 2,
+       "skills": [
+        "connected_components",
+        "visited_set"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Nodes are `0` to `n-1` and `edges` is a list of undirected `[a, b]` pairs. `count_groups(n, edges)` should return the number of connected components. Make the tests pass."
+      },
+      {
+       "id": "o8-c-dbg-missing-isolated",
+       "title": "Debug: the lonely nodes",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 6,
+       "difficulty": 2,
+       "skills": [
+        "connected_components",
+        "graph_adjacency"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`num_clusters(n, edges)` should count the connected components of an undirected graph on nodes `0..n-1`, where a node with no edges is a component by itself. Make the tests pass."
+      }
+     ]
+    },
+    {
+     "id": "o8-cap-provinces",
+     "title": "Number of Provinces",
+     "reps": [
+      {
+       "id": "cap-number-of-provinces",
+       "title": "Count the provinces",
+       "kind": "code",
+       "stage": "capstone",
+       "repType": "capstone",
+       "minutes": 25,
+       "difficulty": 3,
+       "skills": [
+        "connected_components",
+        "graph_dfs",
+        "visited_set"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": 547,
+       "transfer": false,
+       "prompt": "There are `n` cities. `is_connected` is an n x n matrix where `is_connected[i][j] == 1` means cities i and j have a direct road (the matrix is symmetric and `is_connected[i][i] == 1`). Cities linked directly or through o"
+      },
+      {
+       "id": "o8-explain-provinces",
+       "title": "Explain provinces",
+       "kind": "explain",
+       "stage": "interview",
+       "repType": "interview",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "explanation",
+        "complexity"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Explain your provinces solution, and compare it with counting islands and with an edge-list components problem."
+      }
+     ]
+    }
+   ],
+   "optionalSections": [
+    {
+     "id": "o8-warmup",
+     "title": "Warm-up",
+     "reps": [
+      {
+       "id": "o8-wu-open-neighbors",
+       "title": "Open neighbors",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 6,
+       "difficulty": 2,
+       "skills": [
+        "grid_neighbors",
+        "grid_nested"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`grid` is a list of rows of ints: `0` open, `1` wall. Write `open_neighbors(grid, r, c)` returning a list of the open cells directly up, down, left and right of `(r, c)`, as `(row, col)` tuples in that order. Skip cells "
+      },
+      {
+       "id": "o8-wu-longest-unique",
+       "title": "Longest run without repeats",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 7,
+       "difficulty": 3,
+       "skills": [
+        "sliding_window",
+        "window_state"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `longest_unique(s)`: the length of the longest substring of the string `s` with no repeated character. An empty string gives `0`."
+      },
+      {
+       "id": "o8-wu-reverse-list",
+       "title": "Reverse a linked list",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "linked_list_reassignment",
+        "linked_list_traversal"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `reverse(head)` returning the head of the reversed list. Iterative, O(1) extra space."
+      },
+      {
+       "id": "o8-wu-path-sum",
+       "title": "Root-to-leaf sum",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "tree_dfs",
+        "recursion_base_case"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `has_path_sum(root, target)`: `True` if some root-to-leaf path adds up to `target`. Empty tree → `False`."
+      }
+     ]
+    },
+    {
+     "id": "br-133",
+     "title": "Toward Clone Graph",
+     "reps": [
+      {
+       "id": "b133-copy-lists",
+       "title": "Copy an adjacency dict",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "graph_clone",
+        "graph_adjacency",
+        "dict_assign"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`graph` is an adjacency dict: node → list of neighbours. Write `copy_graph(graph)` that returns a **new** dict with a **new** list for every node, so changing the copy never changes the original. `copy_graph({1: [2], 2: "
+      },
+      {
+       "id": "b133-copy-reachable",
+       "title": "Copy only what you can reach",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 9,
+       "difficulty": 3,
+       "skills": [
+        "graph_clone",
+        "graph_dfs",
+        "dict_membership"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`graph` is an adjacency dict and `start` is one of its nodes. Write `copy_from(graph, start)` that returns a new adjacency dict holding **only the nodes reachable from `start`**, each with its own new neighbour list. Let"
+      },
+      {
+       "id": "b133-twins-wire",
+       "title": "Twins first, wires second",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 9,
+       "difficulty": 3,
+       "skills": [
+        "graph_clone",
+        "dict_assign",
+        "dict_lookup"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Now the nodes are objects. `nodes` is a list of **every** `Node` in a graph; each has `.val` and `.neighbors` (a list of other `Node` objects). Write `clone_all(nodes)` that returns a list of copies in the same order. Pa"
+      },
+      {
+       "id": "b133-dbg-late-register",
+       "title": "Debug: the clone that never returns",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 3,
+       "skills": [
+        "graph_clone",
+        "graph_dfs",
+        "recursion_base_case"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`clone_graph(node)` gets one `Node` of a connected graph (every node can be reached from every other by following `.neighbors`) and should return its copy: a new `Node` with the same `val`, whose neighbours are new nodes"
+      },
+      {
+       "id": "b133-copy-chain-mini",
+       "title": "Copy a chain that may loop",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 11,
+       "difficulty": 3,
+       "skills": [
+        "graph_clone",
+        "dict_membership",
+        "listnode",
+        "recursion_base_case"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`head` is the first `ListNode` of a chain (each node has `.val` and `.next`), or `None` for an empty chain. Unlike a normal list, the last node’s `next` may point **back at an earlier node**, so the chain can loop. Write"
+      }
+     ]
+    },
+    {
+     "id": "br-417",
+     "title": "Toward Pacific Atlantic Water Flow",
+     "reps": [
+      {
+       "id": "b417-border-cells",
+       "title": "Collect the top and left edge",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 6,
+       "difficulty": 2,
+       "skills": [
+        "border_reach",
+        "grid_nested",
+        "set_add",
+        "range"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "A grid has `rows` rows and `cols` columns (both at least 1). Write `edge_cells(rows, cols)` that returns every `(r, c)` cell on the **top row or the left column**, each once, as a sorted list. `edge_cells(2, 3)` → `[(0, "
+      },
+      {
+       "id": "b417-spread-many",
+       "title": "Many starts, one visited set",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 11,
+       "difficulty": 3,
+       "skills": [
+        "border_reach",
+        "visited_set",
+        "grid_neighbors",
+        "recursion_base_case"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`grid` is a list of rows of ints: `0` is open, `1` is a wall. `starts` is a list of open `(r, c)` cells; it may be empty. Write `open_reach(grid, starts)` that returns **how many** open cells can be reached from at least"
+      },
+      {
+       "id": "b417-higher-neighbors",
+       "title": "Which neighbours are uphill?",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 7,
+       "difficulty": 2,
+       "skills": [
+        "border_reach",
+        "grid_neighbors",
+        "conditionals"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`heights` is a grid of numbers. Write `higher_neighbors(heights, r, c)` that returns the in-bounds neighbours of `(r, c)` as `(row, col)` tuples, in the order up, down, left, right, whose height is **greater than or equa"
+      },
+      {
+       "id": "b417-dbg-downhill",
+       "title": "Debug: which cells drain left?",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 3,
+       "skills": [
+        "border_reach",
+        "visited_set",
+        "grid_neighbors"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`heights` is a grid of numbers. Rain on a cell runs to any neighbour (up, down, left, right) that is **equal or lower**, and off the grid once it is in the left column. `drains_left(heights)` should return every cell who"
+      },
+      {
+       "id": "b417-both-edges-mini",
+       "title": "Plots that drain north and south",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 13,
+       "difficulty": 4,
+       "skills": [
+        "border_reach",
+        "visited_set",
+        "grid_neighbors",
+        "set_membership"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`field` is a grid of heights: a list of rows of numbers, at least one row and one column. Each cell is a plot. Rain on a plot runs to any neighbour (up, down, left, right) that is equal or lower. It leaves the field to t"
+      }
+     ]
+    },
+    {
+     "id": "br-323",
+     "title": "Toward Number of Connected Components in an Undirected Graph",
+     "reps": [
+      {
+       "id": "b323-walk-starts",
+       "title": "Who starts a new walk?",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 11,
+       "difficulty": 3,
+       "skills": [
+        "connected_components",
+        "graph_dfs",
+        "visited_set"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`graph` is an undirected adjacency dict in which every node is a key. Scan the keys in order; a node that no earlier walk has visited **starts** a new walk that visits everything connected to it. Write `walk_starts(graph"
+      },
+      {
+       "id": "b323-dbg-isolated",
+       "title": "Debug: the missing teams",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 3,
+       "skills": [
+        "connected_components",
+        "graph_adjacency",
+        "dict_get"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Players are numbered `0` to `n - 1`. Each pair in `pairs` knows each other, and everyone connected through people they know forms one team. A player who knows nobody is a team of one. `count_teams(n, pairs)` should retur"
+      },
+      {
+       "id": "b323-circle-sizes-mini",
+       "title": "Sizes of the friend circles",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 14,
+       "difficulty": 3,
+       "skills": [
+        "connected_components",
+        "graph_adjacency",
+        "graph_dfs",
+        "visited_set"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "People are numbered `0` to `n - 1`, and each `[a, b]` in `links` says `a` and `b` are friends. The same friendship may be listed more than once. A circle is everyone connected through friends; someone with no friends is "
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

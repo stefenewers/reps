@@ -7,7 +7,6 @@ import { IconArrowRight, IconCheck } from '@/components/icons'
 import Markdown from '@/components/markdown'
 import type { Lab } from '@/data/course/types'
 import { labKey, labProgress, type LabState } from '@/lib/course/labs'
-import { passedSet } from '@/lib/progress'
 
 /**
  * A lab (REPS_2_MASTER_SPEC.md §34): requirements, design, implement against
@@ -22,7 +21,7 @@ export default function LabView({ lab }: { lab: Lab }) {
     setLocal(next)
     void repo.setState(labKey(lab.id), next)
   }
-  const p = labProgress(lab, saved, passedSet(attempts))
+  const p = labProgress(lab, saved, attempts)
   const step = (n: number, title: string, ok: boolean) => (
     <h2 className="flex items-center gap-2 text-[17px] font-semibold tracking-tight text-ink">
       <span aria-hidden="true" className={`grid size-6 place-items-center rounded-full text-[12px] ${ok ? 'bg-pass text-white' : 'text-muted shadow-[inset_0_0_0_1.5px_var(--line-strong)]'}`}>

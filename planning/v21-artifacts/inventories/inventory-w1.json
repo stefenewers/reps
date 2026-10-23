@@ -1,0 +1,1371 @@
+{
+ "week": 1,
+ "title": "Foundations",
+ "focus": "State, while, mutation, references",
+ "purpose": "Make program state, while loops, indexes, mutation and references understandable enough that later pointer work stands on solid ground.",
+ "weekTarget": 50,
+ "dailyTarget": 10,
+ "trainingDays": [
+  "2026-10-26",
+  "2026-10-27",
+  "2026-10-28",
+  "2026-10-29",
+  "2026-10-30"
+ ],
+ "units": [
+  {
+   "id": "w1-state-while",
+   "title": "State and while loops",
+   "purpose": "A program remembers what something later depends on. A while loop checks, works, changes state and checks again.",
+   "prerequisites": [],
+   "lessonIds": [
+    "l-state",
+    "l-while"
+   ],
+   "workedExampleIds": [
+    "we-countdown"
+   ],
+   "targets": [],
+   "readinessTargets": [],
+   "labs": [],
+   "gates": [],
+   "sections": [
+    {
+     "id": "c1-state",
+     "title": "State",
+     "reps": [
+      {
+       "id": "c1-state-predict",
+       "title": "Trace: a bank balance",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 1.5,
+       "difficulty": 1,
+       "skills": [
+        "accumulator"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Lines run top to bottom, one at a time. A variable keeps its newest value until a line changes it. Predict the output."
+      },
+      {
+       "id": "c1-state-table",
+       "title": "Trace: a table of steps",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 1.5,
+       "difficulty": 1,
+       "skills": [
+        "accumulator",
+        "for_loop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Draw a table on paper with one column per variable: `s`, `total`, `days`. Add a row after each pass of the loop. `//` divides and drops the remainder. Predict the output."
+      },
+      {
+       "id": "c1-state-counter",
+       "title": "Fill: count the good days",
+       "kind": "code",
+       "stage": "complete",
+       "repType": "foundation",
+       "minutes": 2,
+       "difficulty": 1,
+       "skills": [
+        "accumulator",
+        "conditionals"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`steps` is a list of step counts, one per day. `goal` is a number. `days_over_goal(steps, goal)` returns how many days had at least `goal` steps. `days_over_goal([8000, 12000, 10000], 10000)` → `2` Fill in the two blanks"
+      },
+      {
+       "id": "c1-state-swap",
+       "title": "Swap two drinks",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 2,
+       "difficulty": 2,
+       "skills": [
+        "state_tracking"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`left` holds `\"coffee\"` and `right` holds `\"tea\"`. Swap them, so `left` is `\"tea\"` and `right` is `\"coffee\"`. The two lines `left = right` and `right = left` do not work. After the first one, the old value of `left` is g"
+      },
+      {
+       "id": "c1-state-overdrawn",
+       "title": "Count overdrawn moments",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "accumulator",
+        "conditionals"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`start` is a bank balance. `changes` is a list of amounts added to it in order. A negative amount is money taken out. Apply the changes one by one. Return how many times the balance was below 0 right after a change. `cou"
+      },
+      {
+       "id": "c1-state-dbg-reset",
+       "title": "Debug: the total keeps forgetting",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "accumulator",
+        "for_loop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`purchases` is a list of amounts spent. `total_spent(purchases)` should return their sum, and `0` for an empty list. `total_spent([12, 5, 8])` → `25` It returns the wrong answer, and crashes on an empty list. Fix it."
+      }
+     ]
+    },
+    {
+     "id": "c1-while",
+     "title": "While loops",
+     "reps": [
+      {
+       "id": "c1-while-trace-savings",
+       "title": "Trace: saving up",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 1.5,
+       "difficulty": 1,
+       "skills": [
+        "while_loop",
+        "accumulator"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "A `while` loop checks its condition. If it is true, the body runs once, then it checks again. When the condition is false, the program moves on to the line after the loop. Predict the output."
+      },
+      {
+       "id": "c1-while-trace-check-top",
+       "title": "Trace: when the check happens",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 1.5,
+       "difficulty": 1,
+       "skills": [
+        "while_loop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "The condition is checked only at the top of the loop, before each pass. It is not checked in the middle of the body. Predict the output."
+      },
+      {
+       "id": "c1-while-fill-change",
+       "title": "Fill: the missing change",
+       "kind": "code",
+       "stage": "complete",
+       "repType": "foundation",
+       "minutes": 2,
+       "difficulty": 1,
+       "skills": [
+        "while_loop",
+        "accumulator"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`goal` is an amount to save. `per_week` is how much you save each week, and it is at least 1. `weeks_to_goal(goal, per_week)` returns how many weeks it takes to have at least `goal` saved. `weeks_to_goal(100, 30)` → `4` "
+      },
+      {
+       "id": "c1-while-rebuild-countdown",
+       "title": "Rebuild: countdown",
+       "kind": "code",
+       "stage": "reconstruct",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "while_loop",
+        "list_append"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`n` is a whole number. Return a list that counts down from `n` to `1`. If `n` is 0 or less, return an empty list. Use a while loop. Write it from a blank editor. `countdown(3)` → `[3, 2, 1]` `countdown(0)` → `[]` (nothin"
+      },
+      {
+       "id": "c1-while-countdown-by",
+       "title": "Count down by steps",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "while_loop",
+        "list_append"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`start` is a whole number, 0 or more. `step` is how much to subtract each time, and it is at least 1. Start at `start`. Keep subtracting `step`. Return a list of every number you land on, starting with `start`. Stop befo"
+      },
+      {
+       "id": "c1-while-halve-steps",
+       "title": "Clearance sale",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "while_loop",
+        "accumulator"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`price` is a whole number, 0 or more. `k` is a whole number, at least 1. Each day of a sale, the price is cut in half and rounded down: `price // 2`. Return how many days pass until the price is below `k`. If it is alrea"
+      },
+      {
+       "id": "c1-while-dbg-stuck",
+       "title": "Debug: the run that never ends",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "while_loop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`distance` is how far a runner wants to go. `lap` is the length of one lap, at least 1. `laps_to_finish(distance, lap)` should return how many laps it takes to cover at least `distance`. `laps_to_finish(1000, 400)` → `3`"
+      },
+      {
+       "id": "c1-while-dbg-boundary",
+       "title": "Debug: one stop short",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "while_loop",
+        "conditionals"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "A road is `distance` km long. A bus stop goes at km 0 and then every `gap` km, as long as it is still on the road. A stop exactly at the end counts. `gap` is at least 1. `bus_stops(10, 5)` → `3` (stops at 0, 5 and 10) `b"
+      }
+     ]
+    },
+    {
+     "id": "d05-while",
+     "title": "While + indexes",
+     "reps": [
+      {
+       "id": "d05-while-halve",
+       "title": "Halving trace",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 1.5,
+       "difficulty": 1,
+       "skills": [
+        "while_loop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Predict the output. `//` is whole-number division: `5 // 2` is `2`."
+      },
+      {
+       "id": "d05-while-halvings",
+       "title": "Count the halvings",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "while_loop",
+        "accumulator"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`n` is a whole number, 1 or larger. Write `halvings(n)`. Keep replacing `n` with `n // 2` (half of it, rounded down) until it reaches 1. Return how many times you did that. `halvings(8)` → `3` (8 → 4 → 2 → 1) `halvings(1"
+      },
+      {
+       "id": "d05-while-dbg-bounds",
+       "title": "Debug: scan to the first negative",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "while_loop",
+        "list_index"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of numbers, and it may be empty. `first_negative(nums)` should return the index of the first negative value. If there is none, it should return `-1`. `first_negative([3, 0, -2, 5])` → `2` It crashes on s"
+      },
+      {
+       "id": "d05-while-first-at-least",
+       "title": "First index at least target (slow way)",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "while_loop",
+        "list_index"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of numbers **sorted ascending**, smallest first. It may have repeats, and it may be empty. Write `first_at_least(nums, target)` with a while loop. Return the first index `i` where `nums[i] >= target`. If"
+      }
+     ]
+    }
+   ],
+   "optionalSections": []
+  },
+  {
+   "id": "w1-loop-control",
+   "title": "Controlling a loop",
+   "purpose": "Decide when a loop stops, what index it is on and what each pass changes.",
+   "prerequisites": [
+    "w1-state-while"
+   ],
+   "lessonIds": [
+    "l-loop-control"
+   ],
+   "workedExampleIds": [
+    "we-first-negative"
+   ],
+   "targets": [],
+   "readinessTargets": [],
+   "labs": [
+    {
+     "id": "lab-savings-goal",
+     "title": "Savings Goal Simulator",
+     "optional": false
+    }
+   ],
+   "gates": [
+    {
+     "id": "g-loop-control",
+     "title": "Loop control",
+     "need": 2,
+     "skills": [
+      "while_loop",
+      "state_tracking"
+     ],
+     "pool": [
+      "c1-g-countdown-steps",
+      "c1-g-until-total",
+      "c1-g-double-until",
+      "c1-g-halve-count"
+     ]
+    },
+    {
+     "id": "g-index-scan",
+     "title": "Index scan",
+     "need": 2,
+     "skills": [
+      "while_loop",
+      "list_index",
+      "range"
+     ],
+     "pool": [
+      "c1-g-first-over",
+      "c1-g-last-even-index",
+      "c1-g-count-before-stop",
+      "c1-g-index-of-max"
+     ]
+    }
+   ],
+   "sections": [
+    {
+     "id": "c1-loop-control",
+     "title": "Loop control",
+     "reps": [
+      {
+       "id": "c1-loop-trace-index",
+       "title": "Trace: walking by index",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 1.5,
+       "difficulty": 1,
+       "skills": [
+        "while_loop",
+        "list_index"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`i` is an **index**: a position in the list. The first item is at index 0. Predict the output. Pay attention to the last line."
+      },
+      {
+       "id": "c1-loop-fill-scan",
+       "title": "Fill: scan to the first hot day",
+       "kind": "code",
+       "stage": "complete",
+       "repType": "foundation",
+       "minutes": 2,
+       "difficulty": 1,
+       "skills": [
+        "while_loop",
+        "list_index"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`temps` is a list of daily temperatures. `first_hot_day(temps, hot)` returns the index of the first day that is at least `hot`. If there is none, it returns `-1`. `first_hot_day([18, 22, 31, 35], 30)` → `2` Fill in the b"
+      },
+      {
+       "id": "c1-loop-rebuild-first-negative",
+       "title": "Rebuild: first negative balance",
+       "kind": "code",
+       "stage": "reconstruct",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "while_loop",
+        "list_index",
+        "early_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`balances` is a list of end-of-day bank balances. Return the index of the first balance below 0. If there is none, return `-1`. Use a while loop and an index. Write it from a blank editor. `first_negative([40, 15, -5, 20"
+      },
+      {
+       "id": "c1-loop-break",
+       "title": "Total before closing",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "for_loop",
+        "accumulator",
+        "conditionals"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`sales` is a list of sale amounts from one day. A `0` in the list means the shop closed. Everything after it does not count. Return the total of the amounts before the first `0`. If there is no `0`, return the total of a"
+      },
+      {
+       "id": "c1-loop-two-exits",
+       "title": "The day the goal was reached",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "while_loop",
+        "list_index",
+        "accumulator"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`daily_steps` is a list of step counts, one per day. `goal` is a total to reach. Add the days up in order. Return the index of the day on which the total first reaches `goal` or more. If it never does, return `-1`. `goal"
+      },
+      {
+       "id": "c1-loop-dbg-past-end",
+       "title": "Debug: walking off the end",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "while_loop",
+        "list_index"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`forecast` is a list of strings like `\"sun\"` and `\"rain\"`, one per day. `days_before_rain(forecast)` should return how many days come before the first `\"rain\"`. If there is no rain, it should return the number of days. `"
+      },
+      {
+       "id": "c1-loop-last-match",
+       "title": "Last big sale",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "while_loop",
+        "list_index",
+        "early_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`sales` is a list of sale amounts in time order. `min_amount` is a number. Return the index of the **last** sale that is at least `min_amount`. Start at the end of the list and walk backward. If there is none, return `-1"
+      }
+     ]
+    },
+    {
+     "id": "o2-loops",
+     "title": "Loops & range",
+     "reps": [
+      {
+       "id": "o2-for-trace",
+       "title": "Trace: for over a list",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 1.5,
+       "difficulty": 1,
+       "skills": [
+        "for_loop",
+        "list_iterate",
+        "len"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Predict the output."
+      },
+      {
+       "id": "o2-for-print-write",
+       "title": "Write: a printing loop",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 2,
+       "difficulty": 2,
+       "skills": [
+        "for_loop",
+        "list_iterate"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Below the list, write a loop that prints each number and its square on one line: ``` 3 9 5 25 8 64 ```"
+      },
+      {
+       "id": "o2-dbg-for-of",
+       "title": "Debug: total length of words",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 2,
+       "difficulty": 2,
+       "skills": [
+        "for_loop",
+        "accumulator",
+        "len"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`words` is a list of strings. `total_length(words)` should return the lengths of all the words added together, and `0` for an empty list. `total_length(['ab', 'cde'])` → `5` It does not run at all. Read the error, then f"
+      },
+      {
+       "id": "o2-range-basic",
+       "title": "Trace: range with 1, 2 and 3 arguments",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 2,
+       "difficulty": 1,
+       "skills": [
+        "range"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Predict the output. `list(...)` turns a range into a visible list."
+      },
+      {
+       "id": "o2-countdown",
+       "title": "Write: count down with range",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 3.5,
+       "difficulty": 2,
+       "skills": [
+        "range",
+        "list_append"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`n` is a whole number, 0 or more. Write `countdown(n)` that returns the list `[n, n-1, ..., 1]`, using a `for` loop over a `range`. `countdown(3)` → `[3, 2, 1]`. For `n = 0` return `[]`."
+      },
+      {
+       "id": "o2-dbg-squares-range",
+       "title": "Debug: squares up to n",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "range",
+        "list_append"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`n` is a whole number, 0 or more. `squares(n)` should return the squares of 1 through `n` as a list: `squares(3)` → `[1, 4, 9]`. It runs, but the list is wrong."
+      },
+      {
+       "id": "o2-sum-fill",
+       "title": "Write: sum with an accumulator",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "accumulator",
+        "for_loop",
+        "list_iterate"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of numbers. Write `total(nums)` that returns all of them added together, without calling `sum()`. An empty list totals `0`. `total([1, 2, 3])` → `6`"
+      },
+      {
+       "id": "o2-count-evens",
+       "title": "Write: count the evens",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "accumulator",
+        "conditionals",
+        "for_loop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of whole numbers. Write `count_evens(nums)` that returns how many of them are even. `0` and negative even numbers count too. `count_evens([1, 2, 4])` → `2`"
+      },
+      {
+       "id": "o2-max-manual",
+       "title": "Write: largest without max()",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "accumulator",
+        "conditionals",
+        "list_index"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a **non-empty** list of numbers. Write `largest(nums)` that returns the biggest of them, without calling `max()`. The numbers may all be negative. `largest([-4, -1, -8])` → `-1`"
+      },
+      {
+       "id": "o2-dbg-smallest-zero",
+       "title": "Debug: smallest number",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "accumulator",
+        "conditionals"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a non-empty list of numbers. `smallest(nums)` should return the smallest of them, without calling `min()`: `smallest([4, 2, 9])` → `2`. It gives the wrong answer on some lists."
+      },
+      {
+       "id": "o2-early-return-trace",
+       "title": "Trace: early return",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 2,
+       "difficulty": 1,
+       "skills": [
+        "early_return",
+        "functions"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Predict the output. Watch where the function stops."
+      },
+      {
+       "id": "o2-contains-loop",
+       "title": "Write: contains with early return",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 3.5,
+       "difficulty": 2,
+       "skills": [
+        "early_return",
+        "for_loop",
+        "conditionals"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list and `target` is a value to look for. Write `contains(nums, target)` that returns `True` if `target` is one of the items of `nums`, and `False` if it is not (so an empty list gives `False`). Use a loop, n"
+      },
+      {
+       "id": "o2-dbg-early-else",
+       "title": "Debug: any negative?",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "early_return",
+        "conditionals",
+        "for_loop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of numbers. `has_negative(nums)` should return `True` if **any** number in it is below zero, otherwise `False` (an empty list gives `False`). It gives the wrong answer on some lists."
+      }
+     ]
+    }
+   ],
+   "optionalSections": []
+  },
+  {
+   "id": "w1-running-state",
+   "title": "Running state",
+   "purpose": "Keep only the history the rest of the scan needs: a best so far, a count, a previous value.",
+   "prerequisites": [
+    "w1-state-while"
+   ],
+   "lessonIds": [
+    "l-running-state"
+   ],
+   "workedExampleIds": [
+    "we-best-so-far"
+   ],
+   "targets": [],
+   "readinessTargets": [],
+   "labs": [],
+   "gates": [
+    {
+     "id": "g-running-state",
+     "title": "Running state",
+     "need": 2,
+     "skills": [
+      "state_tracking",
+      "accumulator"
+     ],
+     "pool": [
+      "c1-g-longest-rise",
+      "c1-g-max-gap",
+      "c1-g-new-lows",
+      "c1-g-streak-of"
+     ]
+    }
+   ],
+   "sections": [
+    {
+     "id": "c1-running-state",
+     "title": "Running state",
+     "reps": [
+      {
+       "id": "c1-running-trace-best",
+       "title": "Trace: new best score",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 1.5,
+       "difficulty": 1,
+       "skills": [
+        "state_tracking",
+        "conditionals"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Predict the output. Keep a column for `s` and a column for `best`."
+      },
+      {
+       "id": "c1-running-fill-prev",
+       "title": "Fill: remember yesterday",
+       "kind": "code",
+       "stage": "complete",
+       "repType": "foundation",
+       "minutes": 2,
+       "difficulty": 1,
+       "skills": [
+        "state_tracking",
+        "conditionals"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`temps` is a list of daily temperatures. `warmer_days(temps)` returns how many days were warmer than the day before. `warmer_days([10, 12, 11, 15])` → `2` (12 and 15) `prev` holds the day before. It starts as `None` beca"
+      },
+      {
+       "id": "c1-running-rebuild-best",
+       "title": "Rebuild: peak balance",
+       "kind": "code",
+       "stage": "reconstruct",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "state_tracking",
+        "accumulator"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`start` is a bank balance. `changes` is a list of amounts added to it in order. A negative amount is money taken out. Return the highest the balance ever was. The starting balance counts. Write it from a blank editor. `p"
+      },
+      {
+       "id": "c1-running-records",
+       "title": "Count new records",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "state_tracking",
+        "accumulator"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`scores` is a list of game scores in the order they were played. A game sets a **record** when its score beats every score before it. The first game always sets a record. A tie is not a record. Return how many records we"
+      },
+      {
+       "id": "c1-running-longest-same",
+       "title": "Longest run of the same roll",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 6,
+       "difficulty": 2,
+       "skills": [
+        "state_tracking",
+        "conditionals"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`rolls` is a list of dice rolls in order. A **run** is the same value several times in a row, like 5, 5, 5. Return the length of the longest run. One value on its own is a run of 1. An empty list has no runs, so return `"
+      },
+      {
+       "id": "c1-running-dbg-last-run",
+       "title": "Debug: the last dry spell",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "state_tracking",
+        "conditionals"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`rain` is a list of millimetres of rain, one per day. `longest_dry_spell(rain)` should return the most days in a row with `0` rain. `longest_dry_spell([5, 0, 0, 3, 0])` → `2` It is wrong for some inputs. Fix it."
+      }
+     ]
+    },
+    {
+     "id": "d3-running-state",
+     "title": "Running min/max",
+     "reps": [
+      {
+       "id": "d3-rs-trace-min",
+       "title": "Trace min so far",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 2,
+       "difficulty": 1,
+       "skills": [
+        "state_tracking",
+        "list_append"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "What does this print?"
+      },
+      {
+       "id": "d3-rs-largest",
+       "title": "Largest by hand",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "state_tracking",
+        "accumulator",
+        "conditionals"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of numbers with at least one item. Write `largest(nums)`. Return the biggest value in it without calling `max()`. Keep a best-so-far variable and update it as you loop. It must work when every value is n"
+      },
+      {
+       "id": "d3-rs-debug-init",
+       "title": "Fix min and max",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "state_tracking",
+        "tuples"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of numbers with at least one item. `min_and_max(nums)` should return the smallest and largest values as a tuple `(smallest, largest)`. It finds both in one pass. Make the tests pass. `min_and_max([3, 9, "
+      },
+      {
+       "id": "d3-rs-prefix-mins",
+       "title": "Prefix minimums",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "state_tracking",
+        "list_append",
+        "list_create"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of numbers (it may be empty). Write `prefix_mins(nums)`. Return a new list of the same length. Entry `i` is the smallest value so far: the smallest of `nums[0]` through `nums[i]`, including `nums[i]`. An"
+      },
+      {
+       "id": "d3-rs-records",
+       "title": "Count new records",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "state_tracking",
+        "conditionals",
+        "accumulator"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`scores` is a list of numbers in the order they happened. It may be empty, and scores can be negative. A score is a **record** if it is strictly higher than every score before it. The first score always counts. Write `co"
+      },
+      {
+       "id": "d3-rs-biggest-drop",
+       "title": "Biggest fall from a peak",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 6,
+       "difficulty": 3,
+       "skills": [
+        "state_tracking",
+        "list_iterate"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`values` is a list of numbers in time order (it may be empty). Write `biggest_drop(values)`. Return the largest fall from an earlier value to a later one: the largest `values[i] - values[j]` with `i < j`. If the values n"
+      }
+     ]
+    }
+   ],
+   "optionalSections": []
+  },
+  {
+   "id": "w1-mutation-references",
+   "title": "Mutation and references",
+   "purpose": "Know when two names point at the same list, and what changing it in place does to everyone holding it.",
+   "prerequisites": [
+    "w1-state-while"
+   ],
+   "lessonIds": [
+    "l-mutation-references"
+   ],
+   "workedExampleIds": [
+    "we-shared-list"
+   ],
+   "targets": [],
+   "readinessTargets": [],
+   "labs": [],
+   "gates": [
+    {
+     "id": "g-mutation-references",
+     "title": "Mutation and references",
+     "need": 2,
+     "skills": [
+      "list_append",
+      "functions",
+      "list_index"
+     ],
+     "pool": [
+      "c1-g-alias-trace",
+      "c1-g-remove-in-place",
+      "c1-g-copy-not-alias",
+      "c1-g-swap-ends"
+     ]
+    }
+   ],
+   "sections": [
+    {
+     "id": "c1-mutation",
+     "title": "Mutation",
+     "reps": [
+      {
+       "id": "c1-mut-trace-cart",
+       "title": "Trace: a shopping cart",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 1.5,
+       "difficulty": 1,
+       "skills": [
+        "list_append",
+        "list_index"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`append` adds to the end. `cart[0] = ...` replaces one item. `pop()` removes the last item and gives it back. Predict the output."
+      },
+      {
+       "id": "c1-mut-trace-return",
+       "title": "Trace: change it or return a new one",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 1.5,
+       "difficulty": 1,
+       "skills": [
+        "functions",
+        "list_append"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "One function changes the list it is given. The other builds a new list and returns it. A function with no `return` gives back `None`. Predict the output."
+      },
+      {
+       "id": "c1-mut-cap-scores",
+       "title": "Cap the scores in place",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "list_index",
+        "accumulator"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`scores` is a list of numbers. `limit` is the highest score allowed. Change `scores` in place: replace every score above `limit` with `limit`. Do not build a new list. Return how many scores you changed. `cap_scores([5, "
+      },
+      {
+       "id": "c1-mut-new-list",
+       "title": "Restock without touching the original",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "list_append",
+        "functions"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`stock` is a list of item counts. `amount` is how many of each item arrive. Return a **new** list where every count is `amount` higher. Do not change `stock`. `restock([3, 0, 5], 2)` → `[5, 2, 7]` `restock([], 2)` → `[]`"
+      },
+      {
+       "id": "c1-mut-dbg-remove",
+       "title": "Debug: removing while walking",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "while_loop",
+        "list_index"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`boxes` is a list of item counts. `remove_empty(boxes)` should remove every `0` from `boxes` in place. It changes the list itself and returns nothing. After `remove_empty(b)` with `b = [3, 0, 0, 4]`, `b` is `[3, 4]`. It "
+      }
+     ]
+    },
+    {
+     "id": "c1-references",
+     "title": "References",
+     "reps": [
+      {
+       "id": "c1-ref-trace-alias",
+       "title": "Trace: two names, one list",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 1.5,
+       "difficulty": 1,
+       "skills": [
+        "list_append"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`yours = mine` does not copy the list. It gives the same list a second name. `mine[:]` makes a new list with the same items. `is` asks: are these the very same list? Predict the output."
+      },
+      {
+       "id": "c1-ref-trace-function",
+       "title": "Trace: a function gets the same list",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 1.5,
+       "difficulty": 1,
+       "skills": [
+        "functions",
+        "list_append"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "When you pass a list to a function, the parameter is another name for the caller's list. Assigning a new list to the parameter only moves that name. Predict the output."
+      },
+      {
+       "id": "c1-ref-rebuild-shared",
+       "title": "Rebuild: cart history",
+       "kind": "code",
+       "stage": "reconstruct",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "list_append",
+        "functions"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`items` is a list of item names added to a shopping cart, in order. The cart starts empty. Return a list of what the cart held after each item was added. Each entry is a list. Write it from a blank editor. `cart_history("
+      },
+      {
+       "id": "c1-ref-top-three",
+       "title": "Top three, without side effects",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "sorting",
+        "functions"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`scores` is a list of numbers. Return the three highest, largest first. If there are fewer than three, return all of them, largest first. Do not change `scores`. The caller still needs it in its original order. `top_thre"
+      },
+      {
+       "id": "c1-ref-dbg-grid",
+       "title": "Debug: booking one seat books a column",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "list_index",
+        "list_append"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`book_seat(rows, cols, r, c)` should build a seating plan with `rows` rows and `cols` seats per row, all `0`. Then it sets the seat at row `r`, seat `c` to `1` and returns the plan. `book_seat(2, 3, 0, 1)` → `[[0, 1, 0],"
+      }
+     ]
+    }
+   ],
+   "optionalSections": []
+  },
+  {
+   "id": "w1-integration",
+   "title": "Small programs from parts",
+   "purpose": "Split a task into small functions that each own one job, then put them together.",
+   "prerequisites": [
+    "w1-loop-control",
+    "w1-running-state",
+    "w1-mutation-references"
+   ],
+   "lessonIds": [
+    "l-decomposition"
+   ],
+   "workedExampleIds": [],
+   "targets": [],
+   "readinessTargets": [],
+   "labs": [
+    {
+     "id": "lab-inventory",
+     "title": "Inventory Processor",
+     "optional": false
+    }
+   ],
+   "gates": [],
+   "sections": [
+    {
+     "id": "c1-decompose",
+     "title": "Decomposition",
+     "reps": [
+      {
+       "id": "c1-dec-parse",
+       "title": "Job 1: parse one order",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "functions",
+        "string_methods"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`line` is one order from a shop's log, written as `\"name,quantity,price\"`. The price is in cents. Every line has exactly two commas. Return a tuple `(name, quantity, price)` with `quantity` and `price` turned into whole "
+      },
+      {
+       "id": "c1-dec-validate",
+       "title": "Job 2: is the order valid?",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "functions",
+        "conditionals"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`order` is a tuple `(name, quantity, price)`. Return `True` if the order is valid and `False` if it isn't. The name must not be empty. The quantity must be at least 1. The price must be 0 or more. `is_valid((\"tea\", 2, 25"
+      },
+      {
+       "id": "c1-dec-summarise",
+       "title": "Job 3: summarise the orders",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "functions",
+        "accumulator"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`orders` is a list of valid `(name, quantity, price)` tuples. Prices are in cents. Return a tuple `(items, total)`. `items` is the sum of the quantities. `total` is the sum of quantity times price. `summarise([(\"tea\", 2,"
+      },
+      {
+       "id": "c1-dec-report",
+       "title": "Put the jobs together",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 6,
+       "difficulty": 2,
+       "skills": [
+        "functions",
+        "conditionals",
+        "accumulator"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`lines` is a list of order lines like `\"tea,2,250\"`. Three helpers are given in the editor: one parses a line, one checks it, one summarises. Return a dict with four keys. `\"orders\"` is how many lines were valid. `\"skipp"
+      },
+      {
+       "id": "c1-dec-dbg-helper",
+       "title": "Debug: one helper does its job wrong",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "functions",
+        "string_methods"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`report(lines)` should count valid and skipped order lines and total up the valid ones. All the code is in the editor. `report([\"tea,2,250\"])` → `{\"orders\": 1, \"skipped\": 0, \"items\": 2, \"total\": 500}` It crashes. Call ea"
+      }
+     ]
+    }
+   ],
+   "optionalSections": []
+  }
+ ]
+}

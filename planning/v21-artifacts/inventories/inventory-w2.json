@@ -1,0 +1,4029 @@
+{
+ "week": 2,
+ "title": "Problem Solving",
+ "focus": "Contract, examples, tests, improve",
+ "purpose": "The bridge between knowing syntax and turning an unfamiliar prompt into code on your own.",
+ "weekTarget": 60,
+ "dailyTarget": 12,
+ "trainingDays": [
+  "2026-11-02",
+  "2026-11-03",
+  "2026-11-04",
+  "2026-11-05",
+  "2026-11-06"
+ ],
+ "units": [
+  {
+   "id": "w2-contract",
+   "title": "Understand the contract",
+   "purpose": "Before code: what goes in, what comes out, and what the edge cases are.",
+   "prerequisites": [
+    "w1-integration"
+   ],
+   "lessonIds": [
+    "l-solve-map",
+    "l-contract"
+   ],
+   "workedExampleIds": [
+    "we-contract"
+   ],
+   "targets": [],
+   "readinessTargets": [],
+   "labs": [
+    {
+     "id": "lab-pricing-engine",
+     "title": "Pricing Engine",
+     "optional": false
+    }
+   ],
+   "gates": [
+    {
+     "id": "g-contract",
+     "title": "Contract",
+     "need": 2,
+     "skills": [
+      "edge_cases",
+      "explanation"
+     ],
+     "pool": [
+      "c2-g-contract-a",
+      "c2-g-contract-b",
+      "c2-g-contract-c",
+      "c2-g-contract-d"
+     ]
+    }
+   ],
+   "sections": [
+    {
+     "id": "c2-contract",
+     "title": "The contract",
+     "reps": [
+      {
+       "id": "c2-contract-trace",
+       "title": "What the contract promises",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 1.5,
+       "difficulty": 1,
+       "skills": [
+        "edge_cases",
+        "functions"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`average(scores)` has a contract. A list of scores goes in. Their average comes out. An empty list gives `0`. Predict exactly what this prints. Watch the type of each answer."
+      },
+      {
+       "id": "c2-contract-examples",
+       "title": "Examples before code",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "edge_cases"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`cheapest(prices)` takes a list of prices in cents. It returns the smallest price. An empty list returns `None`. Don't write `cheapest`. Write its examples first. Make `examples()` return a list of pairs `(prices, answer"
+      },
+      {
+       "id": "c2-contract-first-late",
+       "title": "Honour the contract: first late order",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "edge_cases",
+        "early_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`days` is a list of how many days each order took to arrive, in order. `limit` is the promised number of days. Return the index of the first order that took longer than `limit`. Taking exactly `limit` days is on time. If"
+      },
+      {
+       "id": "c2-contract-top-seller",
+       "title": "Honour the contract: ties",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "edge_cases",
+        "dict_items",
+        "state_tracking"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`sales` is a dict from product name to units sold. Return the product with the most units sold. On a tie, return the name that comes first alphabetically. An empty dict returns `''`. `top_seller({'mug': 4, 'cap': 9, 'pen"
+      },
+      {
+       "id": "c2-contract-type-debug",
+       "title": "Debug: the wrong kind of answer",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "edge_cases",
+        "list_append"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`names` is a list of customer names, one per order. `repeat_customers(names)` should return a **list** of the names that appear more than once. Each name appears once in the answer, in the order it first appeared in `nam"
+      },
+      {
+       "id": "c2-contract-gap-debug",
+       "title": "Debug: the edge the code forgot",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "edge_cases",
+        "state_tracking"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`times` is a sorted list of the minutes at which support tickets arrived. `longest_wait(times)` should return the longest gap between two tickets in a row. With fewer than two tickets, return `0`. `longest_wait([3, 10, 1"
+      },
+      {
+       "id": "c2-contract-rebuild",
+       "title": "Rebuild: the best sales day",
+       "kind": "code",
+       "stage": "reconstruct",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "edge_cases",
+        "state_tracking"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`sales` is a list of daily sales totals, one per day. Return the index of the day with the highest sales. On a tie, return the earlier day. An empty list returns `-1`. Write the contract as comments first, then the code."
+      }
+     ]
+    }
+   ],
+   "optionalSections": []
+  },
+  {
+   "id": "w2-manual",
+   "title": "Solve it by hand first",
+   "purpose": "Do the example by hand, notice the steps, and turn those steps into subgoals.",
+   "prerequisites": [
+    "w2-contract"
+   ],
+   "lessonIds": [
+    "l-manual"
+   ],
+   "workedExampleIds": [
+    "we-manual"
+   ],
+   "targets": [],
+   "readinessTargets": [],
+   "labs": [],
+   "gates": [
+    {
+     "id": "g-decomposition",
+     "title": "Decomposition",
+     "need": 2,
+     "skills": [
+      "functions",
+      "conditionals"
+     ],
+     "pool": [
+      "c2-g-decompose-a",
+      "c2-g-decompose-b",
+      "c2-g-decompose-c",
+      "c2-g-decompose-d"
+     ]
+    }
+   ],
+   "sections": [
+    {
+     "id": "c2-manual",
+     "title": "By hand first",
+     "reps": [
+      {
+       "id": "c2-manual-table",
+       "title": "A hand table, printed",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 1.5,
+       "difficulty": 1,
+       "skills": [
+        "state_tracking",
+        "conditionals"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "A shop has 5 units in stock and fills orders in turn. An order it cannot fill is skipped. Write the table by hand, one row per order, then check it against what this prints."
+      },
+      {
+       "id": "c2-manual-stamps",
+       "title": "From the table to code",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "state_tracking",
+        "conditionals",
+        "accumulator"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`purchases` is a list of coffee purchase amounts in dollars, in order. A purchase of $5 or more earns one stamp. When you reach 4 stamps, you earn a free coffee and your stamps go back to 0. Return how many free coffees "
+      },
+      {
+       "id": "c2-manual-split-bill",
+       "title": "Finish the subgoals",
+       "kind": "code",
+       "stage": "complete",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "functions",
+        "accumulator",
+        "list_append"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`total` is a bill in cents. `people` is how many people split it, at least 1. Each person pays `total // people`. The leftover cents go one each to the first people in line. Return a list of what each person pays. By han"
+      },
+      {
+       "id": "c2-manual-parking-debug",
+       "title": "Debug: the step the code skips",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "conditionals",
+        "edge_cases"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`minutes` is how long a car stayed in a garage. The fee is $3 for every started hour: 61 minutes counts as 2 hours. 0 minutes costs $0. One stay never costs more than $15. `parking_fee(minutes)` should return the fee in "
+      },
+      {
+       "id": "c2-manual-helpers",
+       "title": "Steps as helper functions",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "functions",
+        "string_methods",
+        "dict_get"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Each line of a packing list looks like `'mug:3'`: an item name, a colon, then a quantity. `lines` is a list of such lines. An item can appear on more than one line. By hand, `['mug:3', 'pen:2', 'mug:1']` goes like this. "
+      },
+      {
+       "id": "c2-manual-reorder",
+       "title": "Put the subgoals in order",
+       "kind": "reorder",
+       "stage": "reconstruct",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "functions",
+        "conditionals"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`scores` is a list of test scores from 0 to 100. `letter_counts(scores)` returns a dict counting the letter grades. 90 and up is `'A'`, 80 and up is `'B'`, 70 and up is `'C'`, and anything lower is `'F'`. Every letter ap"
+      },
+      {
+       "id": "c2-manual-tickets",
+       "title": "Hand steps to helpers, on your own",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "functions",
+        "conditionals",
+        "accumulator"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "A cinema prices tickets by age. Under 12 pays $8. 65 and over pays $9. Everyone else pays $14. A group of 5 or more people gets $10 off the total. `ages` is a list of the ages in one group. Write two functions: - `ticket"
+      },
+      {
+       "id": "c2-manual-rebuild",
+       "title": "Rebuild: compress a string",
+       "kind": "code",
+       "stage": "reconstruct",
+       "repType": "foundation",
+       "minutes": 6,
+       "difficulty": 2,
+       "skills": [
+        "string_iterate",
+        "state_tracking",
+        "edge_cases"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`s` is a string. Return a compressed version: each run of the same letter becomes the letter followed by how long the run is. An empty string returns `''`. Work `'aaabcc'` by hand in a table first. Then write the code fr"
+      }
+     ]
+    },
+    {
+     "id": "d3-strings",
+     "title": "Strings",
+     "reps": [
+      {
+       "id": "d3-str-trace-index",
+       "title": "Trace string indexes",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 2,
+       "difficulty": 1,
+       "skills": [
+        "string_index",
+        "len"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "What does this print?"
+      },
+      {
+       "id": "d3-str-count-vowels",
+       "title": "Count vowels",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "string_iterate",
+        "conditionals",
+        "accumulator"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`s` is a string of lowercase letters (it may be empty). Write `count_vowels(s)` returning how many of its characters are vowels: one of `a e i o u`. `count_vowels(\"banana\")` → `3`"
+      },
+      {
+       "id": "d3-str-same-ends",
+       "title": "Same first and last",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "string_index",
+        "conditionals",
+        "edge_cases"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`s` is a string. Write `same_ends(s)` returning `True` if its first and last characters are equal, otherwise `False`. A one-character string counts (that character is both first and last). An empty string returns `False`"
+      },
+      {
+       "id": "d3-str-debug-immutable",
+       "title": "Capitalize the first letter",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "string_index",
+        "slicing"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`s` is a string. `capitalize_first(s)` should return a string like `s` but with its first character upper-cased and everything else unchanged: `\"hello\"` → `\"Hello\"`. An empty string comes back as `\"\"`. Make the tests pas"
+      },
+      {
+       "id": "d3-str-first-digit",
+       "title": "Index of the first digit",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "string_iterate",
+        "enumerate",
+        "string_methods",
+        "early_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`s` is a string that may mix letters and digits. Write `first_digit_index(s)` that returns the index of the first digit character in `s`, or `-1` if there is none (including when `s` is empty). `ch.isdigit()` is `True` w"
+      },
+      {
+       "id": "d3-str-mirror-pairs",
+       "title": "Mirror index pairs",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 6,
+       "difficulty": 3,
+       "skills": [
+        "string_index",
+        "range",
+        "len",
+        "list_append",
+        "list_create"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`s` is a string. The **mirror** of a position is the one the same distance from the other end: index 0 mirrors the last index, index 1 mirrors the one before it, and so on. Write `mirror_pairs(s)` returning a list of tup"
+      }
+     ]
+    },
+    {
+     "id": "d3-slicing",
+     "title": "Slicing",
+     "reps": [
+      {
+       "id": "d3-slice-trace",
+       "title": "Trace four slices",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 2,
+       "difficulty": 1,
+       "skills": [
+        "slicing"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "What does this print?"
+      },
+      {
+       "id": "d3-slice-is-mirror",
+       "title": "Palindrome in one line",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "slicing",
+        "functions"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "A **palindrome** is a string that reads the same backwards as forwards, like `\"racecar\"`. `s` is a string. Write `is_mirror(s)` in a single `return` line: `True` if `s` is a palindrome, otherwise `False`. Characters are "
+      },
+      {
+       "id": "d3-slice-split-halves",
+       "title": "Split into halves",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "slicing",
+        "len",
+        "tuples"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`s` is a string. Write `split_halves(s)` returning a tuple `(front, back)` of two strings: the first half and the last half of `s`, each `len(s) // 2` characters long. For odd lengths the middle character belongs to neit"
+      },
+      {
+       "id": "d3-slice-debug-reverse",
+       "title": "Find the palindrome words",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "slicing",
+        "list_append"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`words` is a list of strings. `palindrome_words(words)` should return a new list holding, in their original order, only the words that read the same backwards as forwards (palindromes, like `\"noon\"`). A one-letter word c"
+      },
+      {
+       "id": "d3-slice-rotate",
+       "title": "Rotate left",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 6,
+       "difficulty": 3,
+       "skills": [
+        "slicing",
+        "len",
+        "edge_cases"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`s` is a string and `k` is a whole number, 0 or more. Write `rotate_left(s, k)` returning a new string with the first `k` characters of `s` moved to the end. `k` may be larger than `len(s)`: keep rotating, so on a 5-char"
+      },
+      {
+       "id": "d3-slice-debug-middle",
+       "title": "Middle three characters",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "slicing",
+        "len"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`s` is a string that always has an odd length of at least 3. `middle_three(s)` should return the three characters in the middle of `s`, as a string: `\"abcde\"` → `\"bcd\"`. Make the tests pass."
+      },
+      {
+       "id": "d3-slice-break-last-k",
+       "title": "Break last_k",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "slicing",
+        "edge_cases"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "A teammate wrote: ```python def last_k(s, k): return s[-k:] ``` It is meant to return the last `k` characters of the string `s`, and it is right for most inputs. Write `breaking_input()`, which takes nothing and returns "
+      }
+     ]
+    },
+    {
+     "id": "d3-methods",
+     "title": "String methods",
+     "reps": [
+      {
+       "id": "d3-meth-trace",
+       "title": "Trace lower, split, join",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 2,
+       "difficulty": 1,
+       "skills": [
+        "string_methods"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "What does this print?"
+      },
+      {
+       "id": "d3-meth-keep-letters",
+       "title": "Keep only letters",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "string_methods",
+        "list_append",
+        "list_create"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`s` is a string that may hold letters, digits, spaces and punctuation. Write `keep_letters(s)` that returns a new string holding only the letters of `s`, in order, with their case unchanged. If there are no letters, retu"
+      },
+      {
+       "id": "d3-meth-clean",
+       "title": "Clean a phrase",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "string_methods",
+        "string_iterate",
+        "list_append"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`s` is a string that may hold letters, digits, spaces and punctuation. Write `clean(s)` returning a new string: the letters and digits of `s`, in order, all lowercased, with everything else (spaces, punctuation) removed."
+      },
+      {
+       "id": "d3-meth-debug-isalnum",
+       "title": "Count letters and digits",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "string_methods",
+        "accumulator"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`s` is a string. `count_alnum(s)` should return how many of its characters are letters or digits: `\"a1, b2!\"` → `4`. An empty string gives `0`. Make the tests pass."
+      },
+      {
+       "id": "d3-meth-reverse-words",
+       "title": "Reverse word order",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "string_methods",
+        "slicing"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`s` is a string of words separated by one or more spaces. Write `reverse_words(s)` returning one string: the words of `s` in reverse order, separated by single spaces. Extra spaces in the input disappear, and an empty st"
+      },
+      {
+       "id": "d3-meth-word-counts",
+       "title": "Word frequency",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "string_methods",
+        "frequency_map",
+        "dict_get"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`s` is a string of words separated by spaces. Write `word_counts(s)` returning a dict from each word, **lowercased**, to how many times it appears. Case is ignored, so `\"The\"` and `\"the\"` are the same word. An empty stri"
+      },
+      {
+       "id": "d3-meth-clean-mirror",
+       "title": "Clean, then compare",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "string_methods",
+        "slicing"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`s` is a string that may hold letters, digits, spaces and punctuation. Write `is_clean_mirror(s)`. Lowercase `s` and drop everything that isn't a letter or digit. Return `True` if what is left reads the same backwards, o"
+      }
+     ]
+    }
+   ],
+   "optionalSections": []
+  },
+  {
+   "id": "w2-testing",
+   "title": "Test your own code",
+   "purpose": "Choose the inputs that would break it, and check them before anyone else does.",
+   "prerequisites": [
+    "w2-contract"
+   ],
+   "lessonIds": [
+    "l-testing"
+   ],
+   "workedExampleIds": [],
+   "targets": [],
+   "readinessTargets": [],
+   "labs": [
+    {
+     "id": "lab-shipping-eligibility",
+     "title": "Shipping Eligibility Engine",
+     "optional": false
+    }
+   ],
+   "gates": [
+    {
+     "id": "g-testing",
+     "title": "Testing",
+     "need": 2,
+     "skills": [
+      "edge_cases"
+     ],
+     "pool": [
+      "c2-g-test-a",
+      "c2-g-test-b",
+      "c2-g-test-c",
+      "c2-g-test-d"
+     ]
+    }
+   ],
+   "sections": [
+    {
+     "id": "c2-testing",
+     "title": "Testing your own code",
+     "reps": [
+      {
+       "id": "c2-test-break-boundary",
+       "title": "Break it: the boundary",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 2,
+       "difficulty": 2,
+       "skills": [
+        "edge_cases",
+        "conditionals"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "An order ships free when its total is $50 or more. This check is in the editor: ```python def ships_free(total): return total > 50 ``` Leave `ships_free` as it is. Make `breaking_input()` return a total on which it gives"
+      },
+      {
+       "id": "c2-test-break-empty",
+       "title": "Break it: the empty list",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 2,
+       "difficulty": 2,
+       "skills": [
+        "edge_cases"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`lowest_stock(counts)` should return the smallest stock count in the list. An empty list should return `None`. ```python def lowest_stock(counts): lowest = counts[0] for c in counts: if c < lowest: lowest = c return lowe"
+      },
+      {
+       "id": "c2-test-break-ties",
+       "title": "Break it: the tie",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "edge_cases",
+        "dict_items"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`votes` is a dict from a menu item to how many votes it got. `winner(votes)` should return the item with the most votes. On a tie, it should return the name that comes first alphabetically. ```python def winner(votes): b"
+      },
+      {
+       "id": "c2-test-write-asserts",
+       "title": "Write the test that catches it",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "edge_cases"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`count_late(days, limit)` should count the orders that took **more than** `limit` days. Someone wrote it with `>=`: ```python def count_late(days, limit): count = 0 for d in days: if d >= limit: count += 1 return count `"
+      },
+      {
+       "id": "c2-test-weak-test",
+       "title": "A test that misses the bug",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "edge_cases"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`average_rating(ratings)` should return the average of a list of ratings, rounded to 1 decimal place. An empty list should return `0.0`. The test in the editor passes for a correct version. It also passes for this buggy "
+      },
+      {
+       "id": "c2-test-dupes-debug",
+       "title": "Debug: let the tests point",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "edge_cases",
+        "list_append"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`skus` is a list of product codes from today's orders. `sold_once(skus)` should return the codes that appear exactly once, in the order they appear. `sold_once(['a', 'b', 'a'])` → `['b']` Run the tests, read which one fa"
+      },
+      {
+       "id": "c2-test-catch-three",
+       "title": "Catch three hidden bugs",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 6,
+       "difficulty": 3,
+       "skills": [
+        "edge_cases"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`second_best(scores)` returns the second-highest **different** score in the list. With fewer than two different scores, it returns `None`. `[90, 70, 90, 80]` gives `80`. 90 is the highest, and the second 90 does not coun"
+      }
+     ]
+    },
+    {
+     "id": "o11-edges",
+     "title": "Edge cases",
+     "reps": [
+      {
+       "id": "o11-wt-profit",
+       "title": "Break it: profit",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "edge_cases",
+        "state_tracking"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`max_profit(prices)` should return the best profit from buying once and selling on a later day, or 0 if no profit is possible. `prices` is never empty. Do not fix it yet. Write `edge_cases()` returning a list of at least"
+      },
+      {
+       "id": "o11-dbg-profit",
+       "title": "Fix it: profit",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "edge_cases",
+        "state_tracking"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Now make it correct: return the best profit from one buy followed by a later sell, or 0 if no profit is possible. `prices` is never empty."
+      },
+      {
+       "id": "o11-wt-bsearch",
+       "title": "Break it: binary search",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "edge_cases",
+        "search_invariant"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`search(nums, target)` should return the index of `target` in the sorted, distinct list `nums`, or -1. Write `edge_cases()` returning at least two `(nums, target, expected)` triples with correct expected values, where at"
+      },
+      {
+       "id": "o11-edge-bsearch-fix",
+       "title": "Fix the binary search",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "binary_search",
+        "search_invariant",
+        "edge_cases"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "This is the search you just broke. Make it return the index of `target` in sorted `nums`, or -1."
+      },
+      {
+       "id": "o11-dbg-brackets",
+       "title": "Fix it: brackets",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "edge_cases",
+        "matching_pairs",
+        "stack_push_pop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Return `True` if every bracket in `s` is closed by the matching type in the right order, and nothing is left open."
+      },
+      {
+       "id": "o11-edge-second",
+       "title": "Second largest distinct",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "edge_cases",
+        "state_tracking",
+        "conditionals"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Return the second largest **distinct** value in `nums`, or `None` if there is not one. Think about empty lists, one value, and repeats before you type."
+      },
+      {
+       "id": "o11-dbg-touching",
+       "title": "Fix it: touching intervals",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "edge_cases",
+        "interval_overlap",
+        "sorting"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Merge overlapping intervals and return them sorted by start. Intervals that only touch, like `[1, 3]` and `[3, 5]`, count as overlapping. Input is non-empty."
+      },
+      {
+       "id": "o11-dbg-empty-grid",
+       "title": "Fix it: empty grid",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 2.5,
+       "difficulty": 2,
+       "skills": [
+        "edge_cases",
+        "grid_nested"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Return the total of all values in `grid`, a list of equal-length rows of numbers. An empty grid (`[]`) has total 0."
+      },
+      {
+       "id": "o11-edge-kth-end",
+       "title": "k-th node from the end",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 5,
+       "difficulty": 3,
+       "skills": [
+        "edge_cases",
+        "linked_list_traversal",
+        "two_pointer"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Return the value of the k-th node from the end of a linked list (`k = 1` is the last node). Return `None` if the list is shorter than `k`. One pass if you can."
+      },
+      {
+       "id": "o11-wt-two-sum",
+       "title": "Break it: pair sum",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 3.5,
+       "difficulty": 2,
+       "skills": [
+        "edge_cases",
+        "index_map",
+        "complement"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`two_sum(nums, target)` should return two **different** indexes whose values add to `target` (an answer always exists). Write `edge_cases()` returning at least two `(nums, target)` pairs that each have an answer, where a"
+      }
+     ]
+    }
+   ],
+   "optionalSections": []
+  },
+  {
+   "id": "w2-improve",
+   "title": "Brute force, then improve",
+   "purpose": "Write the simple version, find the repeated work, and remove it.",
+   "prerequisites": [
+    "w2-manual"
+   ],
+   "lessonIds": [
+    "l-improve"
+   ],
+   "workedExampleIds": [
+    "we-improve"
+   ],
+   "targets": [],
+   "readinessTargets": [],
+   "labs": [],
+   "gates": [],
+   "sections": [
+    {
+     "id": "c2-improve",
+     "title": "Brute force, then improve",
+     "reps": [
+      {
+       "id": "c2-improve-count-work",
+       "title": "Count the pair checks",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 2,
+       "difficulty": 1,
+       "skills": [
+        "complexity",
+        "for_loop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "A brute-force solution often compares every pair of items. Predict how many pairs this checks for 4, 8 and 16 items."
+      },
+      {
+       "id": "c2-improve-avg-once",
+       "title": "Compute it once",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "complexity",
+        "accumulator"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`scores` is a list of numbers. This counts the scores above the average. It is correct, but it adds up the whole list again for every score: ```python def above_average_slow(scores): count = 0 for s in scores: if s > sum"
+      },
+      {
+       "id": "c2-improve-pairs-brute",
+       "title": "Brute force: matching sizes",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "complexity",
+        "for_loop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`sizes` is a list of shoe sizes returned to a store. Two returns **match** when they have the same size. Return how many matches there are: count every pair of positions `i < j` with the same size. Write it the simple wa"
+      },
+      {
+       "id": "c2-improve-pairs-trace",
+       "title": "Remember instead of rescanning",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 2,
+       "difficulty": 1,
+       "skills": [
+        "complexity",
+        "frequency_map"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "The brute force rescans every earlier shoe for each new one. Instead, keep a count of each size seen so far. A new shoe makes one new pair with each earlier shoe of its size. Predict what this prints."
+      },
+      {
+       "id": "c2-improve-pairs-fast",
+       "title": "Improve: matching sizes in one pass",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "complexity",
+        "frequency_map",
+        "dict_get"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`sizes` is a list of shoe sizes. Return how many pairs of positions `i < j` have the same size. Do it in one pass. Keep a dict from each size to how many times you've seen it so far. Each new shoe adds one pair per earli"
+      },
+      {
+       "id": "c2-improve-refunds",
+       "title": "Improve: replace the inner scan",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "complexity",
+        "dict_create",
+        "dict_lookup"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`orders` is a list of `(order_id, amount)` pairs, with no id repeated. `returned` is a list of order ids that were sent back. Return the total refund: the sum of the amounts of the returned orders. Ignore ids that match "
+      },
+      {
+       "id": "c2-improve-debug-lookup",
+       "title": "Debug: the lookup points the wrong way",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "dict_assign",
+        "dict_lookup",
+        "complexity"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`catalog` is a list of `(sku, price)` pairs. `cart` is a list of skus, and a sku can appear more than once. Every sku in `cart` is in `catalog`. `cart_total(catalog, cart)` should return the total price of the cart. It b"
+      },
+      {
+       "id": "c2-improve-rebuild",
+       "title": "Rebuild: the first repeated ticket",
+       "kind": "code",
+       "stage": "reconstruct",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "complexity",
+        "set_membership",
+        "set_add"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`ids` is a list of ticket ids in the order they were scanned. Return the first id that is scanned a second time: the repeat that happens earliest. If nothing repeats, return `None`. Write the simple version in your head,"
+      }
+     ]
+    },
+    {
+     "id": "o2-complements",
+     "title": "Complements",
+     "reps": [
+      {
+       "id": "o2-comp-write",
+       "title": "Write: list the complements",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "complement",
+        "list_append",
+        "for_loop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of numbers and `target` is a number. Write `complements(nums, target)` that returns a list with one entry per number, in the same order: the amount you would have to add to that number to reach `target`."
+      },
+      {
+       "id": "o2-comp-nested",
+       "title": "Write: pair check, brute force",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 4.5,
+       "difficulty": 2,
+       "skills": [
+        "range",
+        "for_loop",
+        "complement",
+        "early_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of numbers and `target` is a number. Write `pair_exists_slow(nums, target)` that returns `True` if two numbers at **different positions** `i < j` add up to `target`, otherwise `False`. Use two nested loo"
+      },
+      {
+       "id": "o2-comp-set-trace",
+       "title": "Trace: complement against a seen-set",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 2,
+       "difficulty": 1,
+       "skills": [
+        "complement",
+        "set_membership",
+        "set_add"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Predict the output."
+      },
+      {
+       "id": "o2-comp-set-code",
+       "title": "Optimize: pair check in one pass",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 5,
+       "difficulty": 3,
+       "skills": [
+        "complement",
+        "set_membership",
+        "set_add",
+        "hash_reasoning"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "This version checks every pair with two nested loops. It is correct, but slow: ```python def pair_exists_slow(nums, target): for i in range(len(nums)): for j in range(i + 1, len(nums)): if nums[i] + nums[j] == target: re"
+      },
+      {
+       "id": "o2-dbg-comp-inverted",
+       "title": "Debug: pair check finds pairs everywhere",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 2.5,
+       "difficulty": 2,
+       "skills": [
+        "complement",
+        "set_membership",
+        "conditionals"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of numbers and `target` is a number. `has_pair(nums, target)` should return `True` only if two numbers at different positions add up to `target`: `has_pair([3, 7], 10)` → `True`, `has_pair([1, 2], 10)` →"
+      },
+      {
+       "id": "o2-dbg-comp-self-pair",
+       "title": "Debug: a number pairs with itself",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "complement",
+        "set_membership",
+        "set_add"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of numbers and `target` is a number. `has_pair(nums, target)` should return `True` only if two numbers at **different positions** add up to `target`. It gives the wrong answer for one kind of input."
+      }
+     ]
+    }
+   ],
+   "optionalSections": []
+  },
+  {
+   "id": "w2-solve-map",
+   "title": "The Solve Map",
+   "purpose": "Contract, example, subgoals, state, simple solution, test, improve, implement, verify: on your own.",
+   "prerequisites": [
+    "w2-improve",
+    "w2-testing"
+   ],
+   "lessonIds": [
+    "l-solve-map"
+   ],
+   "workedExampleIds": [],
+   "targets": [],
+   "readinessTargets": [],
+   "labs": [],
+   "gates": [
+    {
+     "id": "g-solve-map",
+     "title": "Solve Map",
+     "need": 2,
+     "skills": [
+      "complexity",
+      "edge_cases"
+     ],
+     "pool": [
+      "c2-g-solve-a",
+      "c2-g-solve-b",
+      "c2-g-solve-c",
+      "c2-g-solve-d"
+     ]
+    }
+   ],
+   "sections": [
+    {
+     "id": "c2-solve-map",
+     "title": "The Solve Map",
+     "reps": [
+      {
+       "id": "c2-solve-plan",
+       "title": "Plan before you code",
+       "kind": "explain",
+       "stage": "interview",
+       "repType": "interview",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "explanation",
+        "edge_cases"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`codes` is a list of discount codes used at checkout today. The task: return the codes used more than twice, sorted alphabetically. Don't write code yet. Write steps 1 to 5 of the Solve Map in plain words: 1. **Contract*"
+      },
+      {
+       "id": "c2-solve-restock",
+       "title": "Solve Map: what to restock",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "edge_cases",
+        "dict_items",
+        "sorting"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`stock` is a dict from item name to how many are on the shelf. `minimum` is the lowest count allowed. Return the names of the items below `minimum`, sorted alphabetically. Work through the map: 1. **Contract.** What come"
+      },
+      {
+       "id": "c2-solve-on-time",
+       "title": "Solve Map: the on-time streak",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "state_tracking",
+        "edge_cases"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`delays` is a list of how many minutes late each delivery was, in order. A delay of 0 means on time. Return the length of the longest streak of on-time deliveries in a row. Before code, work `[0, 0, 5, 0, 0, 0, 2]` by ha"
+      },
+      {
+       "id": "c2-solve-busiest-hour",
+       "title": "Solve Map: the busiest hour",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 6,
+       "difficulty": 2,
+       "skills": [
+        "frequency_map",
+        "string_methods",
+        "edge_cases"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`times` is a list of order times written as `'HH:MM'` strings, like `'09:45'`. Return the hour, as an int, with the most orders. On a tie, return the earlier hour. An empty list returns `-1`. Use the map: state the contr"
+      },
+      {
+       "id": "c2-solve-first-unique",
+       "title": "Solve Map: the first unique ticket",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "frequency_map",
+        "complexity",
+        "edge_cases"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`ids` is a list of ticket ids. Return the first id that appears exactly once in the whole list. If every id repeats, return `None`. The simple solution checks `ids.count(x)` for each id. That rescans the list every time."
+      },
+      {
+       "id": "c2-solve-report",
+       "title": "Solve Map, on your own: grade report",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 7,
+       "difficulty": 3,
+       "skills": [
+        "dict_items",
+        "edge_cases",
+        "functions"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`scores` is a dict from student name to test score. Return a dict with three keys: - `'count'`: how many students there are. - `'average'`: the average score, rounded to 1 decimal place. - `'top'`: the names with the hig"
+      }
+     ]
+    }
+   ],
+   "optionalSections": []
+  },
+  {
+   "id": "w2-hashing",
+   "title": "Hashing, kept fresh",
+   "purpose": "Sets and dictionaries are already yours: prove it cold, then keep them fresh.",
+   "prerequisites": [],
+   "lessonIds": [
+    "sets",
+    "dictionaries",
+    "frequency-maps",
+    "index-maps"
+   ],
+   "workedExampleIds": [],
+   "targets": [
+    {
+     "lc": 217,
+     "title": "Contains Duplicate",
+     "solvedInRepsBy": "cap-contains-duplicate"
+    },
+    {
+     "lc": 242,
+     "title": "Valid Anagram",
+     "solvedInRepsBy": "cap-valid-anagram"
+    },
+    {
+     "lc": 1,
+     "title": "Two Sum",
+     "solvedInRepsBy": "cap-two-sum"
+    },
+    {
+     "lc": 49,
+     "title": "Group Anagrams",
+     "solvedInRepsBy": null
+    },
+    {
+     "lc": 128,
+     "title": "Longest Consecutive Sequence",
+     "solvedInRepsBy": null
+    }
+   ],
+   "readinessTargets": [],
+   "labs": [],
+   "gates": [
+    {
+     "id": "g-hashing",
+     "title": "Hashing",
+     "need": 3,
+     "skills": [
+      "frequency_map",
+      "index_map",
+      "set_membership",
+      "complement"
+     ],
+     "pool": [
+      "o2-cold-letter-counts",
+      "o2-cold-tally",
+      "o2-cold-first-index",
+      "o2-cold-last-index",
+      "o2-cold-has-repeat",
+      "o2-cold-over-k",
+      "o2-cold-anagram",
+      "o2-cold-two-sum"
+     ]
+    }
+   ],
+   "sections": [
+    {
+     "id": "o2-python-recall",
+     "title": "Python recall",
+     "reps": [
+      {
+       "id": "o2-list-literal",
+       "title": "Spot the list literal",
+       "kind": "choice",
+       "stage": "recognize",
+       "repType": "foundation",
+       "minutes": 0.5,
+       "difficulty": 1,
+       "skills": [
+        "list_create"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Which line creates a **list** holding 4, 7 and 9?"
+      },
+      {
+       "id": "o2-list-index-trace",
+       "title": "Trace: indexing and len",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 1.5,
+       "difficulty": 1,
+       "skills": [
+        "list_index",
+        "len"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Predict exactly what this prints."
+      },
+      {
+       "id": "o2-bookends",
+       "title": "Write: first and last",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 3.5,
+       "difficulty": 2,
+       "skills": [
+        "list_create",
+        "list_index",
+        "len",
+        "conditionals"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list. It may be empty. Write `bookends(nums)` that returns a **new list** of two items, `[first, last]`: the first and the last item of `nums`. `bookends([4, 7, 9])` → `[4, 9]` A one-item list gives that item"
+      },
+      {
+       "id": "o2-dbg-last-item",
+       "title": "Debug: the last item",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 2.5,
+       "difficulty": 2,
+       "skills": [
+        "list_index",
+        "len"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`last_item(nums)` should return the last item of a non-empty list. Run it, read the error, fix it."
+      },
+      {
+       "id": "o2-append-line",
+       "title": "Write: append in a loop",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "list_append",
+        "for_loop",
+        "functions"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` and `extra` are both lists. Write `add_all(nums, extra)` that adds every item of `extra` onto the end of `nums`, one at a time, then returns `nums`. Change `nums` itself (this is called changing it **in place**) i"
+      },
+      {
+       "id": "o2-dbg-append-none",
+       "title": "Debug: building a doubled list",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "list_append",
+        "list_create",
+        "for_loop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of numbers. `doubled(nums)` should return a **new** list with every number doubled, in the same order: `doubled([1, 2, 3])` → `[2, 4, 6]`. It crashes. Fix it."
+      },
+      {
+       "id": "o2-dbg-print-return",
+       "title": "Debug: print is not return",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 2,
+       "difficulty": 2,
+       "skills": [
+        "functions"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`area(width, height)` should give the area back to the caller, so that `area(2, 3) + 1` is `7`."
+      }
+     ]
+    },
+    {
+     "id": "o2-enumerate",
+     "title": "enumerate",
+     "reps": [
+      {
+       "id": "o2-enum-trace",
+       "title": "Trace: enumerate",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 1.5,
+       "difficulty": 1,
+       "skills": [
+        "enumerate"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Predict the output."
+      },
+      {
+       "id": "o2-enum-print-write",
+       "title": "Write: print index and value",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 2,
+       "difficulty": 2,
+       "skills": [
+        "enumerate",
+        "for_loop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Below the list, write a loop with `enumerate` that prints: ``` 0 apple 1 banana 2 mango ```"
+      },
+      {
+       "id": "o2-enum-fill",
+       "title": "Write: (index, word) pairs",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "enumerate",
+        "tuples",
+        "list_append"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`words` is a list of strings. Write `with_index(words)` that returns a list with one **tuple** per word: `(index, word)`, where the index is the word's position, starting at 0. An empty list gives `[]`. `with_index(['a',"
+      },
+      {
+       "id": "o2-index-of",
+       "title": "Write: first index of a value",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 3.5,
+       "difficulty": 2,
+       "skills": [
+        "enumerate",
+        "early_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list and `target` is a value to look for. Write `index_of(nums, target)` that returns the index of the **first** place `target` appears, or `-1` if it is not in the list at all. Use `enumerate`. `index_of([5,"
+      },
+      {
+       "id": "o2-enum-translate",
+       "title": "Translate: index loop to enumerate",
+       "kind": "code",
+       "stage": "reconstruct",
+       "repType": "foundation",
+       "minutes": 3.5,
+       "difficulty": 2,
+       "skills": [
+        "enumerate",
+        "list_append"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "This works, but juggles `i` and `words[i]`: ```python def labels(words): out = [] for i in range(len(words)): out.append(str(i) + ':' + words[i]) return out ``` Rewrite `labels(words)` with `enumerate` so the loop never "
+      },
+      {
+       "id": "o2-all-indexes",
+       "title": "Write: every index of a value",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "enumerate",
+        "list_append",
+        "conditionals"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list and `target` is a value to look for. Write `indexes_of(nums, target)` that returns a list of **every** index where `target` appears, lowest first. If it never appears, return `[]`. `indexes_of([7, 1, 7, "
+      },
+      {
+       "id": "o2-dbg-enum-order",
+       "title": "Debug: find the first match",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "enumerate",
+        "early_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list and `target` is a value to look for. `find_first(nums, target)` should return the index of the first place `target` appears, or `-1` if it is missing: `find_first([5, 3, 9], 9)` → `2`. It runs, but retur"
+      }
+     ]
+    },
+    {
+     "id": "o2-sets",
+     "title": "Sets",
+     "reps": [
+      {
+       "id": "o2-set-empty",
+       "title": "Empty set vs empty dict",
+       "kind": "choice",
+       "stage": "recognize",
+       "repType": "foundation",
+       "minutes": 1,
+       "difficulty": 1,
+       "skills": [
+        "set_create",
+        "dict_create"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Which line creates an **empty set**?"
+      },
+      {
+       "id": "o2-set-add-trace",
+       "title": "Trace: add ignores duplicates",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 1.5,
+       "difficulty": 1,
+       "skills": [
+        "set_add",
+        "set_membership",
+        "len"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Predict the output."
+      },
+      {
+       "id": "o2-set-add-fill",
+       "title": "Write: distinct values, sorted",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "set_create",
+        "set_add",
+        "for_loop",
+        "sorting"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of numbers. Numbers can repeat. Write `unique_sorted(nums)` that returns a **list** of the distinct values (each different value once), smallest first. Build the set yourself: start with an empty set, `."
+      },
+      {
+       "id": "o2-set-unique-count",
+       "title": "Write: count distinct words, ignoring case",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "set_create",
+        "set_add",
+        "len",
+        "string_methods"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`words` is a list of strings. Write `distinct_count(words)` that returns how many different words there are when upper and lower case are treated as the same: `'Cat'` and `'cat'` are one word. An empty list gives `0`. `d"
+      },
+      {
+       "id": "o2-dbg-seen-list",
+       "title": "Debug: distinct values in order",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "set_create",
+        "set_add",
+        "set_membership",
+        "list_append"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of numbers. `unique_in_order(nums)` should return a list of the distinct values in the order they first appear: `unique_in_order([3, 1, 3, 2])` → `[3, 1, 2]`. The \"have I already had this one?\" check sho"
+      },
+      {
+       "id": "o2-set-common",
+       "title": "Write: values in both lists",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "set_create",
+        "set_add",
+        "set_membership",
+        "for_loop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`a` and `b` are lists. Write `shared(a, b)` that returns a **sorted list** of the distinct values that appear in both. A value that repeats still appears once in the answer, and if nothing is shared the answer is `[]`. `"
+      },
+      {
+       "id": "o2-set-optimize",
+       "title": "Optimize: membership against a list",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "set_create",
+        "set_membership",
+        "hash_reasoning",
+        "accumulator"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` and `allowed` are lists of numbers. This counts how many items of `nums` appear in `allowed`. It is correct, but slow when `allowed` is long: `in` on a **list** scans it item by item, every time. ```python def cou"
+      }
+     ]
+    },
+    {
+     "id": "o2-contains-duplicate",
+     "title": "Contains Duplicate",
+     "reps": [
+      {
+       "id": "o2-dup-brute",
+       "title": "Write: duplicate check, brute force",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4.5,
+       "difficulty": 2,
+       "skills": [
+        "range",
+        "list_index",
+        "early_return",
+        "conditionals"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list. Write `has_dup_slow(nums)` that returns `True` if any value appears at least twice, otherwise `False` (an empty or one-item list gives `False`). Do it the slow, obvious way: two nested loops over indexe"
+      },
+      {
+       "id": "o2-dup-trace",
+       "title": "Trace: the seen-set",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 2,
+       "difficulty": 1,
+       "skills": [
+        "set_membership",
+        "set_add",
+        "conditionals"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Predict the output."
+      },
+      {
+       "id": "o2-dup-fill",
+       "title": "Finish: the seen-set loop",
+       "kind": "code",
+       "stage": "complete",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "set_membership",
+        "set_add",
+        "early_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list. The setup and the final return are written. Write the loop body: return `True` as soon as a value turns up for the second time, otherwise remember it."
+      },
+      {
+       "id": "cap-contains-duplicate",
+       "title": "Capstone: Contains Duplicate",
+       "kind": "code",
+       "stage": "capstone",
+       "repType": "capstone",
+       "minutes": 20,
+       "difficulty": 2,
+       "skills": [
+        "set_create",
+        "set_add",
+        "set_membership",
+        "for_loop",
+        "early_return",
+        "hash_reasoning"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": 217,
+       "transfer": false,
+       "prompt": "Given a list of integers `nums`, return `True` if any value appears at least twice, and `False` if every value is distinct. Aim for one pass over the list."
+      },
+      {
+       "id": "o2-dup-write-test",
+       "title": "Write a test: break the adjacent check",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "edge_cases",
+        "list_create"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Someone wrote this duplicate check. It should return `True` exactly when some value appears at least twice **anywhere** in the list: ```python def has_dup_adjacent(nums): for i in range(len(nums) - 1): if nums[i] == nums"
+      },
+      {
+       "id": "o2-dbg-dup-add-first",
+       "title": "Debug: duplicate check says True too often",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "set_membership",
+        "set_add",
+        "early_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list. `has_dup(nums)` should return `True` only if some value appears at least twice: `has_dup([1, 2, 3])` → `False`, `has_dup([4, 4])` → `True`. It says `True` too often."
+      },
+      {
+       "id": "o2-cap-contains-duplicate-explain",
+       "title": "Explain: Contains Duplicate",
+       "kind": "explain",
+       "stage": "interview",
+       "repType": "interview",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "explanation",
+        "complexity",
+        "hash_reasoning",
+        "edge_cases"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Explain your Contains Duplicate solution as you would to an interviewer: the approach, why it is correct, its time and space complexity, and the edge cases you checked."
+      }
+     ]
+    },
+    {
+     "id": "o2-dictionaries",
+     "title": "Dictionaries",
+     "reps": [
+      {
+       "id": "o2-dict-assign-trace",
+       "title": "Trace: assign, overwrite, look up",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 2,
+       "difficulty": 1,
+       "skills": [
+        "dict_create",
+        "dict_assign",
+        "dict_lookup",
+        "len"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Predict the output."
+      },
+      {
+       "id": "o2-dict-squares-map",
+       "title": "Write: build a dict in a loop",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "dict_create",
+        "dict_assign",
+        "range"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `squares_map(n)` that returns a dict mapping each number 1..n to its square. `squares_map(3)` → `{1: 1, 2: 4, 3: 9}`"
+      },
+      {
+       "id": "o2-dict-in-keys",
+       "title": "Trace: in checks keys",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 1.5,
+       "difficulty": 1,
+       "skills": [
+        "dict_membership"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Predict the output."
+      },
+      {
+       "id": "o2-dbg-keyerror",
+       "title": "Debug: stock lookup",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 2.5,
+       "difficulty": 2,
+       "skills": [
+        "dict_lookup",
+        "dict_membership"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`stock` is a dict: item name → how many are in stock. `stock_of(stock, item)` should return how many of `item` there are. Items that are not listed have 0. It works for listed items and crashes for the others."
+      },
+      {
+       "id": "o2-dict-safe-lookup",
+       "title": "Write: lookup guarded by in",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "dict_membership",
+        "dict_lookup",
+        "conditionals"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`d` is a dictionary. `key` is the key to look for; it may or may not be in `d`. `fallback` is the value to hand back when it is not. Write `lookup_or(d, key, fallback)` that returns the value stored under `key`, or `fall"
+      },
+      {
+       "id": "o2-dbg-in-values",
+       "title": "Debug: does any value match?",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 2.5,
+       "difficulty": 2,
+       "skills": [
+        "dict_membership",
+        "dict_items"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`d` is a dictionary and `target` is a value to look for. `has_value(d, target)` should return `True` if `target` is one of the dict's **values**, otherwise `False`: `has_value({'a': 1, 'b': 2}, 2)` → `True`. It answers a"
+      },
+      {
+       "id": "o2-dict-invert",
+       "title": "Write: swap keys and values",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 3.5,
+       "difficulty": 2,
+       "skills": [
+        "dict_items",
+        "dict_assign",
+        "dict_create"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`d` is a dictionary whose values are all different. Write `invert(d)` that returns a **new** dict with every pair flipped: each old value becomes a key, and its old key becomes the value. An empty dict gives `{}`. `inver"
+      }
+     ]
+    },
+    {
+     "id": "o2-dict-revision",
+     "title": "Dictionary check",
+     "reps": [
+      {
+       "id": "o2-drev-trace",
+       "title": "Trace: keep the table",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 2,
+       "difficulty": 1,
+       "skills": [
+        "dict_create",
+        "dict_assign",
+        "dict_lookup",
+        "dict_membership",
+        "len"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Predict the output. Before you answer, write down what `menu` holds after **every** line."
+      },
+      {
+       "id": "o2-drev-crash",
+       "title": "Which line crashes?",
+       "kind": "choice",
+       "stage": "recognize",
+       "repType": "foundation",
+       "minutes": 1,
+       "difficulty": 1,
+       "skills": [
+        "dict_lookup",
+        "dict_membership",
+        "dict_assign"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`menu` is the dict below. Which **one** of these lines raises an error?"
+      },
+      {
+       "id": "o2-drev-make-menu",
+       "title": "Write: menu from two lists",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 3.5,
+       "difficulty": 2,
+       "skills": [
+        "dict_create",
+        "dict_assign",
+        "enumerate"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`items` is a list of item names (strings). `prices` is a list of whole-number prices, the same length: `prices[i]` is the price of `items[i]`. Write `make_menu(items, prices)` that returns a **dict** mapping each item na"
+      },
+      {
+       "id": "o2-drev-bill",
+       "title": "Write: total a bill",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 3.5,
+       "difficulty": 2,
+       "skills": [
+        "dict_membership",
+        "dict_lookup",
+        "accumulator",
+        "for_loop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`menu` is a dict mapping item names (strings) to prices (ints). `order` is a list of item names, possibly with repeats. Write `bill(menu, order)` that returns the total price of the order. Items that are **not** on the m"
+      },
+      {
+       "id": "o2-drev-dbg-cheapest",
+       "title": "Debug: cheapest item",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "dict_lookup",
+        "for_loop",
+        "conditionals"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`menu` is a dict mapping item names (strings) to prices (ints), with at least one item. `cheapest(menu)` should return the **name** of the cheapest item. It crashes. Fix it."
+      },
+      {
+       "id": "o2-drev-under",
+       "title": "Write: items under a budget",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 3.5,
+       "difficulty": 2,
+       "skills": [
+        "dict_items",
+        "conditionals",
+        "list_append"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`menu` is a dict mapping item names (strings) to prices (ints). `limit` is an int. Write `affordable(menu, limit)` that returns a **sorted list** of the names of items that cost `limit` or less. `affordable({'tea': 4, 'c"
+      },
+      {
+       "id": "o2-drev-seat-chart",
+       "title": "Write: who sits where",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 3.5,
+       "difficulty": 2,
+       "skills": [
+        "dict_items",
+        "dict_assign",
+        "dict_create"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`seats` is a dict mapping guest names (strings) to seat numbers (ints). No two guests share a seat. Write `by_seat(seats)` that returns a **new** dict going the other way: seat number → guest name. `by_seat({'ana': 3, 'b"
+      },
+      {
+       "id": "o2-drev-reprice",
+       "title": "Write: apply price changes",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 4.5,
+       "difficulty": 2,
+       "skills": [
+        "dict_items",
+        "dict_membership",
+        "dict_assign",
+        "dict_create"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`menu` is a dict mapping item names to prices. `changes` is a dict mapping item names to **new** prices. Write `reprice(menu, changes)` that returns a **new** dict: the menu with each change applied. Ignore changes for i"
+      }
+     ]
+    },
+    {
+     "id": "o2-get",
+     "title": ".get()",
+     "reps": [
+      {
+       "id": "o2-get-trace",
+       "title": "Trace: .get with and without default",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 2,
+       "difficulty": 1,
+       "skills": [
+        "dict_get"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Predict the output."
+      },
+      {
+       "id": "o2-get-line",
+       "title": "Write one line: read with .get",
+       "kind": "code",
+       "stage": "recall",
+       "repType": "foundation",
+       "minutes": 1.5,
+       "difficulty": 1,
+       "skills": [
+        "dict_get"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write one line that sets `have` to how many of `name` are in the inventory, or `0` if it is not listed. Use `.get`."
+      },
+      {
+       "id": "o2-get-total-cost",
+       "title": "Write: total with .get in a loop",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 3.5,
+       "difficulty": 2,
+       "skills": [
+        "dict_get",
+        "accumulator",
+        "for_loop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`menu` is a dict: item name → price. `order` is a list of item names; names can repeat, and some may not be on the menu. Write `total_cost(menu, order)` that returns the total price of the order. Items that are not on th"
+      },
+      {
+       "id": "o2-dbg-get-args",
+       "title": "Debug: price list",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "dict_get",
+        "list_append"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`menu` is a dict: item name → price. `items` is a list of item names. `price_list(menu, items)` should return a list with the price of each item, in the same order, using `-1` for items that are not on the menu: `price_l"
+      },
+      {
+       "id": "o2-get-count-fill",
+       "title": "Fill: the counting default",
+       "kind": "code",
+       "stage": "complete",
+       "repType": "foundation",
+       "minutes": 1,
+       "difficulty": 1,
+       "skills": [
+        "dict_get",
+        "dict_assign"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Fill the blank so `counts` ends up holding how many times each letter appears. (Next section you will write this line from memory.)"
+      },
+      {
+       "id": "o2-get-list-default",
+       "title": "Write: group words by first letter",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 6,
+       "difficulty": 3,
+       "skills": [
+        "dict_get",
+        "dict_membership",
+        "list_append",
+        "string_index"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `group_by_first(words)` that returns a dict mapping each first letter to the list of words starting with it, in input order. All words are non-empty. `group_by_first(['ant', 'bee', 'ape'])` → `{'a': ['ant', 'ape'],"
+      }
+     ]
+    },
+    {
+     "id": "o2-iter-dicts",
+     "title": "Iterating dicts",
+     "reps": [
+      {
+       "id": "o2-iter-items",
+       "title": "Trace: keys, values, items",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 2,
+       "difficulty": 1,
+       "skills": [
+        "dict_items",
+        "conditionals"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Predict the output."
+      },
+      {
+       "id": "o2-iter-fill",
+       "title": "Write: describe each pair",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "dict_items",
+        "list_append"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`scores` is a dict: name → score. Write `describe(scores)` that returns a list of `'name=score'` strings, one per entry, in the dict's order. An empty dict gives `[]`. `describe({'a': 1, 'b': 2})` → `['a=1', 'b=2']`"
+      },
+      {
+       "id": "o2-iter-keys-above",
+       "title": "Write: keys whose value passes a test",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "dict_items",
+        "conditionals",
+        "list_append"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`d` is a dictionary whose values are numbers. `limit` is a number. Write `keys_above(d, limit)` that returns a list of the keys whose value is **greater than** `limit` (equal does not count), in the dict's order. `keys_a"
+      },
+      {
+       "id": "o2-dbg-items-unpack",
+       "title": "Debug: total score",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "dict_items",
+        "accumulator"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`scores` is a dict: name → score. `total_score(scores)` should return all the scores added together: `total_score({'ann': 3, 'bo': 4})` → `7`. It crashes. Fix it."
+      }
+     ]
+    },
+    {
+     "id": "o2-frequency",
+     "title": "Frequency maps",
+     "reps": [
+      {
+       "id": "o2-freq-trace",
+       "title": "Trace: a frequency map grows",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 2,
+       "difficulty": 1,
+       "skills": [
+        "frequency_map",
+        "dict_get",
+        "string_iterate"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Predict the output."
+      },
+      {
+       "id": "o2-freq-fill",
+       "title": "Write: character counts",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "frequency_map",
+        "dict_get",
+        "string_iterate"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`s` is a string. It can be empty. Write `char_counts(s)` that returns a dict mapping each character of `s` to how many times it appears. Write the counting line from memory. `char_counts('aab')` → `{'a': 2, 'b': 1}`"
+      },
+      {
+       "id": "o2-dbg-freq-plus-eq",
+       "title": "Debug: count letters",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "frequency_map",
+        "dict_lookup"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`s` is a string. `count_letters(s)` should return a dict: each character → how many times it appears, so `count_letters('aba')` → `{'a': 2, 'b': 1}`. It crashes. Fix it."
+      },
+      {
+       "id": "o2-dbg-freq-overwrite",
+       "title": "Debug: tally the numbers",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 2.5,
+       "difficulty": 2,
+       "skills": [
+        "frequency_map",
+        "dict_assign"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of numbers. `tally(nums)` should return a dict mapping each number to how many times it appears: `tally([2, 2, 5])` → `{2: 2, 5: 1}`. It runs, but the counts are wrong."
+      },
+      {
+       "id": "o2-freq-words",
+       "title": "Write: word counts",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "frequency_map",
+        "dict_get",
+        "string_methods"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`sentence` is a string of words separated by spaces. It can be empty. Write `word_counts(sentence)` that returns a dict: each word → how many times it appears. `sentence.split()` gives you the list of words. `word_counts"
+      },
+      {
+       "id": "o2-dbg-get-no-default",
+       "title": "Debug: count words by length",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "frequency_map",
+        "dict_get",
+        "len"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`words` is a list of strings. `count_by_length(words)` should return a dict mapping each word length to how many words have that length: `count_by_length(['hi', 'yo', 'hey'])` → `{2: 2, 3: 1}`. It crashes. Fix it."
+      },
+      {
+       "id": "o2-freq-most-common",
+       "title": "Write: most common value",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 6,
+       "difficulty": 3,
+       "skills": [
+        "frequency_map",
+        "dict_items",
+        "accumulator"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a non-empty list of numbers, and exactly one value appears more often than any other. Write `most_common(nums)` that returns that **value** (not its count). `most_common([1, 3, 3, 2])` → `3`"
+      },
+      {
+       "id": "o2-freq-same-counts",
+       "title": "Write: same items, same counts",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "frequency_map",
+        "dict_get",
+        "functions"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`a` and `b` are lists. Write `same_items(a, b)` that returns `True` if they contain the same values the same number of times each, in any order, and `False` otherwise. Write the helper `counts_of(items)` that builds a fr"
+      },
+      {
+       "id": "o2-freq-first-unique",
+       "title": "Write: first character that appears once",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 6,
+       "difficulty": 3,
+       "skills": [
+        "frequency_map",
+        "enumerate",
+        "early_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`s` is a string. Write `first_unique(s)` that returns the **index** of the first character that appears exactly once in `s`, or `-1` if there is none (including when `s` is empty). `first_unique('aabbc')` → `4`"
+      }
+     ]
+    },
+    {
+     "id": "o2-dict-mastery",
+     "title": "Dictionaries from scratch",
+     "reps": [
+      {
+       "id": "o2-dmas-trace",
+       "title": "Trace: counts and .get",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 2.5,
+       "difficulty": 1,
+       "skills": [
+        "dict_get",
+        "dict_items",
+        "frequency_map"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Predict the output. Keep a table of `plays` as it changes."
+      },
+      {
+       "id": "o2-dmas-count-plays",
+       "title": "From scratch: count plays",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "frequency_map",
+        "dict_get",
+        "for_loop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`plays` is a list of song names (strings), one entry per time a song was played. Write `count_plays(plays)` that returns a **dict**: song name → how many times it was played. `count_plays(['echo', 'drift', 'echo'])` → `{"
+      },
+      {
+       "id": "o2-dmas-dbg-minutes",
+       "title": "Debug: playlist length",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "dict_get",
+        "accumulator",
+        "for_loop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`lengths` is a dict: song name → length in minutes (ints). `playlist` is a list of song names. `total_minutes(lengths, playlist)` should return the total length of the playlist, counting songs it has no length for as 0. "
+      },
+      {
+       "id": "o2-dmas-merge",
+       "title": "From scratch: merge two play counts",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "dict_items",
+        "dict_get",
+        "dict_assign",
+        "dict_create"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`a` and `b` are dicts: song name → number of plays (from two different phones). Write `merge_counts(a, b)` that returns a **new** dict with every song from either one, and its plays **added together**. Do not modify `a` "
+      },
+      {
+       "id": "o2-dmas-by-artist",
+       "title": "From scratch: songs by artist",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "dict_items",
+        "dict_membership",
+        "list_append",
+        "dict_assign"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`artist_of` is a dict: song name → artist name. Write `songs_by_artist(artist_of)` that returns a dict: artist name → a **sorted list** of that artist's song names. `songs_by_artist({'echo': 'mo', 'drift': 'zee', 'arc': "
+      },
+      {
+       "id": "o2-dmas-top-song",
+       "title": "From scratch: most played song",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 4.5,
+       "difficulty": 2,
+       "skills": [
+        "frequency_map",
+        "dict_get",
+        "dict_items"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`plays` is a non-empty list of song names, one entry per play. Exactly one song has the most plays. Write `top_song(plays)` that returns the **name** of the most played song. `top_song(['echo', 'drift', 'echo'])` → `'ech"
+      }
+     ]
+    },
+    {
+     "id": "o2-dict-ladder",
+     "title": "Dictionary ladder",
+     "reps": [
+      {
+       "id": "o2-dl-empty",
+       "title": "Rung 1 · Make an empty dict",
+       "kind": "choice",
+       "stage": "recognize",
+       "repType": "foundation",
+       "minutes": 0.5,
+       "difficulty": 1,
+       "skills": [
+        "dict_create"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Which line makes an **empty dictionary**?"
+      },
+      {
+       "id": "o2-dl-trace-basic",
+       "title": "Rung 1 · Trace: add and overwrite",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 2,
+       "difficulty": 1,
+       "skills": [
+        "dict_create",
+        "dict_assign",
+        "dict_lookup",
+        "len"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Predict the output. Keep a table of `ages` after every line."
+      },
+      {
+       "id": "o2-dl-add-line",
+       "title": "Rung 1 · Add one entry",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 1,
+       "difficulty": 2,
+       "skills": [
+        "dict_assign"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`colors` is a dict: thing → its color. On the marked line, add the entry `'grass'` → `'green'`. One line."
+      },
+      {
+       "id": "o2-dl-in-trace",
+       "title": "Rung 1 · Trace: in looks at keys",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 1.5,
+       "difficulty": 1,
+       "skills": [
+        "dict_membership"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Predict the output."
+      },
+      {
+       "id": "o2-dl-crash",
+       "title": "Rung 1 · Which line crashes?",
+       "kind": "choice",
+       "stage": "recognize",
+       "repType": "foundation",
+       "minutes": 1,
+       "difficulty": 1,
+       "skills": [
+        "dict_lookup",
+        "dict_get",
+        "dict_membership"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`stock` is the dict below. Which **one** of these lines raises an error?"
+      },
+      {
+       "id": "o2-dl-price-or",
+       "title": "Rung 1 · Price or a message",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 2.5,
+       "difficulty": 2,
+       "skills": [
+        "dict_membership",
+        "dict_lookup",
+        "conditionals"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`menu` is a dict: item name → price. `item` is an item name that may not be on the menu. Write `price_of(menu, item)` that returns the item's price, or the string `'not on menu'` if it is not there. Use `in`."
+      },
+      {
+       "id": "o2-dl-get-trace",
+       "title": "Rung 1 · Trace: .get",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 1.5,
+       "difficulty": 1,
+       "skills": [
+        "dict_get"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Predict the output."
+      },
+      {
+       "id": "o2-dl-sell",
+       "title": "Rung 1 · Sell one",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "dict_membership",
+        "dict_lookup",
+        "dict_assign",
+        "conditionals"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`stock` is a dict: item name → how many are left. `item` is an item name. Write `sell(stock, item)`: if `item` is in `stock` with at least 1 left, take one away (change `stock` itself) and return `True`. Otherwise change"
+      },
+      {
+       "id": "o2-dl-loop-trace",
+       "title": "Rung 2 · Trace: three ways to loop",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 2,
+       "difficulty": 1,
+       "skills": [
+        "dict_items"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Predict the output."
+      },
+      {
+       "id": "o2-dl-sum-values",
+       "title": "Rung 2 · Add up the values",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 2.5,
+       "difficulty": 2,
+       "skills": [
+        "dict_items",
+        "accumulator"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`stock` is a dict: item name → how many are left. Write `total_stock(stock)` that returns the total number of items across all entries. `total_stock({'pen': 2, 'ink': 5})` → `7`"
+      },
+      {
+       "id": "o2-dl-keys-for",
+       "title": "Rung 2 · Who got this score?",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "dict_items",
+        "conditionals",
+        "list_append"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`scores` is a dict: student name → score. `target` is a score. Write `who_scored(scores, target)` that returns a **sorted list** of the names whose score equals `target`. `who_scored({'ana': 9, 'ben': 7, 'cy': 9}, 9)` → "
+      },
+      {
+       "id": "o2-dl-dbg-values",
+       "title": "Rung 2 · Debug: count the expensive ones",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 2.5,
+       "difficulty": 2,
+       "skills": [
+        "dict_items",
+        "accumulator",
+        "conditionals"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`menu` is a dict: item name → price. `limit` is a number. `count_expensive(menu, limit)` should return how many items cost more than `limit`. It crashes. Fix it."
+      },
+      {
+       "id": "o2-dl-max-key",
+       "title": "Rung 2 · Top student",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 3.5,
+       "difficulty": 2,
+       "skills": [
+        "dict_items",
+        "conditionals"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`scores` is a non-empty dict: student name → score. Exactly one student has the top score. Write `best_student(scores)` that returns the **name** of that student."
+      },
+      {
+       "id": "o2-dl-flip",
+       "title": "Rung 2 · Flip a phone code table",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "dict_items",
+        "dict_assign",
+        "dict_create"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`codes` is a dict: country → dialing code (an int). Every code is different. Write `country_by_code(codes)` that returns a **new** dict: dialing code → country. `country_by_code({'fr': 33, 'us': 1})` → `{33: 'fr', 1: 'us"
+      },
+      {
+       "id": "o2-dl-initials",
+       "title": "Rung 3 · Build: name → first letter",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 2.5,
+       "difficulty": 2,
+       "skills": [
+        "dict_create",
+        "dict_assign",
+        "for_loop",
+        "string_index"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`names` is a list of non-empty names. Write `first_letters(names)` that returns a dict: each name → its first letter. `first_letters(['ana', 'ben'])` → `{'ana': 'a', 'ben': 'b'}`"
+      },
+      {
+       "id": "o2-dl-pair-up",
+       "title": "Rung 3 · Build from two lists",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "dict_create",
+        "dict_assign",
+        "enumerate"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`keys` and `values` are lists of the same length. Write `pair_up(keys, values)` that returns a dict where `keys[i]` maps to `values[i]` for every position `i`. `pair_up(['a', 'b'], [1, 2])` → `{'a': 1, 'b': 2}`"
+      },
+      {
+       "id": "o2-dl-letter-count",
+       "title": "Rung 3 · Count letters",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 2.5,
+       "difficulty": 2,
+       "skills": [
+        "frequency_map",
+        "dict_get",
+        "string_iterate"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`word` is a string. Write `letter_count(word)` that returns a dict: each letter → how many times it appears. `letter_count('noon')` → `{'n': 2, 'o': 2}`"
+      },
+      {
+       "id": "o2-dl-dbg-reset",
+       "title": "Rung 3 · Debug: the votes never go up",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 2.5,
+       "difficulty": 2,
+       "skills": [
+        "frequency_map",
+        "dict_membership",
+        "dict_assign"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`votes` is a list of names. `vote_count(votes)` should return a dict: name → number of votes. Every count comes out as 1. Fix it."
+      },
+      {
+       "id": "o2-dl-group-len",
+       "title": "Rung 3 · Group words by length",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "dict_membership",
+        "dict_assign",
+        "list_append",
+        "len"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`words` is a list of words. Write `group_by_length(words)` that returns a dict: word length → the list of words with that length, in their original order. `group_by_length(['hi', 'cat', 'yo'])` → `{2: ['hi', 'yo'], 3: ['"
+      },
+      {
+       "id": "o2-dl-enum-trace",
+       "title": "Rung 4 · Trace: positions into a dict",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 2,
+       "difficulty": 1,
+       "skills": [
+        "index_map",
+        "enumerate"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Predict the output. Keep a table of `i`, `w` and `where` for each step."
+      },
+      {
+       "id": "o2-dl-first-index",
+       "title": "Rung 4 · First position of each value",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "index_map",
+        "enumerate",
+        "dict_membership"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of numbers. Write `first_index(nums)` that returns a dict: each number → the position where it **first** appears. `first_index([5, 3, 5])` → `{5: 0, 3: 1}`"
+      },
+      {
+       "id": "o2-dl-lookup-positions",
+       "title": "Rung 4 · Answer position queries",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "index_map",
+        "enumerate",
+        "dict_get",
+        "list_append"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`words` is a list of words (no repeats). `queries` is a list of words to look for. Write `positions(words, queries)` that returns a list with the position of each query in `words`, or `-1` if it is not there. Build a dic"
+      },
+      {
+       "id": "o2-dl-dbg-direction",
+       "title": "Rung 4 · Debug: backwards map",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 2.5,
+       "difficulty": 2,
+       "skills": [
+        "index_map",
+        "enumerate",
+        "dict_assign"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`letters` is a list of letters. `position_map(letters)` should return a dict so that `position_map(letters)[ch]` is the position of `ch` (last one wins). Fix it."
+      },
+      {
+       "id": "o2-dl-lc-two-sum",
+       "title": "Rung 5 · LeetCode 1: Two Sum",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 6,
+       "difficulty": 3,
+       "skills": [
+        "index_map",
+        "complement",
+        "enumerate",
+        "dict_membership"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of numbers and `target` is a number. Exactly one pair of **different positions** `i < j` has `nums[i] + nums[j] == target`. Write `pair_positions(nums, target)` that returns `[i, j]`. One pass: for each "
+      },
+      {
+       "id": "o2-dl-lc-anagram",
+       "title": "Rung 5 · LeetCode 242: Valid Anagram",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 4.5,
+       "difficulty": 2,
+       "skills": [
+        "frequency_map",
+        "dict_get",
+        "string_iterate"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`a` and `b` are strings. Write `same_letters(a, b)` that returns `True` if `b` uses exactly the same letters as `a`, the same number of times each (in any order). Otherwise `False`. `same_letters('listen', 'silent')` → `"
+      },
+      {
+       "id": "o2-dl-lc-first-unique",
+       "title": "Rung 5 · LeetCode 387: First unique (words)",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 4.5,
+       "difficulty": 2,
+       "skills": [
+        "frequency_map",
+        "dict_get",
+        "early_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`words` is a list of words. Write `first_unique_word(words)` that returns the first word (in list order) that appears **exactly once**, or `None` if every word repeats. `first_unique_word(['a', 'b', 'a', 'c'])` → `'b'`"
+      },
+      {
+       "id": "o2-dl-lc-ransom",
+       "title": "Rung 5 · LeetCode 383: Ransom Note",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "frequency_map",
+        "dict_get",
+        "early_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`note` is the string you want to write. `letters` is a string of the letters you have; each one can be used **once**. Write `can_write(note, letters)` that returns `True` if the note can be written from those letters. `c"
+      },
+      {
+       "id": "o2-dl-lc-majority",
+       "title": "Rung 5 · LeetCode 169: Majority Element",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "frequency_map",
+        "dict_get",
+        "len",
+        "early_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a non-empty list of numbers. One value appears **more than half** the time. Write `majority(nums)` that returns that value. `majority([2, 2, 1, 1, 2])` → `2`"
+      },
+      {
+       "id": "o2-dl-lc-close-dup",
+       "title": "Rung 5 · LeetCode 219: Contains Duplicate II",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 5,
+       "difficulty": 3,
+       "skills": [
+        "index_map",
+        "enumerate",
+        "dict_membership",
+        "early_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of numbers and `k` is a whole number. Write `close_repeat(nums, k)` that returns `True` if some value appears at two positions `i < j` with `j - i <= k`. Otherwise `False`. `close_repeat([1, 2, 3, 1], 3)"
+      },
+      {
+       "id": "o2-dl-lc-group-anagrams",
+       "title": "Rung 5 · Words made of the same letters",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 6,
+       "difficulty": 3,
+       "skills": [
+        "dict_membership",
+        "dict_assign",
+        "list_append",
+        "sorting"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`words` is a list of lowercase words. Two words are **anagrams** when one is a rearrangement of the other: the same letters, the same number of times each, like `'eat'` and `'tea'`. Write `group_anagrams(words)` that ret"
+      }
+     ]
+    },
+    {
+     "id": "o2-valid-anagram",
+     "title": "Valid Anagram",
+     "reps": [
+      {
+       "id": "o2-anagram-sorted-trace",
+       "title": "Trace: the sorting baseline",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 1.5,
+       "difficulty": 1,
+       "skills": [
+        "sorting",
+        "string_iterate",
+        "len"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Predict the output."
+      },
+      {
+       "id": "o2-anagram-fill",
+       "title": "Finish: two maps, then compare",
+       "kind": "code",
+       "stage": "complete",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "frequency_map",
+        "dict_get",
+        "string_iterate"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`s` and `t` are strings. They are anagrams when they use the same characters the same number of times each, in any order: `'rat'` and `'tar'` are, `'rat'` and `'car'` are not. Two empty dicts, `a` and `b`, are set up. Co"
+      },
+      {
+       "id": "cap-valid-anagram",
+       "title": "Capstone: Valid Anagram",
+       "kind": "code",
+       "stage": "capstone",
+       "repType": "capstone",
+       "minutes": 20,
+       "difficulty": 2,
+       "skills": [
+        "frequency_map",
+        "dict_get",
+        "string_iterate",
+        "len",
+        "dict_items"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": 242,
+       "transfer": false,
+       "prompt": "Given two strings `s` and `t`, return `True` if `t` uses exactly the same characters as `s`, each the same number of times (in any order), and `False` otherwise. Characters are case-sensitive. Aim for O(n) time."
+      },
+      {
+       "id": "o2-anagram-write-test",
+       "title": "Write a test: break the set comparison",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "edge_cases",
+        "tuples"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "This anagram check is in the editor. It should return `True` exactly when `t` uses the same characters as `s`, each the same number of times: ```python def same_chars(s, t): return set(s) == set(t) ``` `set(s)` is the se"
+      },
+      {
+       "id": "o2-dbg-anagram-length",
+       "title": "Debug: one map, count up then down",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "frequency_map",
+        "dict_get",
+        "len",
+        "edge_cases"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`s` and `t` are strings. `is_anagram(s, t)` should return `True` exactly when `t` uses the same characters as `s`, each the same number of times. It counts `s` up and `t` down in one dict. It gives the wrong answer for s"
+      },
+      {
+       "id": "o2-cap-valid-anagram-explain",
+       "title": "Explain: Valid Anagram",
+       "kind": "explain",
+       "stage": "interview",
+       "repType": "interview",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "explanation",
+        "complexity",
+        "frequency_map",
+        "edge_cases"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Explain your Valid Anagram solution to an interviewer: approach, why it is correct, complexity, edge cases, and one alternative."
+      }
+     ]
+    },
+    {
+     "id": "o2-index-maps",
+     "title": "Index maps",
+     "reps": [
+      {
+       "id": "o2-imap-trace",
+       "title": "Trace: value → index",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 1.5,
+       "difficulty": 1,
+       "skills": [
+        "index_map",
+        "enumerate"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Predict the output."
+      },
+      {
+       "id": "o2-imap-fill",
+       "title": "Write: positions",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "index_map",
+        "enumerate",
+        "dict_assign"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of numbers. Write `positions(nums)` that returns a dict mapping each number to its index. If a number repeats, keep its **last** index. `positions([4, 8])` → `{4: 0, 8: 1}`, and `positions([3, 3])` → `{3"
+      },
+      {
+       "id": "o2-dbg-seen-direction",
+       "title": "Debug: where is each number?",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 2.5,
+       "difficulty": 2,
+       "skills": [
+        "index_map",
+        "enumerate",
+        "dict_assign"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of numbers. `positions_of(nums)` should return a dict so that `positions_of(nums)[x]` is the index where `x` appears (the last one wins): `positions_of([7, 9])` → `{7: 0, 9: 1}`. It runs, but the dict is"
+      },
+      {
+       "id": "o2-imap-first-code",
+       "title": "Write: first positions",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "index_map",
+        "enumerate",
+        "dict_membership"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`words` is a list of strings. Words can repeat. Write `first_positions(words)` that returns a dict mapping each word to the index where it **first** appears. `first_positions(['a', 'b', 'a'])` → `{'a': 0, 'b': 1}`"
+      },
+      {
+       "id": "o2-imap-widest",
+       "title": "Write: widest gap between equal values",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 6,
+       "difficulty": 3,
+       "skills": [
+        "index_map",
+        "enumerate",
+        "dict_membership",
+        "accumulator"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of numbers. Write `widest_gap(nums)` that returns the largest distance `j - i` between two positions `i < j` that hold the same value. Return `0` if no value repeats. Do it in **one pass**: walk the list"
+      },
+      {
+       "id": "o2-dbg-closest-repeat",
+       "title": "Debug: closest repeat",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "index_map",
+        "enumerate",
+        "dict_membership"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of numbers. `closest_repeat(nums)` should return the smallest distance `j - i` between two positions `i < j` that hold the same value, or `-1` if nothing repeats: `closest_repeat([4, 0, 4, 0])` → `2`. It"
+      }
+     ]
+    },
+    {
+     "id": "o2-two-sum",
+     "title": "Two Sum",
+     "reps": [
+      {
+       "id": "o2-ts-trace-full",
+       "title": "Trace: the whole algorithm",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 1,
+       "skills": [
+        "index_map",
+        "complement",
+        "dict_membership",
+        "enumerate"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Predict every printed line."
+      },
+      {
+       "id": "o2-ts-find-pair",
+       "title": "Write: the first two numbers that add up",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 5,
+       "difficulty": 3,
+       "skills": [
+        "complement",
+        "set_membership",
+        "set_add",
+        "early_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`nums` is a list of numbers and `target` is a number. Write `find_pair(nums, target)` that finds two numbers at **different positions** in `nums` that add up to `target`, and returns their **values** as a list `[earlier,"
+      },
+      {
+       "id": "o2-ts-modify",
+       "title": "Modify: return indexes instead of values",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 4.5,
+       "difficulty": 3,
+       "skills": [
+        "index_map",
+        "enumerate",
+        "complement",
+        "dict_membership",
+        "dict_lookup"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of numbers and `target` is a number. This returns the two **values** of the first pair that adds up to `target`. Change it so it returns their **indexes** `[i, j]` with `i < j`, or `[]` if there is no pa"
+      },
+      {
+       "id": "cap-two-sum",
+       "title": "Capstone: Two Sum",
+       "kind": "code",
+       "stage": "capstone",
+       "repType": "capstone",
+       "minutes": 25,
+       "difficulty": 3,
+       "skills": [
+        "enumerate",
+        "index_map",
+        "dict_membership",
+        "dict_lookup",
+        "dict_assign",
+        "complement",
+        "hash_reasoning"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": 1,
+       "transfer": false,
+       "prompt": "Given a list of integers `nums` and an integer `target`, return the indexes `[i, j]` (with `i < j`) of the two numbers that add up to target. Exactly one such pair exists, and you may not use the same position twice. Aim"
+      },
+      {
+       "id": "o2-ts-write-test",
+       "title": "Write a test: break store-before-check",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "edge_cases",
+        "tuples"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "This Two Sum stores each number **before** checking for its complement: ```python def two_sum_store_first(nums, target): seen = {} for i, num in enumerate(nums): seen[num] = i complement = target - num if complement in s"
+      },
+      {
+       "id": "o2-dbg-ts-store-indent",
+       "title": "Debug: Two Sum never finds the pair",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "index_map",
+        "dict_assign",
+        "enumerate"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of numbers and `target` is a number. `two_sum(nums, target)` should return the indexes `[i, j]` (with `i < j`) of the two numbers that add up to `target`, or `[]` if there is no such pair: `two_sum([2, 7"
+      },
+      {
+       "id": "o2-cap-two-sum-explain",
+       "title": "Explain: Two Sum",
+       "kind": "explain",
+       "stage": "interview",
+       "repType": "interview",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "explanation",
+        "complexity",
+        "hash_reasoning",
+        "edge_cases"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Explain your Two Sum solution as in an interview: brute force first, the improvement, the invariant, complexity and edge cases."
+      },
+      {
+       "id": "o2-ts-pattern-count",
+       "title": "Pattern: replace the nested loop",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 7,
+       "difficulty": 4,
+       "skills": [
+        "hash_reasoning",
+        "frequency_map",
+        "complement",
+        "dict_get"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of numbers and `target` is a number. This counts the pairs of positions `i < j` with `nums[i] + nums[j] == target`, in O(n²): ```python def count_pairs_slow(nums, target): count = 0 for i in range(len(nu"
+      }
+     ]
+    },
+    {
+     "id": "br-49",
+     "title": "Toward Group Anagrams",
+     "reps": [
+      {
+       "id": "b49-dbg-list-key",
+       "title": "Group numbers that share digits",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "grouping_key",
+        "dict_membership",
+        "list_append",
+        "sorting"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of whole numbers, none negative. `group_by_digits(nums)` should put numbers that are made of the same digits into one group, keeping the original order inside each group. The groups come out in the order"
+      },
+      {
+       "id": "b49-group-by-ends",
+       "title": "Group words by both ends",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 6,
+       "difficulty": 3,
+       "skills": [
+        "grouping_key",
+        "tuples",
+        "dict_membership",
+        "list_append"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`words` is a list of non-empty words. A one-letter word starts and ends with that letter. Write `group_by_ends(words)`: words that share **both** their first letter and their last letter go in the same group. Keep the or"
+      }
+     ]
+    },
+    {
+     "id": "br-128",
+     "title": "Toward Longest Consecutive Sequence",
+     "reps": [
+      {
+       "id": "b128-trace-extend",
+       "title": "Trace: walking up a run",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 1.5,
+       "difficulty": 1,
+       "skills": [
+        "sequence_start",
+        "while_loop",
+        "set_membership"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "What does this print?"
+      },
+      {
+       "id": "b128-run-length",
+       "title": "How long is the run from here",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "sequence_start",
+        "while_loop",
+        "set_membership"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`seen` is a set of whole numbers and `start` is one of them. Write `run_length(seen, start)`: how many numbers are in the unbroken run `start, start + 1, start + 2, ...` that are all in `seen`. `run_length({4, 5, 6, 10},"
+      },
+      {
+       "id": "b128-run-starts",
+       "title": "Where do the runs begin",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "sequence_start",
+        "set_create",
+        "set_membership",
+        "sorting"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of whole numbers in any order, possibly with repeats. A number **starts a run** when the number one below it is not in the list. Write `run_starts(nums)` returning every number that starts a run, smalles"
+      },
+      {
+       "id": "b128-dbg-every-number",
+       "title": "One size per run",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3.5,
+       "difficulty": 3,
+       "skills": [
+        "sequence_start",
+        "while_loop",
+        "set_membership"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`run_sizes(nums)` should return the size of every run of consecutive numbers in `nums`, smallest size first: **one** size per run. `run_sizes([4, 10, 5, 6, 11])` → `[2, 3]` (the run 10, 11 and the run 4, 5, 6) It returns"
+      },
+      {
+       "id": "b128-long-streaks",
+       "title": "Count the long streaks",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 9,
+       "difficulty": 3,
+       "skills": [
+        "sequence_start",
+        "set_create",
+        "while_loop",
+        "accumulator"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`days` lists the day numbers on which someone practised, in any order, possibly with repeats. A **streak** is a stretch of days in a row with none missing, as long as it can be. Write `long_streaks(days, k)`: how many st"
+      }
+     ]
+    }
+   ],
+   "optionalSections": [
+    {
+     "id": "br-271",
+     "title": "Toward Encode and Decode Strings",
+     "reps": [
+      {
+       "id": "b271-break-join",
+       "title": "Break the comma trick",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 2.5,
+       "difficulty": 2,
+       "skills": [
+        "string_framing",
+        "string_methods",
+        "edge_cases"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`round_trip` glues a list of strings together with commas and splits it apart again. It looks like you always get the same list back: `round_trip([\"ab\", \"c\"])` → `[\"ab\", \"c\"]` Make `breaking_input()` return a list of str"
+      },
+      {
+       "id": "b271-pack",
+       "title": "Length, marker, text",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "string_framing",
+        "string_methods",
+        "len",
+        "for_loop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`words` is a list of strings; any of them can be empty. Write `pack(words)`: one string holding every word, each written as its length, then `#`, then the word itself, with nothing in between. `pack([\"cat\", \"hi\"])` → `\"3"
+      },
+      {
+       "id": "b271-read-one",
+       "title": "Read one item back",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 6,
+       "difficulty": 3,
+       "skills": [
+        "string_framing",
+        "slicing",
+        "while_loop",
+        "tuples"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`data` is a packed string like `\"3#cat2#hi\"` and `i` is the index where one item begins (the first digit of its length). Write `read_one(data, i)` returning a tuple `(text, next_i)`: the item’s text, and the index just p"
+      },
+      {
+       "id": "b271-dbg-one-digit",
+       "title": "Unpack every item",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 6,
+       "difficulty": 3,
+       "skills": [
+        "string_framing",
+        "slicing",
+        "while_loop",
+        "list_append"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`unpack(data)` should turn a packed string back into the list of its items. `unpack(\"3#cat2#hi\")` → `[\"cat\", \"hi\"]` `unpack(\"11#hello world2#hi\")` → `[\"hello world\", \"hi\"]` It works on the first example only. Fix it."
+      },
+      {
+       "id": "b271-count-items",
+       "title": "How many items are packed",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 8,
+       "difficulty": 3,
+       "skills": [
+        "string_framing",
+        "slicing",
+        "while_loop",
+        "accumulator"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`data` is a packed string: each item is written as its length, `#`, then its text. The texts can contain anything, including `#` and digits. Write `count_items(data)`: how many items it holds. Only the count is wanted, n"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

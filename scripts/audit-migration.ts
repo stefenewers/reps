@@ -7,6 +7,7 @@
  */
 import { writeFileSync } from 'node:fs'
 import { MODULES, DAY_OF_EXERCISE } from '@/data/curriculum'
+import { MOCK_EXERCISES } from '@/data/mocks'
 import { COURSE_SECTIONS } from '@/data/exercises/course'
 import { GATES, GATE_OF_EXERCISE, GATE_BY_ID } from '@/data/course/gates'
 import { LABS, LESSONS, WORKED_EXAMPLES } from '@/data/course/lessons'
@@ -17,9 +18,12 @@ import { wordingProblems } from '@/lib/wording'
 import type { Exercise } from '@/lib/types'
 
 type Action = 'keep' | 'move' | 'reword' | 'reclassify' | 'bridge' | 'retrieval' | 'optional' | 'retire'
+type Classification = 'REQUIRED PATH' | 'OPTIONAL' | 'REPAIR INVENTORY' | 'RETRIEVAL' | 'PLACEMENT' | 'STRETCH'
+
 type Purpose = 'learn' | 'guided' | 'drill' | 'combine' | 'transfer' | 'gate' | 'capstone' | 'retrieval'
 
 interface CurriculumMapping {
+  classification?: Classification
   exerciseId: string
   title: string
   section: string
@@ -46,13 +50,14 @@ const NATURAL: Record<string, number[]> = {
   '2026-10-08': [8, 9],
   '2026-10-09': [9, 10],
   '2026-10-10': [11, 12],
-  '2026-10-11': [13, 14],
+  '2026-10-11': [13, 14]
 }
 
 const sectionUnit = new Map<string, { unit: string; optional: boolean }>()
 for (const u of UNITS) {
   for (const s of u.sections) if (!sectionUnit.has(s)) sectionUnit.set(s, { unit: u.id, optional: false })
-  for (const s of u.optional ?? []) if (!sectionUnit.has(s)) sectionUnit.set(s, { unit: u.id, optional: true })
+  for (const s of [...(u.optional ?? []), ...(u.retrieval ?? []), ...(u.stretch ?? [])])
+    if (!sectionUnit.has(s)) sectionUnit.set(s, { unit: u.id, optional: true })
 }
 const plain = new Set(PLAIN_ENGLISH)
 
@@ -71,7 +76,15 @@ const unmapped: string[] = []
 for (const m of MODULES)
   for (const s of m.sections)
     for (const e of s.exercises) {
-      const base = { exerciseId: e.id, title: e.title, section: s.id, module: m.date, stage: e.stage, skills: e.skills, planDate: DAY_OF_EXERCISE[e.id] ?? null }
+      const base = {
+        exerciseId: e.id,
+        title: e.title,
+        section: s.id,
+        module: m.date,
+        stage: e.stage,
+        skills: e.skills,
+        planDate: DAY_OF_EXERCISE[e.id] ?? null
+      }
       const gate = GATE_OF_EXERCISE[e.id]
       const home = sectionUnit.get(s.id)
       if (gate) {
@@ -92,13 +105,92 @@ for (const m of MODULES)
         rows.push({ ...base, action: 'retrieval', week: unit.week, unitId: unit.id, purpose: 'retrieval', note: 'served by spaced review' })
         continue
       }
-      unmapped.push(e.id)
+      // Legacy practice outside a curated unit is explicitly optional, in its
+      // natural teaching week. It must never become an invisible prerequisite.
+      const week = NATURAL[m.date]?.[0] ?? 14
+      const unit = UNITS.find((u) => u.week === week)!
+      rows.push({ ...base, action: 'optional', week, unitId: unit.id, purpose: purposeOf(e), note: 'optional legacy practice; outside the required path' })
     }
+
+// Classify the course's new reps too, including lab parts (optional practice,
+// tracked separately as binary labs rather than problem credits).
+const mapped = new Set(rows.map((r) => r.exerciseId))
+for (const section of COURSE_SECTIONS)
+  for (const e of section.exercises) {
+    if (mapped.has(e.id)) continue
+    mapped.add(e.id)
+    const gate = GATE_OF_EXERCISE[e.id]
+    const home =
+      UNITS.find((u) => u.path?.includes(e.id)) ??
+      UNITS.find((u) => [...u.sections, ...(u.optional ?? []), ...(u.retrieval ?? []), ...(u.stretch ?? [])].includes(section.id))
+    const lab = LABS.find((l) => l.buildExerciseId === e.id || l.changeRequest.exerciseId === e.id)
+    const unit = gate ? UNIT_BY_ID[GATE_BY_ID[gate].unitId] : (home ?? (lab ? UNIT_BY_ID[lab.unitId] : undefined))
+    if (!unit) {
+      unmapped.push(e.id)
+      continue
+    }
+    rows.push({
+      exerciseId: e.id,
+      title: e.title,
+      section: section.id,
+      module: 'course',
+      stage: e.stage,
+      skills: e.skills,
+      planDate: null,
+      action: gate ? 'reclassify' : e.lab ? 'optional' : 'keep',
+      week: unit.week,
+      unitId: unit.id,
+      purpose: gate ? 'gate' : purposeOf(e),
+      note: e.lab ? 'Lab part: no rep credit; required lab obligation is scheduled separately.' : undefined
+    })
+  }
+for (const e of MOCK_EXERCISES) {
+  if (mapped.has(e.id)) continue
+  rows.push({
+    exerciseId: e.id,
+    title: e.title,
+    section: 'mock-bank',
+    module: 'interview',
+    stage: e.stage,
+    skills: e.skills,
+    planDate: null,
+    action: 'optional',
+    week: 14,
+    unitId: 'w14-interview',
+    purpose: 'transfer',
+    note: 'Readiness-gated mock; never part of the required curriculum path.'
+  })
+}
+for (const row of rows) {
+  const unit = UNIT_BY_ID[row.unitId]
+  if (GATE_OF_EXERCISE[row.exerciseId]) row.classification = 'PLACEMENT'
+  else if (UNITS.some((u) => u.path?.includes(row.exerciseId))) row.classification = 'REQUIRED PATH'
+  else if (unit.stretch?.includes(row.section)) row.classification = 'STRETCH'
+  else if (unit.retrieval?.includes(row.section) || row.action === 'retrieval') row.classification = 'RETRIEVAL'
+  else if (unit.sections.includes(row.section) && !unit.deferred?.includes(row.exerciseId)) row.classification = 'REPAIR INVENTORY'
+  else row.classification = 'OPTIONAL'
+  // A mixed section may contain a later topic. Assign that rep to its actual
+  // teaching week, never to the earlier unit's repair queue.
+  if (unit.deferred?.includes(row.exerciseId)) {
+    const destination = UNITS.find((u) => u.week > unit.week && u.retrievalSkills.some((k) => row.skills.includes(k)))
+    if (destination) {
+      row.week = destination.week
+      row.unitId = destination.id
+    }
+  }
+}
+const classifications = Object.fromEntries(
+  (['REQUIRED PATH', 'OPTIONAL', 'REPAIR INVENTORY', 'RETRIEVAL', 'PLACEMENT', 'STRETCH'] as Classification[]).map((c) => [
+    c,
+    rows.filter((r) => r.classification === c).length
+  ])
+)
 
 const count = (a: Action) => rows.filter((r) => r.action === a).length
 const courseReps = COURSE_SECTIONS.flatMap((s) => s.exercises)
 const byPrefix = (p: RegExp) => courseReps.filter((e) => p.test(e.id)).length
 const summary = {
+  classifications,
   existingReps: rows.length + unmapped.length,
   reused: count('keep'),
   moved: count('move'),
@@ -118,16 +210,18 @@ const summary = {
   newLessons: LESSONS.length,
   newWorkedExamples: WORKED_EXAMPLES.length,
   labs: LABS.length,
-  gates: GATES.length,
+  gates: GATES.length
 }
 
 writeFileSync('planning/reps-v2-migration.json', JSON.stringify({ summary, unmapped, mappings: rows }, null, 1) + '\n')
 
 const perWeek = WEEKS.map((w) => {
   const rs = rows.filter((r) => r.week === w.number)
-  const fresh = courseReps.filter((e) => UNITS.some((u) => u.week === w.number && u.sections.some((sid) => COURSE_SECTIONS.find((s) => s.id === sid)?.exercises.includes(e)))).length
+  const fresh = courseReps.filter((e) =>
+    UNITS.some((u) => u.week === w.number && u.sections.some((sid) => COURSE_SECTIONS.find((s) => s.id === sid)?.exercises.includes(e)))
+  ).length
   const gates = GATES.filter((g) => UNIT_BY_ID[g.unitId].week === w.number)
-  return `| ${w.number} | ${w.title} | ${rs.filter((r) => r.action !== 'optional' && r.action !== 'retrieval').length} | ${rs.filter((r) => r.action === 'optional').length} | ${fresh} | ${gates.length} | ${LABS.filter((l) => l.week === w.number).length} |`
+  return `| ${w.number} | ${w.title} | ${rs.filter((r) => r.classification === 'REQUIRED PATH').length} | ${rs.filter((r) => r.action === 'optional').length} | ${fresh} | ${gates.length} | ${LABS.filter((l) => l.week === w.number).length} |`
 }).join('\n')
 
 const md = `# Reps 2.0 — migration audit
@@ -149,6 +243,16 @@ Generated by \`npm run audit:migration\` from \`data/course\`. Every authored re
 | Retired | ${summary.retired} |
 | **Unmapped** | **${summary.unmapped}** |
 
+## V2.1 curriculum roles
+
+${Object.entries(classifications)
+  .map(([role, n]) => `- **${role}**: ${n}`)
+  .join('\n')}
+
+A required path is the curated list of rep IDs. Unchosen reps in its sections
+are repair inventory. Section classifications never silently add required work.
+Checkpoint variants are placement; lab parts receive no problem credit.
+
 ## What the course added
 
 | | |
@@ -166,7 +270,7 @@ Generated by \`npm run audit:migration\` from \`data/course\`. Every authored re
 
 ## By week
 
-| Week | Title | Existing reps required | Existing optional | New reps | Gates | Labs |
+| Week | Title | Required path reps | Optional legacy | New reps | Gates | Labs |
 |---|---|---:|---:|---:|---:|---:|
 ${perWeek}
 
@@ -195,7 +299,7 @@ What the course needed that the October modules did not have, and where it stand
 | Labs (junior SWE and Applied AI / FDE) | ${LABS.length} labs, ${summary.newLabExercises} exercises: done |
 | Week 13 transfer bank | ${summary.newTransferProblems} unlabeled problems (24 small, 12 full fresh, 6 debug/test, 6 explanation): done |
 | Week 14 interview bank | the October interview module (speed round, debug sprint, cold capstones, mixed) plus the 5 mock problems: reused |
-| Worked examples for Weeks 3–12 | not written: those weeks teach through the 24 concept guides and their ladders; worth adding where checkpoints fail most |
+| Worked examples for Weeks 3–12 | ${WORKED_EXAMPLES.filter((w) => Number(w.unitId.match(/^w(\d+)/)?.[1]) >= 3).length} visual worked examples, each with manual reasoning, a demo and a required reconstruction rep: done |
 | Plain-English pass beyond the first 130 reps | ${summary.reworded} reused reps flagged; reword in two-week batches ahead of the learner |
 `
 writeFileSync('planning/reps-v2-content-gaps.md', gaps)

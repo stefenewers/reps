@@ -7,6 +7,7 @@ import { useReps } from '@/components/reps-provider'
 import { MOCKS } from '@/data/mocks'
 import { DAYS, EXERCISE_BY_ID, MODULES } from '@/data/curriculum'
 import MockLog from '@/components/mock-log'
+import { useMockGate } from '@/components/use-mock-gate'
 import { DesignTrack, StoriesChecklist } from '@/components/track-checklists'
 import { shortDate } from '@/lib/dates'
 import type { MockResult } from '@/lib/types'
@@ -15,6 +16,7 @@ import type { StudyStateRow } from '@/lib/storage/types'
 export default function InterviewView() {
   const { repo, version, today } = useReps()
   void version
+  const gate = useMockGate()
   const results = repo.engine
     .all('study_state')
     .filter((r: StudyStateRow) => r.id.startsWith('mock:'))
@@ -36,6 +38,11 @@ export default function InterviewView() {
       </div>
 
       <h2 className="h2 mt-12">Mock interviews</h2>
+      {gate.gated && (
+        <p className="mt-2 max-w-[640px] text-[13.5px] text-muted" data-testid="mock-gate">
+          Mocks open with the evidence, not the calendar. Transfer grade: <span className="font-medium text-ink">{gate.grade}</span>. {gate.note} {gate.allowed ? `${gate.done} of ${gate.allowed} done.` : ''}
+        </p>
+      )}
 
       <ul className="mt-4 grid gap-4 sm:grid-cols-2">
         {MOCKS.map((m) => {
@@ -58,9 +65,15 @@ export default function InterviewView() {
                 {m.minutes} min · {m.exerciseIds.length} problems
                 {past.length ? ` · done ${past.length}×, last ${shortDate(past[0].startedAt.slice(0, 10))}` : ''}
               </p>
-              <Link href={`/interview/${m.id}`} className="btn btn-primary self-start">
-                {past.length ? 'Run it again' : 'Start'}
-              </Link>
+              {gate.canStart(m.id) ? (
+                <Link href={`/interview/${m.id}`} className="btn btn-primary self-start">
+                  {past.length ? 'Run it again' : 'Start'}
+                </Link>
+              ) : (
+                <span className="btn self-start opacity-60" aria-disabled="true" data-testid="mock-locked">
+                  Opens with readiness
+                </span>
+              )}
             </li>
           )
         })}

@@ -1,0 +1,692 @@
+{
+ "week": 10,
+ "title": "Intervals",
+ "focus": "Intervals",
+ "purpose": "Sorting turns a global relationship into local decisions.",
+ "weekTarget": 45,
+ "dailyTarget": 15,
+ "trainingDays": [
+  "2026-12-28",
+  "2026-12-29",
+  "2026-12-30"
+ ],
+ "units": [
+  {
+   "id": "w10-intervals",
+   "title": "Intervals",
+   "purpose": "Sorting turns a global overlap question into local decisions.",
+   "prerequisites": [
+    "w9-heaps"
+   ],
+   "lessonIds": [
+    "intervals"
+   ],
+   "workedExampleIds": [],
+   "targets": [
+    {
+     "lc": 56,
+     "title": "Merge Intervals",
+     "solvedInRepsBy": "cap-merge-intervals"
+    },
+    {
+     "lc": 57,
+     "title": "Insert Interval",
+     "solvedInRepsBy": null
+    },
+    {
+     "lc": 435,
+     "title": "Non-overlapping Intervals",
+     "solvedInRepsBy": null
+    },
+    {
+     "lc": 252,
+     "title": "Meeting Rooms",
+     "solvedInRepsBy": null
+    }
+   ],
+   "readinessTargets": [],
+   "labs": [
+    {
+     "id": "lab-calendar-conflicts",
+     "title": "Calendar Conflict Engine",
+     "optional": false
+    }
+   ],
+   "gates": [
+    {
+     "id": "g-intervals",
+     "title": "Intervals",
+     "need": 2,
+     "skills": [
+      "interval_overlap",
+      "interval_insert"
+     ],
+     "pool": [
+      "d9-cold-any-overlap",
+      "c10-g-interval-a",
+      "c10-g-interval-b"
+     ]
+    }
+   ],
+   "sections": [
+    {
+     "id": "d9-intervals",
+     "title": "Intervals",
+     "reps": [
+      {
+       "id": "d9-iv-overlaps-line",
+       "title": "Overlap test in one line",
+       "kind": "code",
+       "stage": "recall",
+       "repType": "foundation",
+       "minutes": 2,
+       "difficulty": 1,
+       "skills": [
+        "interval_overlap"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "An **interval** is a `[start, end]` pair with `start <= end`, like a booking from 1 to 4. `cur` and `nxt` are two intervals, and `cur` starts first (`cur[0] <= nxt[0]`). Write `overlaps(cur, nxt)` in one line: `True` if "
+      },
+      {
+       "id": "d9-iv-intersection",
+       "title": "Where two ranges overlap",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "interval_overlap"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`a` and `b` are intervals, each a `[start, end]` list; either one may start first. Write `intersection(a, b)` that returns the part both cover as `[start, end]`, or `None` if they do not overlap. `[1, 6]` and `[4, 9]` gi"
+      },
+      {
+       "id": "d9-iv-merge-trace",
+       "title": "Trace the merge loop",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 1,
+       "skills": [
+        "interval_overlap",
+        "list_index"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "To **merge** intervals is to combine every group that overlaps or touches into one interval covering all of it: `[1, 3]` and `[2, 6]` become `[1, 6]`. The intervals below are already sorted by start. Predict the output; "
+      },
+      {
+       "id": "d9-iv-merge-sorted",
+       "title": "Merge, input already sorted",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "interval_overlap",
+        "list_index"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`intervals` is a list of `[start, end]` pairs, already sorted by start. It may be empty. Write `merge_sorted(intervals)` returning a list in which every group of overlapping or touching intervals has been combined into o"
+      },
+      {
+       "id": "d9-iv-dbg-overwrite-end",
+       "title": "Debug: nested ranges",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3.5,
+       "difficulty": 2,
+       "skills": [
+        "interval_overlap"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`intervals` is a list of `[start, end]` ranges sorted by start. `merge_sorted(intervals)` should combine every overlapping or touching group into one range and return the list of combined ranges. It fails when one range "
+      },
+      {
+       "id": "d9-iv-dbg-strict",
+       "title": "Debug: back-to-back bookings",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3.5,
+       "difficulty": 2,
+       "skills": [
+        "interval_overlap",
+        "sort_key"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`bookings` is a list of `[start, end]` pairs in any order. `combine(bookings)` should merge bookings that overlap **or touch** (a booking ending at 4 and one starting at 4 become one block), returning the blocks sorted b"
+      },
+      {
+       "id": "d9-iv-dbg-unsorted",
+       "title": "Debug: ranges in any order",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3.5,
+       "difficulty": 2,
+       "skills": [
+        "interval_overlap",
+        "sort_key"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`ranges` is a list of `[start, end]` ranges in **any order**. `merge_ranges(ranges)` should combine every overlapping or touching group into one range and return the combined ranges sorted by start: `[[8, 10], [1, 3], [2"
+      },
+      {
+       "id": "d9-iv-can-attend",
+       "title": "Can one person attend every meeting?",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 6,
+       "difficulty": 2,
+       "skills": [
+        "interval_overlap",
+        "sort_key"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`meetings` is a list of `[start, end]` times, in any order. It may be empty. Two meetings **clash** when one of them starts while the other is still going on. A meeting ending at 10 and another starting at 10 do **not** "
+      },
+      {
+       "id": "d9-iv-covered-length",
+       "title": "Total length covered",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 8,
+       "difficulty": 3,
+       "skills": [
+        "interval_overlap",
+        "sort_key",
+        "accumulator"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`intervals` is a list of `[start, end]` pairs in any order (it may be empty). The length of `[start, end]` is `end - start`. Write `covered(intervals)` returning the total length of the number line they cover. Overlappin"
+      },
+      {
+       "id": "d9-iv-write-test",
+       "title": "Write the tests that catch merge bugs",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 3,
+       "skills": [
+        "interval_overlap",
+        "edge_cases"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `test_merge(merge)`. Its argument `merge` is a function: some implementation of merge intervals (it takes a list of `[start, end]` ranges in any order, combines ranges that overlap or touch, and returns the result "
+      },
+      {
+       "id": "cap-merge-intervals",
+       "title": "Merge overlapping ranges",
+       "kind": "code",
+       "stage": "capstone",
+       "repType": "capstone",
+       "minutes": 28,
+       "difficulty": 3,
+       "skills": [
+        "sort_key",
+        "interval_overlap",
+        "list_index"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": 56,
+       "transfer": false,
+       "prompt": "You get a list of ranges, each `[start, end]` with `start <= end`, in no particular order. Combine every group of ranges that overlap (ranges that only touch at an endpoint also combine) and return the resulting ranges s"
+      },
+      {
+       "id": "d9-explain-merge-intervals",
+       "title": "Explain: merge intervals",
+       "kind": "explain",
+       "stage": "interview",
+       "repType": "interview",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "explanation",
+        "complexity",
+        "interval_overlap"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Explain your merge-intervals solution: why sort, the overlap rule, why max, complexity, edge cases."
+      },
+      {
+       "id": "d9-fu-touching-apart",
+       "title": "Follow-up: touching stays apart",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "interval_overlap",
+        "sort_key"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "**Interviewer follow-up.** Your merge-intervals solution is in the editor, already renamed `merge_strict`. It combines ranges that only touch (`[1, 4]` and `[4, 6]` become `[1, 6]`). The rule changes: touching ranges now"
+      }
+     ]
+    },
+    {
+     "id": "br-252",
+     "title": "Toward Meeting Rooms",
+     "reps": [
+      {
+       "id": "b252-first-clash",
+       "title": "The first meeting that clashes",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 6,
+       "difficulty": 2,
+       "skills": [
+        "interval_overlap",
+        "sort_key",
+        "early_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`meetings` is a list of `[start, end]` pairs in any order, all with different starts. A meeting may begin exactly when another ends. Write `first_clash(meetings)`: going through the day in start order, return the first m"
+      },
+      {
+       "id": "b252-one-oven-mini",
+       "title": "One oven, many bakes",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 7,
+       "difficulty": 2,
+       "skills": [
+        "interval_overlap",
+        "sorting",
+        "tuples"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`bakes` is a list of `(start, minutes)` tuples: when a tray goes in and how long it stays. The oven holds one tray. A tray may go in at the very minute the previous one comes out. Write `one_oven(bakes)` that returns `Tr"
+      }
+     ]
+    },
+    {
+     "id": "br-57",
+     "title": "Toward Insert Interval",
+     "reps": [
+      {
+       "id": "b57-before-after",
+       "title": "Entirely before, entirely after",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 7,
+       "difficulty": 2,
+       "skills": [
+        "interval_insert",
+        "interval_overlap",
+        "list_append"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`intervals` is a list of `[start, end]` pairs and `new` is one more pair. Touching counts as overlapping. Write `split_around(intervals, new)` that returns `[before, after]`: the intervals that end before `new` starts, a"
+      },
+      {
+       "id": "b57-absorb",
+       "title": "Widen the new interval",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 7,
+       "difficulty": 2,
+       "skills": [
+        "interval_insert",
+        "interval_overlap",
+        "state_tracking"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`intervals` is sorted by start and none of them overlap each other. `new` is one more `[start, end]` pair; touching counts as overlapping. Write `absorb(intervals, new)` that returns the single `[start, end]` you get by "
+      },
+      {
+       "id": "b57-dbg-one-side",
+       "title": "Debug: the booking that shrank",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 3,
+       "skills": [
+        "interval_insert",
+        "interval_overlap",
+        "while_loop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`slots` is sorted by start with no overlaps. `insert_slot(slots, new)` should return the list with `new` added, still sorted, with anything it overlaps merged into it (touching merges). `insert_slot([[1, 3], [6, 9]], [2,"
+      },
+      {
+       "id": "b57-add-pages-mini",
+       "title": "Add a page range to a print job",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 12,
+       "difficulty": 3,
+       "skills": [
+        "interval_insert",
+        "interval_overlap",
+        "while_loop",
+        "list_append"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "A print job is a sorted list of page `ranges` like `[[1, 2], [6, 8]]`: whole page numbers, each range `[first, last]`, with a gap between any two. `new` is one more range. Write `add_pages(ranges, new)` that returns the "
+      }
+     ]
+    },
+    {
+     "id": "br-435",
+     "title": "Toward Non-overlapping Intervals",
+     "reps": [
+      {
+       "id": "b435-keep-talks",
+       "title": "Keep what fits after the last one",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 6,
+       "difficulty": 2,
+       "skills": [
+        "interval_greedy",
+        "interval_overlap",
+        "list_append"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`talks` is a list of `[start, end]` pairs **already sorted by end time**. One room; a talk may start exactly when the previous one ends. Write `keep_talks(talks)`: go through them in order and keep a talk whenever it sta"
+      },
+      {
+       "id": "b435-pick-shows",
+       "title": "Fill one stage",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 8,
+       "difficulty": 3,
+       "skills": [
+        "interval_greedy",
+        "sort_key",
+        "tuples"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`shows` is a list of `(name, start, end)` tuples in any order, all with different end times. One stage; a show may start the moment another ends. Write `pick_shows(shows)` that fits in as many shows as possible by always"
+      },
+      {
+       "id": "b435-dbg-sort-start",
+       "title": "Debug: the greedy that picks the long one",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 3,
+       "skills": [
+        "interval_greedy",
+        "sort_key",
+        "interval_overlap"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`bookings` is a list of `[start, end]` pairs in any order. `most_bookings(bookings)` should return the largest number of bookings one room can take (a booking may start when another ends). `most_bookings([[1, 10], [2, 3]"
+      },
+      {
+       "id": "b435-refused-mini",
+       "title": "How many court requests to refuse",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 10,
+       "difficulty": 3,
+       "skills": [
+        "interval_greedy",
+        "sort_key",
+        "interval_overlap",
+        "tuples"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "A tennis court gets `requests` as `(start, hours)` tuples: the hour play begins and how long it lasts. A game may begin the moment the previous one finishes. Write `refused(requests)` that returns the **fewest** requests"
+      }
+     ]
+    },
+    {
+     "id": "d9-cold",
+     "title": "Cold reps",
+     "reps": [
+      {
+       "id": "d9-cold-sort-second-desc",
+       "title": "Cold: rank names by points",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "sort_key",
+        "tuples"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `rank_names(pairs)` that takes `(name, points)` pairs and returns just the names, highest points first; equal points ordered by name A to Z."
+      },
+      {
+       "id": "d9-cold-kth-smallest",
+       "title": "Cold: k-th smallest with a heap",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 6,
+       "difficulty": 3,
+       "skills": [
+        "top_k",
+        "heap_push_pop"
+       ],
+       "gateVariantOf": "g-heap",
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `kth_smallest(nums, k)` using a heap of size `k` (the mirror of k-th largest). Return the k-th smallest value: `k = 1` is the minimum. Assume `1 <= k <= len(nums)`."
+      },
+      {
+       "id": "d9-cold-any-overlap",
+       "title": "Cold: any overlap?",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "interval_overlap",
+        "sort_key"
+       ],
+       "gateVariantOf": "g-intervals",
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `has_overlap(intervals)` returning `True` if any two `[start, end]` ranges overlap. Here touching endpoints **do** count as overlap. Input is unsorted."
+      },
+      {
+       "id": "d9-cold-top-words",
+       "title": "Cold: top k words, ordered",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 6,
+       "difficulty": 3,
+       "skills": [
+        "frequency_map",
+        "sort_key"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `top_words(words, k)` returning the `k` most frequent words, most frequent first; words with equal counts go alphabetically. Order matters here."
+      },
+      {
+       "id": "d9-cold-last-rock",
+       "title": "Cold: smash the two heaviest",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 6,
+       "difficulty": 3,
+       "skills": [
+        "heap_push_pop",
+        "while_loop"
+       ],
+       "gateVariantOf": "g-heap",
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "From memory: `last_rock(weights)`. Repeatedly smash the two heaviest rocks; equal weights both vanish, otherwise the difference goes back. Return the last weight, or `0`."
+      }
+     ]
+    }
+   ],
+   "optionalSections": [
+    {
+     "id": "br-253",
+     "title": "Toward Meeting Rooms II",
+     "reps": [
+      {
+       "id": "b253-trace-heap",
+       "title": "Trace the heap of end times",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 1,
+       "skills": [
+        "min_rooms",
+        "heap_push_pop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Each line prints the meeting’s start, the earliest end time still in the heap, and the heap’s size. What is printed?"
+      },
+      {
+       "id": "b253-book",
+       "title": "Book one meeting",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 6,
+       "difficulty": 2,
+       "skills": [
+        "min_rooms",
+        "heap_push_pop",
+        "conditionals"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`ends` is a min-heap (a list managed by `heapq`) holding the end time of every room in use. A meeting from `start` to `end` arrives. A room that ends at 10 is free for a meeting starting at 10. Write `book(ends, start, e"
+      },
+      {
+       "id": "b253-dbg-drain",
+       "title": "Debug: the desks that vanished",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 3,
+       "skills": [
+        "min_rooms",
+        "heap_push_pop",
+        "while_loop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`shifts` is a list of `[start, end]` pairs in any order. Each worker needs a desk for their whole shift; a desk can be handed over at the minute a shift ends. `desks_needed(shifts)` should return the smallest number of d"
+      },
+      {
+       "id": "b253-reuses",
+       "title": "How many meetings reused a room?",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 9,
+       "difficulty": 3,
+       "skills": [
+        "min_rooms",
+        "heap_push_pop",
+        "sorting",
+        "accumulator"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`meetings` is a list of `[start, end]` pairs in any order. Rooms are handed out in start order: a meeting takes over the room that freed up earliest if that room is free by its start (ending at 10 is free at 10), otherwi"
+      },
+      {
+       "id": "b253-platforms-mini",
+       "title": "Platforms at a station",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 9,
+       "difficulty": 3,
+       "skills": [
+        "min_rooms",
+        "heap_push_pop",
+        "sorting",
+        "interval_overlap"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "Train `i` arrives at minute `arrivals[i]` and leaves at minute `departures[i]`. The two lists have the same length and are in no particular order. A platform can take a train arriving in the very minute the previous trai"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

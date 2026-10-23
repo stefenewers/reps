@@ -1,0 +1,1584 @@
+{
+ "week": 11,
+ "title": "Backtracking + DP",
+ "focus": "Backtracking, basic DP",
+ "purpose": "Choose, explore, undo; then remember repeated subproblems.",
+ "weekTarget": 75,
+ "dailyTarget": 15,
+ "trainingDays": [
+  "2027-01-04",
+  "2027-01-05",
+  "2027-01-06",
+  "2027-01-07",
+  "2027-01-08"
+ ],
+ "units": [
+  {
+   "id": "w11-backtracking",
+   "title": "Backtracking",
+   "purpose": "Choose, explore, undo.",
+   "prerequisites": [
+    "w6-recursion"
+   ],
+   "lessonIds": [
+    "backtracking"
+   ],
+   "workedExampleIds": [],
+   "targets": [
+    {
+     "lc": 78,
+     "title": "Subsets",
+     "solvedInRepsBy": "cap-subsets"
+    }
+   ],
+   "readinessTargets": [
+    {
+     "lc": 39,
+     "title": "Combination Sum"
+    }
+   ],
+   "labs": [
+    {
+     "id": "lab-package-configurator",
+     "title": "Package Configurator",
+     "optional": false
+    }
+   ],
+   "gates": [
+    {
+     "id": "g-backtracking",
+     "title": "Backtracking",
+     "need": 2,
+     "skills": [
+      "backtracking_state"
+     ],
+     "pool": [
+      "d10b-step-plans",
+      "d10b-selections",
+      "d10b-seatings",
+      "d10b-quiet-codes",
+      "d10-cold-letter-subsets",
+      "d10-cold-pick-k"
+     ]
+    }
+   ],
+   "sections": [
+    {
+     "id": "d10-decisions",
+     "title": "Decision trees",
+     "reps": [
+      {
+       "id": "d10-dt-call-order",
+       "title": "Down and back up",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 2,
+       "difficulty": 1,
+       "skills": [
+        "recursion_base_case",
+        "recursion_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Predict the output. Watch what happens after each recursive call returns."
+      },
+      {
+       "id": "d10-dt-include-exclude",
+       "title": "Include first, then exclude",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 2.5,
+       "difficulty": 1,
+       "skills": [
+        "backtracking_state",
+        "recursion_base_case"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Predict the output. `choose` decides about one item per call: `i` is the index of the item being decided and `picked` is the list of items taken so far. Each call is handed a **new** list (`picked + [x]` builds one), so "
+      },
+      {
+       "id": "d10-dt-all-sums",
+       "title": "Every subset sum",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "backtracking_state",
+        "recursion_base_case"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of numbers. A **subset** of it is any selection of its items: each item is either taken or left out. `[1, 2]` has four subsets: `[1, 2]`, `[1]`, `[2]` and `[]` (taking nothing counts). Finish `all_sums(n"
+      },
+      {
+       "id": "d10-dt-bit-strings",
+       "title": "All bit strings of length n",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "backtracking_state",
+        "recursion_base_case"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`n` is a whole number, 0 or more. Write `bit_strings(n)` returning a list of every string of length `n` made only of `'0'` and `'1'`. Order matters here: at each position try `'0'` before `'1'`, so `bit_strings(2)` → `['"
+      },
+      {
+       "id": "d10-dt-dbg-base",
+       "title": "Debug: count subsets hitting a target",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3.5,
+       "difficulty": 2,
+       "skills": [
+        "backtracking_state",
+        "recursion_base_case"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of integers and `target` is an integer. `count_sums(nums, target)` should return how many subsets of `nums` (take or leave each item) add up to exactly `target`. The empty subset adds up to 0. `count_sum"
+      },
+      {
+       "id": "d10-dt-can-reach",
+       "title": "Can some subset reach the target?",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 6,
+       "difficulty": 3,
+       "skills": [
+        "backtracking_state",
+        "early_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of integers (negatives allowed) and `target` is an integer. Write `can_reach(nums, target)` returning `True` if some subset of `nums` adds up to exactly `target`, otherwise `False`. The empty subset adds"
+      },
+      {
+       "id": "d10-dt-signs",
+       "title": "Plus or minus each number",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 6,
+       "difficulty": 3,
+       "skills": [
+        "backtracking_state",
+        "recursion_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of integers. Put a `+` or a `-` in front of **every** number, then add them up. Write `sign_ways(nums, target)` returning how many different sign choices make the total equal `target`. `sign_ways([1, 1],"
+      }
+     ]
+    },
+    {
+     "id": "d10-path",
+     "title": "Path state",
+     "reps": [
+      {
+       "id": "d10-ps-copy-trace",
+       "title": "One shared path",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 2,
+       "difficulty": 1,
+       "skills": [
+        "backtracking_state"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Predict the output. One `path` list is shared by every call: `path.append(i)` takes `i`, the call after it explores with `i` taken, and `path.pop()` removes it again. `path[:]` makes a copy of the list as it is right now"
+      },
+      {
+       "id": "d10-ps-subsequences-finish",
+       "title": "Finish: choose, explore, un-choose",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "backtracking_state",
+        "string_methods"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`s` is a string. A **subsequence** keeps some of its characters (possibly none, possibly all) in their original order: `'ab'` has `'ab'`, `'a'`, `'b'` and `''`. `pickings(s)` should return a list of every subsequence of "
+      },
+      {
+       "id": "d10-ps-dice",
+       "title": "Every roll sequence",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 6,
+       "difficulty": 3,
+       "skills": [
+        "backtracking_state",
+        "range"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`n` is how many times a die is rolled and `sides` is how many faces it has (values `1` to `sides`). Write `rolls(n, sides)` returning every possible sequence of `n` rolls, each as a list, smallest first: `rolls(2, 2)` → "
+      },
+      {
+       "id": "d10-ps-dbg-alias",
+       "title": "Debug: every 0/1 list",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "backtracking_state",
+        "slicing"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`bit_lists(n)` should return every list of `n` values chosen from `0` and `1`, zeros first (so `n = 2` gives `[[0, 0], [0, 1], [1, 0], [1, 1]]`). Fix it."
+      },
+      {
+       "id": "d10-ps-combos",
+       "title": "Groups of exactly k",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 9,
+       "difficulty": 3,
+       "skills": [
+        "backtracking_state",
+        "range"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of distinct values and `k` is a whole number, 0 or more. A **combination** is a choice of items where order does not matter: `[1, 2]` and `[2, 1]` are the same group. Write `groups(nums, k)` returning ev"
+      },
+      {
+       "id": "d10-ps-dbg-no-pop",
+       "title": "Debug: increasing picks from 1..n",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3.5,
+       "difficulty": 2,
+       "skills": [
+        "backtracking_state"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`choose(n, k)` should return every increasing list of `k` numbers taken from `1..n` (so `choose(3, 2)` gives `[[1, 2], [1, 3], [2, 3]]`). Fix it."
+      },
+      {
+       "id": "d10-ps-letter-combos",
+       "title": "Keypad letter combinations",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 9,
+       "difficulty": 3,
+       "skills": [
+        "backtracking_state",
+        "dict_lookup"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`digits` is a string of digits from `2` to `9`, like `'23'`. On a phone keypad each digit stands for some letters; the mapping `KEYS` is in the starter. Write `spell(digits)` returning every string made by picking one le"
+      },
+      {
+       "id": "d10-ps-orderings",
+       "title": "Every ordering",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 12,
+       "difficulty": 4,
+       "skills": [
+        "backtracking_state",
+        "set_membership"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of distinct values. An **ordering** (also called a **permutation**) uses every value exactly once; two orderings differ only in the order. Write `orderings(nums)` returning every ordering as a list. `ord"
+      },
+      {
+       "id": "d10-ps-dbg-used",
+       "title": "Debug: arrangements",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "backtracking_state"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`arrangements(items)` should return every ordering of the distinct `items` (any order of orderings). It returns far too few. Fix it."
+      },
+      {
+       "id": "d10-ps-tree-paths",
+       "title": "Root-to-leaf paths",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 9,
+       "difficulty": 3,
+       "skills": [
+        "backtracking_state",
+        "tree_dfs"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`root` is the top node of a binary tree, or `None` for an empty tree. Each node has `.val`, `.left` and `.right`. A **leaf** is a node with no children, and a root-to-leaf path is the list of values you pass going from t"
+      }
+     ]
+    },
+    {
+     "id": "d10-subsets",
+     "title": "Subsets",
+     "reps": [
+      {
+       "id": "d10-sub-loop-style",
+       "title": "Subsets, loop style",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 7,
+       "difficulty": 3,
+       "skills": [
+        "backtracking_state",
+        "range"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of distinct values. Write `all_groups(nums)` returning every subset of `nums` as a list (subsets in any order): `all_groups([1, 2])` → `[[], [1], [1, 2], [2]]`, and `all_groups([])` → `[[]]`. Use the **l"
+      },
+      {
+       "id": "d10-sub-target-subsets",
+       "title": "Subsets that hit a sum",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 8,
+       "difficulty": 3,
+       "skills": [
+        "backtracking_state",
+        "recursion_base_case"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`nums` is a list of distinct integers (negatives allowed) and `target` is an integer. Write `hitting(nums, target)` returning every subset of `nums` whose values add up to exactly `target`. Each subset is a list. The sub"
+      },
+      {
+       "id": "d10-sub-write-test",
+       "title": "Write the test that catches subset bugs",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "backtracking_state",
+        "edge_cases"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "This time you write the test. `test_subsets(subsets)` receives a **function** `subsets`: calling `subsets(nums)` with a list of distinct numbers is supposed to return every subset of `nums`, as a list of lists. Call it o"
+      },
+      {
+       "id": "cap-subsets",
+       "title": "Every subset",
+       "kind": "code",
+       "stage": "capstone",
+       "repType": "capstone",
+       "minutes": 25,
+       "difficulty": 3,
+       "skills": [
+        "backtracking_state",
+        "recursion_base_case"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": 78,
+       "transfer": false,
+       "prompt": "Given a list `nums` of distinct integers, return every possible subset (the power set), including the empty one and `nums` itself. No subset may appear twice. The subsets may come in any order, and so may the values insi"
+      },
+      {
+       "id": "d10-explain-subsets",
+       "title": "Explain: subsets",
+       "kind": "explain",
+       "stage": "interview",
+       "repType": "interview",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "explanation",
+        "complexity",
+        "backtracking_state"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Explain your subsets solution as you would in an interview: the decision tree, the shared path, why the copy, complexity."
+      }
+     ]
+    },
+    {
+     "id": "d10b-check",
+     "title": "Backtracking check",
+     "reps": [
+      {
+       "id": "d10b-step-plans",
+       "title": "Check: ways up the steps",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 10,
+       "difficulty": 3,
+       "skills": [
+        "backtracking_state",
+        "recursion_base_case"
+       ],
+       "gateVariantOf": "g-backtracking",
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "You climb `n` steps, taking 1 or 2 at a time. Write `step_plans(n)` returning every plan as a list of step sizes, in any order. `step_plans(3)` gives `[[1, 1, 1], [1, 2], [2, 1]]`. `[1, 2]` and `[2, 1]` are different pla"
+      },
+      {
+       "id": "d10b-selections",
+       "title": "Check: every selection",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 9,
+       "difficulty": 3,
+       "skills": [
+        "backtracking_state",
+        "recursion_base_case",
+        "list_append"
+       ],
+       "gateVariantOf": "g-backtracking",
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "A stall sells some `extras` (distinct strings). Write `selections(extras)` returning every possible order a customer could place: any number of extras, each at most once, including none at all. `selections(['egg', 'jam']"
+      },
+      {
+       "id": "d10b-seatings",
+       "title": "Check: every seating order",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 10,
+       "difficulty": 3,
+       "skills": [
+        "backtracking_state",
+        "recursion_base_case",
+        "for_loop"
+       ],
+       "gateVariantOf": "g-backtracking",
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `seatings(names)` returning every order in which the people in `names` (distinct strings) can sit along a bench. Each order is a list using every name once. `seatings(['ann', 'bo'])` gives `[['ann', 'bo'], ['bo', '"
+      },
+      {
+       "id": "d10b-quiet-codes",
+       "title": "Check: codes with no double 1",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 11,
+       "difficulty": 3,
+       "skills": [
+        "backtracking_state",
+        "recursion_base_case",
+        "conditionals"
+       ],
+       "gateVariantOf": "g-backtracking",
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `quiet_codes(n)` returning every string of `'0'` and `'1'` of length `n` that never has two `'1'`s next to each other, in any order. `quiet_codes(2)` gives `['00', '01', '10']` (`'11'` is left out). `quiet_codes(0)"
+      }
+     ]
+    },
+    {
+     "id": "br-39",
+     "title": "Toward Combination Sum",
+     "reps": [
+      {
+       "id": "b39-trace-start",
+       "title": "Trace: the call passes i",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 2.5,
+       "difficulty": 1,
+       "skills": [
+        "combination_start",
+        "backtracking_state"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "You know `dfs(i + 1)`: move past the item just picked. Here the call passes `i` itself. Predict the output."
+      },
+      {
+       "id": "b39-scoops",
+       "title": "Bowls of k scoops",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 9,
+       "difficulty": 3,
+       "skills": [
+        "combination_start",
+        "backtracking_state",
+        "range"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`flavors` is a list of distinct strings and `k` is a whole number, 0 or more. Write `scoops(flavors, k)` returning every bowl of exactly `k` scoops, each bowl as a list of flavors. A flavor may be scooped more than once,"
+      },
+      {
+       "id": "b39-exact-loads",
+       "title": "Loads that weigh exactly the limit",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 11,
+       "difficulty": 3,
+       "skills": [
+        "combination_start",
+        "backtracking_state",
+        "recursion_base_case"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `exact_loads(weights, limit)` returning every group of crates whose weights add up to exactly `limit`. Each crate can be used **once**. Weights are distinct positive whole numbers. Carry the weight still allowed do"
+      },
+      {
+       "id": "b39-dbg-orders",
+       "title": "Debug: the same bundle twice",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 6,
+       "difficulty": 3,
+       "skills": [
+        "combination_start",
+        "backtracking_state"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "A shop sells packs of the given `sizes` and has plenty of each. `bundles(sizes, total)` should list every bundle of packs holding exactly `total` items. A size may be used several times. A bundle is a bag of packs: `[2, "
+      },
+      {
+       "id": "b39-count-ways",
+       "title": "How many ways to pay",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 10,
+       "difficulty": 3,
+       "skills": [
+        "combination_start",
+        "recursion_return",
+        "recursion_base_case"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "Write `count_ways(coins, amount)` returning **how many** different handfuls of coins add up to exactly `amount`. `coins` holds distinct positive coin values, and you have as many of each as you like. A handful has no ord"
+      }
+     ]
+    }
+   ],
+   "optionalSections": [
+    {
+     "id": "d10-warmup",
+     "title": "Warm-up",
+     "reps": [
+      {
+       "id": "d10-warm-sort-by-end",
+       "title": "Warm-up: sort by end, then start",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "sort_key",
+        "tuples"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `by_end(intervals)` that returns the `[start, end]` intervals sorted by end; equal ends are ordered by start."
+      },
+      {
+       "id": "d10-warm-k-largest-sum",
+       "title": "Warm-up: sum of the k largest",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 7,
+       "difficulty": 3,
+       "skills": [
+        "top_k",
+        "heap_push_pop"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `sum_top_k(nums, k)` returning the sum of the `k` largest values, using a min-heap trimmed to size `k`. Assume `0 <= k <= len(nums)`."
+      },
+      {
+       "id": "d10-warm-merge-count",
+       "title": "Warm-up: how many blocks after merging?",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 7,
+       "difficulty": 3,
+       "skills": [
+        "interval_overlap",
+        "sort_key"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `block_count(intervals)` that returns how many separate ranges remain after merging all overlapping (or touching) `[start, end]` ranges. Input is unsorted."
+      },
+      {
+       "id": "d10-warm-tree-sum",
+       "title": "Warm-up: sum a tree",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 3,
+       "difficulty": 1,
+       "skills": [
+        "tree_dfs",
+        "recursion_base_case",
+        "recursion_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `tree_sum(root)` returning the sum of all node values (0 for an empty tree)."
+      },
+      {
+       "id": "d10-warm-grid-steps",
+       "title": "Warm-up: fewest steps through a grid",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 11,
+       "difficulty": 3,
+       "skills": [
+        "bfs",
+        "queue_deque",
+        "grid_neighbors",
+        "visited_set"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`grid` is a list of lists with `0` for open and `1` for wall. Moving up, down, left or right, write `fewest_steps(grid)` returning the fewest moves from the top-left to the bottom-right cell, or `-1` if impossible (inclu"
+      },
+      {
+       "id": "d10-warm-first-repeat",
+       "title": "Warm-up: first repeated value",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 3,
+       "difficulty": 1,
+       "skills": [
+        "set_membership",
+        "set_add"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `first_repeat(nums)` returning the first value that appears for a second time while scanning left to right, or `None` if nothing repeats."
+      }
+     ]
+    },
+    {
+     "id": "br-79",
+     "title": "Toward Word Search",
+     "reps": [
+      {
+       "id": "b79-cell-ok",
+       "title": "Is this cell usable?",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "grid_backtracking",
+        "grid_neighbors",
+        "set_membership"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`grid` is a list of equal-length strings. Write `fits(grid, r, c, ch, used)` returning `True` only when `(r, c)` is inside the grid, the cell holds the letter `ch`, and `(r, c)` is not in the set `used`. With `grid = ['A"
+      },
+      {
+       "id": "b79-spell-right-down",
+       "title": "Spell a word going right or down",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 8,
+       "difficulty": 3,
+       "skills": [
+        "grid_backtracking",
+        "recursion_base_case",
+        "grid_nested"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`grid` is a list of equal-length strings. Write `spell_from(grid, r, c, word)` returning `True` if `word` can be read starting at cell `(r, c)`, moving one cell **right or down** for each next letter. With `grid = ['CAT'"
+      },
+      {
+       "id": "b79-dbg-no-unmark",
+       "title": "Debug: the snake that gives up",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 3,
+       "skills": [
+        "grid_backtracking",
+        "backtracking_state",
+        "visited_set"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`snake_from(grid, r, c, word)` should return `True` if `word` can be read starting at `(r, c)`, moving up, down, left or right for each next letter and never standing on the same cell twice. With `grid = ['AB', 'BC', 'D."
+      },
+      {
+       "id": "b79-longest-trail",
+       "title": "Longest walk without reusing a cell",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 12,
+       "difficulty": 4,
+       "skills": [
+        "grid_backtracking",
+        "grid_neighbors",
+        "backtracking_state",
+        "visited_set"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`grid` is a list of equal-length strings: `'.'` is open floor, `'#'` is a wall. Write `longest_trail(grid, r, c)` returning the largest number of cells a walk can cover starting on `(r, c)`, moving up, down, left or righ"
+      },
+      {
+       "id": "b79-has-snake",
+       "title": "A snake of k same-coloured cells",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 15,
+       "difficulty": 4,
+       "skills": [
+        "grid_backtracking",
+        "grid_neighbors",
+        "early_return",
+        "visited_set"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`grid` is a list of equal-length strings, one colour letter per cell. A **snake** is a chain of different cells, each next to the one before (up, down, left or right), all of the same colour. Write `has_snake(grid, k)` r"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "w11-dp",
+   "title": "Basic dynamic programming",
+   "purpose": "A correct recursion, a repeated subproblem, a memo, then the recurrence bottom-up.",
+   "prerequisites": [
+    "w6-recursion"
+   ],
+   "lessonIds": [
+    "dynamic-programming"
+   ],
+   "workedExampleIds": [],
+   "targets": [
+    {
+     "lc": 70,
+     "title": "Climbing Stairs",
+     "solvedInRepsBy": "cap-climbing-stairs"
+    },
+    {
+     "lc": 198,
+     "title": "House Robber",
+     "solvedInRepsBy": "cap-house-robber"
+    }
+   ],
+   "readinessTargets": [],
+   "labs": [
+    {
+     "id": "lab-minimum-cost",
+     "title": "Minimum-Cost Plan",
+     "optional": false
+    }
+   ],
+   "gates": [
+    {
+     "id": "g-dp",
+     "title": "DP state and recurrence",
+     "need": 2,
+     "skills": [
+      "recurrence",
+      "memoization",
+      "dp_table"
+     ],
+     "pool": [
+      "d10-cold-pieces",
+      "d10-cold-cache-stairs",
+      "c11-g-dp-a"
+     ]
+    }
+   ],
+   "sections": [
+    {
+     "id": "d10-recurrence",
+     "title": "Recurrences",
+     "reps": [
+      {
+       "id": "d10-rec-fib-calls",
+       "title": "How many calls?",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 2.5,
+       "difficulty": 1,
+       "skills": [
+        "recurrence",
+        "recursion_return"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Predict the output. `fib(n)` is the n-th Fibonacci number: each one is the sum of the two before it (`0, 1, 1, 2, 3, 5, ...`). `calls` counts how many times `fib` runs."
+      },
+      {
+       "id": "d10-rec-fib-naive",
+       "title": "Fibonacci, plain recursion",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 1,
+       "skills": [
+        "recurrence",
+        "recursion_base_case"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "The Fibonacci numbers are `0, 1, 1, 2, 3, 5, 8, ...`: each is the sum of the two before it. `n` is a whole number, 0 or more. Write `fib(n)` recursively, straight from the recurrence: `fib(0) = 0`, `fib(1) = 1`, and `fib"
+      },
+      {
+       "id": "d10-rec-three-steps",
+       "title": "Steps of 1, 2 or 3",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "recurrence",
+        "recursion_base_case"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "You stand at the bottom of a staircase (step 0) and each move climbs 1, 2 or 3 steps. `n` is the step you want to land on exactly. Write recursive `ways3(n)` returning how many different sequences of moves get there. Ord"
+      },
+      {
+       "id": "d10-rec-grid-paths",
+       "title": "Paths through a grid",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "recurrence",
+        "recursion_base_case"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "A grid has `rows` rows and `cols` columns (both at least 1). You start in the top-left cell and each move goes one cell right or one cell down. Write recursive `grid_paths(rows, cols)` returning how many different routes"
+      },
+      {
+       "id": "d10-rec-dbg-base",
+       "title": "Debug: stair count base cases",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "recurrence",
+        "recursion_base_case"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`climb(n)` should count the ways to climb `n` steps taking 1 or 2 at a time. There is exactly one way to climb 0 steps (do nothing) and one way to climb 1 step. Fix it."
+      }
+     ]
+    },
+    {
+     "id": "d10-memo",
+     "title": "Memoization",
+     "reps": [
+      {
+       "id": "d10-memo-trace",
+       "title": "What ends up in the memo?",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 2,
+       "difficulty": 1,
+       "skills": [
+        "memoization",
+        "dict_items"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Predict the output. `memo` is a dict: `n` → the answer already worked out for `fib(n)`."
+      },
+      {
+       "id": "d10-memo-optimize",
+       "title": "Optimize: add a memo",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "memoization",
+        "recurrence"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`climb(n)` counts the ways to climb `n` steps taking 1 or 2 at a time. It is correct but slow: it works out the same `n` again and again, and `calls` counts how often it runs. Add a dict `memo` (`n` → answer), created on"
+      },
+      {
+       "id": "d10-memo-fib",
+       "title": "Memoized Fibonacci",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "memoization",
+        "recurrence"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `fast_fib(n)` returning the n-th Fibonacci number: `fast_fib(0) = 0`, `fast_fib(1) = 1`, and after that each number is the sum of the two before it (`fast_fib(10)` → `55`). Memoize it: create a dict inside `fast_fi"
+      },
+      {
+       "id": "d10-memo-dbg-inside",
+       "title": "Debug: the memo that never remembers",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "memoization"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`tri(n)` returns `1` for `n < 3`, otherwise `tri(n - 1) + tri(n - 2) + tri(n - 3)`. It is supposed to be memoized, but `calls` shows it is still exponential. A test resets `calls` and requires `tri(20)` to take at most 8"
+      },
+      {
+       "id": "d10-memo-grid",
+       "title": "Memoized grid paths",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 6,
+       "difficulty": 3,
+       "skills": [
+        "memoization",
+        "recurrence",
+        "tuples"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "A grid has `rows` rows and `cols` columns (both at least 1). Starting top-left and moving only right or down, `grid_paths(rows, cols)` returns how many routes reach the bottom-right; one row or one column means exactly o"
+      },
+      {
+       "id": "d10-memo-dbg-key",
+       "title": "Debug: memoized paths with a bad cache",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "memoization",
+        "tuples"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`paths(rows, cols)` should count right/down routes from the top-left to the bottom-right of a `rows` x `cols` grid, memoized. Its answers are wrong. Fix it."
+      },
+      {
+       "id": "d10-memo-cache-ways3",
+       "title": "@cache on 1/2/3 steps",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "memoization",
+        "recurrence"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Each move climbs 1, 2 or 3 steps. Write `ways3(n)` returning how many sequences of moves land exactly on step `n` (`ways3(0) = 1`, `ways3(4)` → `7`). This time let Python do the remembering: `@cache` from `functools`, wr"
+      }
+     ]
+    },
+    {
+     "id": "d10-bottom-up",
+     "title": "Bottom-up DP",
+     "reps": [
+      {
+       "id": "d10-bu-trace",
+       "title": "Fill the table",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 2,
+       "difficulty": 1,
+       "skills": [
+        "dp_table"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Predict the output. `dp` is a list where `dp[i]` holds the i-th Fibonacci number (`dp[0] = 0`, `dp[1] = 1`)."
+      },
+      {
+       "id": "d10-bu-translate",
+       "title": "Translate: memo → table",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "dp_table",
+        "recurrence"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "This memoized `count_ways(n)` counts the ways to climb `n` steps taking 1 or 2 at a time. It is O(n), but it recurses `n` levels deep and crashes for `n = 3000`. Rewrite it **bottom-up**, with no recursion: build a list "
+      },
+      {
+       "id": "d10-bu-three-steps",
+       "title": "Table for 1/2/3 steps",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "dp_table",
+        "recurrence"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Each move climbs 1, 2 or 3 steps. Write `ways3_table(n)` returning how many sequences of moves land exactly on step `n` (`n` is 0 or more), bottom-up with no recursion. Build a list `dp` where `dp[i]` is the number of wa"
+      },
+      {
+       "id": "d10-bu-any-steps",
+       "title": "Any set of step sizes",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 7,
+       "difficulty": 3,
+       "skills": [
+        "dp_table",
+        "recurrence"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "A staircase has `n` steps (`n` is 0 or more) and you start on the ground. `steps` is a list of distinct positive whole numbers: the sizes of move you are allowed to make. Write `ways_with(n, steps)` returning how many di"
+      },
+      {
+       "id": "d10-bu-dbg-range",
+       "title": "Debug: domino tilings",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "dp_table"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`tilings(n)` counts the ways to cover a 2 x `n` strip with 2 x 1 dominoes. `dp[i]` is the number of ways to cover a 2 x `i` strip: `dp[0] = dp[1] = 1` and `dp[i] = dp[i - 1] + dp[i - 2]`. `tilings(3)` should be `3`. Its "
+      },
+      {
+       "id": "d10-bu-min-cost",
+       "title": "Cheapest climb",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 10,
+       "difficulty": 3,
+       "skills": [
+        "dp_table",
+        "recurrence"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`cost` is a list of at least two non-negative numbers: `cost[i]` is what you pay for standing on step `i`. You may start on step 0 or step 1, and from any step you move up 1 or 2. The top is just past the last step and c"
+      },
+      {
+       "id": "cap-climbing-stairs",
+       "title": "Ways up a staircase",
+       "kind": "code",
+       "stage": "capstone",
+       "repType": "capstone",
+       "minutes": 20,
+       "difficulty": 2,
+       "skills": [
+        "recurrence",
+        "memoization",
+        "dp_table"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": 70,
+       "transfer": false,
+       "prompt": "A staircase has `n` steps (`n >= 1`). Each move climbs either one step or two. Return how many different sequences of moves get you from the bottom to exactly the top."
+      },
+      {
+       "id": "d10-explain-climbing-stairs",
+       "title": "Explain: climbing stairs",
+       "kind": "explain",
+       "stage": "interview",
+       "repType": "interview",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "explanation",
+        "complexity",
+        "recurrence"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Explain climbing stairs in an interview: the recurrence and why it is correct, the progression from recursion to memo to table, and complexity."
+      },
+      {
+       "id": "d10-fu-broken-steps",
+       "title": "Follow-up: broken steps",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "dp_table",
+        "recurrence",
+        "set_membership"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "**Interviewer follow-up.** Same staircase, 1 or 2 steps per move, but some steps are **broken** and you can never land on them. `broken` is a set of step numbers from 1 to `n`. Return how many ways reach step `n` exactly"
+      }
+     ]
+    },
+    {
+     "id": "d10-rolling",
+     "title": "Rolling state",
+     "reps": [
+      {
+       "id": "d10-roll-trace",
+       "title": "Two variables marching forward",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 2,
+       "difficulty": 1,
+       "skills": [
+        "state_tracking"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Predict the output. `a` and `b` always hold two neighbouring Fibonacci numbers."
+      },
+      {
+       "id": "d10-roll-fib",
+       "title": "Fibonacci in O(1) space",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "state_tracking",
+        "recurrence"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `fib2(n)` returning the n-th Fibonacci number (`0, 1, 1, 2, 3, 5, ...`, so `fib2(0) = 0` and `fib2(1) = 1`) with a loop and two rolling variables: no list and no recursion."
+      },
+      {
+       "id": "d10-roll-dbg-two-lines",
+       "title": "Debug: rolling Fibonacci",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3,
+       "difficulty": 2,
+       "skills": [
+        "state_tracking"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`fib_fast(n)` should return the n-th Fibonacci number (`0, 1, 1, 2, 3, 5, ...`) using two rolling variables. Fix it."
+      },
+      {
+       "id": "d10-roll-trib",
+       "title": "Three rolling variables",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "state_tracking",
+        "recurrence"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Tribonacci: `t(0) = 0`, `t(1) = 1`, `t(2) = 1`, and `t(n) = t(n - 1) + t(n - 2) + t(n - 3)`. Write `trib(n)` with three rolling variables, no list and no recursion."
+      },
+      {
+       "id": "d10-roll-robber-trace",
+       "title": "Trace the take-or-skip table",
+       "kind": "output",
+       "stage": "trace",
+       "repType": "foundation",
+       "minutes": 2.5,
+       "difficulty": 1,
+       "skills": [
+        "dp_table",
+        "recurrence"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Predict the output. You may take values from `nums`, but never two that are next to each other. `best[i]` is the largest total you can take using only `nums[0]` to `nums[i]`."
+      },
+      {
+       "id": "d10-roll-robber-memo",
+       "title": "Take or skip, top-down",
+       "kind": "code",
+       "stage": "combine",
+       "repType": "combine",
+       "minutes": 7,
+       "difficulty": 3,
+       "skills": [
+        "memoization",
+        "recurrence"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of non-negative numbers. You may take any of them, but never two that are **adjacent** (next to each other in the list: indexes `i` and `i + 1`). Write `best_no_neighbours(nums)` returning the largest to"
+      },
+      {
+       "id": "d10-roll-robber-table",
+       "title": "Never two days in a row",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 7,
+       "difficulty": 3,
+       "skills": [
+        "dp_table",
+        "recurrence",
+        "edge_cases"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "`nums[i]` is what a job on day `i` pays (never negative). You may work any days you like, but never two days in a row. Write `best_table(nums)` returning the most you can earn. `best_table([2, 7, 9, 3, 1])` → `12` (days "
+      },
+      {
+       "id": "d10-roll-dbg-adjacent",
+       "title": "Debug: no neighbours allowed",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 3.5,
+       "difficulty": 2,
+       "skills": [
+        "state_tracking",
+        "recurrence"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`nums` is a list of non-negative numbers. `best_total(nums)` should return the largest sum you can make without ever taking two values that are next to each other (`[2, 7, 9, 3, 1]` → `12`, an empty list → `0`). It uses "
+      },
+      {
+       "id": "cap-house-robber",
+       "title": "No two neighbours",
+       "kind": "code",
+       "stage": "capstone",
+       "repType": "capstone",
+       "minutes": 25,
+       "difficulty": 3,
+       "skills": [
+        "recurrence",
+        "dp_table",
+        "state_tracking"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": 198,
+       "transfer": false,
+       "prompt": "A row of houses each holds some non-negative amount of cash, given as `nums`. You may collect from any houses you like, except that you may never collect from two houses that are next to each other. Return the largest to"
+      },
+      {
+       "id": "d10-explain-house-robber",
+       "title": "Explain: house robber",
+       "kind": "explain",
+       "stage": "interview",
+       "repType": "interview",
+       "minutes": 5,
+       "difficulty": 2,
+       "skills": [
+        "explanation",
+        "complexity",
+        "recurrence",
+        "state_tracking"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Explain your house robber solution: the take-or-skip recurrence, what the two variables mean, complexity, and edge cases."
+      }
+     ]
+    },
+    {
+     "id": "d10-cold",
+     "title": "Cold reps",
+     "reps": [
+      {
+       "id": "d10-cold-letter-subsets",
+       "title": "Cold: every subsequence of a word",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 6,
+       "difficulty": 3,
+       "skills": [
+        "backtracking_state",
+        "recursion_base_case"
+       ],
+       "gateVariantOf": "g-backtracking",
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "From memory: `subsequences(word)` returns every subsequence of `word` as a string (letters keep their order), in any order."
+      },
+      {
+       "id": "d10-cold-pick-k",
+       "title": "Cold: choose k items",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 7,
+       "difficulty": 3,
+       "skills": [
+        "backtracking_state",
+        "range"
+       ],
+       "gateVariantOf": "g-backtracking",
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "From memory: `pick_k(nums, k)` returns every group of `k` items from the distinct values in `nums`, with no group repeated in a different order."
+      },
+      {
+       "id": "d10-cold-pieces",
+       "title": "Cold: pieces of length 1 and 3",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 6,
+       "difficulty": 3,
+       "skills": [
+        "recurrence",
+        "state_tracking",
+        "dp_table"
+       ],
+       "gateVariantOf": "g-dp",
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "A strip of length `n` is covered left to right with pieces of length 1 or 3. Write `cover(n)` counting the ways (`cover(0) = 1`). No recursion."
+      },
+      {
+       "id": "d10-cold-cache-stairs",
+       "title": "Cold: stairs with @cache",
+       "kind": "code",
+       "stage": "retrieval",
+       "repType": "cold",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "memoization",
+        "recurrence"
+       ],
+       "gateVariantOf": "g-dp",
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "Write `stairs(n)` (1 or 2 steps, `stairs(0) = stairs(1) = 1`) top-down with `functools.cache`."
+      }
+     ]
+    }
+   ],
+   "optionalSections": [
+    {
+     "id": "br-213",
+     "title": "Toward House Robber II",
+     "reps": [
+      {
+       "id": "b213-two-lines",
+       "title": "Cut a ring into two lines",
+       "kind": "code",
+       "stage": "microbuild",
+       "repType": "foundation",
+       "minutes": 3.5,
+       "difficulty": 2,
+       "skills": [
+        "circular_split",
+        "slicing",
+        "tuples"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`ring` is a list that loops round: its first and last items sit next to each other. Write `two_lines(ring)` that returns a tuple of two lists: the ring **without its first** item, then the ring **without its last** item."
+      },
+      {
+       "id": "b213-dbg-single",
+       "title": "Debug: a ring of one",
+       "kind": "code",
+       "stage": "debug",
+       "repType": "foundation",
+       "minutes": 4,
+       "difficulty": 2,
+       "skills": [
+        "circular_split",
+        "slicing",
+        "edge_cases"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": false,
+       "prompt": "`tips` is a list of non-negative numbers, one per table. The tables are set in a circle, so the first and last are neighbours. `ring_best(tips)` should return the largest total you can collect when no two of the tables y"
+      },
+      {
+       "id": "b213-ring-mini",
+       "title": "Harvest around a pond",
+       "kind": "code",
+       "stage": "pattern",
+       "repType": "pattern",
+       "minutes": 10,
+       "difficulty": 3,
+       "skills": [
+        "circular_split",
+        "slicing",
+        "state_tracking",
+        "edge_cases"
+       ],
+       "gateVariantOf": null,
+       "capstoneFor": null,
+       "transfer": true,
+       "prompt": "Fields lie in a ring around a pond; `yields` is a list of numbers and `yields[i]` is what field `i` would give (never negative). Two fields that touch cannot both be harvested, and the first and last fields touch. Write "
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

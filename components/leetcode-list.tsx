@@ -14,6 +14,7 @@ import { DAYS, EXERCISE_BY_ID } from '@/data/curriculum'
 import { repairReps } from '@/lib/bridges'
 import { createSession } from '@/lib/sessions'
 import { leetcodeFor, unaidedRate, type SolveResult } from '@/lib/solve-log'
+import { outsideCredit } from '@/lib/course/credit'
 import type { DayModule, LeetcodeItem } from '@/lib/types'
 
 /**
@@ -28,24 +29,26 @@ import type { DayModule, LeetcodeItem } from '@/lib/types'
 
 const ROUND = { review1: '1 of 3', review2: '2 of 3 (about 10 days on)', review3: '3 of 3 (about a month on)' } as const
 
-function how(item: LeetcodeItem) {
+function how(item: LeetcodeItem & { rebuild?: boolean }) {
+  if (item.rebuild) return 'Rebuild · you saw the solution last time · from a blank editor, about 15 min'
   if (item.type === 'redo') return 'Redo · you needed help last time · cold, about 15 min'
   if (item.type !== 'new') return `Re-solve ${ROUND[item.type]} · cold, about 15 min`
   if (item.mode === 'study-first') return 'New · watch the explanation first, then write it from blank'
   return item.mode === 'bridge-first' ? 'New · bridge first, then attempt for up to 30 min' : 'New · attempt for up to 30 min, then study'
 }
 
-export default function LeetcodeList({ day, items: given, heading = 'On LeetCode today' }: { day?: DayModule; items?: (LeetcodeItem & { solveId: string; redoDue?: string })[]; heading?: string }) {
+export default function LeetcodeList({ day, items: given, heading = 'On LeetCode today' }: { day?: DayModule; items?: (LeetcodeItem & { solveId: string; redoDue?: string; rebuild?: boolean })[]; heading?: string }) {
   const { entries, save, remove, today } = useSolveLog()
   const { repo } = useReps()
   const router = useRouter()
   const { byLc, passed } = useTargets()
   const [busy, setBusy] = useState(false)
   // The course passes its own list (lib/course/resolves.ts); the 90-day days build theirs from the calendar.
-  const items = given ?? (day ? leetcodeFor(day, entries, DAYS, lcMeta) : [])
+  const items: (LeetcodeItem & { solveId: string; redoDue?: string; rebuild?: boolean })[] = given ?? (day ? leetcodeFor(day, entries, DAYS, lcMeta) : [])
   if (!items.length) return null
   const byId = new Map(entries.map((e) => [e.id, e]))
-  const done = items.filter((i) => byId.has(i.solveId)).length
+  // A rebuild item is done once it has been rebuilt; everything else once it has been logged.
+  const done = items.filter((i) => (i.rebuild ? Boolean(byId.get(i.solveId)?.rebuiltOn) : byId.has(i.solveId))).length
   const rate = unaidedRate(entries)
   const set = (i: (typeof items)[number], result: SolveResult) => {
     const prev = byId.get(i.solveId)
@@ -74,7 +77,7 @@ export default function LeetcodeList({ day, items: given, heading = 'On LeetCode
         </p>
       </div>
       <p className="mt-1 max-w-[640px] text-[13.5px] leading-relaxed text-muted">
-        Solve these on NeetCode, from a blank editor, saying your approach out loud, then log how it went. A re-solve you needed help on comes back on your next working day.
+        Solve these on NeetCode, from a blank editor, saying your approach out loud, then log honestly how it went. Unaided and small-hint solves count today; a seen solution counts once you rebuild it from blank on a later day.
       </p>
       <ul className="mt-4 flex flex-col divide-y divide-line">
         {items.map((i) => {
@@ -82,11 +85,15 @@ export default function LeetcodeList({ day, items: given, heading = 'On LeetCode
           const r = entry?.result
           const state = i.type === 'new' ? byLc.get(i.lc) : undefined
           const nextRep = state && !r && state.nextRep ? EXERCISE_BY_ID[state.nextRep] : undefined
-          const helped = r === 'hinted' || r === 'failed'
+          // What the log says, and what it earns (lib/course/credit.ts decides; the copy below says the same thing).
+          const credit = entry ? outsideCredit(entry) : null
+          const rebuiltToday = Boolean(entry?.rebuiltOn)
+          const sawSolution = r === 'solution'
+          const notFinished = r === 'failed'
           return (
             <li key={i.solveId} className="flex flex-wrap items-center gap-x-4 gap-y-2 py-3" data-testid={`lc-${i.lc}`}>
-              <span aria-hidden="true" className={`grid size-[22px] shrink-0 place-items-center rounded-md ${r ? (r === 'unaided' ? 'text-pass' : 'text-amber') : 'text-faint shadow-[inset_0_0_0_1px_var(--line-strong)]'}`}>
-                {r && <IconCheck size={12} strokeWidth={2.2} />}
+              <span aria-hidden="true" className={`grid size-[22px] shrink-0 place-items-center rounded-md ${credit ? (credit.evidence === 'outside-hinted' || credit.evidence === 'outside-reconstructed' ? 'text-amber' : 'text-pass') : r ? 'text-repair shadow-[inset_0_0_0_1.5px_var(--repair)]' : 'text-faint shadow-[inset_0_0_0_1px_var(--line-strong)]'}`}>
+                {credit && <IconCheck size={12} strokeWidth={2.2} />}
               </span>
               <div className="min-w-0 flex-1 basis-[240px]">
                 <a href={i.url} target="_blank" rel="noreferrer" className="inline-flex max-w-full items-center gap-1.5 text-[14.5px] font-medium text-ink hover:underline" title={`Practice on ${practiceSite(i.lc)}`}>
@@ -133,29 +140,62 @@ export default function LeetcodeList({ day, items: given, heading = 'On LeetCode
                     <IconPlay size={10} /> Walkthrough
                   </a>
                 )}
-                <button type="button" aria-pressed={r === 'unaided'} onClick={() => set(i, 'unaided')} className={`btn btn-sm ${r === 'unaided' ? 'btn-primary' : ''}`}>
-                  Unaided
-                </button>
-                <button type="button" aria-pressed={r === 'hinted' || r === 'failed'} onClick={() => set(i, 'hinted')} className={`btn btn-sm ${r === 'hinted' || r === 'failed' ? 'btn-primary' : ''}`}>
-                  Needed help
-                </button>
+                {i.rebuild ? (
+                  <button
+                    type="button"
+                    aria-pressed={rebuiltToday}
+                    disabled={!entry || entry.date >= today}
+                    onClick={() => entry && void save({ ...entry, rebuiltOn: entry.rebuiltOn ? undefined : today })}
+                    className={`btn btn-sm ${rebuiltToday ? 'btn-primary' : ''}`}
+                    data-testid="lc-rebuilt"
+                  >
+                    {rebuiltToday ? 'Rebuilt from blank' : 'I rebuilt it from blank'}
+                  </button>
+                ) : (
+                  <div className="flex flex-wrap gap-1" role="group" aria-label={`How LC ${i.lc} went`}>
+                    {(
+                      [
+                        ['unaided', 'Unaided'],
+                        ['hinted', 'Small hint'],
+                        ['solution', 'Saw solution'],
+                        ['failed', 'Not finished'],
+                      ] as [SolveResult, string][]
+                    ).map(([res, label]) => (
+                      <button key={res} type="button" aria-pressed={r === res} onClick={() => set(i, res)} className={`btn btn-sm ${r === res ? 'btn-primary' : ''}`} data-testid={`lc-${res}`}>
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                )}
                 {r && (
                   <Link href={`/log?edit=${encodeURIComponent(i.solveId)}`} className="btn btn-ghost btn-sm">
                     Add notes
                   </Link>
                 )}
               </div>
-              {state && helped && entry && (
+              {entry && (
+                <p className={`w-full text-[12.5px] leading-relaxed ${credit ? 'text-muted' : 'text-repair'}`} data-testid="lc-outcome">
+                  {i.rebuild
+                    ? entry.rebuiltOn
+                      ? 'Counted: rebuilt from blank after seeing the solution. It comes back cold later; that solve proves it.'
+                      : 'Not counted yet. Close the solution, write it again from a blank editor, then mark it rebuilt.'
+                    : r === 'unaided'
+                      ? i.type === 'new'
+                        ? 'Counted. It comes back cold in 3 days.'
+                        : 'Counted: a cold re-solve, the strongest evidence an outside problem gives.'
+                      : r === 'hinted'
+                        ? 'Counted, as assisted. It comes back cold, and that solve is the one that proves it.'
+                        : sawSolution
+                          ? 'Not counted yet: you saw the solution. Rebuild it from a blank editor on a later day; that rebuild counts.'
+                          : notFinished
+                            ? 'Not counted. It comes back on your next training day.'
+                            : null}
+                </p>
+              )}
+              {state && entry && (sawSolution || notFinished) && !i.rebuild && (
                 <div className="w-full rounded-xl bg-surface px-3.5 py-3 text-[13px]" data-testid="lc-rebuild">
-                  <p className="font-medium text-ink">Not finished yet: rebuild it, then go back down the ladder.</p>
-                  <p className="mt-1 leading-relaxed text-muted">
-                    Close the walkthrough and write the solution again from a blank editor, without looking. It comes back cold in 3 days: that is the solve that counts.
-                  </p>
-                  <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
-                    <button type="button" aria-pressed={Boolean(entry.rebuilt)} className={`btn btn-sm ${entry.rebuilt ? 'btn-primary' : ''}`} onClick={() => void save({ ...entry, rebuilt: !entry.rebuilt })}>
-                      {entry.rebuilt ? 'Rebuilt from blank' : 'I rebuilt it from blank'}
-                    </button>
-                    <span className="ml-1 text-muted">Which move broke?</span>
+                  <p className="font-medium text-ink">Go back down the ladder: which move broke?</p>
+                  <div className="mt-2 flex flex-wrap items-center gap-1.5">
                     {state.blocks.map((b, k) => (
                       <button key={k} type="button" className="btn btn-ghost btn-sm" disabled={busy} onClick={() => void repair(state, k)}>
                         {b.label}
