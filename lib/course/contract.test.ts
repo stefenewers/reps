@@ -76,3 +76,14 @@ test('the week is complete only with its output, builds, checkpoints and targets
   assert.ok(week.gates.some((g) => !g.cleared))
   assert.equal(week.status, 'off-track')
 })
+
+test('a backdated imported lab marker cannot complete a lab before the build and change evidence', () => {
+  const id = 'lab-savings-goal'
+  const lab = LAB_BY_ID[id]
+  const state = designed(id)
+  state.doneAt = '2026-10-26T15:00:00Z'
+  const history = [at(lab.buildExerciseId, '2026-10-28'), at(lab.changeRequest.exerciseId, '2026-10-29')]
+  const c = createContracts(input(history, { [id]: state }))
+  assert.equal(c.snapshot('2026-10-28').labsDone.has(id), false)
+  assert.equal(c.snapshot('2026-10-29').labsDone.has(id), true)
+})

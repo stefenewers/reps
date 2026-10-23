@@ -191,7 +191,7 @@ export function weakestSkills(mastery: Record<SkillId, SkillMastery>, limit = 5)
  */
 export function retrievalTypeFor(exercise: Exercise, attempts: Attempt[], opts: { runItBack?: boolean; review?: boolean; now?: Date }): RetrievalType {
   if (opts.runItBack) return 'immediate-reconstruction'
-  if (exercise.repType === 'cold' || exercise.stage === 'retrieval' || opts.review) return 'cold'
+  if (exercise.gate || exercise.cleanPass || exercise.repType === 'cold' || exercise.stage === 'retrieval' || opts.review) return 'cold'
   const now = opts.now ?? new Date()
   const prior = attempts.filter((a) => a.exerciseId === exercise.id && (a.completedAt || a.attemptsBeforePass > 0))
   if (!prior.length) return 'first-exposure'

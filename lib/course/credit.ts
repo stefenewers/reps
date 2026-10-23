@@ -66,12 +66,24 @@ const PRODUCTION: Exercise['kind'][] = ['code', 'output', 'reorder']
 
 const time = (a: Attempt) => a.completedAt ?? a.startedAt
 
-/** Earlier attempts on the same rep, before this one. */
-function earlier(a: Attempt, history: Attempt[]): Attempt[] {
-  return history.filter((h) => h.exerciseId === a.exerciseId && h.id !== a.id && time(h) < time(a))
+/** Validate the local study date without converting it to a UTC day (DST-safe). */
+export function validStudyDate(date: string): boolean {
+  return /^\d{4}-\d{2}-\d{2}$/.test(date) && Number.isFinite(Date.parse(date)) && new Date(date).toISOString().slice(0, 10) === date
 }
 
-const passedAttempt = (a: Attempt) => a.passed && Boolean(a.completedAt)
+/** Invalid imported timestamps remain in history but cannot become evidence. */
+export function validAttempt(a: Attempt): boolean {
+  const start = Date.parse(a.startedAt)
+  const end = Date.parse(time(a))
+  return validStudyDate(a.date) && Number.isFinite(start) && Number.isFinite(end) && end >= start
+}
+
+/** Earlier attempts on the same rep, before this one. */
+function earlier(a: Attempt, history: Attempt[]): Attempt[] {
+  return history.filter((h) => h.exerciseId === a.exerciseId && h.id !== a.id && validAttempt(h) && Date.parse(time(h)) <= Date.parse(time(a)))
+}
+
+const passedAttempt = (a: Attempt) => a.passed && Boolean(a.completedAt) && validAttempt(a)
 const clean = (a: Attempt) => passedAttempt(a) && a.hintsUsed === 0 && !a.solutionViewed
 
 /** The date of the last attempt (before this one) that showed the solution, if any. */
@@ -88,7 +100,7 @@ export function masteryEvidence(a: Attempt, history: Attempt[]): Evidence {
   // Seen the solution before: this pass rebuilds what was shown, until a clean pass on a LATER day than the
   // reveal proves it independently. A same-day "run it back" never clears a reveal.
   const reveal = lastRevealDate(a, before)
-  if (reveal && (a.date <= reveal || !before.some((h) => clean(h) && h.date > reveal))) return 'reconstructed'
+  if (reveal && (a.date <= reveal || !before.some((h) => clean(h) && h.date > reveal && h.date < a.date))) return 'reconstructed'
   if (a.hintsUsed > 0) return 'assisted'
   // Retrieval: cold, after an earlier independent pass on a different day (and after any reveal).
   if (a.retrievalType === 'cold' && before.some((h) => clean(h) && h.date < a.date && (!reveal || h.date > reveal))) return 'retrieval'
@@ -125,7 +137,7 @@ export function coldEvidence(a: Attempt, history: Attempt[]): boolean {
 /** The clean standard a gate requires: no hints, no solution, not a reconstruction; at most two failed runs. */
 export function gateClean(a: Attempt, history: Attempt[]): boolean {
   const e = masteryEvidence(a, history)
-  return (e === 'cold-independent' || e === 'independent' || e === 'retrieval' || e === 'self-corrected') && a.attemptsBeforePass <= 2
+  return a.retrievalType === 'cold' && (e === 'cold-independent' || e === 'independent' || e === 'retrieval' || e === 'self-corrected') && a.attemptsBeforePass <= 2
 }
 
 /** The strongest evidence any pass of a rep has produced (later, stronger passes upgrade earlier, weaker ones). */
@@ -150,10 +162,10 @@ const isResolve = (k: SolveEntry['kind']) => k === 'review1' || k === 'review2' 
  * - failed: nothing.
  */
 export function outsideCredit(e: SolveEntry): { date: string; evidence: OutsideEvidence } | null {
-  if (!e.lc) return null
+  if (!Number.isInteger(e.lc) || e.lc! <= 0 || !validStudyDate(e.date)) return null
   if (e.result === 'unaided') return { date: e.date, evidence: isResolve(e.kind) ? 'outside-cold' : 'outside-unaided' }
   if (e.result === 'hinted') return { date: e.date, evidence: 'outside-hinted' }
-  if (e.result === 'solution' && e.rebuiltOn && e.rebuiltOn > e.date) return { date: e.rebuiltOn, evidence: 'outside-reconstructed' }
+  if (e.result === 'solution' && e.rebuiltOn && validStudyDate(e.rebuiltOn) && e.rebuiltOn > e.date) return { date: e.rebuiltOn, evidence: 'outside-reconstructed' }
   return null
 }
 

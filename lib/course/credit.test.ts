@@ -109,3 +109,29 @@ test('a rep keeps its strongest evidence: a later cold solve upgrades an earlier
   const shown = at('b', '2026-11-02', { solutionViewed: true })
   assert.equal(bestEvidence('b', [shown]), null, 'a revealed pass is no evidence')
 })
+
+test('a reconstruction cannot become independence through another attempt on the same day', () => {
+  const shown = at('a', '2026-11-01', { solutionViewed: true })
+  const rebuild = at('a', '2026-11-02', { retrievalType: 'cold' })
+  const retry = at('a', '2026-11-02', { retrievalType: 'cold' })
+  const history = [shown, rebuild, retry]
+  assert.equal(masteryEvidence(retry, history), 'reconstructed')
+  assert.equal(gateClean(retry, history), false)
+  const spaced = at('a', '2026-11-05', { retrievalType: 'cold' })
+  assert.equal(masteryEvidence(spaced, [...history, spaced]), 'retrieval')
+})
+
+test('tied imported timestamps preserve reveal evidence; invalid dates and reversed clocks earn nothing', () => {
+  const shown = at('a', '2026-11-02', { solutionViewed: true })
+  const tied = { ...shown, id: 'tied', solutionViewed: false }
+  assert.equal(creditReason(tied, EX.a, [shown, tied]), 'rebuilt-same-day')
+  for (const over of [{ completedAt: 'bad' }, { startedAt: '2026-11-03T00:00:00Z' }, { date: '2026-02-30' }]) {
+    const invalid = at('a', '2026-11-02', over)
+    assert.equal(qualifies(invalid, EX.a), false)
+    assert.equal(masteryEvidence(invalid, [invalid]), 'failed')
+  }
+  const warm = at('cold', '2026-11-02')
+  assert.equal(gateClean(warm, [warm]), false, 'gate evidence must be cold')
+  const outside = { lc: 1, date: '2026-02-30', result: 'unaided' } as SolveEntry
+  assert.equal(outsideCredit(outside), null)
+})

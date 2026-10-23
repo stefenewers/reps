@@ -5,7 +5,7 @@ import { LABS } from '@/data/course/lessons'
 import { DAY_PLAN, GATE_DUE, LAB_DUE, SCHEDULE, TARGET_DUE, type DayPlan } from '@/data/course/schedule'
 import { UNIT_BY_ID, UNITS } from '@/data/course/units'
 import { PROBLEM_URLS } from '@/data/problem-urls'
-import { dailyCredits, outsideCredit } from '@/lib/course/credit'
+import { dailyCredits, outsideCredit, validAttempt, masteryEvidence } from '@/lib/course/credit'
 import { labProgress, type LabState } from '@/lib/course/labs'
 import { courseStatus, type CourseContext, type UnitStatus } from '@/lib/course/routing'
 import type { SkillMastery } from '@/lib/mastery'
@@ -124,14 +124,14 @@ export function solvedDates(attempts: Attempt[], entries: SolveEntry[]): Map<num
   }
   for (const a of attempts) {
     const lc = CAPSTONE_LC[a.exerciseId]
-    if (lc && a.passed && a.completedAt && !a.solutionViewed) note(lc, a.date)
+    if (lc && validAttempt(a) && a.passed && a.completedAt && !['failed', 'revealed'].includes(masteryEvidence(a, attempts)) && !attempts.some((h) => h.exerciseId === a.exerciseId && h.solutionViewed && h.date === a.date && Date.parse(time(h)) <= Date.parse(time(a)))) note(lc, a.date)
   }
   return out
 }
 
 export function createContracts(input: ContractInput) {
   const cache = new Map<string, Snapshot>()
-  const sorted = [...input.attempts].sort((x, y) => time(x).localeCompare(time(y)))
+  const sorted = input.attempts.filter(validAttempt).sort((x, y) => time(x).localeCompare(time(y)))
   const allSolved = solvedDates(input.attempts, input.entries)
   const labDoneOn = new Map<string, string>()
   for (const lab of LABS) {
