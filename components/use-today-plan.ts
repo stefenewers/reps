@@ -7,6 +7,11 @@ import { useCredits } from '@/components/use-credits'
 import { useCourse } from '@/components/use-course'
 import { PROBLEM_URLS } from '@/data/problem-urls'
 import type { QueuePurpose } from '@/lib/course/routing'
+import { outsideCredit } from '@/lib/course/credit'
+import { courseDailyPlan } from '@/lib/course/daily-plan'
+import { LABS } from '@/data/course/lessons'
+import { SECTION_BY_ID } from '@/data/course'
+import { labKey, type LabState } from '@/lib/course/labs'
 import { COURSE_START } from '@/data/course/calendar'
 import type { usePacing } from '@/components/use-pacing'
 import { lcMeta, useSolveLog } from '@/components/use-solve-log'
@@ -22,7 +27,19 @@ import type { LeetcodeItem } from '@/lib/types'
 type Pace = ReturnType<typeof usePacing>
 
 /** How a course queue item shows in today's list. */
-const COURSE_KIND: Record<QueuePurpose, ItemKind> = { learn: 'learn', guided: 'learn', drill: 'drill', combine: 'combine', transfer: 'transfer', retrieve: 'cold', gate: 'gate', repair: 'repair', capstone: 'prove', problem: 'problem', extra: 'drill' }
+const COURSE_KIND: Record<QueuePurpose, ItemKind> = {
+  learn: 'learn',
+  guided: 'learn',
+  drill: 'drill',
+  combine: 'combine',
+  transfer: 'transfer',
+  retrieve: 'cold',
+  gate: 'gate',
+  repair: 'repair',
+  capstone: 'prove',
+  problem: 'problem',
+  extra: 'drill'
+}
 type Training = ReturnType<typeof useTraining>
 type DueLc = LeetcodeItem & { solveId: string }
 
@@ -32,7 +49,7 @@ type DueLc = LeetcodeItem & { solveId: string }
  * re-solves and cold reps that are due. See lib/today-plan.ts for the rules.
  */
 export function useTodayPlan(pace: Pace, training: Training, dueLc: DueLc[]) {
-  const { attempts, mastery, reviews, today } = useReps()
+  const { attempts, mastery, reviews, today, repo, version } = useReps()
   const { entries } = useSolveLog()
   const { byLc } = useTargets()
   const capacity = useCapacity()
@@ -40,43 +57,109 @@ export function useTodayPlan(pace: Pace, training: Training, dueLc: DueLc[]) {
   const course = useCourse()
 
   return useMemo(() => {
+    // Study state changes in place; its version invalidates lab/learning reads.
+    void version
+    if (today >= COURSE_START) {
+      const due = courseDailyPlan(today, {
+        attempts,
+        entries,
+        mastery,
+        labStates: Object.fromEntries(LABS.map((l) => [l.id, repo.state<LabState>(labKey(l.id))])),
+        exercises: EXERCISE_BY_ID,
+        sections: SECTION_BY_ID
+      })
+      const done = (credits.items[today] ?? []).map((c) => ({
+        key: c.key,
+        exerciseId: c.exerciseId,
+        lc: c.lc,
+        title: c.exerciseId ? (EXERCISE_BY_ID[c.exerciseId]?.title ?? c.exerciseId) : `LC ${c.lc}`,
+        kind: c.exerciseId ? COURSE_KIND[course.queue.find((q) => q.exerciseId === c.exerciseId)?.purpose ?? 'drill'] : ('problem' as const),
+        units: 1,
+        done: true
+      }))
+      const items = due.map((q) => ({
+        key: q.key,
+        exerciseId: q.exerciseId,
+        lc: q.lc,
+        title: q.exerciseId ? (EXERCISE_BY_ID[q.exerciseId]?.title ?? q.exerciseId) : `LC ${q.lc} · ${PROBLEM_URLS[q.lc!]?.title ?? ''}`,
+        kind: COURSE_KIND[q.purpose],
+        units: 1,
+        required: q.required,
+        ready: true,
+        done: false
+      }))
+      return {
+        capacity: capacity.requiredReps,
+        items: [...done, ...items],
+        repsDone: done.length,
+        complete: done.length >= capacity.requiredReps,
+        optional: [],
+        capacityInfo: capacity
+      }
+    }
     const passed = passedSet(attempts)
     const practice = practiceBySkill(attempts)
     const ctx = { mastery, practice }
-    const solvedLc = new Set(entries.filter((e) => e.kind === 'new' && e.lc).map((e) => e.lc!))
+    const solvedLc = new Set(entries.filter((e) => e.kind === 'new' && e.lc && outsideCredit(e)).map((e) => e.lc!))
     const repKind = (id: string, sectionId?: string, gate?: boolean): ItemKind => {
       const e = EXERCISE_BY_ID[id]
       if (!e) return 'drill'
       if (e.transfer) return 'transfer'
       return repPurpose(e, { sectionId, gate }, ctx) as ItemKind
     }
-    const rep = (id: string, kind: ItemKind): Candidate => ({ key: id, kind, title: EXERCISE_BY_ID[id]?.title ?? id, units: repUnits(EXERCISE_BY_ID[id]), exerciseId: id })
+    const rep = (id: string, kind: ItemKind): Candidate => ({
+      key: id,
+      kind,
+      title: EXERCISE_BY_ID[id]?.title ?? id,
+      units: repUnits(EXERCISE_BY_ID[id]),
+      exerciseId: id
+    })
 
     // Warm-up and "again, cold": the training planner's repeats, in its order.
     const prep: Candidate[] = training.pending
       ? []
-      : training.plan.blocks.filter((b) => b.extra && b.kind !== 'maintain').flatMap((b) => b.reps.map((id) => rep(id, b.kind === 'reactivate' ? 'warm' : 'redo')))
+      : training.plan.blocks
+          .filter((b) => b.extra && b.kind !== 'maintain')
+          .flatMap((b) => b.reps.map((id) => rep(id, b.kind === 'reactivate' ? 'warm' : 'redo')))
     // From Oct 26 the plan is the course queue (units, placement, gates, repairs, targets); before it, the 90-day queue.
     const coursePlan: Candidate[] | null =
       today >= COURSE_START
         ? course.queue.slice(0, 80).map((q) =>
             q.lc
-              ? { key: q.key, kind: 'problem' as const, title: `LC ${q.lc} · ${lcMeta(q.lc)?.title ?? PROBLEM_URLS[q.lc]?.title ?? ''}`, units: 3, lc: q.lc, ready: Boolean(byLc.get(q.lc)?.ready ?? true) }
-              : { ...rep(q.exerciseId!, COURSE_KIND[q.purpose]), required: q.purpose === 'gate' || q.purpose === 'repair' },
+              ? {
+                  key: q.key,
+                  kind: 'problem' as const,
+                  title: `LC ${q.lc} · ${lcMeta(q.lc)?.title ?? PROBLEM_URLS[q.lc]?.title ?? ''}`,
+                  units: 3,
+                  lc: q.lc,
+                  ready: Boolean(byLc.get(q.lc)?.ready ?? true)
+                }
+              : { ...rep(q.exerciseId!, COURSE_KIND[q.purpose]), required: q.purpose === 'gate' || q.purpose === 'repair' }
           )
         : null
     // The plan: the canonical queue from where you are, reps and new problems in order.
-    const plan: Candidate[] = coursePlan ?? pace.queue
-      .filter((q) => (q.kind === 'rep' ? !passed.has(q.key) : !solvedLc.has(q.lc!.lc)))
-      .slice(0, 80)
-      .map((q) =>
-        q.kind === 'rep'
-          ? rep(q.key, repKind(q.key, q.sectionId, q.gate))
-          : { key: `lc:${q.lc!.lc}:new`, kind: 'problem' as const, title: `LC ${q.lc!.lc} · ${q.lc!.title}`, units: 3, lc: q.lc!.lc, ready: Boolean(byLc.get(q.lc!.lc)?.ready) },
-      )
+    const plan: Candidate[] =
+      coursePlan ??
+      pace.queue
+        .filter((q) => (q.kind === 'rep' ? !passed.has(q.key) : !solvedLc.has(q.lc!.lc)))
+        .slice(0, 80)
+        .map((q) =>
+          q.kind === 'rep'
+            ? rep(q.key, repKind(q.key, q.sectionId, q.gate))
+            : {
+                key: `lc:${q.lc!.lc}:new`,
+                kind: 'problem' as const,
+                title: `LC ${q.lc!.lc} · ${q.lc!.title}`,
+                units: 3,
+                lc: q.lc!.lc,
+                ready: Boolean(byLc.get(q.lc!.lc)?.ready)
+              }
+        )
     // Maintenance: re-solves and redos due today, then cold reps on the skills that are due.
     const resolves: Candidate[] = dueLc.map((x) => ({ key: x.solveId, kind: 'resolve' as const, title: `LC ${x.lc} · ${x.title}`, units: 2, lc: x.lc }))
-    const cold: Candidate[] = buildReviewSession(dueReviews(reviews), ALL_EXERCISES, DAY_OF_EXERCISE, attempts, today, new Date(), 4).map((id) => rep(id, 'cold'))
+    const cold: Candidate[] = buildReviewSession(dueReviews(reviews), ALL_EXERCISES, DAY_OF_EXERCISE, attempts, today, new Date(), 4).map((id) =>
+      rep(id, 'cold')
+    )
 
     // Done today: every rep passed today (once each), every LeetCode solve logged today.
     const seen = new Set<string>()
@@ -87,12 +170,32 @@ export function useTodayPlan(pace: Pace, training: Training, dueLc: DueLc[]) {
         .filter((a) => a.passed && a.completedAt && a.date === today)
         .sort((a, b) => (a.completedAt ?? '').localeCompare(b.completedAt ?? ''))
         .filter((a) => !seen.has(a.exerciseId) && seen.add(a.exerciseId))
-        .map((a) => ({ key: a.exerciseId, units: repUnits(EXERCISE_BY_ID[a.exerciseId]), title: EXERCISE_BY_ID[a.exerciseId]?.title, kind: a.sessionKind === 'review' ? ('cold' as const) : before.has(a.exerciseId) ? ('warm' as const) : repKind(a.exerciseId) })),
-      ...entries.filter((e) => e.date === today && e.lc).map((e) => ({ key: e.id, units: e.kind === 'new' ? 3 : 2, title: `LC ${e.lc} · ${e.title}`, kind: e.kind === 'new' ? ('problem' as const) : ('resolve' as const) })),
+        .map((a) => ({
+          key: a.exerciseId,
+          units: repUnits(EXERCISE_BY_ID[a.exerciseId]),
+          title: EXERCISE_BY_ID[a.exerciseId]?.title,
+          kind: a.sessionKind === 'review' ? ('cold' as const) : before.has(a.exerciseId) ? ('warm' as const) : repKind(a.exerciseId)
+        })),
+      ...entries
+        .filter((e) => outsideCredit(e)?.date === today && e.lc)
+        .map((e) => ({
+          key: e.id,
+          units: e.kind === 'new' ? 3 : 2,
+          title: `LC ${e.lc} · ${e.title}`,
+          kind: e.kind === 'new' ? ('problem' as const) : ('resolve' as const)
+        }))
     ]
     // In the course, what counts is decided by lib/course/credit.ts: a revealed solution, a repeat, a lab or a failure earns nothing.
     const counted = today >= COURSE_START ? new Set((credits.items[today] ?? []).map((c) => c.key)) : null
-    const t = prescribe({ capacity: capacity.requiredReps, phase: capacity.phase, doneToday: counted ? doneToday.filter((d) => counted.has(d.key)) : doneToday, prep, plan, resolves, cold })
+    const t = prescribe({
+      capacity: capacity.requiredReps,
+      phase: capacity.phase,
+      doneToday: counted ? doneToday.filter((d) => counted.has(d.key)) : doneToday,
+      prep,
+      plan,
+      resolves,
+      cold
+    })
     return { ...t, capacityInfo: capacity }
-  }, [attempts, entries, mastery, reviews, today, pace.queue, training, dueLc, byLc, capacity, credits, course])
+  }, [attempts, entries, mastery, reviews, today, pace.queue, training, dueLc, byLc, capacity, credits, course, repo, version])
 }

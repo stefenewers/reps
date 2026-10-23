@@ -7,6 +7,7 @@ import { DAYS } from '@/data/curriculum'
 import { INTERVIEW_TARGET } from '@/data/program'
 import { programProgress } from '@/lib/progress'
 import ProgramProgress from '@/components/program-progress'
+import { useCourseDay } from '@/components/use-course-day'
 import { useCredits } from '@/components/use-credits'
 import { COURSE_START } from '@/data/course/calendar'
 import { courseRail } from '@/lib/course/rail'
@@ -21,7 +22,7 @@ const NAV = [
   { href: '/problems', label: 'Problems', match: (p: string) => p.startsWith('/problems') },
   { href: '/log', label: 'Log', match: (p: string) => p.startsWith('/log') },
   { href: '/progress', label: 'Progress', match: (p: string) => p.startsWith('/progress') },
-  { href: '/interview', label: 'Interview', match: (p: string) => p.startsWith('/interview') },
+  { href: '/interview', label: 'Interview', match: (p: string) => p.startsWith('/interview') }
 ]
 
 const SYNC_LABEL: Record<SyncStatus, string> = {
@@ -29,7 +30,7 @@ const SYNC_LABEL: Record<SyncStatus, string> = {
   'signed-out': 'Sign in to sync',
   syncing: 'Syncing',
   saved: 'Saved',
-  offline: 'Offline · saved locally',
+  offline: 'Offline · saved locally'
 }
 
 function SyncIndicator() {
@@ -57,7 +58,11 @@ export default function Header() {
   // The whole-program finish line: canonical curriculum reps only.
   // During the course the rail is qualifying output against the 950-problem course; before it, the old plan.
   const credits = useCredits()
-  const program = useMemo(() => (today >= COURSE_START ? courseRail(credits.byDate) : programProgress(DAYS, attempts)), [attempts, today, credits])
+  const course = useCourseDay()
+  const program = useMemo(
+    () => (today >= COURSE_START ? courseRail(credits.byDate, (date) => course.contracts.dayContract(date).complete) : programProgress(DAYS, attempts)),
+    [attempts, today, credits, course.contracts]
+  )
   const lastLocal = useCallback(() => repo.lastLocalCompletionAt, [repo])
   const pct = Math.round(program.fraction * 100)
   // The public demo has its own minimal top bar and none of the personal navigation.
@@ -90,7 +95,10 @@ export default function Header() {
           <span className="hidden md:inline">
             <SyncIndicator />
           </span>
-          <span className={`num hidden px-1 text-[12px] font-medium transition-opacity sm:inline ${loaded ? 'text-muted' : 'text-transparent'}`} title={`${program.completed} of ${program.total} reps in the whole program`}>
+          <span
+            className={`num hidden px-1 text-[12px] font-medium transition-opacity sm:inline ${loaded ? 'text-muted' : 'text-transparent'}`}
+            title={`${program.completed} of ${program.total} reps in the whole program`}
+          >
             {pct}%<span className="sr-only"> of the whole program complete</span>
           </span>
           <Link
@@ -102,9 +110,13 @@ export default function Header() {
           >
             <span className="hidden items-center gap-1.5 sm:inline-flex">
               <span className="font-medium text-ink">{INTERVIEW_TARGET.chip.full[0]}</span>
-              <span aria-hidden="true" className="text-faint">·</span>
+              <span aria-hidden="true" className="text-faint">
+                ·
+              </span>
               <span className="num">{INTERVIEW_TARGET.chip.full[1]}</span>
-              <span aria-hidden="true" className="hidden text-faint md:inline">·</span>
+              <span aria-hidden="true" className="hidden text-faint md:inline">
+                ·
+              </span>
               <span className="hidden md:inline">{INTERVIEW_TARGET.chip.full[2]}</span>
             </span>
             <span className="num font-medium sm:hidden">{INTERVIEW_TARGET.chip.compact}</span>

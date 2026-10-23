@@ -26,6 +26,8 @@ export interface WorkedExample {
   unitId: string
   /** The task, as the learner would read it. */
   problem: string
+  manualReasoning?: string[]
+  demoId?: string
   subgoals: { title: string; explanation: string; code?: string }[]
   /** The full solution, shown at the end. */
   solution: string

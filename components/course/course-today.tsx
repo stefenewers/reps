@@ -1,351 +1,393 @@
 'use client'
 
 import Link from 'next/link'
+import EarnedMoment from '@/components/course/earned-moment'
 import { useRouter } from 'next/navigation'
-import { useEffect, useMemo, useState } from 'react'
-import { IconArrowRight, IconCheck, IconExternal } from '@/components/icons'
+import { useState } from 'react'
 import { useReps } from '@/components/reps-provider'
 import TrainingFlame from '@/components/course/training-flame'
 import WeekStrip from '@/components/course/week-strip'
 import type { useCourseDay } from '@/components/use-course-day'
 import type { useTodayPlan } from '@/components/use-today-plan'
 import { trainingKey, type useTraining } from '@/components/use-training'
-import { conceptFor, CONCEPT_BY_ID } from '@/data/concepts'
+import { CONCEPT_BY_ID } from '@/data/concepts'
+import { COURSE_END } from '@/data/course/calendar'
 import { LESSON_BY_ID, WORKED_EXAMPLE_BY_ID } from '@/data/course/lessons'
-import { milestoneReached, todayLine } from '@/data/course/motivation'
+import { DAY_PLAN } from '@/data/course/schedule'
+import { UNIT_BY_ID } from '@/data/course/units'
 import { EXERCISE_BY_ID } from '@/data/curriculum'
-import { practiceSite } from '@/data/problem-urls'
+import { practiceUrl } from '@/data/problem-urls'
+import { demosForConcept } from '@/lib/demos'
 import { createSession } from '@/lib/sessions'
-import type { ItemKind, PlanItem } from '@/lib/today-plan'
+import type { PlanItem } from '@/lib/today-plan'
 
 type CourseDayState = ReturnType<typeof useCourseDay>
 type Plan = ReturnType<typeof useTodayPlan>
 type Training = ReturnType<typeof useTraining>
 
-/** Today's path, grouped into the blocks of a training session. */
-const GROUP: Record<ItemKind, 'reactivate' | 'learn' | 'drill' | 'combine' | 'prove' | 'retrieve'> = {
-  warm: 'reactivate',
-  redo: 'reactivate',
-  learn: 'learn',
-  drill: 'drill',
-  repair: 'drill',
-  combine: 'combine',
-  transfer: 'prove',
-  prove: 'prove',
-  gate: 'prove',
-  problem: 'prove',
-  resolve: 'retrieve',
-  cold: 'retrieve',
-}
-const GROUP_LABEL = { reactivate: 'Reactivate', learn: 'Learn', drill: 'Drill', combine: 'Combine', prove: 'Prove', retrieve: 'Retrieve' } as const
-const GROUP_TONE = { reactivate: 'text-repair', learn: 'text-learn', drill: 'text-ink', combine: 'text-ink', prove: 'text-cold', retrieve: 'text-pass' } as const
-const KIND: Record<ItemKind, string> = { warm: 'Warm-up', redo: 'Again, cold', learn: 'Learn', drill: 'Drill', combine: 'Combine', transfer: 'Unlabeled', prove: 'Prove', problem: 'Problem', resolve: 'Re-solve', cold: 'Cold rep', gate: 'Checkpoint', repair: 'Repair' }
-/** The block a kind belongs to on the rep page. */
-const BLOCK: Record<ItemKind, string> = { warm: 'reactivate', redo: 'drill', learn: 'learn', drill: 'drill', repair: 'drill', combine: 'combine', transfer: 'prove', prove: 'prove', gate: 'prove', problem: 'prove', resolve: 'maintain', cold: 'maintain' }
-const WHY: Record<ItemKind, string> = {
-  warm: 'You already learned this. A quick rep warms it back up before today leans on it.',
-  redo: 'This needed help last time. Write it again from blank.',
-  learn: 'New here: read the idea, then type it.',
-  drill: 'Small productions until the mechanics stop costing attention.',
-  repair: 'The smallest piece the checkpoint showed was missing. Then a fresh checkpoint.',
-  combine: 'The pieces exist. This is where they are put together.',
-  transfer: 'The pattern is not named for you here. Work out which of your moves applies.',
-  prove: 'Cold, from a signature: the check that the pattern is yours.',
-  gate: 'A checkpoint: cold, no lesson panel, no solution. Passing it unlocks what comes next.',
-  problem: 'Every move it needs is one you have already written. Now assemble them.',
-  resolve: 'Brought back before it fades.',
-  cold: 'Brought back before it fades.',
-}
-
-export default function CourseToday({ plan, training, cd, lcUrl }: { plan: Plan; training: Training; cd: CourseDayState; lcUrl: (lc: number) => string | undefined }) {
+/** The complete daily contract and its next action, in one place. */
+export default function CourseToday({ plan, cd, lcUrl }: { plan: Plan; training: Training; cd: CourseDayState; lcUrl: (lc: number) => string | undefined }) {
   const { repo, today } = useReps()
   const router = useRouter()
   const [busy, setBusy] = useState(false)
   const [stopped, setStopped] = useState(false)
-  const { day, week, progress } = cd
-  const target = day.type === 'training' ? day.target : day.optionalTarget
-  const done = cd.doneToday
-  // The one contract (lib/course/contract.ts): reps AND every lab, checkpoint, target and repair due today.
-  const complete = day.type === 'training' && cd.dayContract.complete
-  const left = plan.items.filter((i) => !i.done)
-  const next = left[0]
-  const session = training.session
-  const pct = target ? Math.min(100, Math.round((100 * done) / target)) : 0
-  const line = todayLine({ dayType: day.type, repsDone: done, repsTarget: target, week: day.week, shortfall: day.optionalTarget, holiday: day.holiday, assistedCount: cd.assistedToday, seed: today })
+  const c = cd.dayContract
+  const complete = c.type === 'training' && c.complete
+  const recovery = c.type === 'recovery'
+  const target = recovery ? cd.day.optionalTarget : c.reps.target
+  const focus = (DAY_PLAN[today]?.focusUnits ?? []).map((id) => UNIT_BY_ID[id])
+  const units = focus.length ? focus : cd.course.current ? [cd.course.current.unit] : []
+  const learningUnits = cd.course.current && cd.course.current.unit.week < cd.week.number ? [cd.course.current.unit] : units
+  const unlabeled = cd.week.unlabeled
+  const learning = unlabeled
+    ? []
+    : learningUnits
+        .flatMap((u) => [
+          ...u.lessonIds.map((id) => ({
+            key: `lesson:${id}`,
+            title: (LESSON_BY_ID[id] ?? CONCEPT_BY_ID[id])?.title ?? id,
+            href: `/learn/${id}`,
+            label: 'LEARN'
+          })),
+          ...u.lessonIds
+            .flatMap((id) => demosForConcept(id))
+            .map((d) => ({ key: `demo:${d.id}`, title: d.title, href: `/demo/${d.id}`, label: 'WATCH IT MOVE' })),
+          ...u.workedExampleIds.map((id) => ({ key: `example:${id}`, title: WORKED_EXAMPLE_BY_ID[id]?.title ?? id, href: `/example/${id}`, label: 'REBUILD' }))
+        ])
+        .filter((x, i, xs) => xs.findIndex((y) => y.key === x.key) === i)
+        .sort((a, b) => ['LEARN', 'WATCH IT MOVE', 'REBUILD'].indexOf(a.label) - ['LEARN', 'WATCH IT MOVE', 'REBUILD'].indexOf(b.label))
+  const learn = learning.find((l) => !repo.state(l.key))
+  const reps = plan.items.filter((i) => i.exerciseId && i.kind !== 'gate' && i.kind !== 'problem')
+  const remainingReps = reps.filter((i) => !i.done)
+  const repair = remainingReps.filter((i) => i.kind === 'repair')
+  const lab = c.labs.find((l) => l.state !== 'done')
+  const gate = c.gates.find((g) => g.state === 'open')
+  const outside = c.targets.find((t) => t.state === 'open')
+  const openItems = c.labs.some((l) => l.state !== 'done') || c.gates.some((g) => g.state !== 'cleared') || c.targets.some((t) => t.state !== 'done')
+  const learningNeeded = !c.reps.met && !recovery && learn
+  const main = complete
+    ? { label: 'Day complete', href: '' }
+    : repair.length
+      ? { label: 'Do repair first', href: '' }
+      : learningNeeded
+        ? { label: 'Start today', href: learningNeeded.href }
+        : remainingReps.length
+          ? { label: c.reps.done ? 'Continue today' : 'Start today', href: '' }
+          : lab
+            ? { label: 'Start lab', href: `/lab/${lab.id}` }
+            : gate
+              ? { label: 'Start checkpoint', href: '' }
+              : outside
+                ? { label: 'Start target', href: lcUrl(outside.lc) ?? practiceUrl(outside.lc) ?? '/problems' }
+                : undefined
 
-  // Celebrate once, the first time today's target is met on this device (remembered after this view).
-  const celebrateKey = `reps-celebrated:${today}`
-  const celebrate = useMemo(() => {
-    if (!complete) return false
-    try {
-      return !window.localStorage.getItem(celebrateKey)
-    } catch {
-      return false
-    }
-  }, [complete, celebrateKey])
-  useEffect(() => {
-    if (!celebrate) return
-    try {
-      window.localStorage.setItem(celebrateKey, '1')
-    } catch {
-      /* storage blocked: nothing to remember */
-    }
-  }, [celebrate, celebrateKey])
-  const milestone = milestoneReached(cd.total - done, cd.total)
-
-  // The unit in focus and what teaches it.
-  const unit = cd.course.current?.unit
-  const focusConcepts = [...new Set(left.concat(plan.items).flatMap((i) => (i.exerciseId ? [conceptFor(EXERCISE_BY_ID[i.exerciseId]?.skills ?? [])?.id] : [])).filter(Boolean))].slice(0, 2) as string[]
-  const lessons = (unit?.lessonIds ?? []).map((id) => LESSON_BY_ID[id] ?? CONCEPT_BY_ID[id]).filter(Boolean)
-  const examples = (unit?.workedExampleIds ?? []).map((id) => WORKED_EXAMPLE_BY_ID[id]).filter(Boolean)
-  // Week 13 shows no labels: no lesson suggestions, no concepts, before an attempt.
-  const learnFirst = !week.unlabeled && Boolean(unit) && cd.course.current!.route === 'full' && cd.course.current!.done === 0 && (lessons.length > 0 || examples.length > 0)
-
-  const start = async () => {
-    const reps = left.filter((i) => i.exerciseId)
-    if (busy || !reps.length) return
+  const startReps = async (items: PlanItem[], title = "Today's training") => {
+    const ids = items.flatMap((i) => (i.exerciseId ? [i.exerciseId] : []))
+    if (busy || !ids.length) return
     setBusy(true)
-    const extras = reps.filter((i) => i.kind === 'warm' || i.kind === 'redo' || i.kind === 'cold').map((i) => i.exerciseId!)
-    for (const id of extras) {
-      try {
-        window.localStorage.removeItem(`reps-draft:${id}`)
-      } catch {
-        /* the synced draft below is cleared either way */
+    try {
+      const extras = items.filter((i) => i.kind === 'cold' || i.kind === 'warm' || i.kind === 'redo').map((i) => i.exerciseId!)
+      for (const id of extras) {
+        try {
+          window.localStorage.removeItem(`reps-draft:${id}`)
+        } catch {
+          /* drafts still reset in the repository */
+        }
+        await repo.saveDraft(id, EXERCISE_BY_ID[id]?.starterCode ?? '')
       }
-      await repo.saveDraft(id, EXERCISE_BY_ID[id]?.starterCode ?? '')
+      const blocks = items.map((i) => ({
+        kind: i.kind === 'cold' ? 'maintain' : i.kind === 'gate' ? 'prove' : i.kind,
+        title: i.kind === 'gate' ? 'Checkpoint' : 'Practice',
+        why: i.kind === 'gate' ? 'Prove the prerequisite cold.' : 'Write it yourself, then check it.',
+        reps: [i.exerciseId!],
+        extra: extras.includes(i.exerciseId!)
+      }))
+      const session = await createSession(repo, 'day', title, ids, undefined, { training: { blocks, extras } })
+      await repo.setState(trainingKey(today), { sessionId: session.id })
+      router.push(`/rep/${ids[0]}?s=${session.id}`)
+    } finally {
+      setBusy(false)
     }
-    const blocks: { kind: string; title: string; why: string; reps: string[]; extra?: boolean }[] = []
-    for (const i of reps) {
-      const last = blocks[blocks.length - 1]
-      if (last && last.kind === BLOCK[i.kind] && last.why === WHY[i.kind]) last.reps.push(i.exerciseId!)
-      else blocks.push({ kind: BLOCK[i.kind], title: KIND[i.kind], why: WHY[i.kind], reps: [i.exerciseId!], extra: extras.includes(i.exerciseId!) })
-    }
-    const s = await createSession(repo, 'day', "Today's training", reps.map((i) => i.exerciseId!), undefined, { training: { blocks, extras } })
-    await repo.setState(trainingKey(today), { sessionId: s.id })
-    router.push(`/rep/${reps[0].exerciseId}?s=${s.id}`)
   }
-  const inSession = (id?: string) => Boolean(id && session?.exerciseIds.includes(id))
-  const hrefFor = (i: PlanItem) => (i.exerciseId ? `/rep/${i.exerciseId}${inSession(i.exerciseId) ? `?s=${session!.id}` : ''}` : i.lc ? (i.kind === 'resolve' ? '#leetcode' : lcUrl(i.lc)) : undefined)
+  const startGate = (id: string) => {
+    const due = c.gates.find((g) => g.id === id)
+    if (!due || due.state !== 'open') return
+    void startReps(
+      due.next.map((exerciseId) => ({ key: exerciseId, exerciseId, title: due.title, kind: 'gate', units: 1, done: false })),
+      due.title
+    )
+  }
+  const primary = () => {
+    if (repair.length) void startReps(repair, 'Focused repair')
+    else if (remainingReps.length) void startReps(remainingReps)
+    else if (gate) startGate(gate.id)
+  }
 
-  // ── Rest day ──────────────────────────────────────────────────────────────
-  if (day.type === 'rest')
+  if (today > COURSE_END)
     return (
-      <section aria-labelledby="today-h" className="mt-8 rounded-[20px] bg-rest-soft p-6 shadow-[0_0_0_1px_var(--hairline)] sm:p-8" data-testid="course-today" data-day="rest">
-        <p className="eyebrow text-rest">{day.holiday ?? 'Sunday'} · Week {day.week}</p>
-        <h2 id="today-h" className="mt-2 text-[30px] font-semibold leading-tight tracking-tight" data-testid="rest-title">
+      <section className="panel mt-8 p-6 sm:p-8" data-testid="course-finished">
+        <p className="eyebrow text-muted">February checkpoint</p>
+        <h2 className="mt-2 text-2xl font-semibold">
+          {cd.finalDecision === 'ready' ? 'Ready' : cd.finalDecision === 'ready-with-gaps' ? 'Ready with gaps' : 'Not yet ready'}
+        </h2>
+        <p className="mt-3 text-ink-2">Your next work follows the evidence recorded across the course.</p>
+        <Link href="/progress" className="btn btn-accent mt-5">
+          Review your readiness and next steps
+        </Link>
+      </section>
+    )
+  if (c.type === 'rest')
+    return (
+      <section className="panel mt-8 bg-rest-soft p-6 sm:p-8" data-testid="course-today" data-day="rest">
+        <p className="eyebrow text-rest">
+          {cd.day.holiday ?? 'Sunday'} · Week {cd.week.number}
+        </p>
+        <h2 className="mt-2 text-[30px] font-semibold" data-testid="rest-title">
           Rest day
         </h2>
-        <p className="mt-2 max-w-[560px] text-[15.5px] leading-relaxed text-ink-2" data-testid="motivation">
-          {line.text}
+        <p className="mt-2 text-ink-2" data-testid="motivation">
+          Nothing is due. Your plan is intact.
         </p>
-        <p className="mt-3 text-[13px] text-muted">{cd.streak ? `🔥 ${cd.streak}-day streak · rest day, streak protected` : 'Rest protects nothing and costs nothing. Tomorrow starts fresh.'}</p>
+        <p className="mt-3 text-sm text-muted">Rest day, streak protected.</p>
         <div className="mt-6 max-w-[420px]">
-          <WeekStrip week={day.week} today={today} credits={cd.credits} />
+          <WeekStrip week={cd.week.number} today={today} credits={cd.credits} contracts={cd.contracts} />
         </div>
       </section>
     )
 
   return (
-    <section aria-labelledby="today-h" className="mt-8 overflow-hidden rounded-[20px] bg-bg shadow-[0_0_0_1px_var(--hairline),0_2px_4px_rgba(28,24,12,0.04),0_18px_40px_-16px_rgba(28,24,12,0.18)]" data-testid="course-today" data-day={day.type} data-complete={complete ? 'true' : 'false'}>
-      <div className={`p-6 sm:p-8 ${complete ? 'bg-[linear-gradient(180deg,var(--flame-soft),transparent_70%)]' : ''}`}>
-        <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
-          <p className="eyebrow flex items-center gap-2 text-ink-2">
-            <span data-testid="streak" className={cd.streak ? 'text-flame' : 'text-muted'}>
-              {cd.streak ? `🔥 ${cd.streak} training day${cd.streak === 1 ? '' : 's'} in a row` : 'Streak starts with today'}
-            </span>
-          </p>
-          <p className="num text-[12.5px] text-muted" data-testid="course-week">
-            Week {week.number} · {week.title}
-          </p>
+    <section
+      aria-labelledby="today-h"
+      className="panel mt-8 overflow-hidden"
+      data-testid="course-today"
+      data-day={c.type}
+      data-complete={complete ? 'true' : 'false'}
+    >
+      <div className={`p-6 sm:p-8 ${complete ? 'bg-flame-soft' : ''}`}>
+        <div className="flex flex-wrap justify-between gap-2 text-sm text-muted">
+          <span data-testid="streak">{cd.streak ? `🔥 ${cd.streak} training day${cd.streak === 1 ? '' : 's'} in a row` : 'Streak starts with today'}</span>
+          <span data-testid="course-week">
+            Week {cd.week.number} · {cd.week.title}
+          </span>
         </div>
-
-        <div className="mt-4 flex items-start gap-4">
-          <TrainingFlame state={cd.flame} size={complete ? 64 : 56} ignite={celebrate} />
-          <div className="min-w-0 flex-1">
+        <div className="mt-5 flex items-start gap-4">
+          <TrainingFlame state={cd.flame} size={56} />
+          <div className="min-w-0">
+            <p className="eyebrow text-muted">{recovery ? 'Saturday · optional recovery' : 'Today'}</p>
             {complete ? (
               <div data-testid="day-complete">
-                <h2 id="today-h" className="celebrate-in text-[30px] font-semibold leading-tight tracking-tight">
+                <h2 id="today-h" className="text-[30px] font-semibold">
                   Day complete
                 </h2>
-                <p className="num mt-0.5 text-[16px] font-medium text-ink-2">
-                  {done} / {target} · You did enough.
+                <p>
+                  {c.reps.done} / {target} · You did enough.
                 </p>
               </div>
             ) : (
-              <div>
-                <p className="eyebrow text-muted">{day.type === 'recovery' ? 'Saturday · optional' : 'Today'}</p>
-                <h2 id="today-h" className="num text-[32px] font-semibold leading-tight tracking-tight" data-testid="day-target">
-                  {day.type === 'recovery' ? (target ? `${target} reps would close the week` : 'Nothing owed') : `${target} reps`}
+              <>
+                <h2 id="today-h" className="text-[28px] font-semibold leading-tight tracking-tight">
+                  {unlabeled ? 'Independent practice' : units.map((u) => u.title).join(' + ') || 'Continue your course'}
                 </h2>
-              </div>
-            )}
-            {unit && !complete && (
-              <p className="mt-1 text-[14px] text-ink-2" data-testid="unit-focus">
-                <span className="font-medium text-ink">{unit.title}</span> · {unit.purpose}
-              </p>
+                <p className="num mt-1 font-medium" data-testid="day-target">
+                  {recovery ? (openItems ? 'Open work, if you choose' : target ? `${target} reps would close the week` : 'Week complete') : `${target} reps`}
+                </p>
+              </>
             )}
           </div>
         </div>
-
-        {target > 0 && (
-          <div className="mt-5 flex items-center gap-4">
-            <span className="num text-[15px] font-semibold text-ink" aria-hidden="true">
-              {done} / {target}
-            </span>
-            <span className="bar bar-flame block h-2.5 flex-1" role="progressbar" aria-valuemin={0} aria-valuemax={target} aria-valuenow={Math.min(done, target)} aria-label={`Today: ${Math.min(done, target)} of ${target} reps`} data-testid="day-progress">
-              <span style={{ width: `${pct}%` }} />
-            </span>
-          </div>
-        )}
-
-        <p className={`mt-4 max-w-[680px] text-[15px] leading-relaxed ${line.tone === 'celebrate' ? 'font-medium text-ink' : 'text-ink-2'}`} data-testid="motivation" data-tone={line.tone}>
-          {line.text}
-        </p>
-        {day.type === 'training' && !complete && cd.dayContract.remaining.length > 0 && (
-          <div className="mt-4 rounded-xl bg-surface px-4 py-3" data-testid="still-due">
-            <p className="label">Done for today when</p>
-            <ul className="mt-1 flex flex-col gap-0.5 text-[13.5px] text-ink-2">
-              {cd.dayContract.remaining.map((r) => (
-                <li key={r}>· {r}</li>
-              ))}
-            </ul>
-          </div>
-        )}
-        {milestone && complete && (
-          <p className="celebrate-in mt-2 inline-flex items-center gap-1.5 rounded-full bg-flame-soft px-3 py-1 text-[13px] font-medium text-flame" data-testid="milestone">
-            🔥 {milestone} qualifying problems
+        {!unlabeled && !complete && (
+          <p className="mt-4 text-[14px] leading-relaxed text-ink-2" data-testid="unit-focus">
+            {units.map((u) => u.purpose).join(' ')}
           </p>
         )}
-
-        {!complete && next && (
-          <div className="mt-5 flex flex-wrap items-center gap-3">
-            {next.exerciseId ? (
-              inSession(next.exerciseId) ? (
-                <Link href={hrefFor(next)!} className="btn btn-accent btn-lg" data-testid="training-start">
-                  Continue <IconArrowRight size={15} />
-                </Link>
-              ) : (
-                <button type="button" className="btn btn-accent btn-lg" onClick={start} disabled={busy} data-testid="training-start">
-                  {done ? 'Continue' : 'Start'} <IconArrowRight size={15} />
-                </button>
-              )
-            ) : next.lc ? (
-              <a href={hrefFor(next)} {...(next.kind === 'problem' ? { target: '_blank', rel: 'noreferrer' } : {})} className="btn btn-accent btn-lg" data-testid="training-start">
-                {next.kind === 'problem' ? `Practice LC ${next.lc} on ${practiceSite(next.lc)}` : 'Go to the re-solves'} <IconExternal size={14} />
-              </a>
-            ) : null}
-            <span className="text-[13px] text-muted">Next: {next.title}</span>
+        <EarnedMoment events={cd.events} />
+        <dl className="mt-5 grid grid-cols-2 gap-3 rounded-xl bg-surface p-4 text-sm sm:grid-cols-4" data-testid="today-contract">
+          <div>
+            <dt className="label">Qualifying reps</dt>
+            <dd className="num mt-1 font-semibold">
+              {c.reps.done} / {target}
+            </dd>
           </div>
-        )}
+          <div>
+            <dt className="label">Labs</dt>
+            <dd className="num mt-1">
+              {c.labs.filter((l) => l.state === 'done').length} / {c.labs.length}
+            </dd>
+          </div>
+          <div>
+            <dt className="label">Checkpoints</dt>
+            <dd className="num mt-1">
+              {c.gates.filter((g) => g.state === 'cleared' || g.state === 'handled').length} / {c.gates.length}
+            </dd>
+          </div>
+          <div>
+            <dt className="label">Targets</dt>
+            <dd className="num mt-1">
+              {c.targets.filter((t) => t.state === 'done').length} / {c.targets.length}
+            </dd>
+          </div>
+        </dl>
+        <div
+          className="bar bar-flame mt-4 h-2"
+          role="progressbar"
+          aria-label="Today's reps"
+          aria-valuemin={0}
+          aria-valuemax={target || 1}
+          aria-valuenow={Math.min(target || 1, c.reps.done)}
+          data-testid="day-progress"
+        >
+          <span style={{ width: `${target ? Math.min(100, (c.reps.done / target) * 100) : 0}%` }} />
+        </div>
+        <p className="mt-4 text-sm text-ink-2" data-testid="motivation" data-tone={complete ? 'celebrate' : 'neutral'}>
+          {complete
+            ? 'Good work today. You completed the training contract. This moved the plan forward.'
+            : recovery
+              ? 'Saturday is optional. You can close open work here or come back on your next training day.'
+              : c.reps.met
+                ? 'The rep target is met. Finish the open items below to complete the day.'
+                : 'Follow the steps below. Each qualifying rep is something you produced.'}
+        </p>
+        {main &&
+          !complete &&
+          (main.href ? (
+            <Link href={main.href} className="btn btn-accent btn-lg mt-5" data-testid="training-start">
+              {main.label}
+            </Link>
+          ) : (
+            <button className="btn btn-accent btn-lg mt-5" onClick={primary} disabled={busy} data-testid="training-start">
+              {main.label}
+            </button>
+          ))}
+        {!main && !complete && <p className="mt-4 text-sm text-muted">Finish the prerequisite reps to open the remaining checkpoints and targets.</p>}
       </div>
-
-      {/* Learn first: a new unit begins with its lesson and worked example. They are not counted; the reps are. */}
-      {learnFirst && !complete && (
-        <div className="border-t border-line bg-learn-soft px-6 py-5 sm:px-8" data-testid="learn-first">
-          <p className="eyebrow text-learn">Learn first · not counted, and that is fine</p>
-          <p className="mt-1 text-[14px] text-ink-2">A new unit starts with the idea, then a worked example, then the reps.</p>
-          <div className="mt-3 flex flex-wrap gap-2">
-            {lessons.map((l) => (
-              <Link key={l.id} href={`/learn/${l.id}`} className="btn btn-sm">
-                Lesson: {l.title}
-              </Link>
-            ))}
-            {examples.map((w) => (
-              <Link key={w.id} href={`/example/${w.id}`} className="btn btn-sm">
-                Worked example: {w.title}
-              </Link>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Today's path, in blocks. */}
-      {!complete && plan.items.length > 0 && (
-        <div className="border-t border-line px-6 py-5 sm:px-8">
-          <ul className="flex flex-wrap gap-2" aria-label="Today's blocks" data-testid="today-blocks">
-            {(Object.keys(GROUP_LABEL) as (keyof typeof GROUP_LABEL)[]).map((g) => {
-              const items = plan.items.filter((i) => GROUP[i.kind] === g)
-              if (!items.length) return null
-              const d = items.filter((i) => i.done).length
-              return (
-                <li key={g} className="flex items-baseline gap-1.5 rounded-lg bg-surface px-3 py-1.5" data-group={g}>
-                  <span className={`text-[11px] font-semibold uppercase tracking-wide ${GROUP_TONE[g]}`}>{GROUP_LABEL[g]}</span>
-                  <span className="num text-[14px] font-semibold text-ink">
-                    {d}/{items.length}
-                  </span>
-                </li>
-              )
-            })}
-          </ul>
-          <ol className="mt-4 flex flex-col" data-testid="training-items">
-            {plan.items.map((i, k) => {
-              const now = !i.done && i === next
-              const href = hrefFor(i)
-              return (
-                <li key={i.key} className={`grid grid-cols-[26px_minmax(0,1fr)_auto] items-center gap-x-3 rounded-xl px-2 py-2 transition-colors ${now ? 'bg-surface' : ''}`} data-kind={i.kind} data-state={i.done ? 'done' : now ? 'now' : 'todo'} aria-current={now ? 'step' : undefined}>
-                  <span aria-hidden="true" className={`num grid size-[22px] place-items-center rounded-full text-[11.5px] ${i.done ? 'bg-pass text-white' : now ? 'bg-flame text-white' : 'text-muted shadow-[inset_0_0_0_1.5px_var(--line-strong)]'}`}>
-                    {i.done ? <IconCheck size={11} strokeWidth={2.6} /> : k + 1}
-                  </span>
-                  <p className={`min-w-0 truncate text-[14px] ${i.done ? 'text-muted line-through decoration-line-strong' : 'text-ink'}`}>
-                    <span className="sr-only">{i.done ? 'Done: ' : now ? 'Next: ' : 'To do: '}</span>
-                    {href && !i.done ? (
-                      <a href={href} {...(i.kind === 'problem' ? { target: '_blank', rel: 'noreferrer' } : {})} className="hover:underline">
-                        {i.title}
-                      </a>
-                    ) : (
-                      i.title
-                    )}
+      {!complete && (
+        <div className="border-t border-line p-6 sm:px-8" data-testid="execution-stack">
+          {repair.length > 0 && (
+            <div className="mb-5 rounded-xl bg-surface p-4" data-testid="repair-step">
+              <p className="eyebrow text-repair">Repair first</p>
+              <p className="mt-1 text-sm">{repair.length} focused reps before a fresh checkpoint.</p>
+              <button className="btn btn-sm mt-2" onClick={() => void startReps(repair)}>
+                Start repair
+              </button>
+            </div>
+          )}
+          {learning.length > 0 && (
+            <ol className="mb-5 flex flex-col gap-3" data-testid="learn-first">
+              {learning.map((l) => (
+                <li key={l.key} className="rounded-xl bg-learn-soft p-4">
+                  <p className="eyebrow text-learn">
+                    {l.label} {repo.state(l.key) ? '· Done' : '· Recommended'}
                   </p>
-                  <span className={`whitespace-nowrap text-right text-[12px] ${i.kind === 'gate' ? 'font-medium text-cold' : i.kind === 'repair' ? 'text-repair' : i.kind === 'learn' ? 'text-learn' : 'text-muted'}`}>{KIND[i.kind]}</span>
+                  <Link href={l.href} className="mt-1 inline-block text-sm font-medium hover:underline">
+                    {l.label === 'LEARN' ? 'Lesson: ' : l.label === 'REBUILD' ? 'Worked example: ' : ''}
+                    {l.title}
+                  </Link>
                 </li>
-              )
-            })}
+              ))}
+            </ol>
+          )}
+          <div data-testid="today-blocks">
+            <ol className="flex flex-col gap-4" data-testid="training-items">
+              {['drill', 'combine', 'retrieve'].map((group) => {
+                const items = reps.filter((i) =>
+                  group === 'retrieve'
+                    ? ['cold', 'warm', 'redo', 'resolve'].includes(i.kind)
+                    : group === 'combine'
+                      ? ['combine', 'prove', 'transfer'].includes(i.kind)
+                      : !['cold', 'warm', 'redo', 'resolve', 'combine', 'prove', 'transfer'].includes(i.kind)
+                )
+                return items.length ? (
+                  <li key={group} data-group={group}>
+                    <p className="eyebrow text-muted">
+                      {group} · {items.filter((i) => i.done).length}/{items.length}
+                    </p>
+                    <ul className="mt-2 flex flex-col gap-2">
+                      {items.map((i) => (
+                        <li key={i.key} className="text-sm" data-kind={i.kind} data-state={i.done ? 'done' : 'todo'}>
+                          {i.done ? (
+                            <span className="text-muted">✓ {unlabeled ? 'Independent practice' : i.title}</span>
+                          ) : (
+                            <Link href={`/rep/${i.exerciseId}`} className="hover:underline">
+                              {unlabeled ? 'Independent practice' : i.title}
+                            </Link>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  </li>
+                ) : null
+              })}
+            </ol>
+          </div>
+          <ol className="mt-5 flex flex-col gap-3">
+            {c.labs.map((l) => (
+              <li key={l.id} className="rounded-xl border border-line p-4" data-testid="today-lab" data-state={l.state}>
+                <p className="eyebrow text-learn">
+                  Lab · {l.state === 'done' ? 'Done' : recovery ? 'Optional recovery' : l.carried ? 'Carried over' : 'Required today'}
+                </p>
+                <Link href={`/lab/${l.id}`} className="mt-1 inline-block text-sm font-medium hover:underline">
+                  {l.title}
+                </Link>
+              </li>
+            ))}
+            {c.gates.map((g) => (
+              <li key={g.id} className="rounded-xl border border-line p-4" data-testid="today-gate" data-state={g.state}>
+                <p className="eyebrow text-cold">Checkpoint · {g.state}</p>
+                <p className="mt-1 text-sm font-medium">{g.title}</p>
+                {g.state === 'open' ? (
+                  <button className="btn btn-sm mt-2" disabled={busy} onClick={() => startGate(g.id)}>
+                    Start checkpoint
+                  </button>
+                ) : g.state === 'locked' ? (
+                  <p className="mt-1 text-sm text-muted">Finish the prerequisite reps first.</p>
+                ) : g.state === 'repair' ? (
+                  <p className="mt-1 text-sm text-repair">Do the repair reps first.</p>
+                ) : g.state === 'handled' ? (
+                  <p className="mt-1 text-sm text-muted">Repair done. A fresh checkpoint opens next training day.</p>
+                ) : null}
+              </li>
+            ))}
+            {c.targets.map((t) => (
+              <li key={t.lc} className="rounded-xl border border-line p-4" data-testid="today-target" data-state={t.state}>
+                <p className="eyebrow text-cold">Target · {t.state}</p>
+                <p className="mt-1 text-sm font-medium">
+                  LC {t.lc} · {t.title}
+                </p>
+                {t.state === 'locked' ? (
+                  <p className="mt-1 text-sm text-muted">Opens after checkpoint.</p>
+                ) : t.state === 'open' ? (
+                  <Link href={lcUrl(t.lc) ?? '/problems'} className="btn btn-sm mt-2">
+                    Start target
+                  </Link>
+                ) : null}
+              </li>
+            ))}
           </ol>
+          {!recovery && (
+            <div className="mt-6 rounded-xl bg-surface p-4" data-testid="still-due">
+              <p className="label">Done for today when</p>
+              <ul className="mt-2 flex flex-col gap-1 text-sm text-ink-2">
+                {c.remaining.map((r) => (
+                  <li key={r}>· {r}</li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       )}
-
-      {/* Day complete: the week, tomorrow, and a real choice to stop. */}
       {complete && (
-        <div className="border-t border-line px-6 py-5 sm:px-8" data-testid="complete-panel">
-          <dl className="grid gap-4 sm:grid-cols-3">
-            <div>
-              <dt className="label">Week {week.number}</dt>
-              <dd className="num mt-0.5 text-[16px] font-semibold text-ink">
-                {progress.done} / {progress.target}
-              </dd>
-              <dd className="text-[12.5px] text-muted">
-                {cd.gatesCleared} of {cd.weekGates.length} checkpoints cleared
-              </dd>
-            </div>
-            <div>
-              <dt className="label">Tomorrow</dt>
-              <dd className="mt-0.5 text-[14px] text-ink-2">{plan.optional.find((o) => o.exerciseId)?.title ?? unit?.title ?? 'The next unit'}</dd>
-            </div>
-            <div>
-              <dt className="label">Streak</dt>
-              <dd className="mt-0.5 text-[14px] text-ink-2">{cd.streak ? `🔥 ${cd.streak} training day${cd.streak === 1 ? '' : 's'}` : '—'}</dd>
-            </div>
-          </dl>
+        <div className="border-t border-line p-6 sm:px-8" data-testid="complete-panel">
+          <p className="text-sm text-ink-2">
+            Week {cd.week.number} · {cd.weekContract.output.done} / {cd.weekContract.output.target} qualifying reps
+          </p>
           {stopped ? (
-            <p className="celebrate-in mt-5 text-[14px] font-medium text-ink" data-testid="stopped">
+            <p className="mt-4 font-medium" data-testid="stopped">
               Good. See you tomorrow.
             </p>
           ) : (
-            <div className="mt-5 flex flex-wrap gap-2" data-testid="training-optional">
-              <button type="button" className="btn btn-accent btn-sm" onClick={() => setStopped(true)} data-testid="stop-today">
-                Stop for today
-              </button>
-              {focusConcepts[0] && !week.unlabeled && (
-                <Link href={`/learn/${focusConcepts[0]}`} className="btn btn-sm">
-                  Review a concept
-                </Link>
-              )}
-              {plan.optional.find((o) => o.exerciseId) && (
-                <Link href={`/rep/${plan.optional.find((o) => o.exerciseId)!.exerciseId}`} className="btn btn-ghost btn-sm" data-testid="keep-going">
-                  Bonus: {plan.optional.find((o) => o.exerciseId)!.title}
-                </Link>
-              )}
-            </div>
+            <button className="btn btn-accent mt-4" onClick={() => setStopped(true)} data-testid="stop-today">
+              Stop for today
+            </button>
           )}
         </div>
       )}

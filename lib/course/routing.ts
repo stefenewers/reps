@@ -104,7 +104,9 @@ export function unitPath(unit: LearningUnit, ctx: Pick<CourseContext, 'sections'
 /** Repair inventory: the unit's other reps (sections and optional sections), never required. */
 export function unitInventory(unit: LearningUnit, ctx: Pick<CourseContext, 'sections' | 'exercises'>): Exercise[] {
   const path = new Set(unitPath(unit, ctx).map((e) => e.id))
-  return [...unit.sections, ...(unit.optional ?? [])].flatMap((id) => ctx.sections[id]?.exercises ?? []).filter((e) => !GATE_OF_EXERCISE[e.id] && !path.has(e.id))
+  return [...unit.sections, ...(unit.optional ?? [])]
+    .flatMap((id) => ctx.sections[id]?.exercises ?? [])
+    .filter((e) => !GATE_OF_EXERCISE[e.id] && !path.has(e.id) && !unit.deferred?.includes(e.id))
 }
 
 /**
@@ -135,7 +137,9 @@ export function gateStatus(gate: MasteryGate, ctx: CourseContext, index: Map<str
     const unit = UNITS.find((u) => u.id === gate.unitId)
     const pool = unit ? [...unitPath(unit, ctx), ...unitInventory(unit, ctx)] : []
     const fresh = (id: string) => (index.get(id) ?? []).some((a) => a.passed && a.completedAt && !a.solutionViewed && time(a) > time(last))
-    const candidates = pool.filter((e) => REPAIR_STAGES.includes(e.stage) && e.kind === 'code' && e.skills.some((s) => broken.has(s) || (!broken.size && gate.skills.includes(s))))
+    const candidates = pool.filter(
+      (e) => REPAIR_STAGES.includes(e.stage) && e.kind === 'code' && e.skills.some((s) => broken.has(s) || (!broken.size && gate.skills.includes(s)))
+    )
     // The smallest broken skill first: shorter, easier reps before combined ones. At least two, at most three.
     const ranked = [...new Map(candidates.map((e) => [e.id, e])).values()].sort((a, b) => a.difficulty - b.difficulty || a.minutes - b.minutes).slice(0, 3)
     repairPlan = ranked.map((e) => e.id)
@@ -162,7 +166,7 @@ export function gateStatus(gate: MasteryGate, ctx: CourseContext, index: Map<str
     repairPlan,
     next: cleared ? [] : queue.slice(0, still),
     available,
-    attempted: tries.length > 0,
+    attempted: tries.length > 0
   }
 }
 
@@ -181,7 +185,10 @@ export function courseStatus(ctx: CourseContext): UnitStatus[] {
   const byId = new Map<string, UnitStatus>()
   for (const unit of UNITS) {
     const path = unitPath(unit, ctx)
-    const gates = unit.gateIds.map((id) => GATE_BY_ID[id]).filter(Boolean).map((g) => gateStatus(g, ctx, index))
+    const gates = unit.gateIds
+      .map((id) => GATE_BY_ID[id])
+      .filter(Boolean)
+      .map((g) => gateStatus(g, ctx, index))
     const liveGates = gates.filter((g) => g.available.length > 0)
     const prior = priorEvidence(unit, path, passed, ctx)
     const anyGateFailed = liveGates.some((g) => g.failed)
@@ -256,18 +263,28 @@ export function courseQueue(statuses: UnitStatus[], ctx: CourseContext, solvedLc
     if (s.unit.week > horizon || s.locked) continue
     const { unit } = s
     if (s.state === 'placement') {
-      for (const g of s.gates) for (const id of g.next) out.push({ key: id, unitId: unit.id, purpose: 'gate', exerciseId: id, gateId: g.gate.id, required: true })
+      for (const g of s.gates)
+        for (const id of g.next) out.push({ key: id, unitId: unit.id, purpose: 'gate', exerciseId: id, gateId: g.gate.id, required: true })
     } else if (s.state !== 'ready' && s.state !== 'maintenance') {
-      for (const g of s.gates) for (const id of g.repair) out.push({ key: id, unitId: unit.id, purpose: 'repair', exerciseId: id, gateId: g.gate.id, required: true })
+      for (const g of s.gates)
+        for (const id of g.repair) out.push({ key: id, unitId: unit.id, purpose: 'repair', exerciseId: id, gateId: g.gate.id, required: true })
       for (const e of s.path) if (!passed.has(e.id)) out.push({ key: e.id, unitId: unit.id, purpose: purposeOf(e), exerciseId: e.id, required: true })
       // Gates once the path is done; a failed gate's next variant only after its repairs.
-      if (s.path.every((e) => passed.has(e.id))) for (const g of s.gates) if (!g.repair.length) for (const id of g.next) out.push({ key: id, unitId: unit.id, purpose: 'gate', exerciseId: id, gateId: g.gate.id, required: true })
+      if (s.path.every((e) => passed.has(e.id)))
+        for (const g of s.gates)
+          if (!g.repair.length)
+            for (const id of g.next) out.push({ key: id, unitId: unit.id, purpose: 'gate', exerciseId: id, gateId: g.gate.id, required: true })
     }
     // Required targets: once the unit is ready. Readiness targets and inventory are optional practice.
     const open = s.state === 'ready' || s.state === 'maintenance'
     if (open) for (const lc of unit.targets) if (!solvedLc.has(lc)) out.push({ key: `lc:${lc}:new`, unitId: unit.id, purpose: 'problem', lc, required: true })
-    if (open) for (const lc of unit.readinessTargets ?? []) if (!solvedLc.has(lc)) extras.push({ key: `lc:${lc}:new`, unitId: unit.id, purpose: 'problem', lc, required: false })
-    if (!s.locked) for (const e of unitInventory(unit, ctx)) if (!passed.has(e.id) && e.kind !== 'choice' && e.kind !== 'explain') extras.push({ key: e.id, unitId: unit.id, purpose: 'extra', exerciseId: e.id, required: false })
+    if (open)
+      for (const lc of unit.readinessTargets ?? [])
+        if (!solvedLc.has(lc)) extras.push({ key: `lc:${lc}:new`, unitId: unit.id, purpose: 'problem', lc, required: false })
+    if (!s.locked)
+      for (const e of unitInventory(unit, ctx))
+        if (!passed.has(e.id) && e.kind !== 'choice' && e.kind !== 'explain')
+          extras.push({ key: e.id, unitId: unit.id, purpose: 'extra', exerciseId: e.id, required: false })
   }
   // A rep can sit in two units (shared sections): keep the first. Required work always comes before extras.
   const seen = new Set<string>()

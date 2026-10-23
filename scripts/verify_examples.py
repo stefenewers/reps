@@ -1,10 +1,12 @@
 """Checks the worked examples written in prompts: `f(args)` → `value` must hold for the reference solution."""
 import json, sys, io, contextlib
+from typing import List, Optional, Dict, Set, Tuple
 
 jobs = json.load(sys.stdin)
 out = []
 for job in jobs:
-    ns = {}
+    # Match the annotation aliases provided by the browser Python harness.
+    ns = {"List": List, "Optional": Optional, "Dict": Dict, "Set": Set, "Tuple": Tuple}
     errors = []
     try:
         with contextlib.redirect_stdout(io.StringIO()):

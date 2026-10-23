@@ -1,0 +1,2826 @@
+{
+  "note": "Full hand curation; integrates saved plans and review fixes. Weeks 3 and 4 curated on 2026-10-23.",
+  "plans": {
+    "1": {
+      "week": 1,
+      "units": [
+        {
+          "unitId": "w1-state-while",
+          "path": [
+            "c1-state-predict",
+            "c1-state-table",
+            "c1-while-trace-savings",
+            "c1-while-trace-check-top",
+            "c1-while-fill-change",
+            "c1-while-rebuild-countdown",
+            "c1-state-dbg-reset",
+            "c1-while-dbg-stuck",
+            "c1-while-halve-steps"
+          ],
+          "pathRationale": "All c1 content, teaching reps first. The path opens with two state traces (one line at a time, then the variable table) and two while traces (the check/work/change cycle, then the check happening only at the top). Next come the missing-state-change fill and the we-countdown rebuild (rule 6). The practice reps are the state-reset-inside-the-loop debug, the never-ending-loop debug and one blank-editor while loop (halve until below k), which has the same shape as the g-loop-control variants. These go to repair inventory: c1-state-counter and c1-state-overdrawn (counting drills that Wednesday covers); c1-state-swap (a state_tracking microbuild ahead of any state_tracking trace); c1-while-countdown-by (a second countdown and a list_append drill); and c1-while-dbg-boundary (its conditionals tag would make a debug the first conditionals rep, and halve-steps' boundary tests plus Tuesday's walking-off-the-end debug cover boundaries). d05-while was written as the warm-up for the October binary-search day, so it is optional. 9 reps: 8 on Monday and the 9th opens Tuesday.",
+          "optionalSections": [
+            "d05-while"
+          ],
+          "stretchSections": [],
+          "retrievalSections": [],
+          "requiredTargets": [],
+          "readinessTargets": [],
+          "otherWeekReps": [
+            {
+              "repId": "d05-while-first-at-least",
+              "belongsToWeek": 5,
+              "why": "Its prompt says 'later today you will get the same answer in O(log n)' and its note introduces the lower bound. It is the linear baseline for w5-binary-search (before d05-var-insert and d05-var-dbg-lower), not Week 1 material."
+            },
+            {
+              "repId": "d05-while-halve",
+              "belongsToWeek": 5,
+              "why": "Its explanation says 'Binary search, later today, halves a list the same way'. That is the log2(n) intuition for w5-binary-search, and in Week 1 the sentence would point four weeks ahead."
+            }
+          ]
+        },
+        {
+          "unitId": "w1-loop-control",
+          "path": [
+            "c1-loop-trace-index",
+            "o2-range-basic",
+            "c1-loop-fill-scan",
+            "c1-loop-rebuild-first-negative",
+            "c1-loop-two-exits",
+            "c1-loop-dbg-past-end",
+            "c1-loop-last-match"
+          ],
+          "pathRationale": "c1 loop-control reps plus o2-range-basic, the only trace that teaches range (a g-index-scan skill). In order: the index-walk trace, the range trace, the scan-until fill and the we-first-negative rebuild (rule 6), then a running total with two exits, the walking-off-the-end debug and a backward scan. Together they cover every g-index-scan variant (first over, count before a stop, last even, index of the best) and the two-exit loop in the Savings Goal lab. Two groups go to repair inventory. c1-loop-break is a conditionals drill that would come before Wednesday's first conditionals trace, and return already covers early exit. The rest of o2-loops is for-loop basics; its two range drills also carry list_append and would come before the first list_append trace.",
+          "optionalSections": [],
+          "stretchSections": [],
+          "retrievalSections": [],
+          "requiredTargets": [],
+          "readinessTargets": [],
+          "otherWeekReps": []
+        },
+        {
+          "unitId": "w1-running-state",
+          "path": [
+            "c1-running-trace-best",
+            "c1-running-fill-prev",
+            "c1-running-rebuild-best",
+            "c1-running-records",
+            "c1-running-longest-same",
+            "c1-running-dbg-last-run"
+          ],
+          "pathRationale": "The whole c1-running-state section in its authored order: best-so-far trace, previous-value fill, peak-balance rebuild (rule 6), records, longest equal run and the last-run debug. It is the path's first state_tracking and conditionals exposure, and it maps onto the g-running-state pool (new lows, longest rise, max gap, streak). d3-running-state repeats records and largest-by-hand, so it is optional. It is also this unit's only repair source. Two of its reps (prefix minimums, biggest drop) belong in Week 3.",
+          "optionalSections": [
+            "d3-running-state"
+          ],
+          "stretchSections": [],
+          "retrievalSections": [],
+          "requiredTargets": [],
+          "readinessTargets": [],
+          "otherWeekReps": [
+            {
+              "repId": "d3-rs-prefix-mins",
+              "belongsToWeek": 3,
+              "why": "It builds a prefix-minimum array, the prefix half of Week 3's prefix/suffix topic. It would be a natural first exposure before br-238 in w3-running-prefix."
+            },
+            {
+              "repId": "d3-rs-biggest-drop",
+              "belongsToWeek": 3,
+              "why": "Finding the largest earlier-minus-later fall in one pass has the same shape as LC 121 (best earlier value against the current one). It bridges to cap-best-time-stock in w3-running-prefix."
+            }
+          ]
+        },
+        {
+          "unitId": "w1-mutation-references",
+          "path": [
+            "c1-mut-trace-return",
+            "c1-ref-trace-alias",
+            "c1-ref-trace-function",
+            "c1-ref-rebuild-shared",
+            "c1-mut-dbg-remove",
+            "c1-ref-dbg-grid"
+          ],
+          "pathRationale": "The path starts with the three traces that the alias-trace gate variant needs: mutating versus returning a new list, two names for one list versus a [:] copy, and a parameter that shares the caller's list. The we-shared-list rebuild follows (rule 6). Last come the removing-while-walking and repeated-row debugs, which are the remove-in-place and blank-board variants. The path's first functions trace and first list_append trace both land here. Repair inventory: c1-mut-trace-cart, c1-mut-cap-scores, c1-mut-new-list and c1-ref-top-three (uses sorted() and carries a sorting tag).",
+          "optionalSections": [],
+          "stretchSections": [],
+          "retrievalSections": [],
+          "requiredTargets": [],
+          "readinessTargets": [],
+          "otherWeekReps": []
+        },
+        {
+          "unitId": "w1-integration",
+          "path": [
+            "c1-dec-validate",
+            "c1-dec-summarise",
+            "c1-dec-report"
+          ],
+          "pathRationale": "The learner validates one order, summarises the valid orders, then composes the report from the given helpers (the parse helper is supplied). c1-dec-parse and c1-dec-dbg-helper need str.split and int parsing, which Week 2 teaches, so they are listed for Week 2. The section has no trace or fill, so after the l-decomposition lesson the path opens with the smallest one-job function. The unit unlocks only after all four gates clear, so it runs Friday after the two Friday gates. The Inventory Processor is the week's integration build.",
+          "optionalSections": [],
+          "stretchSections": [],
+          "retrievalSections": [],
+          "requiredTargets": [],
+          "readinessTargets": [],
+          "otherWeekReps": [
+            {
+              "repId": "c1-dec-parse",
+              "belongsToWeek": 2,
+              "why": "It parses 'name,qty,price' with str.split and int(). String methods are taught in Week 2 (d3-methods), and the rep fits w2-manual beside c2-manual-helpers as g-decomposition practice."
+            },
+            {
+              "repId": "c1-dec-dbg-helper",
+              "belongsToWeek": 2,
+              "why": "It debugs the same string-parsing helper (text versus int from split), so it needs the Week 2 string basics. It fits w2-manual after d3-methods."
+            }
+          ]
+        }
+      ],
+      "schedule": [
+        {
+          "date": "2026-10-26",
+          "focusUnits": [
+            "w1-state-while"
+          ],
+          "gatesDue": [],
+          "labsDue": [],
+          "targetsDue": [],
+          "theme": "State and while from first principles: state traces, the while cycle, the countdown rebuild, the state-reset and never-ending-loop debugs (spec theme)."
+        },
+        {
+          "date": "2026-10-27",
+          "focusUnits": [
+            "w1-state-while",
+            "w1-loop-control"
+          ],
+          "gatesDue": [],
+          "labsDue": [
+            "lab-savings-goal"
+          ],
+          "targetsDue": [],
+          "theme": "Controlling a loop: opens with the last while rep (halve until below k), then index walks, range, two exits and walking backward. Savings Goal Simulator (spec theme)."
+        },
+        {
+          "date": "2026-10-28",
+          "focusUnits": [
+            "w1-running-state"
+          ],
+          "gatesDue": [
+            "g-index-scan"
+          ],
+          "labsDue": [],
+          "targetsDue": [],
+          "theme": "Running state: best so far, previous value, runs (spec theme). The index-scan gate is taken cold, the day after loop control (moved from Friday)."
+        },
+        {
+          "date": "2026-10-29",
+          "focusUnits": [
+            "w1-mutation-references"
+          ],
+          "gatesDue": [
+            "g-running-state"
+          ],
+          "labsDue": [],
+          "targetsDue": [],
+          "theme": "Mutation and references: aliasing, copies, changing a list in place (spec theme). The running-state gate is taken cold, the day after running state (moved from Friday)."
+        },
+        {
+          "date": "2026-10-30",
+          "focusUnits": [
+            "w1-integration"
+          ],
+          "gatesDue": [
+            "g-loop-control",
+            "g-mutation-references"
+          ],
+          "labsDue": [
+            "lab-inventory"
+          ],
+          "targetsDue": [],
+          "theme": "Decomposition and integration after the loop-control and mutation/reference cold gates, then the Inventory Processor (spec theme, with 2 of its 4 gates)."
+        }
+      ],
+      "budget": {
+        "weekTarget": 50,
+        "allowance": 8,
+        "pathTotal": 31,
+        "gateNeeds": 8,
+        "requiredTargets": 0,
+        "requiredLoad": 39,
+        "fits": true
+      },
+      "days": [
+        {
+          "date": "2026-10-26",
+          "capacity": 8,
+          "cumulativeCapacity": 8,
+          "pathDue": 0
+        },
+        {
+          "date": "2026-10-27",
+          "capacity": 8,
+          "cumulativeCapacity": 16,
+          "pathDue": 16
+        },
+        {
+          "date": "2026-10-28",
+          "capacity": 6,
+          "cumulativeCapacity": 22,
+          "pathDue": 16
+        },
+        {
+          "date": "2026-10-29",
+          "capacity": 6,
+          "cumulativeCapacity": 28,
+          "pathDue": 22
+        },
+        {
+          "date": "2026-10-30",
+          "capacity": 4,
+          "cumulativeCapacity": 32,
+          "pathDue": 31
+        }
+      ],
+      "deviations": [
+        "Friday holds 2 of the spec's 4 cold gates (g-loop-control and g-mutation-references). Four gates are 8 gate reps, which leaves Friday 10 - 2 - 8 = 0 path slots. w1-integration also unlocks only after all four gates clear, so its 3 reps could never be scheduled. Two gates leave 10 - 2 - 4 = 4 >= 3. g-index-scan moves to Wednesday and g-running-state to Thursday, each the day after its unit is taught, so they are still cold.",
+        "g-loop-control is due Friday rather than Tuesday or Wednesday. It checks state_tracking, and the first state_tracking trace in the path is Wednesday's c1-running-trace-best. Friday also puts four days between Monday's while-loop material and its test. The harder running-state gate goes on Thursday so that a failure still has Friday for repair.",
+        "Tuesday opens with c1-while-halve-steps, the 9th state/while rep, because Monday holds 8. w1-loop-control unlocks once it passes.",
+        "The Savings Goal Simulator is due Tuesday, after the loop-control reps and before both loop-control checkpoints (reps, then lab, then checkpoint, per master spec sections 9 and 11).",
+        "w1-integration is 3 reps, not 5. c1-dec-parse and c1-dec-dbg-helper need str.split and int parsing (string methods are Week 2), so they are listed for Week 2. The Inventory Processor carries Friday's integration theme.",
+        "The path uses 31 of the week's 32 path slots. Friday keeps 1 spare as a buffer for a gate repair, because its two gates stand in front of integration.",
+        "Rule 3 caveats. list_append's first path rep is the c1-while-rebuild-countdown rebuild, which rule 6 keeps (we-countdown is its exposure). Its first trace is Thursday's c1-mut-trace-return, with no list_append drill in between. range is covered only by the o2-range-basic trace: both range drills (o2-countdown, o2-dbg-squares-range) also carry list_append and would put a list_append drill ahead of that trace, and g-index-scan's variants never call range().",
+        "c1-state-swap (a microbuild tagged state_tracking) is left out of the path because it would be the first state_tracking rep, ahead of any trace. The swap idea stays in the l-state lesson."
+      ],
+      "concerns": [
+        "Readiness for units without a gate is computed over every section rep: pathDone uses `full` in /Users/ruggudile/Desktop/Projects/reps-v21/lib/course/routing.ts. It must use the curated path. Otherwise w1-state-while waits on 5 repair-inventory reps, which keeps loop-control, running-state and mutation locked (the Day 2 stall), and w1-integration waits on c1-dec-parse and c1-dec-dbg-helper, which keeps Week 2 locked. A focused route must also not drop the 5 lesson-level reps of the 9-rep state/while path while readiness still waits for them.",
+        "g-loop-control tests Monday's while-counter material, but repairs for a failed gate come from w1-loop-control's own reps, which are index scans and for-loop basics. The closest repairs (c1-while-dbg-boundary and c1-while-countdown-by in w1-state-while's repair inventory) are out of reach unless repairs can draw on the prerequisite unit.",
+        "Friday is the riskiest day. Two gates must clear before w1-integration unlocks, and a failed gate costs 2-4 repair reps plus a new variant. The 1 spare slot and Saturday can absorb that, but w2-contract requires w1-integration to be ready, so the 3 integration reps must be done by Sunday.",
+        "Several tags don't match what the reps teach. c1-state-predict, c1-state-table and c1-state-dbg-reset teach state but are tagged only accumulator, so the first state_tracking rep is Wednesday's trace. That forces g-loop-control to Friday and keeps c1-state-swap out of the path. Tagging c1-state-table with state_tracking would let c1-state-swap return and let g-loop-control be due earlier. Separately, g-index-scan lists range, but none of its four variants call range().",
+        "Two gate variants have no direct path practice. The swap pattern in c1-g-swap-ends now appears only in the l-state lesson, and c1-g-index-of-max (index of the best) has no exact path rep; the closest are c1-loop-two-exits and Wednesday's best-so-far reps. Both are third or fourth in their pools, so they only come up after a failed variant.",
+        "w1-running-state has no repair inventory of its own, because all six c1-running reps are in the path. Its gate repairs must come from d3-running-state, so keep that section on the unit as optional (minus the two Week 3 reps) rather than dropping it.",
+        "d05-while-halvings (optional) is nearly the same problem as the g-loop-control variant c1-g-halve-count. Offering it to a learner who is ahead pre-exposes a gate variant.",
+        "Monday is course day 1, so there is nothing to retrieve in its 2 allowance slots. They should fall through to c1-while-halve-steps, which would also unlock w1-loop-control a day early.",
+        "The current queue offers a unit's gates as soon as its path is done, so the loop-control gates will appear on Tuesday. What is owed today must follow the due dates, not the queue, or Tuesday's 'day complete' will count two gates as owed."
+      ]
+    },
+    "2": {
+      "week": 2,
+      "units": [
+        {
+          "unitId": "w2-contract",
+          "path": [
+            "c2-contract-trace",
+            "c2-contract-examples",
+            "c2-contract-first-late",
+            "c2-contract-top-seller",
+            "c2-contract-type-debug",
+            "c2-contract-gap-debug",
+            "c2-contract-rebuild"
+          ],
+          "pathRationale": "All seven c2-contract reps, in authored order. First the trace (the first exposure of edge_cases and functions), then examples written before code. Two builds honour the contract: one with a boundary and a -1 sentinel, one with an alphabetical tie and an empty result of ''. Two debugs follow (the wrong output type, and a forgotten short-list edge), then the we-contract rebuild. Every g-contract variant is a filtered min or max with a tie rule and an empty sentinel (None, -1 or ''), and first-late, top-seller, gap-debug and the rebuild practise exactly that. 7 reps fit Monday's 8 path slots after the 2-rep checkpoint.",
+          "optionalSections": [],
+          "stretchSections": [],
+          "retrievalSections": [],
+          "requiredTargets": [],
+          "readinessTargets": [],
+          "otherWeekReps": []
+        },
+        {
+          "unitId": "w2-manual",
+          "path": [
+            "c2-manual-table",
+            "c2-manual-stamps",
+            "c2-manual-split-bill",
+            "c2-manual-parking-debug",
+            "c2-manual-helpers",
+            "c2-manual-reorder",
+            "c2-manual-tickets",
+            "c2-manual-rebuild"
+          ],
+          "pathRationale": "All eight c2-manual reps. In order: the hand-table trace (first Week 2 exposure of conditionals), table to code (a stamp counter that resets, which trains state, a weak spot), fill the subgoals (split bill), and the missing-step debug (capped parking fee, close to c2-g-decompose-c). Then parse helpers (close to decompose-d), the subgoal reorder (close to decompose-b), cinema helpers done alone (close to decompose-a), and the we-manual rebuild (compress a string). The three d3 string ladders are retrieval: the spec's Week 2 themes don't include strings, the unit's retrievalSkills are exactly string_index, slicing and string_methods, and the learner has October evidence on them. Even their three traces would push Mon+Tue to 7+8+3 = 18 > 16.",
+          "optionalSections": [],
+          "stretchSections": [],
+          "retrievalSections": [
+            "d3-strings",
+            "d3-slicing",
+            "d3-methods"
+          ],
+          "requiredTargets": [],
+          "readinessTargets": [],
+          "otherWeekReps": []
+        },
+        {
+          "unitId": "w2-testing",
+          "path": [
+            "c2-test-break-boundary",
+            "c2-test-break-empty",
+            "c2-test-break-ties",
+            "c2-test-write-asserts",
+            "c2-test-weak-test",
+            "c2-test-catch-three"
+          ],
+          "pathRationale": "Six of the seven c2-testing reps. The three break-it reps cover the places bugs hide (boundary, empty input, tie). Then a test function that receives the function under test, strengthening a weak test, and catch-three-hidden-bugs, which is exactly the g-testing format. c2-test-dupes-debug (debugging from a failing test) stays as repair inventory to keep a buffer. c2-testing has no trace or fill rep, so the path opens with its lightest rep after the l-testing lesson; edge_cases was first exposed by Monday's c2-contract-trace. o11-edges contributes no path rep: 8 of its 10 cold reps need later-week topics (listed below). The 2 that fit Week 2 (o11-edge-second, o11-wt-two-sum) stay as Week 2 retrieval.",
+          "optionalSections": [],
+          "stretchSections": [],
+          "retrievalSections": [],
+          "requiredTargets": [],
+          "readinessTargets": [],
+          "otherWeekReps": [
+            {
+              "repId": "o11-wt-profit",
+              "belongsToWeek": 3,
+              "why": "Edge cases for max_profit, which is Best Time to Buy and Sell Stock (LC 121). That is a Week 3 target in w3-running-prefix (d3-stock), so the learner would write tests for a problem not yet taught."
+            },
+            {
+              "repId": "o11-dbg-profit",
+              "belongsToWeek": 3,
+              "why": "Fixing max_profit means solving LC 121 (low-so-far running state), Week 3's w3-running-prefix capstone problem."
+            },
+            {
+              "repId": "o11-wt-bsearch",
+              "belongsToWeek": 5,
+              "why": "Breaking a binary search (search_invariant) needs w5-binary-search."
+            },
+            {
+              "repId": "o11-edge-bsearch-fix",
+              "belongsToWeek": 5,
+              "why": "Fixing a binary search (binary_search, search_invariant) belongs to w5-binary-search."
+            },
+            {
+              "repId": "o11-dbg-brackets",
+              "belongsToWeek": 4,
+              "why": "Bracket matching with a stack (stack_push_pop, matching_pairs) is w4-stacks, LC 20."
+            },
+            {
+              "repId": "o11-dbg-touching",
+              "belongsToWeek": 10,
+              "why": "Merging touching intervals (interval_overlap, sorting) is w10-intervals, LC 56."
+            },
+            {
+              "repId": "o11-dbg-empty-grid",
+              "belongsToWeek": 8,
+              "why": "Grid traversal over rows and columns (grid_nested) belongs to w8-grids."
+            },
+            {
+              "repId": "o11-edge-kth-end",
+              "belongsToWeek": 6,
+              "why": "k-th node from the end of a linked list in one pass (linked_list_traversal, two_pointer gap) is the br-19 / LC 19 technique in w6-fast-slow."
+            }
+          ]
+        },
+        {
+          "unitId": "w2-improve",
+          "path": [
+            "c2-improve-count-work",
+            "c2-improve-avg-once",
+            "c2-improve-pairs-brute",
+            "c2-improve-pairs-trace",
+            "c2-improve-pairs-fast",
+            "c2-improve-refunds",
+            "o2-comp-set-trace",
+            "o2-comp-set-code",
+            "c2-improve-rebuild"
+          ],
+          "pathRationale": "Brute force, then repeated work, then improve. The reps: count the pair checks (first exposure of complexity), compute it once, brute-force pairs, and the remember-instead-of-rescan trace (first exposure of frequency_map). Then one-pass pairs with a dict, and replacing the inner scan with a dict. From o2-complements come the complement seen-set trace (first exposure of complement and set_membership) and its one-pass optimisation. Both sit before the we-improve rebuild (first repeated ticket, using a set), so set_membership is traced before the rebuild uses it. This unit carries the hashing checkpoint's frequency_map, set_membership and complement teaching. Repair inventory: c2-improve-debug-lookup (dict direction; low value for a learner strong on dicts), o2-comp-write, o2-comp-nested, o2-dbg-comp-inverted, o2-dbg-comp-self-pair.",
+          "optionalSections": [],
+          "stretchSections": [],
+          "retrievalSections": [],
+          "requiredTargets": [],
+          "readinessTargets": [],
+          "otherWeekReps": []
+        },
+        {
+          "unitId": "w2-solve-map",
+          "path": [
+            "c2-solve-restock",
+            "c2-solve-on-time",
+            "c2-solve-busiest-hour",
+            "c2-solve-first-unique",
+            "c2-solve-report"
+          ],
+          "pathRationale": "Every creditable Solve Map rep, from guided to independent. Restock spells out the map steps. The on-time streak uses a state table (a weak area). Busiest hour combines a frequency map with a tie rule. First unique goes from a brute .count() to a one-pass count, which matches the large hidden tests of the g-solve-map variants. The grade report is done alone. c2-solve-plan is an explain rep (self-graded, no credit), so it is excluded and the path starts at the guided restock. Restock through first-unique land on Thursday after the improve unit; the independent report and the cold g-solve-map are Friday.",
+          "optionalSections": [],
+          "stretchSections": [],
+          "retrievalSections": [],
+          "requiredTargets": [],
+          "readinessTargets": [],
+          "otherWeekReps": []
+        },
+        {
+          "unitId": "w2-hashing",
+          "path": [
+            "o2-imap-trace",
+            "cap-two-sum"
+          ],
+          "pathRationale": "This unit exists to prove hashing cold (g-hashing, 3 of 8 variants) and keep it fresh for a learner strong on dictionaries. Its frequency_map, set_membership and complement teaching is in w2-improve's path, so the hashing path adds only the missing skill, index_map, via the value-to-index trace. Then comes the unit's flagship capstone, Two Sum, which combines that index map with Thursday's check-before-add complement and solves LC 1 inside Reps. cap-contains-duplicate and cap-valid-anagram are not required: the checkpoint pool already covers their problems cold (o2-cold-has-repeat, o2-cold-anagram), each is a 20-minute re-solve, and three capstones on Friday would exceed the day's internal load (3x3 + 9 = 18 > 16). The ten skill ladders become spaced retrieval (keep it fresh). The two capstone sections and the three Toward bridges are optional. Repair inventory: the rest of o2-index-maps and o2-two-sum.",
+          "optionalSections": [
+            "o2-contains-duplicate",
+            "o2-valid-anagram",
+            "br-49",
+            "br-128",
+            "br-271"
+          ],
+          "stretchSections": [],
+          "retrievalSections": [
+            "o2-python-recall",
+            "o2-enumerate",
+            "o2-sets",
+            "o2-dictionaries",
+            "o2-dict-revision",
+            "o2-get",
+            "o2-iter-dicts",
+            "o2-frequency",
+            "o2-dict-mastery",
+            "o2-dict-ladder"
+          ],
+          "requiredTargets": [],
+          "readinessTargets": [
+            217,
+            242,
+            49,
+            128
+          ],
+          "otherWeekReps": []
+        }
+      ],
+      "schedule": [
+        {
+          "date": "2026-11-02",
+          "focusUnits": [
+            "w2-contract",
+            "w2-manual"
+          ],
+          "gatesDue": [
+            "g-contract"
+          ],
+          "labsDue": [],
+          "targetsDue": [],
+          "theme": "Understand the contract: inputs, output, edge cases, examples before code, then the Contract checkpoint (the last slot opens Tuesday's hand table)"
+        },
+        {
+          "date": "2026-11-03",
+          "focusUnits": [
+            "w2-manual",
+            "w2-testing"
+          ],
+          "gatesDue": [
+            "g-decomposition"
+          ],
+          "labsDue": [
+            "lab-pricing-engine"
+          ],
+          "targetsDue": [],
+          "theme": "Solve it by hand first: hand table, subgoals, helper functions; Decomposition checkpoint; Pricing Engine lab"
+        },
+        {
+          "date": "2026-11-04",
+          "focusUnits": [
+            "w2-testing",
+            "w2-improve"
+          ],
+          "gatesDue": [
+            "g-testing"
+          ],
+          "labsDue": [],
+          "targetsDue": [],
+          "theme": "Learner-owned testing: break it at the boundary, the empty input and the tie, then write tests that catch hidden bugs; Testing checkpoint; first look at brute-force cost"
+        },
+        {
+          "date": "2026-11-05",
+          "focusUnits": [
+            "w2-improve",
+            "w2-solve-map"
+          ],
+          "gatesDue": [],
+          "labsDue": [
+            "lab-shipping-eligibility"
+          ],
+          "targetsDue": [],
+          "theme": "Brute force, find the repeated work, improve it with a dict or a set; then the guided Solve Map; Shipping Eligibility lab"
+        },
+        {
+          "date": "2026-11-06",
+          "focusUnits": [
+            "w2-solve-map",
+            "w2-hashing"
+          ],
+          "gatesDue": [
+            "g-solve-map",
+            "g-hashing"
+          ],
+          "labsDue": [],
+          "targetsDue": [],
+          "theme": "Complete an independent Solve Map, then prove hashing cold: index map, Two Sum, Solve Map and Hashing checkpoints"
+        }
+      ],
+      "budget": {
+        "weekTarget": 60,
+        "allowance": 9,
+        "pathTotal": 37,
+        "gateNeeds": 11,
+        "requiredTargets": 0,
+        "requiredLoad": 48,
+        "fits": true
+      },
+      "days": [
+        {
+          "date": "2026-11-02",
+          "capacity": 8,
+          "cumulativeCapacity": 8,
+          "pathDue": 7
+        },
+        {
+          "date": "2026-11-03",
+          "capacity": 8,
+          "cumulativeCapacity": 16,
+          "pathDue": 15
+        },
+        {
+          "date": "2026-11-04",
+          "capacity": 8,
+          "cumulativeCapacity": 24,
+          "pathDue": 21
+        },
+        {
+          "date": "2026-11-05",
+          "capacity": 10,
+          "cumulativeCapacity": 34,
+          "pathDue": 21
+        },
+        {
+          "date": "2026-11-06",
+          "capacity": 5,
+          "cumulativeCapacity": 39,
+          "pathDue": 37
+        }
+      ],
+      "deviations": [
+        "Each day's theme carries over by 1 to 4 reps. Day capacities are 8, 8, 8, 10 and 5, but the unit paths are 7, 8, 6, 9 and 5+2, and path reps are taken in unit order. So each day ends with the next unit's opening reps: Monday with c2-manual-table, Tuesday with c2-test-break-boundary, Wednesday with the first three improve reps, and Thursday with the four guided Solve Map reps. Each day still opens with its spec theme, and Friday is the independent Solve Map (c2-solve-report plus its cold checkpoint).",
+        "g-hashing is due Friday next to g-solve-map, not Thursday when its material (frequency maps, seen-sets, complements) is taught. w2-hashing is last in unit order, so its path comes after w2-solve-map's. A Thursday due date would need all 37 path reps done against Thursday's cumulative capacity of 31. The master spec's Week 2 exit lists four checkpoints; this fifth one stays because it is in gates.ts and w9-heaps requires w2-hashing.",
+        "Each lab is due the day after its unit is taught and checkpointed: Pricing Engine on Tuesday, Shipping Eligibility on Thursday. The alternative was the unit's own day. Monday and Wednesday already carry a new unit plus its checkpoint, Friday carries two checkpoints and a capstone, and Thursday has no checkpoint. The Pricing Engine also uses Tuesday's by-hand subgoals: its design questions ask for a cart worked by hand and one function per rule.",
+        "w2-hashing goes from 16 required sections (about 125 reps) to 2 path reps. The path keeps only one of the unit's three capstones, against rule 5's 'keep the unit's capstone'. cap-contains-duplicate and cap-valid-anagram are optional because the checkpoint pool already proves their problems cold and three capstones would overload Friday.",
+        "Week 2 has no required outside problems (the spec lists none). LC 1 is solved inside Reps by the path capstone cap-two-sum. LC 217, 242, 49 and 128 become readinessTargets: offered once the hashing checkpoint is clean, never required. In units.ts, w2-hashing.targets [217, 242, 1, 49, 128] should become [], with readinessTargets [217, 242, 49, 128].",
+        "The string basics (d3-strings, d3-slicing, d3-methods) are retrieval, not path, even though the course reference lists strings basics under Week 2. The spec's Week 2 themes don't include strings, and adding even their three traces breaks Tuesday's limit (18 > 16).",
+        "Two paths can't open with a trace or fill rep. c2-testing has none, so the testing path opens with its lightest rep (c2-test-break-boundary, 2 min) after the l-testing lesson; edge_cases was already exposed by Monday's c2-contract-trace. c2-solve-plan, the Solve Map's opening rep, is an explain rep, so the Solve Map path opens with the guided c2-solve-restock.",
+        "w2-improve mixes its two sections: o2-comp-set-trace and o2-comp-set-code come before c2-improve-rebuild, so set_membership is traced before the rebuild uses it. From the o2-complements legacy ladder only the trace and the combine are kept: no drill or debug, against rule 5.",
+        "Only two c2 reps are left out of the path: c2-test-dupes-debug and c2-improve-debug-lookup. They become repair inventory, which keeps 2 free slots on Friday.",
+        "o11-edges contributes no path reps. 8 of its 10 cold reps need Week 3, 4, 5, 6, 8 or 10 topics (see otherWeekReps). The two that fit Week 2 stay as retrieval. These are ordinary cold reps, not checkpoints."
+      ],
+      "concerns": [
+        "g-contract can't satisfy teach-before-test as defined. Its skills are ['edge_cases', 'explanation'], but in Weeks 1-2 'explanation' appears only on explain reps, which earn no credit and can't be in a path. The only code reps with it are c13-t-07 and c13-t-24 in Week 13. Its pool variants c2-g-contract-a..d are code and tagged ['edge_cases', 'state_tracking']. Change the gate's skills to ['edge_cases', 'state_tracking']. Otherwise a failed Contract checkpoint will look for repair reps on a skill nothing trains.",
+        "The live routing would break this day plan unless the queue follows DAY_PLAN. courseQueue walks UNITS in order, skips only locked units, and looks one week ahead (frontier week + 1). w2-hashing has no prerequisites, so it is never locked. With October evidence it starts in placement, so its 3 checkpoint variants are queued as required from Monday. prescribe() takes the checks within today's reach first, so on Monday the hashing variants would come before the Contract checkpoint. Week 3's w3-two-pointers and w3-running-prefix depend only on Week 1 units, so they are also unlocked within that one-week window. Their path reps would fill any Week 2 day whose own work runs out, such as Friday's 2 free slots. Fix: take required path and checkpoint items only from units whose focus day is today or earlier, and don't prescribe a checkpoint before its due day while that day's own work is open.",
+        "The buffer for failed checkpoints is thin. Cumulative slack is 1 on Monday, 1 on Tuesday, 3 on Wednesday and 2 on Friday. One failed checkpoint costs about 3-4 reps (2-3 repairs plus another variant), so an early failure spills 1-2 reps into Saturday's optional day, and two failures spill more. The week stays truthful (nothing is hidden), but Saturday may be needed.",
+        "Week 3 depends on strings that are now only retrieval. Week 3's cap-valid-palindrome, d3-vp-debug-case and d3-vp-one-deletion use string_methods and slicing. Their first exposures (d3-meth-trace, d3-slice-trace, d3-str-trace-index) are Week 2 retrieval in this plan, not path. Either Week 3's curation adds a string trace, or the warm-up picker should serve these before Nov 9.",
+        "Thursday and Friday may be lighter in practice. o2-comp-set-trace, o2-comp-set-code, o2-imap-trace and cap-two-sum are October reps, and the queue skips any rep already passed. If 40% or more of the hashing path is already passed, the unit goes to placement. Nothing is owed twice; the plan above assumes nothing was passed."
+      ]
+    },
+    "3": {
+      "week": 3,
+      "units": [
+        {
+          "unitId": "w3-two-pointers",
+          "path": [
+            "d3-tp-trace-pairs",
+            "c3-rebuild-pair",
+            "d3-tp-palindrome-plain",
+            "d3-tp-debug-step",
+            "d3-tp-swap-reverse",
+            "d3-pu-trace-sorted-sum",
+            "d3-pu-has-pair",
+            "d3-pu-debug-swapped",
+            "d3-pu-skip-spaces",
+            "cap-valid-palindrome",
+            "cap-two-sum-ii"
+          ],
+          "pathRationale": "Trace opposing pointers before palindrome mechanics, then trace sorted sums before movement decisions. Keep one debug per mechanic, a skip-spaces combine, and both capstones. Pattern variations remain repair inventory.",
+          "optionalSections": [
+            "d3-pointer-patterns"
+          ],
+          "stretchSections": [],
+          "retrievalSections": [],
+          "requiredTargets": [],
+          "readinessTargets": [
+            11
+          ],
+          "otherWeekReps": []
+        },
+        {
+          "unitId": "w3-running-prefix",
+          "path": [
+            "cap-best-time-stock",
+            "d3-stock-debug-order",
+            "d3-stock-days",
+            "b238-sums-before",
+            "b238-dbg-products-before",
+            "b238-products-after",
+            "b238-dbg-overwrite",
+            "b238-best-rival"
+          ],
+          "pathRationale": "Week 1 already teaches running state; stock combines it before a debug and index-return variation. The prefix bridge starts with a guided build, then products before/after, debug and combine. LC 238 remains optional outside transfer after this ladder.",
+          "optionalSections": [
+            "br-11",
+            "br-15"
+          ],
+          "stretchSections": [],
+          "retrievalSections": [
+            "d3-warmup"
+          ],
+          "requiredTargets": [],
+          "readinessTargets": [
+            238
+          ],
+          "otherWeekReps": []
+        }
+      ],
+      "schedule": [
+        {
+          "date": "2026-11-09",
+          "focusUnits": [
+            "w3-two-pointers"
+          ],
+          "gatesDue": [],
+          "labsDue": [],
+          "targetsDue": [],
+          "theme": "Trace two pointers, then choose which pointer moves"
+        },
+        {
+          "date": "2026-11-10",
+          "focusUnits": [
+            "w3-two-pointers"
+          ],
+          "gatesDue": [],
+          "labsDue": [
+            "lab-sorted-match"
+          ],
+          "targetsDue": [],
+          "theme": "Combine pointer movement in the Sorted Match Engine"
+        },
+        {
+          "date": "2026-11-11",
+          "focusUnits": [
+            "w3-two-pointers",
+            "w3-running-prefix"
+          ],
+          "gatesDue": [
+            "g-pointer-mechanics",
+            "g-pointer-movement"
+          ],
+          "labsDue": [],
+          "targetsDue": [],
+          "theme": "Prove pointer movement; carry the best value through a scan"
+        },
+        {
+          "date": "2026-11-12",
+          "focusUnits": [
+            "w3-running-prefix"
+          ],
+          "gatesDue": [],
+          "labsDue": [
+            "lab-trend-analyzer"
+          ],
+          "targetsDue": [],
+          "theme": "Prefix and suffix state; build the Trend Analyzer"
+        },
+        {
+          "date": "2026-11-13",
+          "focusUnits": [
+            "w3-running-prefix"
+          ],
+          "gatesDue": [
+            "g-prefix-suffix"
+          ],
+          "labsDue": [],
+          "targetsDue": [],
+          "theme": "Prove prefix and suffix reasoning; retrieve earlier skills"
+        }
+      ],
+      "deviations": [
+        "The prefix bridge has no full LC 238 capstone; LC 238 is a readiness target rather than duplicated required work. Pointer gates are Wednesday to leave room for repair."
+      ],
+      "concerns": [
+        "Prefix first exposure is a guided code build because this inventory contains no prefix trace."
+      ],
+      "budget": {
+        "weekTarget": 75,
+        "allowance": 12,
+        "pathTotal": 19,
+        "gateNeeds": 6,
+        "requiredTargets": 0,
+        "requiredLoad": 25,
+        "fits": true
+      },
+      "days": [
+        {
+          "date": "2026-11-09",
+          "capacity": 12,
+          "cumulativeCapacity": 12,
+          "pathDue": 0
+        },
+        {
+          "date": "2026-11-10",
+          "capacity": 12,
+          "cumulativeCapacity": 24,
+          "pathDue": 11
+        },
+        {
+          "date": "2026-11-11",
+          "capacity": 8,
+          "cumulativeCapacity": 32,
+          "pathDue": 11
+        },
+        {
+          "date": "2026-11-12",
+          "capacity": 12,
+          "cumulativeCapacity": 44,
+          "pathDue": 19
+        },
+        {
+          "date": "2026-11-13",
+          "capacity": 10,
+          "cumulativeCapacity": 54,
+          "pathDue": 19
+        }
+      ]
+    },
+    "4": {
+      "week": 4,
+      "units": [
+        {
+          "unitId": "w4-windows",
+          "path": [
+            "d4-win-trace-slices",
+            "c4-rebuild-window",
+            "d4-win-all-windows",
+            "d4-win-max-sum-k",
+            "d4-win-debug-leaving",
+            "d4-win-trace-variable",
+            "d4-win-longest-under",
+            "d4-win-debug-shrink",
+            "d4-ws-trace-set",
+            "d4-ws-remove-one",
+            "d4-ws-distinct-windows",
+            "d4-ws-debug-no-del",
+            "cap-longest-substring"
+          ],
+          "pathRationale": "Fixed-window trace, builds and debug precede variable-window tracing. Trace maintained membership before count updates and a frequency-map combine, then the full substring capstone.",
+          "optionalSections": [
+            "br-424"
+          ],
+          "stretchSections": [
+            "br-76"
+          ],
+          "retrievalSections": [
+            "d4-warmup"
+          ],
+          "requiredTargets": [],
+          "readinessTargets": [
+            424
+          ],
+          "otherWeekReps": []
+        },
+        {
+          "unitId": "w4-stacks",
+          "path": [
+            "d4-st-trace",
+            "d4-st-reverse",
+            "d4-st-backspace",
+            "d4-st-debug-empty-pop",
+            "d4-mp-trace",
+            "d4-mp-one-line-lookup",
+            "d4-mp-closes-top",
+            "d4-mp-first-bad",
+            "d4-mp-debug-peek",
+            "d4-mp-reorder",
+            "cap-valid-parentheses"
+          ],
+          "pathRationale": "Trace push/pop before stack drills and empty-pop repair. Trace closer lookup before matching drills, a combine and debug. Reconstruct the checker before the capstone.",
+          "optionalSections": [],
+          "stretchSections": [],
+          "retrievalSections": [
+            "d4-cold"
+          ],
+          "requiredTargets": [],
+          "readinessTargets": [],
+          "otherWeekReps": []
+        }
+      ],
+      "schedule": [
+        {
+          "date": "2026-11-16",
+          "focusUnits": [
+            "w4-windows"
+          ],
+          "gatesDue": [],
+          "labsDue": [],
+          "targetsDue": [],
+          "theme": "Fixed windows: enter a value and remove the outgoing value"
+        },
+        {
+          "date": "2026-11-17",
+          "focusUnits": [
+            "w4-windows"
+          ],
+          "gatesDue": [
+            "g-fixed-window"
+          ],
+          "labsDue": [
+            "lab-activity-window"
+          ],
+          "targetsDue": [],
+          "theme": "Variable windows: shrink until valid; build the Activity Window Analyzer"
+        },
+        {
+          "date": "2026-11-18",
+          "focusUnits": [
+            "w4-windows",
+            "w4-stacks"
+          ],
+          "gatesDue": [
+            "g-variable-window"
+          ],
+          "labsDue": [],
+          "targetsDue": [],
+          "theme": "Prove window state, then trace stack operations"
+        },
+        {
+          "date": "2026-11-19",
+          "focusUnits": [
+            "w4-stacks"
+          ],
+          "gatesDue": [],
+          "labsDue": [
+            "lab-undo-redo"
+          ],
+          "targetsDue": [],
+          "theme": "Match nested pairs and build Editor Undo/Redo"
+        },
+        {
+          "date": "2026-11-20",
+          "focusUnits": [
+            "w4-stacks"
+          ],
+          "gatesDue": [
+            "g-stack"
+          ],
+          "labsDue": [],
+          "targetsDue": [],
+          "theme": "Prove stack matching; retrieve windows and pointer movement"
+        }
+      ],
+      "deviations": [
+        "Window gates are Tuesday and Wednesday so the stack block can follow and failed windows have room for repair. LC 3 and LC 20 are solved by their path capstones."
+      ],
+      "concerns": [],
+      "budget": {
+        "weekTarget": 75,
+        "allowance": 12,
+        "pathTotal": 24,
+        "gateNeeds": 4,
+        "requiredTargets": 0,
+        "requiredLoad": 28,
+        "fits": true
+      },
+      "days": [
+        {
+          "date": "2026-11-16",
+          "capacity": 12,
+          "cumulativeCapacity": 12,
+          "pathDue": 0
+        },
+        {
+          "date": "2026-11-17",
+          "capacity": 11,
+          "cumulativeCapacity": 23,
+          "pathDue": 13
+        },
+        {
+          "date": "2026-11-18",
+          "capacity": 10,
+          "cumulativeCapacity": 33,
+          "pathDue": 13
+        },
+        {
+          "date": "2026-11-19",
+          "capacity": 12,
+          "cumulativeCapacity": 45,
+          "pathDue": 24
+        },
+        {
+          "date": "2026-11-20",
+          "capacity": 11,
+          "cumulativeCapacity": 56,
+          "pathDue": 24
+        }
+      ]
+    },
+    "5": {
+      "week": 5,
+      "units": [
+        {
+          "unitId": "w5-binary-search",
+          "path": [
+            "d05-bs-trace-found",
+            "c5-rebuild-search",
+            "d05-bs-body",
+            "d05-bs-contains",
+            "d05-bs-dbg-lt",
+            "d05-bs-write-test",
+            "d05-bs-optimize",
+            "cap-binary-search",
+            "d05-var-insert",
+            "d05-var-dbg-lower",
+            "d05-var-first",
+            "d05-var-last",
+            "d05-var-dbg-first",
+            "d05-var-sqrt",
+            "d05-var-first-true"
+          ],
+          "pathRationale": "Opens with the teaching reps: the lo/hi/mid trace, then the fill that states the invariant. Core: two drills (contains from a bare signature; linear scan -> O(log n) under a read-count probe), the `while lo < hi` debug and the test that catches it, then the LC 704 capstone, so 704 is solved in Reps rather than as an outside target. List boundaries: insert position (where lo stops) and its half-open lower-bound debug (the template the Product Catalog lab's review expects), then first and last occurrence and the return-on-first-match debug (record the match, keep searching). Beyond a list: floor sqrt (search on the answer, which the staircase variant needs) and first True (an unlabeled monotonic-predicate transfer). Every g-search-invariant variant is taught before the gate: exact (page_of, index_of), lower bound (count_below, first_at_least), last at most (last_affordable) and answer range (staircase). Repair inventory: d05-fu-insert-position (same insert_at function and tests as d05-var-insert), d05-bs-dbg-index (a second core debug) and d05-explain-bs (self-graded). d05s-check is the gate pool.",
+          "optionalSections": [],
+          "stretchSections": [
+            "br-153",
+            "br-33"
+          ],
+          "retrievalSections": [
+            "d05-warmup"
+          ],
+          "requiredTargets": [],
+          "readinessTargets": [],
+          "otherWeekReps": []
+        },
+        {
+          "unitId": "w5-linked-lists",
+          "path": [
+            "d05-ll-walk",
+            "c5-rebuild-rewire",
+            "d05-ll-alias",
+            "d05-ll-to-array",
+            "d05-ll-translate",
+            "d05-ll-dbg-max",
+            "d05-ll-last",
+            "d05-ll-kth",
+            "d05-ll-middle",
+            "d05-rw-insert-after",
+            "d05-rw-remove-second",
+            "d05-rw-dbg-insert-order",
+            "d05-rw-reverse-trace",
+            "d05-rw-finish-reverse",
+            "d05-rw-dbg-lose-next",
+            "d05-rw-reorder",
+            "d05-rw-reversed-copy",
+            "cap-reverse-linked-list",
+            "d05-dummy-trace",
+            "d05-dummy-from-values",
+            "d05-dummy-evens",
+            "d05-dummy-remove",
+            "d05-dummy-merge-arrays",
+            "d05-dummy-dbg-leftover",
+            "cap-merge-two-lists"
+          ],
+          "pathRationale": "Opens with the two traces: walking nodes, and names as references (the reference model). Traversal: list_to_array, translating a for loop into `while node:` (the learner's while-loop weak spot), the `while node.next` debug, then that same loop used on purpose to stop on the tail (the move d05-cold-append tests), the k-th value, and the two-pass middle (count, reset, walk; the baseline that Week 6's fast/slow b141-middle improves). Rewiring: insert after the head, skip a node, and the wrong-order bug that makes a self-loop. Reversal: trace -> finish -> lose-next debug -> reorder -> backwards copy (transfer) -> LC 206 capstone. Dummy head: trace -> build_list -> keep evens (walk one list while building another) -> remove every x (a dummy before the head; it uses both gate skills) -> merge two sorted Python lists (bridge from Week 3 two pointers) -> merge-leftover debug -> LC 21 capstone. 206 and 21 are solved in Reps by those capstones. Repair inventory: d05-ll-sum (same shape as to-array and translate), d05-rw-dbg-return (a third reversal debug), d05-dummy-dbg-return (same function as keep evens) and the two explain reps. d05-cold is all gate variants: 3 for g-safe-rewiring, plus d05-cold-index-of and d05-cold-first-at-least, which belong to g-search-invariant.",
+          "optionalSections": [],
+          "stretchSections": [],
+          "retrievalSections": [],
+          "requiredTargets": [],
+          "readinessTargets": [],
+          "otherWeekReps": []
+        }
+      ],
+      "schedule": [
+        {
+          "date": "2026-11-23",
+          "focusUnits": [
+            "w5-binary-search"
+          ],
+          "gatesDue": [],
+          "labsDue": [],
+          "targetsDue": [],
+          "theme": "Binary search as elimination: trace lo/hi/mid, write the loop, break it (lo < hi) and write the test that catches it, linear scan -> O(log n), Binary Search capstone (LC 704). Then list boundaries: insert position and its half-open lower-bound twin, first/last occurrence."
+        },
+        {
+          "date": "2026-11-24",
+          "focusUnits": [
+            "w5-binary-search",
+            "w5-linked-lists"
+          ],
+          "gatesDue": [
+            "g-search-invariant"
+          ],
+          "labsDue": [
+            "lab-product-catalog"
+          ],
+          "targetsDue": [],
+          "theme": "Search beyond a list (floor sqrt on the answer range, first True), then the search-invariant checkpoint and the Product Catalog lab. Then linked lists: walking nodes, names as references, for -> while node, the while node.next trap, k-th and middle value."
+        },
+        {
+          "date": "2026-11-25",
+          "focusUnits": [
+            "w5-linked-lists"
+          ],
+          "gatesDue": [],
+          "labsDue": [],
+          "targetsDue": [],
+          "theme": "Rewiring and reversal: insert after the head, skip a node, the rewire-order bug; reversal trace -> finish -> debug -> reorder -> backwards copy; Reverse Linked List capstone (LC 206). Dummy-head intro: trace, build_list, keep evens."
+        },
+        {
+          "date": "2026-11-26",
+          "focusUnits": [
+            "w5-linked-lists"
+          ],
+          "gatesDue": [],
+          "labsDue": [],
+          "targetsDue": [],
+          "theme": "Dummy nodes and merge: remove every x with a dummy before the head, merge two sorted Python lists, the merge-leftover bug, Merge Two Sorted Lists capstone (LC 21). 8 spare slots for repair or retrieval."
+        },
+        {
+          "date": "2026-11-27",
+          "focusUnits": [
+            "w5-linked-lists"
+          ],
+          "gatesDue": [
+            "g-safe-rewiring"
+          ],
+          "labsDue": [
+            "lab-playlist"
+          ],
+          "targetsDue": [],
+          "theme": "Integration: Playlist Editor lab (with the move-song change request) and the safe-rewiring checkpoint (cold reverse/merge/append). No new path reps; 10 spare slots for repair, retrieval or stretch."
+        }
+      ],
+      "budget": {
+        "weekTarget": 75,
+        "allowance": 12,
+        "pathTotal": 40,
+        "gateNeeds": 4,
+        "requiredTargets": 0,
+        "requiredLoad": 44,
+        "fits": true
+      },
+      "days": [
+        {
+          "date": "2026-11-23",
+          "capacity": 12,
+          "cumulativeCapacity": 12,
+          "pathDue": 0
+        },
+        {
+          "date": "2026-11-24",
+          "capacity": 10,
+          "cumulativeCapacity": 22,
+          "pathDue": 15
+        },
+        {
+          "date": "2026-11-25",
+          "capacity": 12,
+          "cumulativeCapacity": 34,
+          "pathDue": 15
+        },
+        {
+          "date": "2026-11-26",
+          "capacity": 12,
+          "cumulativeCapacity": 46,
+          "pathDue": 15
+        },
+        {
+          "date": "2026-11-27",
+          "capacity": 10,
+          "cumulativeCapacity": 56,
+          "pathDue": 40
+        }
+      ],
+      "deviations": [
+        "Themes run about a day early from Tuesday on. The prescription takes path reps in unit order, 12 slots a day (10 on checkpoint days). Week 5's sections hold at most 42 non-duplicate path reps against 56 slots, and new material would need 47+ path reps to reach Friday. Monday's 12 slots hold the whole elimination core, the LC 704 capstone and the list boundary variants. Tuesday finishes binary search (search on the answer, first True) and starts linked-list references/traversal (spec: Wednesday). Wednesday is rewiring and reversal (spec: Thursday) plus the first three dummy-head reps. Thursday is dummy nodes and merge (spec: Friday). Friday becomes the integration day: the Playlist Editor lab and the safe-rewiring checkpoint.",
+        "Rule 5's legacy-ladder template (first exposures, 1-2 drills, one debug, one combine, capstone) is exceeded in five places, on purpose. d05-variants keeps two debugs, one for each template the gate pool and the Product Catalog lab use (record the match and keep searching; half-open lower bound). d05-bs keeps the test-writing rep. d05-listnode keeps d05-ll-last, the stop-on-the-tail move the d05-cold-append variant tests, and d05-ll-middle, the two-pass baseline that Week 6's b141-middle improves. d05-rewire keeps two debugs (the two ways 'save, change, advance' breaks) plus the reorder. d05-dummy keeps keep-evens plus the merge bridge. The learner is weak on exactly these skills (while loops, state, pointer movement). A template-only path (about 32 reps) would also put reversal, dummy nodes and both list capstones on Wednesday under the in-order prescription.",
+        "Two checkpoints, not four: the spec lists search invariant, traversal/reference model, safe rewiring and mixed transfer for Week 5, but the inventory has only g-search-invariant and g-safe-rewiring, so only those are scheduled.",
+        "d05s-check (w5-binary-search) and d05-cold (w5-linked-lists) are left out of the optional, stretch and retrieval lists. Every rep in them is a gate variant, so they stay attached to their gates instead of a section class."
+      ],
+      "concerns": [
+        "Spare slots need filling: Thursday has 8 unused path slots and Friday 10 (18 in all). Today must fill them with qualifying work, or those days cannot reach 15 and 'day complete' cannot be truthful. Available sources: gate repairs; the 5 repair-inventory reps (d05-bs-dbg-index, d05-fu-insert-position, d05-ll-sum, d05-rw-dbg-return, d05-dummy-dbg-return); d05-warmup (5, but the daily allowance draws on it too); the rotated-search stretch when ahead (8); and outside re-solves or earlier weeks' retrieval.",
+        "g-safe-rewiring can clear without any dummy-node evidence. It needs 2 of [d05-cold-reverse, d05-cold-merge, d05-cold-append], and d05-cold-append is tagged linked_list_traversal + listnode only. If merge fails, the router offers append next, so reverse + append clears the gate. Make d05-cold-merge required, or add a second dummy-node variant.",
+        "With the traversal/reference-model and mixed-transfer checkpoints missing, Week 5 produces no mixed-transfer evidence. d05-cold-append plus a cold aliasing trace could form a traversal gate. A mixed-transfer gate needs new unlabeled search/list variants.",
+        "The Product Catalog lab asks for first_at_least and last_at_most, the same functions as d05-cold-first-at-least and d05s-ck-last-affordable (and count_below is first_at_least as a count). Both are due Tuesday: run the checkpoint before the lab that day, or the checkpoint is no longer cold for those variants.",
+        "Week 2 handoff: o11-edges' o11-wt-bsearch and o11-edge-bsearch-fix are the same `while lo < hi` bug as d05-bs-dbg-lt and d05-bs-write-test. If Week 2 sends them here, they belong in repair or retrieval inventory, not the path. o11-edge-kth-end (k-th from the end) belongs with Week 6's fixed-gap material.",
+        "Thursday 2026-11-26 is US Thanksgiving, but the calendar treats it as a training day. If it becomes a rest day, the week drops to 60 with 44 slots (12, 10, 12, 10). The 38-rep path still fits (38 + 4 + allowance 9 = 51 <= 60), but the merge capstone, the Playlist lab and the checkpoint would all land on Friday."
+      ]
+    },
+    "6": {
+      "week": 6,
+      "units": [
+        {
+          "unitId": "w6-fast-slow",
+          "path": [
+            "b141-middle",
+            "b141-dbg-check-first",
+            "b141-jump-loop",
+            "b19-kth-from-end",
+            "b19-dbg-chop",
+            "b19-insert-from-end"
+          ],
+          "pathRationale": "Both path sections are the bridges built for this unit's two required targets. Each one is already the minimal ladder: guided first exposure, then a debug, then an unlabeled mini transfer. br-141 (Mon, two speeds): b141-middle introduces slow/fast and the `while fast and fast.next` guard (gate variant b, first middle). b141-dbg-check-first fixes compare-before-move, which is the LC 141 move and gate variant c (loops_back). b141-jump-loop transfers loop detection to an index walk. br-19 (Tue, fixed gap): b19-kth-from-end introduces lead-by-k (gate variant a). b19-dbg-chop adds the dummy so the head itself can be cut. b19-insert-from-end assembles the LC 19 move: lead from a dummy and stop on the node before. g-fast-slow tests all three moves, so all six reps stay (two debugs, one per bridge). All are kind 'code', none is a gate variant, and none needs a later-week topic: linked lists and dummy nodes are Week 5. No trace, output or fill rep exists for fast_slow, so b141-middle, whose prompt spells out the moves, serves as the guided first exposure. br-143 (Reorder List: weave, split, shuffle halves) is not a Week 6 target ('first in when ahead' in stretch.csv) and stays optional.",
+          "optionalSections": [
+            "br-143"
+          ],
+          "stretchSections": [],
+          "retrievalSections": [],
+          "requiredTargets": [
+            141,
+            19
+          ],
+          "readinessTargets": [],
+          "otherWeekReps": []
+        },
+        {
+          "unitId": "w6-recursion",
+          "path": [
+            "d06-fn-print-vs-return",
+            "d06-fn-params",
+            "d06-rec-fact-stack",
+            "c6-rebuild-recursion",
+            "d06-rec-sum-to",
+            "d06-rec-dbg-no-return",
+            "d06-rec-fib",
+            "d06-rec-list-len"
+          ],
+          "pathRationale": "The path starts with the unit's teaching reps. The two d06-functions traces model the spec's 'each call owns local work ... later uses the returned answer': print is not return, and a rebound parameter stays local while a mutated list is shared. They are 3.5 minutes of re-exposure (Week 1's c1-mut-trace-return and c1-ref-trace-function first taught the 'functions' tag), so the section's drills and debug (d06-fn-tuple, d06-fn-helper, d06-fn-dbg-return) stay as repair inventory. d06-rec-fact-stack, an output trace of the DOWN/UP call stack, is the first exposure of both gate skills. Then the legacy-ladder recipe. Two drills: d06-rec-sum-to, the first recursive build and the same shape as the gate variant d06-cold-digits, and d06-rec-fib, two calls combined, which is the multi-call shape of the nested-list gate variants and of Week 7's left/right recursion. One debug: d06-rec-dbg-no-return (recursion_return: computing a value is not returning it). One combine: d06-rec-list-len (None base case plus 1 + rest on a linked list; the content's own bridge to tree recursion). There is no capstone. Repair inventory: d06-rec-power, d06-rec-dbg-base, d06-rec-index-param, d06-rec-reverse-str, d06-rec-translate, d06-rec-pal. Nothing here needs a later-week topic: d06-rec-pal uses Week 3 two pointers, and the tree sections belong to w7-trees. d06-warmup is cold retrieval on Weeks 2-5 (binary search, reversal, dummy, anagram, profit, window).",
+          "optionalSections": [],
+          "stretchSections": [],
+          "retrievalSections": [
+            "d06-warmup"
+          ],
+          "requiredTargets": [],
+          "readinessTargets": [],
+          "otherWeekReps": []
+        }
+      ],
+      "schedule": [
+        {
+          "date": "2026-11-30",
+          "focusUnits": [
+            "w6-fast-slow"
+          ],
+          "gatesDue": [],
+          "labsDue": [],
+          "targetsDue": [],
+          "theme": "Fast/slow: two speeds on one chain (middle in one pass, loop check)"
+        },
+        {
+          "date": "2026-12-01",
+          "focusUnits": [
+            "w6-fast-slow"
+          ],
+          "gatesDue": [],
+          "labsDue": [
+            "lab-route-walker"
+          ],
+          "targetsDue": [],
+          "theme": "Fixed pointer gap: lead by k, trail from a dummy; then the Route Walker lab"
+        },
+        {
+          "date": "2026-12-02",
+          "focusUnits": [
+            "w6-recursion"
+          ],
+          "gatesDue": [
+            "g-fast-slow"
+          ],
+          "labsDue": [],
+          "targetsDue": [
+            141
+          ],
+          "theme": "Call stack: each call owns its locals and waits for a smaller call (DOWN); fast/slow checkpoint, then Linked List Cycle"
+        },
+        {
+          "date": "2026-12-03",
+          "focusUnits": [
+            "w6-recursion"
+          ],
+          "gatesDue": [],
+          "labsDue": [
+            "lab-nested-analyzer"
+          ],
+          "targetsDue": [],
+          "theme": "Recursive returns: use what comes back (UP); then the Nested Structure Analyzer lab"
+        },
+        {
+          "date": "2026-12-04",
+          "focusUnits": [
+            "w6-fast-slow",
+            "w6-recursion"
+          ],
+          "gatesDue": [
+            "g-recursion"
+          ],
+          "labsDue": [],
+          "targetsDue": [
+            19
+          ],
+          "theme": "Integration and gates: recursion checkpoint, Remove Nth Node From End"
+        }
+      ],
+      "budget": {
+        "weekTarget": 75,
+        "allowance": 12,
+        "pathTotal": 14,
+        "gateNeeds": 4,
+        "requiredTargets": 2,
+        "requiredLoad": 20,
+        "fits": true
+      },
+      "days": [
+        {
+          "date": "2026-11-30",
+          "capacity": 12,
+          "cumulativeCapacity": 12,
+          "pathDue": 0
+        },
+        {
+          "date": "2026-12-01",
+          "capacity": 12,
+          "cumulativeCapacity": 24,
+          "pathDue": 6
+        },
+        {
+          "date": "2026-12-02",
+          "capacity": 9,
+          "cumulativeCapacity": 33,
+          "pathDue": 6
+        },
+        {
+          "date": "2026-12-03",
+          "capacity": 12,
+          "cumulativeCapacity": 45,
+          "pathDue": 14
+        },
+        {
+          "date": "2026-12-04",
+          "capacity": 9,
+          "cumulativeCapacity": 54,
+          "pathDue": 14
+        }
+      ],
+      "deviations": [
+        "g-fast-slow is due Wednesday 12-02, not Friday ('Friday: integration and gates'). The checkpoint comes after its unit's reps (Mon-Tue) and lab (Tue) with a day of spacing, in the order Reps, Mini Lab, Checkpoint, Transfer. It also unlocks LC 141 and LC 19, which must come after it. If a variant fails, Thu-Fri still leave room for the 2-4 repair reps and a retake inside the week. A Friday gate would put both targets on Friday and push any retake into Week 7. Friday keeps the recursion gate.",
+        "Wednesday ('call stack') also carries the fast/slow checkpoint and LC 141. Capacity 15 - 3 - 2 - 1 = 9 path slots; 4 are used, by the call-stack reps.",
+        "The recursion path ends Thursday and Friday has no new path reps, so lab-nested-analyzer (Thursday) comes before the Friday gate. It is the only place that teaches recursion inside a loop over nested items, the shape of the c6-g-recursion variants. LC 19 goes on Friday as the integration problem rather than on the already heavy Thursday.",
+        "Path, rule 5: d06-functions contributes two traces that are re-exposures, not first exposures (Week 1 taught the 'functions' tag). They are kept as the unit's call-model teaching reps, and its drills and debug are left out. w6-fast-slow keeps two debugs and two transfer minis because it is two bridges, one per required target, and the gate pool tests both moves."
+      ],
+      "concerns": [
+        "Week 6 is under-filled, not over-filled. requiredLoad 19 + allowance 12 = 31 of 75. In the per-day model, 41 slots (9/9/5/9/9) are flex, but Week 6 owns only 20 non-path reps: 9 repair inventory, 5 in optional br-143 and 6 in retrieval d06-warmup. Week 7 stays locked until g-recursion clears on Friday. About 21 slots must therefore come from Weeks 1-5 retrieval and re-solves. 2.1 needs an explicit flex order: the focus unit's repair inventory first (e.g. d06-rec-index-param, d06-rec-translate, d06-rec-dbg-base on Thursday), then br-143, then retrieval. Spec §17's ~12-18 new small reps for this week are not authored; the 6 c6 gate variants are the only new Week 6 content.",
+        "Filling greedily in unit order would finish all 13 path reps by Tuesday (cumulative capacity 24) and leave Wed-Fri with no teaching. The daily themes hold only if the prescription caps path reps per day by focusUnits (3/3/4/3/0).",
+        "No trace, output or fill rep exists for fast_slow anywhere in Weeks 1-6. b141-middle and b19-kth-from-end are guided microbuilds whose prompts dictate the moves; the fast-slow-pointers primer's report() example is the only trace. A 'predict slow/fast (lead/trail) positions' output rep, or the Drop 2 linked-list demo, should lead each bridge.",
+        "g-recursion validity: c6-g-recursion-a/b/c (nested_sum, depth, flatten) need recursion inside a loop over nested lists, with isinstance. No path or repair rep teaches that shape; only lab-nested-analyzer does (nested dicts), which is why the lab is due Thursday, before Friday's gate. Consider adding one guided nested-list rep, or making the lab a prerequisite of the gate. Also, d06-cold-digits (first in the pool) is the recursion primer's worked example verbatim (digit_sum), so passing it shows recall more than independent solving.",
+        "Spec §17 lists four Week 6 gates (fast/slow, call-stack model, recursive return, fresh recursion); the inventory and gates.ts have two. Adding the other two at need 2 would make requiredLoad 23, and 23 + 12 = 35 <= 75 still fits.",
+        "w6-fast-slow puts all six section reps in its path, so its repair inventory is empty. A failed g-fast-slow repairs by redoing path reps or from optional br-143 (b143-split and b143-shuffle-halves carry fast_slow). routing.gateStatus already searches optional sections, but a 2.1 rule that repairs only from repair inventory would leave this unit with nothing.",
+        "Neither unit has a worked example or a rebuild rep (workedExampleIds is empty). 2.1 §14 and §16 require a recursion call-stack visualizer and a recursion worked example (Drop 2).",
+        "LC 141 is due the same day as g-fast-slow. If the gate is not cleared Wednesday, LC 141 has to slide; Thursday has room (capacity 12, path 3).",
+        "Ceil rounding makes the per-day reserve (3 x 5 = 15) larger than the weekly allowance (12). The plan satisfies both."
+      ]
+    },
+    "7": {
+      "week": 7,
+      "units": [
+        {
+          "unitId": "w7-trees",
+          "path": [
+            "d06-tn-level-order",
+            "c7-rebuild-tree",
+            "d06-tn-is-leaf",
+            "d06-tn-children-sum",
+            "d06-tn-dbg-none",
+            "d06-mut-swap",
+            "d06-mut-dbg-swap",
+            "d06-dfs-pre-trace",
+            "d06-dfs-preorder",
+            "d06-dfs-at-depth",
+            "d06-dfs-count",
+            "d06-dfs-dbg-ignore",
+            "d06-dfs-modify-count",
+            "d06-dfs-max",
+            "d06-dfs-leaves",
+            "d06-dfs-contains",
+            "d06-dfs-inorder-return",
+            "d06-dfs-path-sum",
+            "d06-dfs-dbg-path",
+            "cap-max-depth",
+            "d06-fu-min-depth",
+            "d06-dfs-translate-stack",
+            "d06-pair-lists",
+            "d06-pair-dbg-order",
+            "d06-pair-bigger",
+            "cap-same-tree",
+            "d06-pair-mirror",
+            "d06-mut-add-one",
+            "d06-mut-copy",
+            "cap-invert-tree",
+            "b572-count-starts",
+            "b572-dbg-two-levels",
+            "b572-mirror-inside"
+          ],
+          "pathRationale": "The path is 32 of the unit's 36 producing reps, in the order they are served (12, 12 and 8 over Mon-Wed). It opens with the teaching traces. d06-tn-level-order teaches TreeNode and level-order lists. Then come the safe-child and save-before-overwrite reps. d06-dfs-pre-trace comes before any tree_dfs drill. recursion_return and recursion_base_case come from Week 6's path, so both g-tree-contract skills are produced before the gate.\n\nMon: structure and traversal (TreeNode x4, swap trace and debug, preorder trace and fill, depth carried down), then the first return contract (count, the ignored-result debug, modify).\n\nTue: return contracts. These cover max with a -inf base, the two base cases for leaves, boolean contains, in-order by returned lists, and root-to-leaf sum with its debug. Then the Max Depth capstone (LC 104) and its min-depth follow-up, the explicit-stack translation (the ladder's one combine; stacks are Week 4), and the start of pair recursion (lists, base-case order, all_bigger).\n\nWed: the Same Tree capstone (LC 100), mirror as its transfer, in place vs copy, the Invert Tree capstone (LC 226), then br-572's check-at-every-node (count, debug, mirror inside).\n\nd06-dfs keeps 13 of its 15 reps. The week has 57 path slots for 48 eligible reps, and tree DFS must be interview-ready. Later reps also rely on these: b235-bst-has's hint cites d06-dfs-contains, and b230-smallest-k's hint cites d06-dfs-preorder.\n\nFour debug reps are held back as repair inventory: the g-tree-contract repair kit. d06-dfs-dbg-depth matches cold height, d06-pair-dbg-values matches cold same and d06-mut-dbg-mirror matches cold mirror. Each is a near-copy of a capstone and would pre-solve it. d06-dfs-dbg-leaf-base covers the None-base crash.\n\nExcluded: the 3 explain reps (self-graded; they stay as uncredited reflection after each capstone), and d06-cold. Every rep in d06-cold is a checkpoint variant, so it is left unclassified to keep the variants unseen before the gate.\n\nLC 104, 100 and 226 are solved in the path by the three capstones. LC 572 is not a spec target for Week 7, so it becomes a readiness target while its ladder stays in the path.",
+          "optionalSections": [],
+          "stretchSections": [],
+          "retrievalSections": [],
+          "requiredTargets": [],
+          "readinessTargets": [
+            572
+          ],
+          "otherWeekReps": [
+            {
+              "repId": "d06-cold-digits",
+              "belongsToWeek": 6,
+              "why": "It is a checkpoint variant of Week 6's g-recursion (already in that gate's pool), filed in w7-trees' d06-cold section. It is never a path rep, and unitReps already filters it out."
+            }
+          ]
+        },
+        {
+          "unitId": "w7-bst",
+          "path": [
+            "b230-trace-inorder",
+            "b235-bst-has",
+            "b235-floor",
+            "b235-dbg-or",
+            "b235-shared-steps",
+            "b98-all-between",
+            "b98-window",
+            "b98-dbg-children",
+            "b98-descending",
+            "b230-smallest-k",
+            "b230-dbg-counter",
+            "b230-kth-largest"
+          ],
+          "pathRationale": "The path takes all 12 producing reps. The unit has no gate and only 12 reps for the 21 slots on Thu-Fri.\n\nIt opens with b230-trace-inorder, the unit's only trace: a search tree reads out sorted, and every later rep relies on that ordering. Serving it first also means it is passed before the focused route (40% or more of the path passed) can hide it. If it were hidden, this gateless unit would stall.\n\nThen br-235: one-way search with a while loop, floor with a remembered best, the and/or split-point debug, and shared steps. Then br-98: bounds passed down, the window narrowed during a walk, the children-only validation bug, and a flipped-BST transfer. Last, br-230's in-order production: k smallest with a shared list, the nonlocal counter debug, and k-th largest by reverse in-order.\n\nThe while-loop BST walks give concentrated practice on the learner's weak spots (loops, state, pointer movement).\n\nLC 235 is the one required outside target. The spec says 'LCA BST if ready', and br-235 exists for it. It opens Friday once the path is done. LC 98 and 230 stay readiness-gated. br-105 (tree reconstruction) and br-124 (max path sum, tree-global-best) are stretch, per the spec's 'Do not require'.",
+          "optionalSections": [],
+          "stretchSections": [
+            "br-105",
+            "br-124"
+          ],
+          "retrievalSections": [],
+          "requiredTargets": [
+            235
+          ],
+          "readinessTargets": [
+            98,
+            230
+          ],
+          "otherWeekReps": []
+        }
+      ],
+      "schedule": [
+        {
+          "date": "2026-12-07",
+          "focusUnits": [
+            "w7-trees"
+          ],
+          "gatesDue": [],
+          "labsDue": [],
+          "targetsDue": [],
+          "theme": "Tree structure: TreeNode fields, level-order lists, None children, children as references, DFS order (preorder trace and fill, depth carried down), then the first return contract (count)."
+        },
+        {
+          "date": "2026-12-08",
+          "focusUnits": [
+            "w7-trees"
+          ],
+          "gatesDue": [],
+          "labsDue": [],
+          "targetsDue": [],
+          "theme": "Subtree return contracts: what each call promises (max, leaves, contains, in-order lists, root-to-leaf sum). Max Depth capstone (LC 104) and min-depth follow-up. Recursion as an explicit stack. Pair recursion begins."
+        },
+        {
+          "date": "2026-12-09",
+          "focusUnits": [
+            "w7-trees"
+          ],
+          "gatesDue": [],
+          "labsDue": [
+            "lab-org-hierarchy"
+          ],
+          "targetsDue": [],
+          "theme": "Comparing and transforming trees: Same Tree capstone (LC 100), mirror images, in place vs copy, Invert Tree capstone (LC 226), a check at every node. Organization Hierarchy Analyzer lab."
+        },
+        {
+          "date": "2026-12-10",
+          "focusUnits": [
+            "w7-bst"
+          ],
+          "gatesDue": [
+            "g-tree-contract"
+          ],
+          "labsDue": [],
+          "targetsDue": [],
+          "theme": "Checkpoint first: Tree contract (2 cold variants) unlocks BSTs. Then BST ordering, one-way search, floor, split point, bounds and validation."
+        },
+        {
+          "date": "2026-12-11",
+          "focusUnits": [
+            "w7-bst"
+          ],
+          "gatesDue": [],
+          "labsDue": [
+            "lab-category-tree"
+          ],
+          "targetsDue": [
+            235
+          ],
+          "theme": "In-order on a BST (nonlocal counter, k-th largest). LCA of a BST (LC 235). Searchable Category Tree lab. Validate BST, Kth Smallest and Subtree of Another Tree only if readiness is clean."
+        }
+      ],
+      "budget": {
+        "weekTarget": 75,
+        "allowance": 12,
+        "pathTotal": 45,
+        "gateNeeds": 2,
+        "requiredTargets": 1,
+        "requiredLoad": 48,
+        "fits": true
+      },
+      "days": [
+        {
+          "date": "2026-12-07",
+          "capacity": 12,
+          "cumulativeCapacity": 12,
+          "pathDue": 0
+        },
+        {
+          "date": "2026-12-08",
+          "capacity": 12,
+          "cumulativeCapacity": 24,
+          "pathDue": 0
+        },
+        {
+          "date": "2026-12-09",
+          "capacity": 12,
+          "cumulativeCapacity": 36,
+          "pathDue": 33
+        },
+        {
+          "date": "2026-12-10",
+          "capacity": 10,
+          "cumulativeCapacity": 46,
+          "pathDue": 33
+        },
+        {
+          "date": "2026-12-11",
+          "capacity": 11,
+          "cumulativeCapacity": 57,
+          "pathDue": 45
+        }
+      ],
+      "deviations": [
+        "g-tree-contract is due Thursday, first thing, instead of Friday ('Friday: inorder + gates'). w7-bst lists w7-trees as a hard prerequisite, so no BST rep can start until the tree checkpoint clears. Thursday morning also puts the checkpoint after Wednesday's lab (Mini Lab before Checkpoint), and a night after the three capstones its variants mirror. Friday has no gate because w7-bst has none.",
+        "Theme boundaries shift by about three reps because the prescription fills 12 path slots a day in order. Monday ends with the first return contract (d06-dfs-count, d06-dfs-dbg-ignore, d06-dfs-modify-count). Tuesday ends with the first pair reps (d06-pair-lists, d06-pair-dbg-order, d06-pair-bigger). b230-smallest-k lands on Thursday. A split that follows the themes (Thu 9, Fri 3) also meets every constraint.",
+        "d06-mut-swap and d06-mut-dbg-swap are served Monday (children are references; save before overwrite) instead of Wednesday with the rest of d06-mutate.",
+        "The BST path opens with the in-order trace (b230-trace-inorder) on Thursday, although the spec puts in-order on Friday. It is the unit's only trace, and it shows the ordering the search reps rely on.",
+        "d06-dfs keeps 13 of its 15 reps, more than rule 5's minimum per ladder. Week 7 has 57 path slots for 48 eligible reps, so trimming to 1-2 drills would leave more than 20 slots empty on a skill that must be interview-ready. Curation instead holds back four debug reps as targeted repair.",
+        "cap-same-tree is served before d06-pair-mirror: the capstone opens Wednesday and mirror follows as its transfer. The section order put mirror first.",
+        "LC 572 moves from a required target to w7-trees readinessTargets, because it is not in the spec's Week 7 targets. LC 104, 100 and 226 are not required outside because the path's capstones solve them.",
+        "d06-cold is not classified as optional, stretch or retrieval. Every rep in it is a checkpoint variant (5 for g-tree-contract, plus d06-cold-digits for Week 6's g-recursion). Serving them as retrieval would show the variants before the checkpoint."
+      ],
+      "concerns": [
+        "w7-bst has no gate, so bst_property and tree_inorder are never proven cold, and Friday's 'gates' theme has nothing to schedule. Recommend a BST checkpoint due Friday: need 2 of 3-4 cold variants (one-way search, floor/ceiling, validate with bounds, k-th smallest). Friday's capacity minus that gate (11 - 2 = 9) still covers its 2 remaining path reps.",
+        "Because w7-bst has no gate, it is exposed to the Day-2 stall. Its readiness waits for every path rep, while the focused route hides trace reps that have not been passed. Serving b230-trace-inorder first avoids the stall in normal use, but the routing fix is still needed; otherwise the unit can never read as ready.",
+        "Week 7 is short of content. The 44 path reps fill 44 of 57 path slots (4 spare Wednesday, 9 spare Friday). Required load plus allowance is 59 of 75, so 16 qualifying reps must come from readiness targets (572, 98, 230), repair inventory, stretch sections or Week 8 work-ahead, and Today must surface them. The spec's estimated 10-15 new tree/BST reps for Drop 2 would close the gap.",
+        "lab-category-tree requires insert/build_catalog, but no path rep teaches BST insert. Only b105-from-sorted, in a stretch section, builds a BST. A BST-insert microbuild and a debug rep should be authored before Friday.",
+        "There is no trace rep for bst_property (b235-bst-has, a microbuild, teaches it in its prompt). There is also no Week 7 worked example: workedExampleIds is empty, and spec section 16 lists tree recursion.",
+        "routing.ts gateStatus ranks repair candidates over all unit reps by difficulty and minutes. It would re-serve passed path reps (d06-dfs-count, d06-dfs-modify-count) before the held-back debug reps. Phase A should prefer unseen repair inventory matched to the failed variant: cold-height to d06-dfs-dbg-depth, cold-same to d06-pair-dbg-values, cold-mirror to d06-mut-dbg-mirror, and a None crash to d06-dfs-dbg-leaf-base.",
+        "d06-cold-postorder is a checkpoint variant, but no path rep produces postorder; the note on d06-dfs-pre-trace only names it. It is a near-transfer from preorder and in-order, but a failure on it has no matching repair rep.",
+        "b235-dbg-or and b235-shared-steps encode the LCA split-point loop, so Friday's LC 235 solve comes one day after near-identical practice. Record it as transfer or retrieval evidence, not cold-independent.",
+        "Wednesday is the heaviest day by time: two 25-minute capstones, b572-mirror-inside (10 min) and the Organization Hierarchy lab.",
+        "lab-org-hierarchy uses an n-ary tree (a list of reports), while every Week 7 rep is binary. Week 6's Nested Structure Analyzer lab is the only n-ary practice before it."
+      ]
+    },
+    "8": {
+      "week": 8,
+      "units": [
+        {
+          "unitId": "w8-queue-bfs",
+          "path": [
+            "o7-dq-trace-basic",
+            "c8-rebuild-bfs",
+            "o7-dq-drain",
+            "o7-dq-rotate-elim",
+            "o7-dq-dbg-pop-end",
+            "o7-t-trace-levels",
+            "o7-t-flat",
+            "o7-t-depth",
+            "o7-t-dbg-snapshot",
+            "o7-t-right-view",
+            "o7-t-min-depth",
+            "cap-level-order",
+            "o7-fu-zigzag"
+          ],
+          "pathRationale": "Uses all of Monday's capacity (12). Deque ladder: o7-dq-trace-basic (first exposure of queue_deque, trace) -> o7-dq-drain (drill: while q / popleft, the learner's while-loop weakness) -> o7-dq-rotate-elim (combine: rotate and eliminate under while len(q) > 1) -> o7-dq-dbg-pop-end (debug: pop() vs popleft(); its prompt introduces BFS, so it goes last as the on-ramp to the tree ladder). Tree-BFS ladder: o7-t-trace-levels (first exposure of bfs_levels: snapshot range(len(q))) -> o7-t-flat (drill: plain BFS) -> o7-t-depth (drill: one outer pass per level) -> o7-t-dbg-snapshot (debug: while done < len(q) re-reads a growing queue, a while/state bug) -> o7-t-right-view (combine, LC 199) -> o7-t-min-depth (transfer: early return at the first leaf) -> cap-level-order (capstone; solves LC 102) -> o7-fu-zigzag (follow-up; kept after the capstone because its starter code is a full level-order solution). g-queue (queue_deque, bfs_levels): both skills open with a trace, then drills, a debug and the capstone. Repair inventory: o7-dq-recent, o7-t-dbg-none-child, and o7-t-sums, which is left out on purpose because it is the same task as gate variant c8-g-queue-a (row sums). Not in the path by kind: o7-dq-why-not-pop0 (choice), o7-explain-level-order (explain).",
+          "optionalSections": [],
+          "stretchSections": [],
+          "retrievalSections": [
+            "o7-warmup"
+          ],
+          "requiredTargets": [],
+          "readinessTargets": [],
+          "otherWeekReps": []
+        },
+        {
+          "unitId": "w8-grids",
+          "path": [
+            "o7-g-trace-dims",
+            "o7-g-find-all",
+            "o7-g-dbg-alias",
+            "o7-g-dbg-strings",
+            "o7-n-trace",
+            "o7-n-list",
+            "o7-n-land",
+            "o7-n-dbg-bounds",
+            "o7-n-wt-wrap",
+            "o7-n-perimeter",
+            "o7-v-trace-order",
+            "o7-v-finish",
+            "o7-v-dbg-late-mark",
+            "o7-v-shortest",
+            "o7-v-flood-fill",
+            "o7-v-multi-source",
+            "o7-v-dfs-stack",
+            "o7-i-sink-dfs",
+            "cap-number-of-islands",
+            "o7-i-dbg-count-every",
+            "o7-i-max-area"
+          ],
+          "pathRationale": "Tuesday 10 + Wednesday 12 = 22, exactly both days' capacity. Tuesday, grid modeling: o7-g-trace-dims (first exposure of grid_nested) -> o7-g-find-all (drill: (r, c) tuples, the lab's find_exits) -> o7-g-dbg-alias (debug: [[0]*n]*n shares one row; a Week 1 references bug, and multi-source and the lab both build distance grids) -> o7-g-dbg-strings (debug: \"1\" != 1; Number of Islands uses strings) -> o7-n-trace (first exposure of grid_neighbors) -> o7-n-list (fill: directions + bounds) -> o7-n-land (drill) -> o7-n-dbg-bounds (debug: <= vs <) -> o7-n-wt-wrap (break-it: a missing lower bound silently reads grid[-1]; targets the learner's bounds weakness) -> o7-n-perimeter (combine, LC 463). Wednesday, visited + grid BFS/DFS: o7-v-trace-order (trace: BFS with a visited set, marking on enqueue) -> o7-v-finish (skeleton fill; first visited_set production) -> o7-v-reachable-strings (drill from scratch) -> o7-v-dbg-late-mark (debug: mark when enqueued; a lab review point) -> o7-v-shortest (combine: BFS distance; prepares gate variant o8-cold-grid-steps) -> o7-v-flood-fill (pattern, LC 733: the grid is its own visited record) -> o7-v-multi-source (pattern: BFS from every exit at once, the core of the Evacuation Map lab) -> o7-v-dfs-stack (combine: the same loop with a stack is DFS; placed after o7-v-reachable-strings because its starter code is that solution) -> o7-i-sink-dfs (transfer: recursive grid DFS) -> cap-number-of-islands (capstone; solves LC 200) -> o7-i-dbg-count-every (debug; kept after the capstone because its broken code is a near-solution) -> o7-i-max-area (pattern, LC 695). g-grid: grid_neighbors opens with o7-n-trace, then the o7-n-list fill; visited_set is shown in o7-v-trace-order and first produced in the o7-v-finish skeleton fill. Repair inventory: o7-g-count, o7-g-dbg-dims, o7-n-dbg-dirs, o7-v-dbg-tuple, o7-i-sink-iter. Not in the path by kind: o7-explain-islands. o7-cold is entirely gate pool (o7-c-neighbors and o7-c-blobs for g-grid, o7-c-last-level for g-queue), so it is in none of optional, stretch or retrieval.",
+          "optionalSections": [],
+          "stretchSections": [],
+          "retrievalSections": [],
+          "requiredTargets": [],
+          "readinessTargets": [],
+          "otherWeekReps": []
+        },
+        {
+          "unitId": "w8-graphs",
+          "path": [
+            "o8-a-trace-build",
+            "c8-rebuild-graph",
+            "o8-a-build-undirected",
+            "o8-a-dbg-one-way",
+            "o8-a-build-directed",
+            "o8-a-matrix",
+            "o8-d-trace-recursive",
+            "o8-d-order",
+            "o8-v-fix-bounce",
+            "o8-d-stack",
+            "o8-d-directed-reach",
+            "o8-b-order",
+            "o8-b-distances",
+            "o8-b-dbg-late-mark",
+            "cap-path-exists",
+            "o8-fu-fewest-hops",
+            "o8-c-trace",
+            "o8-c-count",
+            "o8-c-dbg-visited-reset",
+            "o8-c-dbg-missing-isolated"
+          ],
+          "pathRationale": "Thursday 10 + Friday 9 = 19 (Friday keeps 1 free slot). Thursday, representation + DFS: o8-a-trace-build (first exposure of graph_adjacency) -> o8-a-build-undirected (drill) -> o8-a-dbg-one-way (debug: an undirected edge stored once) -> o8-a-build-directed (drill; gate variant o8-cold-build takes a directed flag, and Week 9 works on directed graphs) -> o8-a-matrix (combine: adjacency-matrix input, the form Number of Provinces uses) -> o8-d-trace-recursive (first exposure of graph_dfs: why a graph needs visited) -> o8-d-order (drill: recursive DFS) -> o8-v-fix-bounce (debug: no visited set gives infinite recursion) -> o8-d-stack (drill: DFS with a stack) -> o8-d-directed-reach (combine: edges -> adjacency -> DFS). Friday, reachability + components: o8-b-order (bridges grid BFS to graph BFS) -> o8-b-distances (drill: the distance dict doubles as visited) -> o8-b-dbg-late-mark (debug: set the distance on discovery) -> cap-path-exists (capstone; solves LC 1971) -> o8-fu-fewest-hops (follow-up: which order gives the fewest hops, the same task as the lab's degrees_apart; kept after the capstone because its starter code is a valid_path solution) -> o8-c-trace (first exposure of connected_components) -> o8-c-count (drill, the LC 323 shape) -> o8-c-dbg-visited-reset (debug: visited reset inside the loop, a state bug) -> o8-c-dbg-missing-isolated (debug: isolated nodes disappear; the lab and o8-cold-components both test this). g-graph-traversal: all three of its skills open with a trace. Repair inventory: o8-a-dbg-shared-list, o8-d-translate, o8-v-optimize-list, o8-d-dbg-directed-both, o8-b-dbg-pop-end, and o8-b-shortest (the same task as o8-fu-fewest-hops). Not in the path by kind: o8-explain-path-exists, o8-explain-provinces. Moved out: o8-a-in-degree (Week 9), o8-d-path (Week 11). o8-cap-provinces is optional because LC 547 is readiness-gated.",
+          "optionalSections": [
+            "o8-cap-provinces",
+            "br-133",
+            "br-323",
+            "br-417"
+          ],
+          "stretchSections": [],
+          "retrievalSections": [
+            "o8-warmup"
+          ],
+          "requiredTargets": [],
+          "readinessTargets": [
+            547
+          ],
+          "otherWeekReps": [
+            {
+              "repId": "o8-a-in-degree",
+              "belongsToWeek": 9,
+              "why": "In-degree counting is the first step of Kahn's topological sort, which belongs to Week 9 (Monday: dependency modeling; Wednesday: Kahn introduction). Week 9's o8-cycles goes straight to o8-y-kahn-write with no in-degree warm-up, and nothing in Week 8 (gate, lab or target) uses in-degree."
+            },
+            {
+              "repId": "o8-d-path",
+              "belongsToWeek": 11,
+              "why": "It is tagged backtracking_state, which Week 11 teaches (choose, recurse, un-choose), so rule 4 keeps it out of a Week 8 path. Its solution only returns [node] + rest; if the tag is corrected to recursion_return it could stay in Week 8 repair inventory instead."
+            }
+          ]
+        }
+      ],
+      "schedule": [
+        {
+          "date": "2026-12-14",
+          "focusUnits": [
+            "w8-queue-bfs"
+          ],
+          "gatesDue": [],
+          "labsDue": [],
+          "targetsDue": [],
+          "theme": "Queue + tree BFS: deque mechanics, BFS by level, Level Order (LC 102 via cap-level-order)"
+        },
+        {
+          "date": "2026-12-15",
+          "focusUnits": [
+            "w8-grids"
+          ],
+          "gatesDue": [
+            "g-queue"
+          ],
+          "labsDue": [],
+          "targetsDue": [],
+          "theme": "Grid modeling: rows and columns, (r, c) cells, neighbors and bounds. Starts with the g-queue checkpoint, which unlocks grids"
+        },
+        {
+          "date": "2026-12-16",
+          "focusUnits": [
+            "w8-grids"
+          ],
+          "gatesDue": [],
+          "labsDue": [],
+          "targetsDue": [],
+          "theme": "Visited + grid BFS/DFS: mark on enqueue, distances, flood fill, multi-source BFS, DFS, Number of Islands (LC 200 via cap-number-of-islands)"
+        },
+        {
+          "date": "2026-12-17",
+          "focusUnits": [
+            "w8-graphs"
+          ],
+          "gatesDue": [
+            "g-grid"
+          ],
+          "labsDue": [
+            "lab-evacuation-map"
+          ],
+          "targetsDue": [],
+          "theme": "Graph representation and DFS: edge list and matrix to adjacency, directed vs undirected, recursive and stack DFS. Grid close-out: the g-grid checkpoint (unlocks graphs) and the Evacuation Map lab"
+        },
+        {
+          "date": "2026-12-18",
+          "focusUnits": [
+            "w8-graphs"
+          ],
+          "gatesDue": [
+            "g-graph-traversal"
+          ],
+          "labsDue": [
+            "lab-social-network"
+          ],
+          "targetsDue": [],
+          "theme": "Reachability + connected components: graph BFS distances, Path Exists (LC 1971 via cap-path-exists), components. Social Network lab, then the g-graph-traversal checkpoint"
+        }
+      ],
+      "budget": {
+        "weekTarget": 75,
+        "allowance": 12,
+        "pathTotal": 54,
+        "gateNeeds": 6,
+        "requiredTargets": 0,
+        "requiredLoad": 60,
+        "fits": true
+      },
+      "days": [
+        {
+          "date": "2026-12-14",
+          "capacity": 12,
+          "cumulativeCapacity": 12,
+          "pathDue": 0
+        },
+        {
+          "date": "2026-12-15",
+          "capacity": 10,
+          "cumulativeCapacity": 22,
+          "pathDue": 13
+        },
+        {
+          "date": "2026-12-16",
+          "capacity": 12,
+          "cumulativeCapacity": 34,
+          "pathDue": 13
+        },
+        {
+          "date": "2026-12-17",
+          "capacity": 10,
+          "cumulativeCapacity": 44,
+          "pathDue": 34
+        },
+        {
+          "date": "2026-12-18",
+          "capacity": 10,
+          "cumulativeCapacity": 54,
+          "pathDue": 54
+        }
+      ],
+      "deviations": [
+        "Gates are due on the morning the next unit starts, not on their own unit's last day: g-queue on Tue 12-15, g-grid on Thu 12-17. The queue path fills Monday's 12 exactly, and the grids path fills Tue 10 + Wed 12 exactly; a same-day gate would cut that day's capacity by 2 and push reps into the next theme day. Each checkpoint also gets a night of spacing, and both fall on the lightest path days (Tue about 42.5 min, Thu about 54.5 min), which leaves room for repair. g-graph-traversal is on Friday, the same day its path ends, because Friday is the last training day.",
+        "lab-evacuation-map is due Thu 12-17 instead of Wednesday, the grid-BFS theme day. Wednesday already has 12 grid reps (about 123 min, including the 30-min islands capstone), against about 55 min of graph reps on Thursday. On Thursday the lab sits next to g-grid (the V2.1 order: finish the lab, then prove it cold), a day after o7-v-multi-source. A learner who is ahead can do it on Wednesday.",
+        "Graph BFS (o8-b-order, o8-b-distances, o8-b-dbg-late-mark, o8-fu-fewest-hops) is not named in the spec's Week 8 daily themes. It is on Friday under 'reachability' because the Social Network lab's degrees_apart and the Path Exists follow-up both need shortest-hop BFS.",
+        "The path order differs from the authored section order in two places: o7-dq-rotate-elim comes before o7-dq-dbg-pop-end (pure deque work first, then the BFS on-ramp right before the tree ladder), and o7-v-multi-source comes before o7-v-dfs-stack (a BFS block, then a DFS block: stack, recursive sink, islands). The authored after-the-capstone order is kept for o7-fu-zigzag, o8-fu-fewest-hops and o7-i-dbg-count-every, because their starter or broken code gives away the capstone's solution.",
+        "o7-cold (w8-grids) is in none of optional, stretch or retrieval, because all three of its reps are checkpoint variants (o7-c-neighbors and o7-c-blobs for g-grid, o7-c-last-level for g-queue). Keep it in sections as the gate pool; unitReps already filters gate variants out. The repo's own definition of retrieval is 'cold sections that are not gates', and listing o7-cold as retrieval or optional would show checkpoint items before the checkpoint.",
+        "o8-cap-provinces is listed in sections but classified optional: Number of Provinces (LC 547) is readiness-gated in the spec ('if gate clean'). cap-number-of-provinces fits Friday's one free slot once g-graph-traversal is clean.",
+        "Two reps move to other weeks (otherWeekReps): o8-a-in-degree to Week 9 and o8-d-path to Week 11."
+      ],
+      "concerns": [
+        "Hard locks: w8-grids stays locked until g-queue is cleared, and w8-graphs until g-grid is cleared. On Tuesday and Thursday the first required action is therefore the previous unit's checkpoint, so Today's stack and CTA must put it before the new unit's lesson and drills. If a morning gate fails, repair and a retry variant have to happen before that day's path can start.",
+        "Repair slack is thin. Monday to Thursday the path equals capacity exactly, Friday has 1 free slot, and the week has 4 spare (75 - 71). Any repair beyond that replaces warm-ups (3 a day) or makes the day longer.",
+        "Each gate pool (g-queue, g-grid, g-graph-traversal) has 3 variants and needs 2. After one failed variant, both remaining variants must be clean, and a second failure uses up the pool.",
+        "Many gate variants are close copies of path reps, so these gates test cold recall rather than transfer. o7-c-neighbors is the function fixed in o7-n-dbg-bounds, o8-cold-components is o8-c-count, o8-cold-grid-steps is close to o7-v-shortest, and c8-g-queue-b (row starts) mirrors o7-t-right-view. o7-t-sums is left out of the path because it is c8-g-queue-a. The retrieval warm-up o8-wu-open-neighbors is close to o7-c-neighbors, so serve it after g-grid, not before.",
+        "Rep counts follow the contract, but minutes are uneven: about 123 min of path on Wednesday; about 82.5 min on Friday plus g-graph-traversal plus the Social Network lab; about 42.5 min on Tuesday.",
+        "Tags to fix: o7-v-trace-order teaches marking on enqueue but is not tagged visited_set. 'bfs' is first tagged on a debug (o7-dq-dbg-pop-end, which gives the full code) because no trace in the unit is tagged bfs. graph_bfs has no trace; o8-b-order is the bridge. o8-d-path is tagged backtracking_state although its solution is recursion-return. list_comprehension appears for the first time in the whole course in o7-g-dbg-alias; a plain loop also fixes it.",
+        "LC 102, 200 and 1971 are solved by path capstones (cap-level-order, cap-number-of-islands, cap-path-exists), so requiredTargets is empty. The week card should show them as solved in Reps rather than ask for separate outside solves.",
+        "Week 8 has no worked examples (workedExampleIds is empty), so it has no rebuild reps and every path opens with traces. This is a Phase D content gap."
+      ]
+    },
+    "9": {
+      "week": 9,
+      "units": [
+        {
+          "unitId": "w9-cycles",
+          "path": [
+            "o8-y-trace-states",
+            "o8-y-has-cycle",
+            "o8-y-dbg-no-visiting",
+            "o8-y-wt-diamond",
+            "o8-y-reachable-cycle",
+            "cap-course-schedule",
+            "o8-y-kahn-write"
+          ],
+          "pathRationale": "7 reps. It starts with the UNSEEN/VISITING/DONE trace, which is the first exposure to cycle_detection, the only skill g-directed-cycle checks. Then come the core build (has_cycle from edges), one debug (no-visiting: the cycle nobody saw), the break-the-naive-detector drill (why a plain visited set fails, which the Course Schedule explanation asks for), and one combine (a reachable cycle from a start). After those come the Reps capstone cap-course-schedule (solves LC 207) and Kahn's algorithm as the topological introduction (spec Wednesday). Adjacency, DFS, BFS, deque and in-degree were all taught in Week 8 (o8-adjacency incl. o8-a-in-degree, o8-dfs, o8-bfs, o7-deque), so no rep needs a later-week skill. o8-y-dbg-never-done and o8-explain-course-schedule (explain, self-graded) become repair inventory.",
+          "optionalSections": [
+            "br-261"
+          ],
+          "stretchSections": [],
+          "retrievalSections": [
+            "o8-cold"
+          ],
+          "requiredTargets": [],
+          "readinessTargets": [],
+          "otherWeekReps": [
+            {
+              "repId": "o8-cold-build",
+              "belongsToWeek": 8,
+              "why": "Checkpoint variant of the Week 8 gate g-graph-traversal (adjacency from edges). Week 9 uses it only as retrieval/warm-up, never as path."
+            },
+            {
+              "repId": "o8-cold-components",
+              "belongsToWeek": 8,
+              "why": "Checkpoint variant of the Week 8 gate g-graph-traversal (connected components). Retrieval only here."
+            },
+            {
+              "repId": "o8-cold-grid-steps",
+              "belongsToWeek": 8,
+              "why": "Checkpoint variant of the Week 8 gate g-grid (grid BFS). Retrieval only here."
+            }
+          ]
+        },
+        {
+          "unitId": "w9-heaps",
+          "path": [
+            "d9-sort-returns-none",
+            "d9-sort-inplace-desc",
+            "d9-sort-median",
+            "d9-sort-dbg-assign-none",
+            "d9-sort-group-anagrams",
+            "d9-key-len-stable",
+            "d9-sort-tuples",
+            "d9-key-age-desc",
+            "d9-key-len-then-alpha",
+            "d9-key-records",
+            "d9-key-dbg-reverse-ties",
+            "d9-key-dict-by-value",
+            "d9-freq-topk-by-sort",
+            "d9-freq-dbg-pairs",
+            "d9-freq-most-common",
+            "d9-heap-push-trace",
+            "d9-heap-smallest-k",
+            "d9-heap-sort",
+            "d9-heap-dbg-slice",
+            "d9-heap-run-order",
+            "d9-maxheap-trace",
+            "d9-maxheap-k-largest-desc",
+            "d9-maxheap-dbg-no-negate",
+            "d9-maxheap-smash",
+            "d9-topk-trace",
+            "d9-topk-kth-by-sort",
+            "d9-topk-optimize",
+            "d9-topk-dbg-no-trim",
+            "d9-topk-keys-by-count",
+            "cap-kth-largest",
+            "cap-top-k-frequent"
+          ],
+          "pathRationale": "31 reps. Each sub-skill follows trace or fill, then drill, debug, combine. Sorting: .sort() returns None trace, in-place desc recall, median, assign-None debug, group-anagrams combine. sort_key: key=len trace, tuple-ordering trace, age-desc recall, len-then-alpha and dict-record drills (dict records match the gate's rank-teams variant), the reverse-ties debug, and the dict-by-value combine. Frequency + sort bridges to the strong area (dicts): top-k by sorting, the pairs debug, and the most-common combine. heap_push_pop: push trace, smallest-k and heap-sort drills, the slice debug, and the run-order combine on (priority, name) tuples. Max-heap: negation trace, k-largest drill, the no-negate debug, and the smash combine (matches the last-rock gate variant). top_k: size-k heap trace, the sorting baseline, the optimize to a size-k heap, the no-trim debug, and the keys-by-count combine. Last come both Reps capstones: cap-kth-largest solves LC 215 and cap-top-k-frequent solves LC 347. Every gate skill (heap_push_pop, top_k, sort_key) and every supporting pool skill (tuples, sorting, dict_lookup, frequency_map, while_loop) has a trace or fill first exposure in this path or an earlier week. These become repair inventory: d9-sort-second-largest, d9-sort-min-gap, d9-sort-dbg-discarded, d9-key-distance, d9-key-dbg-wrong-index, d9-freq-sort-chars, d9-heap-ropes, d9-topk-closest, d9-topk-dbg-tuple-order, and the two explain reps.",
+          "optionalSections": [
+            "br-23"
+          ],
+          "stretchSections": [],
+          "retrievalSections": [
+            "d9-warmup",
+            "d9h-check"
+          ],
+          "requiredTargets": [],
+          "readinessTargets": [],
+          "otherWeekReps": [
+            {
+              "repId": "b23-fold",
+              "belongsToWeek": 5,
+              "why": "br-23 (toward Merge k Sorted Lists) is built on linked-list merging from Week 5. It stays optional when ahead, not path."
+            },
+            {
+              "repId": "b23-dbg-rounds",
+              "belongsToWeek": 5,
+              "why": "Linked-list merge rounds (linked_list_traversal). Optional bridge only."
+            },
+            {
+              "repId": "b23-merge-arrays",
+              "belongsToWeek": 3,
+              "why": "Multi-pointer merge of sorted arrays (two_pointer, Week 3). Optional bridge only."
+            }
+          ]
+        }
+      ],
+      "schedule": [
+        {
+          "date": "2026-12-21",
+          "focusUnits": [
+            "w9-cycles",
+            "w9-heaps"
+          ],
+          "gatesDue": [],
+          "labsDue": [],
+          "targetsDue": [],
+          "theme": "Dependency modeling and directed cycles: all 7 w9-cycles path reps (UNSEEN/VISITING/DONE trace, has_cycle, debug, naive-detector break, reachable cycle, Course Schedule capstone, Kahn), then the first 5 w9-heaps sorting reps (returns-none trace through group-anagrams)"
+        },
+        {
+          "date": "2026-12-22",
+          "focusUnits": [
+            "w9-heaps"
+          ],
+          "gatesDue": [
+            "g-directed-cycle"
+          ],
+          "labsDue": [],
+          "targetsDue": [],
+          "theme": "Directed-cycle checkpoint (Course Schedule solved yesterday in Reps), then sort keys (7) and frequency + sort (3)"
+        },
+        {
+          "date": "2026-12-23",
+          "focusUnits": [
+            "w9-heaps"
+          ],
+          "gatesDue": [],
+          "labsDue": [
+            "lab-dependency-planner"
+          ],
+          "targetsDue": [],
+          "theme": "Topological ordering applied in the Dependency Planner lab, plus heap foundations: heapq (5), max-heap by negation (4), and the top-k opening (size-k trace, sorting baseline, optimize to heap)"
+        },
+        {
+          "date": "2026-12-24",
+          "focusUnits": [
+            "w9-heaps"
+          ],
+          "gatesDue": [
+            "g-heap"
+          ],
+          "labsDue": [],
+          "targetsDue": [],
+          "theme": "Top-k: no-trim debug, keys-by-count combine, the Kth Largest and Top K Frequent capstones, then the heap-invariant checkpoint"
+        }
+      ],
+      "budget": {
+        "weekTarget": 60,
+        "allowance": 9,
+        "pathTotal": 38,
+        "gateNeeds": 4,
+        "requiredTargets": 0,
+        "requiredLoad": 42,
+        "fits": true
+      },
+      "days": [
+        {
+          "date": "2026-12-21",
+          "capacity": 12,
+          "cumulativeCapacity": 12,
+          "pathDue": 0
+        },
+        {
+          "date": "2026-12-22",
+          "capacity": 10,
+          "cumulativeCapacity": 22,
+          "pathDue": 7
+        },
+        {
+          "date": "2026-12-23",
+          "capacity": 12,
+          "cumulativeCapacity": 34,
+          "pathDue": 7
+        },
+        {
+          "date": "2026-12-24",
+          "capacity": 10,
+          "cumulativeCapacity": 44,
+          "pathDue": 38
+        }
+      ],
+      "deviations": [
+        "Monday absorbs the whole w9-cycles path (7 reps, including cap-course-schedule and Kahn). The prescription fills path reps in unit order at 12 per day, so Course Schedule falls on Monday, not the spec's Tuesday, and Kahn on Monday, not Wednesday. Tuesday keeps the directed-cycle checkpoint, and Wednesday carries topological ordering through the Dependency Planner lab.",
+        "Heap foundations start Monday afternoon with sorting (5 reps), a day and a half earlier than the spec's Wednesday. Sort keys and frequency-sort fill Tuesday, heapq/max-heap fill Wednesday, and top-k plus both capstones land Thursday, as the spec says.",
+        "Required lab: Dependency Planner (the spec allows either). lab-priority-queue is optional for the holiday week and is not scheduled. The lab is on Wednesday so Tuesday holds only one checkpoint.",
+        "No outside requiredTargets. LC 207, 215 and 347 are each solved by a Reps capstone in the path (cap-course-schedule, cap-kth-largest, cap-top-k-frequent), so they do not count again.",
+        "Fri 12-25 to Sun 12-27 are off as the spec says. Only 4 training days are budgeted."
+      ],
+      "concerns": [
+        "The spec lists 4 Week 9 gates (directed cycle, dependency modeling, heap invariant, top-k transfer), but the inventory has only g-directed-cycle and g-heap. Adding two need-1 gates would still fit (requiredLoad 44, +9 = 53 <= 60; Thursday capacity would drop to 9 or 8, still >= the 4 path reps left).",
+        "There is no dedicated 'dependency modeling' content: no rep turns prerequisites/tasks into a directed graph before cycle detection. Monday's spec theme leans on Week 8's o8-a-build-directed/in-degree. A short c9 dependency-modeling trace and build pair would be worth authoring, placed before o8-y-trace-states.",
+        "The g-heap pool lists d9-cold-kth-smallest and d9-cold-last-rock, which are in no Week 9 section. d9-cold-kth-smallest appears in inventory-w10, so the same cold rep may be counted as a Week 10 asset too. Check that it is not also a path or gate rep elsewhere.",
+        "g-directed-cycle's pool reps c9-g-cycle-a/b exist only in data/course/gates.ts and gates-w3w12.ts. o8-cold-cycle is the only legacy variant.",
+        "Kahn (o8-y-kahn-write) is placed after the capstone because it was the last rep of the section. If topological ordering should feed into Course Schedule, swap the two; the load and the feasibility check are unchanged.",
+        "The o8-cold section mixes the Week 9 cycle checkpoint variant with three Week 8 gate variants (g-graph-traversal, g-grid). It is classified retrieval for w9-cycles. Those three should not be offered as Week 9 checkpoints."
+      ]
+    },
+    "10": {
+      "week": 10,
+      "units": [
+        {
+          "unitId": "w10-intervals",
+          "path": [
+            "d9-iv-overlaps-line",
+            "d9-iv-intersection",
+            "d9-iv-merge-trace",
+            "d9-iv-merge-sorted",
+            "d9-iv-dbg-overwrite-end",
+            "d9-iv-can-attend",
+            "d9-iv-dbg-unsorted",
+            "d9-iv-write-test",
+            "b252-first-clash",
+            "cap-merge-intervals",
+            "d9-fu-touching-apart",
+            "b252-one-oven-mini",
+            "b57-before-after",
+            "b57-absorb",
+            "b57-dbg-one-side",
+            "b57-add-pages-mini",
+            "b435-keep-talks",
+            "b435-pick-shows",
+            "b435-dbg-sort-start",
+            "b435-refused-mini"
+          ],
+          "pathRationale": "20 reps, all checked against inventory-w10.json and all of kind code or output. The first 12 cover overlap and merge, which is Monday's theme. They open with the overlap-test recall (it defines an interval), then the intersection drill, the merge trace (first exposure of the merge loop), merge on sorted input and the nested-range max debug. Next comes can-attend, which is Meeting Rooms I in Reps form. Following review, it now sits before dbg-unsorted, so the learner builds sort-then-scan before debugging a missing sort. sort_key was taught in Week 9's d9-keys. Then one testing rep (edge cases for merge), the first-clash combine, the capstone cap-merge-intervals (it solves LC 56, the week's one required target), the touching-intervals follow-up d9-fu-touching-apart (id corrected from d9-iv-fu-touching-apart) and the one-oven pattern transfer. Next is all of br-57 (insert): first exposure, absorb drill, the while_loop debug that targets the learner's weak spot, and the pattern. Last is all of br-435 (light interval greedy): two drills, the sort-by-start debug and the pattern. Gate skills interval_overlap and interval_insert are both produced by path reps before the gate. Every rep uses only Week 10 or earlier skills (sorting, sort_key, tuples, while loops). d9-iv-dbg-strict and d9-iv-covered-length become repair inventory. d9-explain-merge-intervals is excluded because it is an explain rep.",
+          "optionalSections": [
+            "br-253"
+          ],
+          "stretchSections": [],
+          "retrievalSections": [
+            "d9-cold"
+          ],
+          "requiredTargets": [],
+          "readinessTargets": [],
+          "otherWeekReps": [
+            {
+              "repId": "d9-cold-kth-smallest",
+              "belongsToWeek": 9,
+              "why": "Checkpoint variant of g-heap (Week 9, heaps/top-k). It is Week 9 retrieval inside d9-cold, never a Week 10 path rep."
+            },
+            {
+              "repId": "d9-cold-last-rock",
+              "belongsToWeek": 9,
+              "why": "Checkpoint variant of g-heap (Week 9 heaps). Retrieval only."
+            },
+            {
+              "repId": "d9-cold-sort-second-desc",
+              "belongsToWeek": 9,
+              "why": "Cold rep on sort keys and tuples (Week 9 d9-keys). Week 10 warm-up retrieval only."
+            },
+            {
+              "repId": "d9-cold-top-words",
+              "belongsToWeek": 9,
+              "why": "Cold rep on frequency maps and sort keys (Week 9 d9-freq-sort). Retrieval only."
+            }
+          ]
+        }
+      ],
+      "schedule": [
+        {
+          "date": "2026-12-28",
+          "focusUnits": [
+            "w10-intervals"
+          ],
+          "gatesDue": [],
+          "labsDue": [],
+          "targetsDue": [],
+          "theme": "Overlap + merge: path reps 1-12 (overlap test, intersection, merge trace, merge sorted, overwrite-end debug, can-attend, unsorted debug, write-test, first-clash, cap-merge-intervals = LC 56, touching follow-up, one-oven pattern)"
+        },
+        {
+          "date": "2026-12-29",
+          "focusUnits": [
+            "w10-intervals"
+          ],
+          "gatesDue": [],
+          "labsDue": [],
+          "targetsDue": [],
+          "theme": "Insert (path reps 13-16, br-57), then light interval greedy pulled forward (path reps 17-20, br-435). The unit path finishes today."
+        },
+        {
+          "date": "2026-12-30",
+          "focusUnits": [
+            "w10-intervals"
+          ],
+          "gatesDue": [
+            "g-intervals"
+          ],
+          "labsDue": [
+            "lab-calendar-conflicts"
+          ],
+          "targetsDue": [],
+          "theme": "Ordering + mixed interval transfer: the g-intervals checkpoint (need 2) and the Calendar Conflict Engine lab. The rest of the day is retrieval (d9-cold), optional br-253 (toward Meeting Rooms II) and repair."
+        }
+      ],
+      "budget": {
+        "weekTarget": 45,
+        "allowance": 7,
+        "pathTotal": 20,
+        "gateNeeds": 2,
+        "requiredTargets": 0,
+        "requiredLoad": 22,
+        "fits": true
+      },
+      "days": [
+        {
+          "date": "2026-12-28",
+          "capacity": 12,
+          "cumulativeCapacity": 12,
+          "pathDue": 0
+        },
+        {
+          "date": "2026-12-29",
+          "capacity": 12,
+          "cumulativeCapacity": 24,
+          "pathDue": 0
+        },
+        {
+          "date": "2026-12-30",
+          "capacity": 10,
+          "cumulativeCapacity": 34,
+          "pathDue": 20
+        }
+      ],
+      "deviations": [
+        "The spec's theme puts light interval greedy on Wednesday, but the 4 br-435 greedy reps land on Tuesday after insert. The prescription fills path reps in order up to daily capacity (12). Only 20 eligible path reps exist, so the path runs out on Tuesday. Matching the theme exactly is still feasible (Mon 12, Tue 4 insert, Wed 4 greedy + gate, with Wed cap 10 >= 4), but it needs a per-day cap or theme pinning in the prescription engine. Until then, Wednesday's ordering and greedy theme is covered by the mixed checkpoint, the lab and optional br-253.",
+        "The spec lists four gates (overlap; merge/insert; sorting for structure; mixed interval transfer). The inventory has one gate, g-intervals (need 2, skills interval_overlap + interval_insert), and it is scheduled once, on Wednesday. Sorting for structure is exercised in the path (can-attend, dbg-unsorted, cap-merge-intervals, b435-dbg-sort-start) but not checkpointed separately.",
+        "The lab is due Wednesday with the gate, not Tuesday. Tuesday already finishes the path, and Wednesday has the free capacity (10 path slots unused).",
+        "Path order changed from the previous plan, following the review: d9-iv-can-attend now comes before d9-iv-dbg-unsorted, so sort-then-scan is built before it is debugged."
+      ],
+      "concerns": [
+        "The week is underfilled by the path. Required load is 22 of 45, and Wednesday has no path reps. If daily completion requires 15 qualifying reps, the remaining ~23 must be credited from optional br-253, repair inventory (d9-iv-dbg-strict, d9-iv-covered-length) and retrieval. Otherwise, count the lab and gate toward Wednesday or lower its rep target.",
+        "LC 57, 435 and 252 are unit targets with solvedInRepsBy = null. The spec requires only Merge Intervals, which cap-merge-intervals solves in the path, so these three are neither requiredTargets nor readinessTargets. Show them as optional outside practice, not blocking.",
+        "The g-intervals pool is d9-cold-any-overlap, c10-g-interval-a and c10-g-interval-b, with need 2. d9-cold-any-overlap covers only interval_overlap and sort_key. c10-g-interval-a/b are not rep entries in inventory-w10.json, so their skills could not be checked here. Verify that at least one of them tests interval_insert, and that gate selection makes sure a pass on 2 covers both skills. Otherwise a pass on any-overlap plus a non-insert variant would not check insert.",
+        "The d9-cold section mixes Week 9 g-heap checkpoint variants (kth-smallest, last-rock) with the Week 10 variant d9-cold-any-overlap. The Week 10 retrieval offer must not relabel the Week 9 variants as Week 10 checkpoints.",
+        "br-253 (Toward Meeting Rooms II, heap of end times) stays optional. It uses Week 9 heap skills, so it is safe to offer when the learner is ahead.",
+        "Week 10 has no worked examples (workedExampleIds is empty), so it has no rebuild reps. Merge and insert are taught only through the lesson plus trace/recall reps."
+      ]
+    },
+    "11": {
+      "week": 11,
+      "units": [
+        {
+          "unitId": "w11-backtracking",
+          "path": [
+            "d10-dt-call-order",
+            "c11-rebuild-backtracking",
+            "d10-dt-include-exclude",
+            "d10-dt-all-sums",
+            "d10-dt-bit-strings",
+            "d10-dt-dbg-base",
+            "d10-dt-can-reach",
+            "d10-ps-copy-trace",
+            "d10-ps-subsequences-finish",
+            "d10-ps-dbg-alias",
+            "d10-ps-dbg-no-pop",
+            "d10-ps-combos",
+            "d10-ps-letter-combos",
+            "d10-ps-orderings",
+            "d10-sub-loop-style",
+            "d10-sub-target-subsets",
+            "cap-subsets",
+            "b39-trace-start",
+            "b39-scoops",
+            "b39-dbg-orders",
+            "b39-exact-loads",
+            "b39-count-ways"
+          ],
+          "pathRationale": "21 reps. Teaching comes first: two output traces (call order, then include/exclude) give the first exposure to recursion order and backtracking_state, which is the skill g-backtracking checks. Next come builds, a base-case debug and a combine (can-reach). d10-path teaches 'reversible state' (the Monday theme): a trace of the shared path, a finish-the-code choose/explore/un-choose, then the two central bugs, aliasing without a copy and the missing pop. These two get separate debugs because the learner is weak on state; choose-k, keypad (dictionary strength) and permutations follow. d10-sub covers subsets loop-style, constrained subsets and the LC78 capstone cap-subsets, so target 78 is solved in the path. br-39 (Tuesday's 'constrained choices') adds a trace of dfs(i) vs dfs(i+1), a build, a debug, a combine and count-ways, to prepare for readiness target LC39. It also starts the Coin Change thinking named in the spec. Skills used: recursion (W6), dict_lookup, set_membership, range and slicing, all taught earlier. No later-week topics.",
+          "optionalSections": [
+            "br-79"
+          ],
+          "stretchSections": [],
+          "retrievalSections": [
+            "d10-warmup",
+            "d10b-check"
+          ],
+          "requiredTargets": [],
+          "readinessTargets": [
+            39
+          ],
+          "otherWeekReps": []
+        },
+        {
+          "unitId": "w11-dp",
+          "path": [
+            "d10-rec-fib-calls",
+            "c11-rebuild-dp",
+            "d10-rec-fib-naive",
+            "d10-rec-three-steps",
+            "d10-rec-grid-paths",
+            "d10-rec-dbg-base",
+            "d10-memo-trace",
+            "d10-memo-optimize",
+            "d10-memo-cache-ways3",
+            "d10-memo-dbg-inside",
+            "d10-memo-grid",
+            "d10-memo-dbg-key",
+            "d10-bu-trace",
+            "d10-bu-translate",
+            "d10-bu-three-steps",
+            "d10-bu-dbg-range",
+            "d10-bu-any-steps",
+            "cap-climbing-stairs",
+            "d10-fu-broken-steps",
+            "d10-roll-trace",
+            "d10-roll-fib",
+            "d10-roll-dbg-two-lines",
+            "d10-roll-trib",
+            "d10-roll-robber-trace",
+            "d10-roll-robber-memo",
+            "d10-roll-robber-table",
+            "d10-roll-dbg-adjacent",
+            "cap-house-robber",
+            "d10-bu-min-cost"
+          ],
+          "pathRationale": "28 reps following the spec's derivation: correct recursion, then repeated subproblem, memo, recurrence, bottom-up, rolling state. Each g-dp skill gets an output trace before any code: recurrence (fib-calls), memoization (memo-trace) and dp_table (bu-trace). memo-cache-ways3 teaches functools.cache, which the gate's d10-cold-cache-stairs uses. roll-trace teaches the state_tracking that d10-cold-pieces needs. The capstones cap-climbing-stairs (LC70) and cap-house-robber (LC198) solve both DP targets inside the path. The rolling section keeps both debugs and Tribonacci because the learner is weak on rolling state. d10-bu-min-cost (cheapest climb, minimum-choice DP) is moved to the end of the path to match Friday's theme and lead into the Minimum-Cost Plan lab.",
+          "optionalSections": [
+            "br-213"
+          ],
+          "stretchSections": [],
+          "retrievalSections": [
+            "d10-cold"
+          ],
+          "requiredTargets": [],
+          "readinessTargets": [
+            322
+          ],
+          "otherWeekReps": []
+        }
+      ],
+      "schedule": [
+        {
+          "date": "2027-01-04",
+          "focusUnits": [
+            "w11-backtracking"
+          ],
+          "gatesDue": [],
+          "labsDue": [],
+          "targetsDue": [],
+          "theme": "Reversible state: decision trees, then the shared path, choose/explore/undo, and the copy and pop bugs (path reps 1-12)"
+        },
+        {
+          "date": "2027-01-05",
+          "focusUnits": [
+            "w11-backtracking",
+            "w11-dp"
+          ],
+          "gatesDue": [],
+          "labsDue": [],
+          "targetsDue": [],
+          "theme": "Subsets and constrained choices: permutations, subsets, cap-subsets (LC78) and Toward Combination Sum; ends with the first DP recurrence traces (path reps 13-24)"
+        },
+        {
+          "date": "2027-01-06",
+          "focusUnits": [
+            "w11-dp"
+          ],
+          "gatesDue": [
+            "g-backtracking"
+          ],
+          "labsDue": [
+            "lab-package-configurator"
+          ],
+          "targetsDue": [],
+          "theme": "Memoization through repeated subproblems: recurrence debug, the whole memo ladder, first bottom-up table; backtracking checkpoint and Package Configurator lab (path reps 25-34)"
+        },
+        {
+          "date": "2027-01-07",
+          "focusUnits": [
+            "w11-dp"
+          ],
+          "gatesDue": [],
+          "labsDue": [],
+          "targetsDue": [],
+          "theme": "Bottom-up to House Robber: cap-climbing-stairs (LC70), then rolling state and take-or-skip, memo and table (path reps 35-46)"
+        },
+        {
+          "date": "2027-01-08",
+          "focusUnits": [
+            "w11-dp"
+          ],
+          "gatesDue": [
+            "g-dp"
+          ],
+          "labsDue": [
+            "lab-minimum-cost"
+          ],
+          "targetsDue": [],
+          "theme": "Minimum-choice DP and gates: finish House Robber (cap-house-robber, LC198), cheapest climb, DP checkpoint, Minimum-Cost Plan lab (path reps 47-49)"
+        }
+      ],
+      "budget": {
+        "weekTarget": 75,
+        "allowance": 12,
+        "pathTotal": 51,
+        "gateNeeds": 4,
+        "requiredTargets": 0,
+        "requiredLoad": 55,
+        "fits": true
+      },
+      "days": [
+        {
+          "date": "2027-01-04",
+          "capacity": 12,
+          "cumulativeCapacity": 12,
+          "pathDue": 0
+        },
+        {
+          "date": "2027-01-05",
+          "capacity": 12,
+          "cumulativeCapacity": 24,
+          "pathDue": 0
+        },
+        {
+          "date": "2027-01-06",
+          "capacity": 10,
+          "cumulativeCapacity": 34,
+          "pathDue": 22
+        },
+        {
+          "date": "2027-01-07",
+          "capacity": 12,
+          "cumulativeCapacity": 46,
+          "pathDue": 22
+        },
+        {
+          "date": "2027-01-08",
+          "capacity": 10,
+          "cumulativeCapacity": 56,
+          "pathDue": 51
+        }
+      ],
+      "deviations": [
+        "The Thursday House Robber theme spills into Friday. Under minimum pacing, cap-house-robber and d10-roll-dbg-adjacent fall on Friday (path reps 47-48): Wednesday's capacity is 10 because the backtracking checkpoint is due then, and putting the checkpoint on Wednesday rather than Tuesday gives a day's spacing for a cold check. A learner at full pace reaches the capstone on Thursday.",
+        "Friday's spec theme says 'gates' (plural), but g-backtracking is due on Wednesday, one day after its unit ends, so the backtracking cold check is spaced out and Friday is not overloaded. g-dp stays on Friday.",
+        "d10-bu-min-cost is moved from the middle of d10-bottom-up to the end of the DP path so that minimum-choice DP lands on Friday next to the Minimum-Cost Plan lab.",
+        "Rule 5 asks for 'one debug' per legacy ladder. d10-path keeps two (dbg-alias: copy the path; dbg-no-pop: undo the choice), and d10-memo and d10-rolling keep two each (memo placement and cache key; rolling update order and adjacency). These are distinct core bugs in exactly the area the learner is weak on (state), and the week still fits with 10 to spare.",
+        "Gate-pool sections d10b-check (g-backtracking) and d10-cold (g-backtracking and g-dp) contribute no path reps. They are listed under retrieval only because each section must be classified; they are served as checkpoints, not as warm-ups.",
+        "Readiness target 322 (Coin Change) is added to w11-dp even though the inventory lists none. The spec's Week 11 targets say 'Coin Change begin/complete as readiness supports'. b39-count-ways (counting coin handfuls) and d10-bu-min-cost (minimum-choice table) are the bridge reps."
+      ],
+      "concerns": [
+        "The spec lists four Week 11 gates (backtracking state; choose/explore/undo; DP state + recurrence; DP transfer), but the inventory has only two (g-backtracking, g-dp). 'Choose/explore/undo' is folded into g-backtracking, and there is no 'DP transfer' gate. If one is added, its need must fit Friday's 7 spare capacity.",
+        "The g-dp pool includes c11-g-dp-a, which does not appear in any unit section of this inventory. It needs confirmation that it exists. The other two pool reps cover recurrence, memoization and dp_table.",
+        "Reps from path sections that were not chosen become repair inventory: d10-dt-signs, d10-ps-dice, d10-ps-dbg-used, d10-ps-tree-paths, d10-sub-write-test, d10-memo-fib. The explain reps (d10-explain-subsets, d10-explain-climbing-stairs, d10-explain-house-robber) are excluded as self-graded but could be useful for interview practice.",
+        "br-79 (Toward Word Search) relies on grid neighbours and visited sets from Week 8. It is fine as optional, but its pattern rep b79-has-snake is a strong transfer item if a 'DP/backtracking transfer' gate is ever added.",
+        "Under minimum pacing Friday has only 3 path reps. Reaching the 75 weekly output depends on about 10 reps from allowance, repair or optional work (br-79, br-213, d10-warmup) beyond the required load of 53 plus the 12 allowance."
+      ]
+    },
+    "12": {
+      "week": 12,
+      "units": [
+        {
+          "unitId": "w12-dp-greedy",
+          "path": [
+            "b322-trace-inf",
+            "b322-makeable",
+            "b322-fewest-each",
+            "b322-dbg-zero-fill",
+            "b322-cheapest-packs",
+            "b53-trace-ending",
+            "b53-ending-sums",
+            "b53-dbg-reset-zero",
+            "b53-worst-stretch",
+            "b55-farthest",
+            "b55-dbg-no-stop",
+            "b55-first-unreachable"
+          ],
+          "pathRationale": "All three bridge sections are small (5+4+3) and each is already a lean ladder: first exposure (trace or fill), drills, one debug, one pattern. They teach exactly the three g-dp-greedy skills (dp_min_choice, kadane, greedy_reach). Each skill gets a first exposure before its drills: b322-trace-inf, b53-trace-ending, and b55-farthest (a fill; br-55 has no trace). The path builds on w11-dp (recurrence, dp_table, memoization). It uses no later-week skills. No Reps capstone exists, because all three targets have solvedInRepsBy = null.",
+          "optionalSections": [
+            "br-139",
+            "br-62"
+          ],
+          "stretchSections": [
+            "br-300",
+            "br-1143",
+            "br-5",
+            "br-91"
+          ],
+          "retrievalSections": [],
+          "requiredTargets": [
+            322,
+            53,
+            55
+          ],
+          "readinessTargets": [
+            139,
+            62
+          ],
+          "otherWeekReps": []
+        },
+        {
+          "unitId": "w12-matrix-tries",
+          "path": [
+            "mx-t-swap-cells",
+            "mx-t-transpose",
+            "mx-t-reverse-rows",
+            "mx-t-flip-rows",
+            "mx-t-dbg-twice",
+            "mx-l-trace",
+            "mx-l-top-edge",
+            "mx-l-bottom-edge",
+            "mx-l-left-edge",
+            "mx-l-dbg-single-row",
+            "b54-spiral-fill",
+            "mx-m-lines-with",
+            "mx-m-wipe",
+            "mx-m-dbg-flood",
+            "mx-m-open-seats",
+            "tr-nested-trace",
+            "tr-add-path",
+            "tr-node-class",
+            "tr-step",
+            "tr-insert",
+            "tr-dbg-no-advance",
+            "tr-build-trie",
+            "tr-find-node",
+            "tr-has-word",
+            "tr-any-starts-with",
+            "tr-dbg-prefix-true",
+            "b208-word-set"
+          ],
+          "pathRationale": "Matrix first (15 reps), then tries (12). Transform: swap-cells is the first exposure, then transpose and reverse-rows. flip-rows comes next: it is explicit top/bottom pointer practice for a learner weak on pointer movement, and it is half of the gate's half-turn. dbg-twice closes the step. Layers: the trace comes first, then the top, bottom and left edges (all directions mx-c-frame tests), then the single-row debug. b54-spiral-fill is the combine and the near-transfer for LC 54. Marking: lines-with, wipe, dbg-flood, then the open-seats combine. These cover all three g-matrix skills. Tries: the nested-dict trace is the first exposure. Then node and build (add-path, node-class, step, insert), one debug (no-advance), and the from-memory build-trie combine. Then search (find-node, has-word, any-starts-with) with the prefix debug. The last rep is b208-word-set, the class packaging LC 208 asks for. Left as repair inventory: b54-dbg-centre, tr-dbg-shared, tr-dbg-no-end, tr-count-prefix and tr-words-with-prefix (both use recursion collection, beyond the LC 208 canonical form), and b208-prefix-tally. mx-check is the g-matrix pool, so it is not classified. Every skill used (grid_nested wk8, two_pointer wk3, while_loop wk1) is from an earlier week.",
+          "optionalSections": [
+            "br-48",
+            "br-73"
+          ],
+          "stretchSections": [
+            "br-211"
+          ],
+          "retrievalSections": [
+            "tr-check",
+            "o11-name-it"
+          ],
+          "requiredTargets": [
+            54,
+            208
+          ],
+          "readinessTargets": [
+            48
+          ],
+          "otherWeekReps": []
+        }
+      ],
+      "schedule": [
+        {
+          "date": "2027-01-11",
+          "focusUnits": [
+            "w12-dp-greedy"
+          ],
+          "gatesDue": [],
+          "labsDue": [],
+          "targetsDue": [],
+          "theme": "DP consolidation (min-choice DP), then running state and greedy. All 12 dp-greedy path reps fit today's capacity of 12."
+        },
+        {
+          "date": "2027-01-12",
+          "focusUnits": [
+            "w12-dp-greedy",
+            "w12-matrix-tries"
+          ],
+          "gatesDue": [
+            "g-dp-greedy"
+          ],
+          "labsDue": [],
+          "targetsDue": [
+            53,
+            55
+          ],
+          "theme": "Greedy and running state: DP/greedy checkpoint, then Maximum Subarray and Jump Game outside; begin matrix transforms"
+        },
+        {
+          "date": "2027-01-13",
+          "focusUnits": [
+            "w12-matrix-tries"
+          ],
+          "gatesDue": [],
+          "labsDue": [],
+          "targetsDue": [],
+          "theme": "Matrix mechanics: edges, spiral fill, mark-then-change; begin tries"
+        },
+        {
+          "date": "2027-01-14",
+          "focusUnits": [
+            "w12-matrix-tries"
+          ],
+          "gatesDue": [],
+          "labsDue": [
+            "lab-support-router"
+          ],
+          "targetsDue": [
+            322
+          ],
+          "theme": "Tries finished; adaptive Tier-A repair (Coin Change) and the first AI/FDE build (Support Router)"
+        },
+        {
+          "date": "2027-01-15",
+          "focusUnits": [
+            "w12-matrix-tries"
+          ],
+          "gatesDue": [
+            "g-matrix"
+          ],
+          "targetsDue": [
+            54,
+            208
+          ],
+          "labsDue": [],
+          "theme": "Final curriculum gates and unlabeled selection: matrix checkpoint, Spiral Matrix, Implement Trie, and o11-name-it / tr-check retrieval in the slack"
+        }
+      ],
+      "budget": {
+        "weekTarget": 75,
+        "allowance": 12,
+        "pathTotal": 39,
+        "gateNeeds": 4,
+        "requiredTargets": 5,
+        "requiredLoad": 48,
+        "fits": true
+      },
+      "days": [
+        {
+          "date": "2027-01-11",
+          "capacity": 12,
+          "cumulativeCapacity": 12,
+          "pathDue": 0
+        },
+        {
+          "date": "2027-01-12",
+          "capacity": 8,
+          "cumulativeCapacity": 20,
+          "pathDue": 12
+        },
+        {
+          "date": "2027-01-13",
+          "capacity": 12,
+          "cumulativeCapacity": 32,
+          "pathDue": 12
+        },
+        {
+          "date": "2027-01-14",
+          "capacity": 11,
+          "cumulativeCapacity": 43,
+          "pathDue": 12
+        },
+        {
+          "date": "2027-01-15",
+          "capacity": 8,
+          "cumulativeCapacity": 51,
+          "pathDue": 39
+        }
+      ],
+      "deviations": [
+        "Monday takes all 12 dp-greedy reps, Kadane and greedy included, because the prescription fills capacity in unit order. So Tuesday's 'greedy and running state' theme comes through its gate and the LC 53/55 targets, and the matrix unit starts on Tuesday, not Wednesday.",
+        "Tries get no day of their own in the spec. They run Wednesday afternoon through Thursday, which leaves Thursday only 4 slots of Tier-A repair beside the lab.",
+        "Coin Change (322, 'if unfinished' in the spec) is moved to Thursday as the Tier-A repair target, not grouped with the Tuesday DP gate. This keeps Tuesday at capacity 8, not 7, and fits Thursday's repair theme.",
+        "The matrix checkpoint is on Friday ('final curriculum gates'). It cannot come earlier: the matrix and trie content is one unit, so the gate waits for the tries path to finish on Thursday.",
+        "LC 208 Implement Trie is kept as a required target, although the spec's Week 12 target list omits it. Tries are a 'solve canonical form' item for Feb 1, the unit has no trie gate, and the LC 208 target is the only independent trie evidence."
+      ],
+      "concerns": [
+        "The spec lists four Week 12 gates (DP reasoning, greedy/running state, matrix mechanics, Tier-A algorithm selection), but the inventory has only two: g-dp-greedy and g-matrix. No Tier-A selection gate exists, and o11-name-it (4 unlabeled pattern reps, all earlier-week skills) is only offered as Friday retrieval. Consider building a c12 Tier-A selection gate from it.",
+        "Tries have no checkpoint. tr-check reps are cold but have gateVariantOf = null, so they are classified as retrieval, and trie readiness rests only on LC 208.",
+        "o11-name-it sits inside w12-matrix-tries as an optional section, but its content (sets, BFS, sliding window, binary search) is unrelated to matrix or tries. It belongs to a Tier-A selection unit or gate, not this unit.",
+        "br-55 has no trace rep, so the first exposure to greedy_reach is the fill b55-farthest.",
+        "15 slots of the week's capacity are unused (60 of 75). This is deliberate, for Thursday's repair and Friday's unlabeled selection, but the app must not turn it into hidden required work."
+      ]
+    },
+    "13": {
+      "week": 13,
+      "units": [
+        {
+          "unitId": "w13-transfer",
+          "path": [
+            "c13-t-01",
+            "c13-t-05",
+            "c13-t-30",
+            "c13-t-09",
+            "c13-t-13",
+            "c13-t-12",
+            "c13-t-16",
+            "c13-t-08",
+            "c13-t-33",
+            "c13-t-22",
+            "c13-t-06",
+            "c13-t-23",
+            "c13-t-17",
+            "c13-t-02",
+            "c13-t-37",
+            "c13-t-26",
+            "c13-t-04",
+            "c13-t-20",
+            "c13-t-34",
+            "c13-t-18",
+            "c13-t-11",
+            "c13-t-28",
+            "c13-t-10",
+            "c13-t-35",
+            "c13-t-21",
+            "c13-t-44",
+            "c13-t-40",
+            "c13-t-45",
+            "c13-t-36",
+            "c13-t-39",
+            "c13-t-03",
+            "c13-t-31",
+            "c13-t-25",
+            "c13-t-32",
+            "c13-t-14",
+            "c13-t-19",
+            "c13-t-07",
+            "c13-t-42",
+            "c13-t-43",
+            "c13-t-27",
+            "c13-t-15",
+            "c13-t-48",
+            "c13-t-46",
+            "c13-t-38",
+            "c13-t-47",
+            "c13-t-24",
+            "c13-t-29",
+            "c13-t-41"
+          ],
+          "pathRationale": "Rule 7 limits the Week 13 path to c13-t-* reps. The bank has exactly 48 of them, all kind 'code' (none are choice or explain). Every skill they use is taught in Weeks 1-12: hashing, two pointers, prefix sums, sliding window, stacks, binary search, linked lists, fast/slow, recursion, trees, BFS/grids, graphs/topo, heaps, intervals, backtracking, DP/greedy and matrix. None needs a later-week topic. The capacity is 4 days x 12 = 48, so the whole bank fits with zero slack, and 48 + 9 allowance = 57 <= 60. The spec's daily make-up is 5 transfer + 3 fresh full + 2 debug/test + 2 explanation + 1 wildcard + 2 cold retrieval. That is 12 path reps plus 3 allowance reps, which matches 12 path reps a day exactly. The order is a deliberate unlabeled interleave in four blocks of 12, one per training day. Each block mixes topics so the topic can't be guessed from neighbouring reps. Each block has 2 interview-stage full problems: day 1 06, 23; day 2 10, 35; day 3 14, 19; day 4 29, 41. Each has 1-2 debug/test-writing reps: 12; 04, 20; 36; 43, 27. Minutes are balanced at 116/131/138/135, 520 in total. Day 1, the first day after MLK, is the lightest and starts with easier hash/state/two-pointer reps. Day 2 opens with c13-t-17 (state + while loop), the learner's stated weakness. The hardest combinations come on day 4: heap-ordered topological sort (29) and LCA (41). They were not dropped. LCA is canonical tree material, not one of the 'difficult tree-global-best' stretch patterns, and topo ordering is in the must-understand list.",
+          "optionalSections": [],
+          "stretchSections": [],
+          "retrievalSections": [],
+          "requiredTargets": [],
+          "readinessTargets": [],
+          "otherWeekReps": []
+        }
+      ],
+      "schedule": [
+        {
+          "date": "2027-01-19",
+          "focusUnits": [
+            "w13-transfer"
+          ],
+          "gatesDue": [],
+          "labsDue": [],
+          "targetsDue": [],
+          "theme": "Unlabeled transfer I (after MLK): path reps 1-12. Easier mix of hashing, state, two pointers, stack, window, recursion, linked list, set and intervals. Test-writing: t-12. Full problems: t-06, t-23. Plus 2 cold retrieval + 1 wildcard from the allowance."
+        },
+        {
+          "date": "2027-01-20",
+          "focusUnits": [
+            "w13-transfer"
+          ],
+          "gatesDue": [],
+          "labsDue": [],
+          "targetsDue": [],
+          "theme": "Unlabeled transfer II: path reps 13-24. Opens with state + while (t-17, a known weak area), then merge, prefix, monotonic stack, fast/slow, tree DFS, components, DP, matrix. Debug: t-04, t-20. Full problems: t-10, t-35. FDE Customer Workflow build starts."
+        },
+        {
+          "date": "2027-01-21",
+          "focusUnits": [
+            "w13-transfer"
+          ],
+          "gatesDue": [],
+          "labsDue": [],
+          "targetsDue": [],
+          "theme": "Unlabeled transfer III: path reps 25-36. Binary search, brackets, grouping, window, linked list, grid BFS, heap, backtracking, greedy. Debug: t-36. Full problems: t-14, t-19. FDE build continues with its mid-build requirement change."
+        },
+        {
+          "date": "2027-01-22",
+          "focusUnits": [
+            "w13-transfer"
+          ],
+          "gatesDue": [],
+          "labsDue": [
+            "lab-fde-workflow"
+          ],
+          "targetsDue": [],
+          "theme": "Unlabeled transfer IV: path reps 37-48. Index map, top-k, binary search on the answer, tree BFS, topo/cycle, graph-is-tree, grid DP. Test/debug: t-43, t-27. Full problems: t-29, t-41. FDE Customer Workflow due. Final GREEN/YELLOW/RED state decided."
+        }
+      ],
+      "budget": {
+        "weekTarget": 60,
+        "allowance": 9,
+        "pathTotal": 48,
+        "gateNeeds": 0,
+        "requiredTargets": 0,
+        "requiredLoad": 48,
+        "fits": true
+      },
+      "days": [
+        {
+          "date": "2027-01-19",
+          "capacity": 12,
+          "cumulativeCapacity": 12,
+          "pathDue": 0
+        },
+        {
+          "date": "2027-01-20",
+          "capacity": 12,
+          "cumulativeCapacity": 24,
+          "pathDue": 0
+        },
+        {
+          "date": "2027-01-21",
+          "capacity": 12,
+          "cumulativeCapacity": 36,
+          "pathDue": 0
+        },
+        {
+          "date": "2027-01-22",
+          "capacity": 12,
+          "cumulativeCapacity": 48,
+          "pathDue": 48
+        }
+      ],
+      "deviations": [
+        "Week 13 has no gates. The inventory lists none, and the spec gives Week 13 a final GREEN/YELLOW/RED state instead of a checkpoint, so gatesDue is empty every day.",
+        "The spec's 2 'explanation/follow-up' reps a day have no authored explain reps in the bank, and 'explain' is excluded from the path anyway. Explanation is carried by code reps whose skills include complexity/explanation (t-07, t-24, t-15, t-31, t-39, t-47, t-48). Any spoken explanation would come out of the allowance.",
+        "The '12 fresh full problems (4 Easy, 8 Medium)' are met by the 8 interview-stage reps (06, 10, 14, 19, 23, 29, 35, 41) plus full pattern problems such as t-02, t-26, t-48 and t-15. The bank has no Easy-labelled interview-stage reps.",
+        "The FDE Customer Workflow lab is due Friday rather than spread across days. It is a single binary build with a mid-build requirement change, best started Wednesday and finished Friday."
+      ],
+      "concerns": [
+        "Zero slack: path 48 equals cumulative capacity 48. A single missed or failed day leaves the week behind unless allowance reps are spent on path reps. Consider letting the prescription pull path reps into the 3-rep allowance when the learner falls behind, or marking t-29 and t-41 as optional to create 2 reps of slack.",
+        "Path minutes average about 130 a day (520 total), on top of 3 allowance reps and the FDE build. This is heavy for a holiday week. Thursday (138 min) and Friday (135 min plus the lab due) are the peaks.",
+        "Week 13 must hide labels: every c13-t rep carries skills tags in the data. The UI must not show skills, topic or pattern before an attempt (master spec, Week 13 note), including in the path list or the Today cards.",
+        "The inventory gives no evidence-classification gate for the GREEN/YELLOW/RED state. Spec 2.1 section 7 completion requires checkpoints, but Week 13 has none, so week completion depends only on the 48 path reps, the allowance and lab-fde-workflow. Confirm this is intended.",
+        "Interleaved order is fixed in path order. If the prescription engine reorders by stage (pattern before interview), the per-day mix and minute balance above break."
+      ]
+    },
+    "14": {
+      "week": 14,
+      "units": [
+        {
+          "unitId": "w14-interview",
+          "path": [
+            "o11-speed-count",
+            "o11-speed-first-seen",
+            "o11-speed-last-seen",
+            "o11-speed-deque",
+            "o11-speed-heap-small",
+            "o11-speed-heap-tuples",
+            "o11-speed-sort-key",
+            "o11-speed-leaderboard",
+            "o11-speed-neighbors",
+            "cold-two-sum",
+            "cold-valid-parentheses",
+            "cold-reverse-linked-list",
+            "cold-longest-substring",
+            "cold-merge-intervals",
+            "cold-top-k-frequent",
+            "cold-house-robber",
+            "cold-subsets",
+            "o11-mix-nearby-repeat",
+            "o11-opt-common",
+            "o11-mix-sorted-squares",
+            "o11-mix-two-kinds",
+            "o11-mix-first-at-least",
+            "o11-mix-path-sum",
+            "o11-mix-k-closest",
+            "cold-number-of-islands",
+            "cold-level-order",
+            "cold-course-schedule",
+            "o11-mix-groups",
+            "o11-mix-cheapest-climb",
+            "o11-mix-choose",
+            "o11-mix-fewest-steps",
+            "o11-bug-get",
+            "o11-bug-dict-direction",
+            "o11-bug-bsearch-hi",
+            "o11-bug-reverse-order",
+            "o11-bug-base-case",
+            "o11-bug-visited-late",
+            "o11-bug-path-copy",
+            "o11-bug-heap-trim",
+            "o11-bug-unsorted",
+            "o11-bug-dummy",
+            "o11-bug-window-left"
+          ],
+          "pathRationale": "Week 14 is interview execution. Every topic was taught in Weeks 1-12, so no rep needs a later-week skill. All 42 credit-earning reps (code/output) in the four o11 sections fit the budget: 9 speed + 11 cold capstones + 11 mixed + 11 debug = 42. The 7 choice reps (o11-cx-pop-front, o11-speed-slicing, o11-cx-grid-bfs, o11-cx-subsets, o11-cx-memo, o11-cx-tree-space, o11-cx-heap-k) and the 6 explain reps (o11-say-pair-sum, o11-cx-window-explain, o11-say-dry-run, o11-cx-graph-explain, o11-say-clarify, o11-say-stuck) are left out under rules 2/7. None of these ids is in any earlier unit's path: the Week 2 plan uses o2-cold-two-sum and the cap-* capstones, not cold-*. The order follows the daily themes, 12 path reps a day. Mon: speed-round warm-up (9 short reps) plus 3 easier full problems on a generous timer (two-sum, valid-parentheses, reverse-linked-list). Tue: 5 timed cold singles plus the first 7 mixed patterns. Wed: the last 3 cold singles (islands, level order, course schedule) as timed singles, the 4 graph/DP/backtracking/BFS follow-up variants, and the first 5 debug reps. Thu: the last 6 debug reps as diagnose->repair work around Mock #1. Fri has no path reps (Mock #2 plus final readiness).",
+          "optionalSections": [
+            "o11-edges"
+          ],
+          "stretchSections": [],
+          "retrievalSections": [],
+          "requiredTargets": [],
+          "readinessTargets": [],
+          "otherWeekReps": []
+        }
+      ],
+      "schedule": [
+        {
+          "date": "2027-01-25",
+          "focusUnits": [
+            "w14-interview"
+          ],
+          "gatesDue": [],
+          "labsDue": [],
+          "targetsDue": [],
+          "theme": "Generous-timer full problems: speed-round warm-up (9) + cold Two Sum, Valid Parentheses, Reverse Linked List (path #1-12, ~57 min)"
+        },
+        {
+          "date": "2027-01-26",
+          "focusUnits": [
+            "w14-interview"
+          ],
+          "gatesDue": [],
+          "labsDue": [],
+          "targetsDue": [],
+          "theme": "Timed singles: cold Longest Substring, Merge Intervals, Top-K Frequent, House Robber, Subsets + mixed patterns nearby-repeat..k-closest (path #13-24, ~106 min)"
+        },
+        {
+          "date": "2027-01-27",
+          "focusUnits": [
+            "w14-interview"
+          ],
+          "gatesDue": [],
+          "labsDue": [],
+          "targetsDue": [],
+          "theme": "Timed singles and follow-ups: cold Islands, Level Order, Course Schedule + follow-up variants (groups, cheapest climb, choose k, fewest steps) + first 5 debug reps; project/system explanation off-path (path #25-36, ~102 min)"
+        },
+        {
+          "date": "2027-01-28",
+          "focusUnits": [
+            "w14-interview"
+          ],
+          "gatesDue": [],
+          "labsDue": [],
+          "targetsDue": [],
+          "theme": "Mock #1 -> diagnose -> repair: last 6 debug-sprint reps (path #37-42, ~18 min) plus the mock (readiness-gated, off-path)"
+        },
+        {
+          "date": "2027-01-29",
+          "focusUnits": [],
+          "gatesDue": [],
+          "labsDue": [],
+          "targetsDue": [],
+          "theme": "Mock #2 + final readiness status (READY / READY WITH TARGETED GAPS / NOT YET READY); no path reps, allowance used for targeted repair and re-solves"
+        }
+      ],
+      "budget": {
+        "weekTarget": 75,
+        "allowance": 12,
+        "pathTotal": 42,
+        "gateNeeds": 0,
+        "requiredTargets": 0,
+        "requiredLoad": 42,
+        "fits": true
+      },
+      "days": [
+        {
+          "date": "2027-01-25",
+          "capacity": 12,
+          "cumulativeCapacity": 12,
+          "pathDue": 0
+        },
+        {
+          "date": "2027-01-26",
+          "capacity": 12,
+          "cumulativeCapacity": 24,
+          "pathDue": 0
+        },
+        {
+          "date": "2027-01-27",
+          "capacity": 12,
+          "cumulativeCapacity": 36,
+          "pathDue": 0
+        },
+        {
+          "date": "2027-01-28",
+          "capacity": 12,
+          "cumulativeCapacity": 48,
+          "pathDue": 0
+        },
+        {
+          "date": "2027-01-29",
+          "capacity": 12,
+          "cumulativeCapacity": 60,
+          "pathDue": 0
+        }
+      ],
+      "deviations": [
+        "Friday has no path reps. Spec Friday = 'Mock #2 + final gates', but the inventory has no Week 14 gates or mocks as reps, so Friday holds only Mock #2, the final readiness status and repair from the allowance.",
+        "Wednesday's theme is 'interviewer follow-ups + project/system explanation', but every explain rep (o11-say-*, o11-cx-*-explain) is excluded from the path because explain is self-graded. Wednesday instead carries follow-up variants (mixed patterns) and the last timed cold singles. The explanation practice stays as repair/optional inventory.",
+        "Path reps are spread by count (12/day), not by minutes, so Tue (~106 min) and Wed (~102 min) are much heavier than Mon (~57) and Thu (~18). The heavy cold capstones were split 3/5/3 across Mon-Wed to limit this."
+      ],
+      "concerns": [
+        "Week 14 is supposed to depend on readiness (GREEN/YELLOW/RED from Week 13), but the unit has a single fixed path. A RED learner should get no mock theater, more transfer and more repair. A YELLOW learner gets at most one mock. That needs a separate path variant or engine logic; the inventory cannot express it.",
+        "The inventory has no mock-interview objects, gates, labs or targets for Week 14. 'Mock #1/#2' and 'final gates' exist only in the spec's text. This plan treats them as off-path and readiness-gated, which ties to the audit finding that /interview is not actually gated.",
+        "The cold-* capstones re-solve problems whose cap-* versions were credited in Weeks 2-11 (Two Sum, Longest Substring, Valid Parentheses, etc.). This is intentional cold retrieval, but the credit/readiness logic should not count it as a new LeetCode target solve.",
+        "Choice reps (o11-cx-pop-front, o11-speed-slicing, o11-cx-grid-bfs, o11-cx-subsets, o11-cx-memo, o11-cx-tree-space, o11-cx-heap-k) sit right after the reps they ask about. Leaving them out of the path breaks that pairing; the UI may still want to show them as non-credit follow-ups.",
+        "Even with every eligible rep included, required load is 42 against a 75 target. The spare capacity (Thu 6, Fri 12, plus the allowance) relies on mocks and repair to fill it, and those do not count toward the daily rep total."
+      ]
+    }
+  }
+}

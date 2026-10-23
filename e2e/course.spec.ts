@@ -12,9 +12,42 @@ function bundle(passes: { id: string; date: string; over?: Record<string, unknow
   const attempts = passes.map((p, i) => {
     const e = EXERCISE_BY_ID[p.id]
     const stamp = `${p.date}T14:${String(10 + Math.floor(i / 60)).padStart(2, '0')}:${String(i % 60).padStart(2, '0')}.000Z`
-    return { id: `c-e2e-${i}`, exerciseId: p.id, date: p.date, skills: e.skills, stage: e.stage, mode: 'practice', passed: true, attemptsBeforePass: 0, hintsUsed: 0, solutionViewed: false, runtimeErrors: [], startedAt: stamp, completedAt: stamp, retrievalType: 'first-exposure', updatedAt: stamp, ...p.over }
+    return {
+      id: `c-e2e-${i}`,
+      exerciseId: p.id,
+      date: p.date,
+      skills: e.skills,
+      stage: e.stage,
+      mode: 'practice',
+      passed: true,
+      attemptsBeforePass: 0,
+      hintsUsed: 0,
+      solutionViewed: false,
+      runtimeErrors: [],
+      startedAt: stamp,
+      completedAt: stamp,
+      retrievalType: 'first-exposure',
+      updatedAt: stamp,
+      ...p.over
+    }
   })
-  return { name: 'progress.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify({ app: 'reps', version: 1, exportedAt: new Date().toISOString(), attempts, skill_mastery: [], daily_progress: [], review_queue: [], generated_reps: [], study_state: [] })) }
+  return {
+    name: 'progress.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from(
+      JSON.stringify({
+        app: 'reps',
+        version: 1,
+        exportedAt: new Date().toISOString(),
+        attempts,
+        skill_mastery: [],
+        daily_progress: [],
+        review_queue: [],
+        generated_reps: [],
+        study_state: []
+      })
+    )
+  }
 }
 
 const WEEK1 = ['c1-state', 'c1-while'].flatMap((id) => SECTION_BY_ID[id].exercises.map((e) => e.id))
@@ -78,7 +111,7 @@ test('ten qualifying reps complete the day: the flame blazes, the streak starts,
 test('planned rest: Sundays and Christmas ask for nothing, and say the plan is intact', async ({ page }) => {
   for (const [iso, label] of [
     ['2026-11-01T10:00:00-05:00', 'Sunday'],
-    ['2026-12-25T10:00:00-05:00', 'Christmas Day'],
+    ['2026-12-25T10:00:00-05:00', 'Christmas Day']
   ]) {
     await at(page, iso)
     await page.goto('/')
@@ -117,4 +150,112 @@ test('learning objects: a lesson, a worked example by subgoals that hands off to
   // A lab part says so, and is not a rep that counts.
   await page.goto('/rep/lab-savings-goal-build')
   await expect(page.getByTestId('lab-part')).toContainText('Savings Goal Simulator')
+})
+
+test('Today exposes every due lab, checkpoint and target, including locked and carried work', async ({ page }) => {
+  const { createContracts } = await import('@/lib/course/contract')
+  const input = { attempts: [], entries: [], mastery: {}, labStates: {}, exercises: EXERCISE_BY_ID, sections: SECTION_BY_ID }
+  for (const date of ['2026-10-27', '2026-10-28', '2026-12-02']) {
+    await at(page, `${date}T12:00:00-05:00`)
+    await page.goto('/')
+    const expected = createContracts(input).dayContract(date)
+    const today = page.getByTestId('course-today')
+    await expect(today.getByTestId('today-lab')).toHaveCount(expected.labs.length)
+    await expect(today.getByTestId('today-gate')).toHaveCount(expected.gates.length)
+    await expect(today.getByTestId('today-target')).toHaveCount(expected.targets.length)
+    for (const lab of expected.labs) await expect(today.getByRole('link', { name: lab.title, exact: true })).toHaveAttribute('href', `/lab/${lab.id}`)
+    for (const gate of expected.gates) await expect(today.getByTestId('today-gate').filter({ hasText: gate.title })).toHaveAttribute('data-state', gate.state)
+    if (expected.targets.length) await expect(today.getByTestId('today-target').first()).toContainText('Opens after checkpoint')
+  }
+})
+
+test('the primary action starts learning first, then required labs when the rep target is met', async ({ page }) => {
+  await at(page, '2026-10-26T12:00:00-04:00')
+  await page.goto('/')
+  await expect(page.getByTestId('training-start')).toHaveText('Start today')
+  await expect(page.getByTestId('training-start')).toHaveAttribute('href', '/learn/l-state')
+  await page.getByTestId('training-start').click()
+  await page.getByRole('button', { name: 'Mark learning step complete' }).click()
+  await page.getByRole('link', { name: 'Back to today' }).click()
+  await expect(page.getByTestId('training-start')).toHaveAttribute('href', '/learn/l-while')
+  await at(page, '2026-10-27T16:00:00-04:00')
+  await page.goto('/')
+  const qualifying = SECTION_BY_ID['c1-state'].exercises
+    .concat(SECTION_BY_ID['c1-while'].exercises)
+    .filter((e) => ['code', 'output', 'reorder'].includes(e.kind))
+    .slice(0, 10)
+  await page.getByLabel('Import progress file').setInputFiles(bundle(qualifying.map((e) => ({ id: e.id, date: '2026-10-27' }))))
+  await page.goto('/')
+  await expect(page.getByTestId('course-today')).toHaveAttribute('data-complete', 'false')
+  await expect(page.getByTestId('training-start')).toHaveText('Start lab')
+  await expect(page.getByTestId('training-start')).toHaveAttribute('href', '/lab/lab-savings-goal')
+  await expect(page.getByTestId('training-flame')).not.toHaveAttribute('data-flame', 'blaze')
+})
+
+test('Saturday shows open work as optional and February shows the final decision', async ({ page }) => {
+  await at(page, '2026-10-31T12:00:00-04:00')
+  await page.goto('/')
+  await expect(page.getByTestId('course-today')).toHaveAttribute('data-day', 'recovery')
+  await expect(page.getByTestId('course-today')).toContainText('Open work, if you choose')
+  await expect(page.getByTestId('course-today')).not.toContainText('Nothing owed')
+  await at(page, '2027-02-01T12:00:00-05:00')
+  await page.goto('/')
+  await expect(page.getByTestId('course-finished')).toContainText('Not yet ready')
+  await expect(page.getByTestId('course-finished')).not.toContainText('Week 1')
+})
+
+test('every interactive concept loads, steps and resets on a 390px screen with reduced motion', async ({ page }) => {
+  const { DEMOS } = await import('@/lib/demos')
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  for (const demo of DEMOS) {
+    await page.goto(`/demo/${demo.id}`)
+    await expect(page.getByTestId('demo-player')).toBeVisible()
+    const next = page.getByRole('button', { name: /Next step/i })
+    const prediction = page.getByTestId('predict-0')
+    if (await prediction.isVisible()) await prediction.click()
+    await next.click()
+    await page.getByRole('button', { name: /Reset/i }).click()
+    await expect(page.getByTestId('demo-player')).toBeVisible()
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true)
+  }
+})
+
+test('a failed checkpoint makes focused repair the primary action', async ({ page }) => {
+  await at(page, '2026-10-30T12:00:00-04:00')
+  await page.goto('/')
+  await page
+    .getByLabel('Import progress file')
+    .setInputFiles(bundle([{ id: 'c1-g-countdown-steps', date: '2026-10-30', over: { passed: false, attemptsBeforePass: 1, retrievalType: 'cold' } }]))
+  await page.goto('/')
+  await expect(page.getByTestId('training-start')).toHaveText('Do repair first')
+  await expect(page.getByTestId('repair-step')).toBeVisible()
+  await expect(page.getByTestId('today-gate').filter({ hasText: 'Loop control' })).toHaveAttribute('data-state', 'repair')
+})
+
+test('a seen outside solution earns credit only after a rebuild on a later training day', async ({ page }) => {
+  await at(page, '2026-11-06T12:00:00-05:00')
+  await page.goto('/')
+  const stamp = '2026-11-05T16:00:00.000Z'
+  const entry = { id: 'lc:141:new', lc: 141, title: 'Linked List Cycle', date: '2026-11-05', kind: 'new', result: 'solution', at: stamp }
+  const data = {
+    app: 'reps',
+    version: 1,
+    exportedAt: stamp,
+    attempts: [],
+    skill_mastery: [],
+    daily_progress: [],
+    review_queue: [],
+    generated_reps: [],
+    study_state: [{ id: 'solve:lc:141:new', value: entry, updatedAt: stamp }]
+  }
+  await page
+    .getByLabel('Import progress file')
+    .setInputFiles({ name: 'progress.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(data)) })
+  await page.goto('/')
+  const item = page.getByTestId('lc-141')
+  await expect(item.getByTestId('lc-outcome')).toContainText('Not counted yet')
+  await item.getByRole('button', { name: 'I rebuilt it from blank', exact: true }).click()
+  await expect(item.getByTestId('lc-outcome')).toContainText('Counted: rebuilt from blank')
+  await expect(page.getByTestId('today-contract')).toContainText('1 / 12')
 })

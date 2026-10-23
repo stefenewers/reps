@@ -1,6 +1,5 @@
 'use client'
 
-import { COURSE_END } from '@/data/course/calendar'
 import { createContext, useContext, useEffect, useMemo, useState, useSyncExternalStore, type ReactNode } from 'react'
 import { SKILLS } from '@/data/skills'
 import { DAY_BY_DATE, FIRST_DAY, LAST_DAY, PLAN_START, REQUIRED_MODULES } from '@/data/curriculum'
@@ -8,7 +7,7 @@ import { MOCKS } from '@/data/mocks'
 import { PROGRAM_STAGES, type ProgramStage } from '@/data/program'
 import { currentProgramStage, mockProgress, programStageProgress, remainingProgramStages, type StageProgress } from '@/lib/progress'
 import { computeAllMastery, type SkillMastery } from '@/lib/mastery'
-import { clampDate, localDate } from '@/lib/dates'
+import { localDate } from '@/lib/dates'
 import { createLocalStore } from '@/lib/storage/local'
 import { SupabaseRemoteStore } from '@/lib/storage/remote'
 import { SyncEngine } from '@/lib/storage/sync'
@@ -51,7 +50,7 @@ const SKILL_IDS = SKILLS.map((s) => s.id)
 function createRepository(): RepsRepository {
   const sb = getSupabase()
   const engine = new SyncEngine(createLocalStore(), sb ? new SupabaseRemoteStore(sb) : null, {
-    flushDelayMs: { attempts: 300, study_state: 15_000 },
+    flushDelayMs: { attempts: 300, study_state: 15_000 }
   })
   return new RepsRepository(engine, { skillIds: SKILL_IDS, dayFor: (d) => DAY_BY_DATE[d], lastDay: LAST_DAY, planStart: PLAN_START })
 }
@@ -78,7 +77,7 @@ function devAsOf(): string | null {
 
 export function studyToday(now = new Date()): string {
   // The calendar runs to the end of the 14-week course (Jan 31), past the old plan's last day.
-  return devAsOf() ?? clampDate(localDate(now), FIRST_DAY, LAST_DAY > COURSE_END ? LAST_DAY : COURSE_END)
+  return devAsOf() ?? (localDate(now) < FIRST_DAY ? FIRST_DAY : localDate(now))
 }
 
 export function RepsProvider({ children }: { children: ReactNode }) {
@@ -87,12 +86,16 @@ export function RepsProvider({ children }: { children: ReactNode }) {
   const version = useSyncExternalStore(
     (fn) => engine.subscribe(fn),
     () => engine.version,
-    () => 0,
+    () => 0
   )
-  const [today, setToday] = useState(() => studyToday())
+  const [today, setToday] = useState(FIRST_DAY)
   const [userEmail, setUserEmail] = useState<string | null>(null)
 
   useEffect(() => {
+    // Render the same initial calendar on the server and client; load the
+    // learner's actual local date after hydration.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setToday(studyToday())
     void engine.start()
     const sb = getSupabase()
     const sub = sb?.auth.onAuthStateChange((event, session) => {
@@ -126,7 +129,10 @@ export function RepsProvider({ children }: { children: ReactNode }) {
   const studyState = repo.engine.all('study_state')
   const program = useMemo(() => {
     const results = studyState.filter((r) => r.id.startsWith('mock:')).map((r) => r.value as MockResult)
-    const mocks = mockProgress(results, MOCKS.map((m) => m.id))
+    const mocks = mockProgress(
+      results,
+      MOCKS.map((m) => m.id)
+    )
     // Topics are measured on the authored modules (required reps), independent of the calendar.
     const stages = programStageProgress(PROGRAM_STAGES, REQUIRED_MODULES, attempts, mocks)
     return { stages, current: currentProgramStage(stages), remaining: remainingProgramStages(stages), mocks }
@@ -144,7 +150,7 @@ export function RepsProvider({ children }: { children: ReactNode }) {
     mastery,
     today,
     userEmail,
-    program,
+    program
   }
   return <RepsContext.Provider value={value}>{children}</RepsContext.Provider>
 }

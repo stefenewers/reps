@@ -2,6 +2,8 @@
 
 You are picking up a partly finished upgrade of **Reps**, a Next.js 16 + TypeScript app that trains one learner (Stefen) for SWE I / new-grad Python interviews through a 14-week course (Oct 26, 2026 → Jan 31, 2027). Read this file first, then `planning/V2_1_HANDOFF.md` (the detailed state and designs), then the spec `planning/REPS_2_1_SPEC.md`.
 
+**Continuation update:** the implementation described as next work below is now present. Read `planning/V2_1_IMPLEMENTATION.md` for current state, verification and remaining limits; the original instructions are preserved below as historical context.
+
 ## 0. Ground rules
 
 - **Branch: `v21-work`** (pushed to `origin`). Do all work there. **Never merge into `main`** and never push to `main`; `main` (`e3ae928`) is V2 and is live on Vercel. The user merges.

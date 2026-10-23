@@ -84,7 +84,9 @@ test('a code rep runs real Python in the browser and an infinite loop is stopped
   await page.locator('.cm-content').click()
   await page.keyboard.press('ControlOrMeta+a')
   await page.keyboard.press('Backspace')
-  await page.keyboard.insertText('def contains_duplicate(nums):\n    seen = set()\n    for n in nums:\n        if n in seen:\n            return True\n        seen.add(n)\n    return False\n')
+  await page.keyboard.insertText(
+    'def contains_duplicate(nums):\n    seen = set()\n    for n in nums:\n        if n in seen:\n            return True\n        seen.add(n)\n    return False\n'
+  )
   await page.getByTestId('submit').click()
   await expect(page.getByTestId('rep-complete')).toBeVisible({ timeout: 90_000 })
 })
@@ -117,14 +119,14 @@ test('a re-solve that needed help is logged, and comes back as a redo on the nex
   await page.goto('/')
   const list = page.getByTestId('leetcode-list')
   await expect(list).toBeVisible()
-  await list.getByRole('button', { name: 'Needed help' }).first().click()
+  await list.getByRole('button', { name: 'Small hint', exact: true }).first().click()
   await expect(list.getByText(/1 of \d logged/)).toBeVisible()
 
   // It is in the solve log, with a redo queued for the next working day.
   await page.goto('/log')
   await expect(page.getByRole('heading', { name: 'Solve log' })).toBeVisible()
   await expect(page.locator('tbody tr')).toHaveCount(1)
-  await expect(page.locator('tbody tr').first()).toContainText('Hinted')
+  await expect(page.locator('tbody tr').first()).toContainText('Small hint')
   await expect(page.locator('tbody tr').first()).toContainText('Oct 13')
   await expect(page.getByRole('heading', { name: 'Re-solve queue' })).toBeVisible()
   await expect(page.getByText(/^Redo/).first()).toBeVisible()
@@ -178,7 +180,7 @@ test('the public demo: no app chrome, a rep runs against its tests, the base pla
   expect(await page.evaluate(() => Object.keys(localStorage).filter((k) => /draft|attempt|solve/.test(k)).length)).toBe(0)
 })
 
-test('a problem is reached through its bridge: last block rep → ready → attempt logged → rebuild and repair → the re-solve is queued', async ({ page }) => {
+test('a problem is reached through its bridge: last block rep → ready → small-hint solve → spaced re-solve queued', async ({ page }) => {
   // LC 128, Longest Consecutive Sequence: everything before the last rep of its bridge is done.
   const target = TARGET_BY_LC.get(128)!
   const order = PLAN_DAYS.flatMap((d) => d.planOrder ?? [])
@@ -186,12 +188,30 @@ test('a problem is reached through its bridge: last block rep → ready → atte
   const last = bridge[bridge.length - 1]
   // What Stefen had already passed before the plan began (the sprint, with its dictionary checks), then the plan up to here.
   const sprint = (JSON.parse(readFileSync('planning/done.json', 'utf8')) as string[]).filter((id) => EXERCISE_BY_ID[id])
-  const before = [...new Set([...sprint, ...order.slice(0, order.indexOf(last)).filter((k) => !k.startsWith('lc:')), ...target.blocks.flatMap((b) => b.evidence ?? [])])]
+  const before = [
+    ...new Set([...sprint, ...order.slice(0, order.indexOf(last)).filter((k) => !k.startsWith('lc:')), ...target.blocks.flatMap((b) => b.evidence ?? [])])
+  ]
   const day = PLAN_DAYS.find((d) => d.planOrder?.includes('lc:128'))!.date
   const stamp = `${PLAN_DAYS[0].date}T15:00:00.000Z`
   const attempts = before.map((id, i) => {
     const e = EXERCISE_BY_ID[id]
-    return { id: `e2e-${i}`, exerciseId: id, date: PLAN_DAYS[0].date, skills: e.skills, stage: e.stage, mode: 'learn', passed: true, attemptsBeforePass: 0, hintsUsed: 0, solutionViewed: false, runtimeErrors: [], startedAt: stamp, completedAt: stamp, retrievalType: 'first-exposure', updatedAt: stamp }
+    return {
+      id: `e2e-${i}`,
+      exerciseId: id,
+      date: PLAN_DAYS[0].date,
+      skills: e.skills,
+      stage: e.stage,
+      mode: 'learn',
+      passed: true,
+      attemptsBeforePass: 0,
+      hintsUsed: 0,
+      solutionViewed: false,
+      runtimeErrors: [],
+      startedAt: stamp,
+      completedAt: stamp,
+      retrievalType: 'first-exposure',
+      updatedAt: stamp
+    }
   })
   const state = readiness(target, new Set(before))
   expect(state.ready).toBe(false)
@@ -199,7 +219,25 @@ test('a problem is reached through its bridge: last block rep → ready → atte
 
   await page.clock.setFixedTime(new Date(`${day}T10:00:00-04:00`))
   await page.goto('/')
-  await page.getByLabel('Import progress file').setInputFiles({ name: 'progress.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify({ app: 'reps', version: 1, exportedAt: stamp, attempts, skill_mastery: [], daily_progress: [], review_queue: [], generated_reps: [], study_state: [] })) })
+  await page
+    .getByLabel('Import progress file')
+    .setInputFiles({
+      name: 'progress.json',
+      mimeType: 'application/json',
+      buffer: Buffer.from(
+        JSON.stringify({
+          app: 'reps',
+          version: 1,
+          exportedAt: stamp,
+          attempts,
+          skill_mastery: [],
+          daily_progress: [],
+          review_queue: [],
+          generated_reps: [],
+          study_state: []
+        })
+      )
+    })
   await expect(page.getByText(`Imported ${attempts.length} new attempts`)).toBeVisible()
 
   // The problem is a destination: its building blocks are listed, and exactly one is still open.
@@ -224,15 +262,10 @@ test('a problem is reached through its bridge: last block rep → ready → atte
   await expect(item.getByTestId('lc-readiness')).toContainText(`Ready: all ${state.total} building blocks in place`)
   await expect(item.getByRole('link', { name: 'Walkthrough' })).toHaveAttribute('href', /youtube\.com\/watch/)
 
-  // The attempt needed help: that is not the end. Rebuild it, then go back down the ladder to the block that broke.
-  await item.getByRole('button', { name: 'Needed help' }).click()
-  const rebuild = item.getByTestId('lc-rebuild')
-  await expect(rebuild).toContainText('rebuild it')
-  await rebuild.getByRole('button', { name: 'I rebuilt it from blank' }).click()
-  await expect(rebuild.getByRole('button', { name: 'Rebuilt from blank' })).toHaveAttribute('aria-pressed', 'true')
-  const broke = target.blocks.findLast((b) => b.reps?.length)!
-  await rebuild.getByRole('button', { name: broke.label }).click()
-  await expect(page).toHaveURL(new RegExp(`/rep/${broke.reps![0]}\\?s=`))
+  // A small hint followed by an independent finish is assisted credit. It
+  // does not require rebuilding a revealed solution.
+  await item.getByRole('button', { name: 'Small hint', exact: true }).click()
+  await expect(item.getByTestId('lc-outcome')).toContainText('Counted, as assisted')
 
   // The first solve is on the record, and the problem comes back cold: its re-solve is in the queue.
   await page.goto('/problems')
@@ -250,11 +283,45 @@ test('reactivation: Today offers a warm-up session of existing reps, it runs end
   const stamp = '2026-10-04T15:00:00.000Z'
   const attempts = sprint.map((id, i) => {
     const e = EXERCISE_BY_ID[id]
-    return { id: `e2e-r${i}`, exerciseId: id, date: '2026-10-04', skills: e.skills, stage: e.stage, mode: 'learn', passed: true, attemptsBeforePass: 0, hintsUsed: 0, solutionViewed: false, runtimeErrors: [], startedAt: stamp, completedAt: stamp, retrievalType: 'first-exposure', updatedAt: stamp }
+    return {
+      id: `e2e-r${i}`,
+      exerciseId: id,
+      date: '2026-10-04',
+      skills: e.skills,
+      stage: e.stage,
+      mode: 'learn',
+      passed: true,
+      attemptsBeforePass: 0,
+      hintsUsed: 0,
+      solutionViewed: false,
+      runtimeErrors: [],
+      startedAt: stamp,
+      completedAt: stamp,
+      retrievalType: 'first-exposure',
+      updatedAt: stamp
+    }
   })
   await page.clock.setFixedTime(new Date('2026-10-12T09:30:00-04:00'))
   await page.goto('/')
-  await page.getByLabel('Import progress file').setInputFiles({ name: 'progress.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify({ app: 'reps', version: 1, exportedAt: stamp, attempts, skill_mastery: [], daily_progress: [], review_queue: [], generated_reps: [], study_state: [] })) })
+  await page
+    .getByLabel('Import progress file')
+    .setInputFiles({
+      name: 'progress.json',
+      mimeType: 'application/json',
+      buffer: Buffer.from(
+        JSON.stringify({
+          app: 'reps',
+          version: 1,
+          exportedAt: stamp,
+          attempts,
+          skill_mastery: [],
+          daily_progress: [],
+          review_queue: [],
+          generated_reps: [],
+          study_state: []
+        })
+      )
+    })
   await expect(page.getByText(`Imported ${attempts.length} new attempts`)).toBeVisible()
 
   // The card sits above the normal queue, and says where the plan resumes afterwards.
@@ -265,7 +332,10 @@ test('reactivation: Today offers a warm-up session of existing reps, it runs end
   await expect(card).toContainText('After this · Resume:')
   await expect(page.getByTestId('today-training')).toBeVisible()
   // Last time's answer is still saved as a draft on this device: starting the session must not hand it back.
-  await page.evaluate(([id, code]) => window.localStorage.setItem(`reps-draft:${id}`, code), [REACTIVATION_REPS[0], EXERCISE_BY_ID[REACTIVATION_REPS[0]].solution!])
+  await page.evaluate(
+    ([id, code]) => window.localStorage.setItem(`reps-draft:${id}`, code),
+    [REACTIVATION_REPS[0], EXERCISE_BY_ID[REACTIVATION_REPS[0]].solution!]
+  )
   await card.getByTestId('reactivate-start').click()
 
   // Every rep in order, each starting from its bare starter (never last time's answer), each run against its tests.
@@ -273,7 +343,10 @@ test('reactivation: Today offers a warm-up session of existing reps, it runs end
     await expect(page).toHaveURL(new RegExp(`/rep/${id}\\?s=`))
     const e = EXERCISE_BY_ID[id]
     // A line of the answer that the starter does not already have (debug reps share most lines with their fix).
-    const tell = e.solution!.split('\n').map((l) => l.trim()).find((l) => l.length > 6 && !(e.starterCode ?? '').includes(l))
+    const tell = e
+      .solution!.split('\n')
+      .map((l) => l.trim())
+      .find((l) => l.length > 6 && !(e.starterCode ?? '').includes(l))
     await expect(page.locator('.cm-content')).toBeVisible()
     if (tell) await expect(page.locator('.cm-content')).not.toContainText(tell)
     await answer(page, e)
@@ -302,9 +375,45 @@ function progressBundle(upTo: string, date: string) {
   const stamp = `${date}T15:00:00.000Z`
   const attempts = ids.map((id, i) => {
     const e = EXERCISE_BY_ID[id]
-    return { id: `e2e-t${i}`, exerciseId: id, date, skills: e.skills, stage: e.stage, mode: 'learn', passed: true, attemptsBeforePass: 0, hintsUsed: 0, solutionViewed: false, runtimeErrors: [], startedAt: stamp, completedAt: stamp, retrievalType: 'first-exposure', updatedAt: stamp }
+    return {
+      id: `e2e-t${i}`,
+      exerciseId: id,
+      date,
+      skills: e.skills,
+      stage: e.stage,
+      mode: 'learn',
+      passed: true,
+      attemptsBeforePass: 0,
+      hintsUsed: 0,
+      solutionViewed: false,
+      runtimeErrors: [],
+      startedAt: stamp,
+      completedAt: stamp,
+      retrievalType: 'first-exposure',
+      updatedAt: stamp
+    }
   })
-  return { count: attempts.length, order, file: { name: 'progress.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify({ app: 'reps', version: 1, exportedAt: stamp, attempts, skill_mastery: [], daily_progress: [], review_queue: [], generated_reps: [], study_state: [] })) } }
+  return {
+    count: attempts.length,
+    order,
+    file: {
+      name: 'progress.json',
+      mimeType: 'application/json',
+      buffer: Buffer.from(
+        JSON.stringify({
+          app: 'reps',
+          version: 1,
+          exportedAt: stamp,
+          attempts,
+          skill_mastery: [],
+          daily_progress: [],
+          review_queue: [],
+          generated_reps: [],
+          study_state: []
+        })
+      )
+    }
+  }
 }
 
 test('training: briefing → drill → repair and back → combine → the target is ready → prove → the review says what changed', async ({ page }) => {
@@ -403,7 +512,9 @@ test('training: briefing → drill → repair and back → combine → the targe
   await page.getByTestId('more').locator('summary').click()
   const review = page.getByTestId('session-review')
   await expect(review).toContainText('What changed because you trained today')
-  expect(await review.getByTestId('review-came').locator('li').count() + (await review.getByTestId('review-improved').locator('li').count())).toBeGreaterThan(0)
+  expect((await review.getByTestId('review-came').locator('li').count()) + (await review.getByTestId('review-improved').locator('li').count())).toBeGreaterThan(
+    0
+  )
   await expect(review.getByTestId('review-next')).not.toBeEmpty()
   await page.goto('/problems')
   await expect(page.getByTestId('target-1').getByTestId('target-status')).toHaveText('Solved unaided')
@@ -521,7 +632,9 @@ test('learn mode teaches first: the concept comes before the question, then goes
   await expect(page.getByTestId('concept-video').first()).toHaveAttribute('href', /youtube\.com\/watch/)
 })
 
-test('a shown solution is for looking, then rebuilding: the editor starts over and the solution hides once you type; unclear wording is one tap to flag', async ({ page }) => {
+test('a shown solution is for looking, then rebuilding: the editor starts over and the solution hides once you type; unclear wording is one tap to flag', async ({
+  page
+}) => {
   const e = EXERCISE_BY_ID['o2-bookends']
   await page.goto(`/rep/${e.id}`)
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(e.title)

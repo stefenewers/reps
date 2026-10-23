@@ -1,6 +1,8 @@
 'use client'
 
 import Link from 'next/link'
+import DemoEmbed from '@/components/demos/demo-embed'
+import LearningComplete from '@/components/course/learning-complete'
 import { useState } from 'react'
 import CodeView from '@/components/code-view'
 import Markdown from '@/components/markdown'
@@ -21,6 +23,16 @@ export default function WorkedExampleView({ example }: { example: WorkedExample 
         <p className="label">The task</p>
         <Markdown text={example.problem} className="mt-1 !text-[14.5px]" />
       </section>
+      {example.manualReasoning && (
+        <section className="rounded-xl bg-learn-soft p-4">
+          <p className="label">Manual reasoning</p>
+          <ol className="mt-2 list-decimal space-y-2 pl-5 text-sm leading-relaxed">
+            {example.manualReasoning.map((step) => (
+              <li key={step}>{step}</li>
+            ))}
+          </ol>
+        </section>
+      )}
       <ol className="flex flex-col gap-4">
         {example.subgoals.slice(0, shown).map((g, i) => (
           <li key={i} className="celebrate-in rounded-xl px-4 py-3.5 shadow-[inset_2px_0_0_var(--learn)]" data-testid="subgoal">
@@ -33,11 +45,15 @@ export default function WorkedExampleView({ example }: { example: WorkedExample 
       </ol>
       {all ? (
         <section className="celebrate-in flex flex-col gap-2">
-          <p className="label">All together</p>
+          {example.demoId && <DemoEmbed id={example.demoId} />}
+          <p className="label">Code · all together</p>
+          <LearningComplete stateKey={`example:${example.id}`} />
           <CodeView code={example.solution} />
           <div className="mt-3 rounded-xl bg-learn-soft px-4 py-3.5">
             <p className="text-[14.5px] font-semibold text-ink">Rebuild it</p>
-            <p className="mt-0.5 text-[13.5px] leading-relaxed text-ink-2">Now write it yourself from a blank editor. The example stays here; the rep will not show it.</p>
+            <p className="mt-0.5 text-[13.5px] leading-relaxed text-ink-2">
+              Now write it yourself from a blank editor. The example stays here; the rep will not show it.
+            </p>
             <Link href={`/rep/${example.reconstructionExerciseId}`} className="btn btn-accent mt-3" data-testid="rebuild">
               Rebuild it <IconArrowRight size={14} />
             </Link>

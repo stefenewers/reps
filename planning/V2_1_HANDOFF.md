@@ -1,5 +1,9 @@
 # Reps V2.1 — handoff (read this first)
 
+## Latest Codex continuation
+
+All 14 weeks are curated and integrated; Today uses the shared daily prescription and contract; 11 demos and ten new visual worked examples/reconstruction reps are implemented, with earned events. See [V2_1_IMPLEMENTATION.md](V2_1_IMPLEMENTATION.md) for the implementation, budgets, validation and remaining limits. Earlier sections below are historical and describe the incoming branch. All work remains on `v21-work`; never merge or push `main`.
+
 Last updated: Oct 23, 2026 (late), PAUSED by the user to save usage. Both workflows were STOPPED; all outputs are saved in `planning/v21-artifacts/`. Spec: `planning/REPS_2_1_SPEC.md` (the V2.1 request, verbatim in substance). V2 architecture: `docs/reps-2.md`. Original V2 spec: `REPS_2_MASTER_SPEC.md`.
 
 **Do not merge anything into `main`.** `main` = `e3ae928` is V2, live on Vercel (https://reps-five-jade.vercel.app). The course switches Today/Plan/Progress to course mode on **Mon Oct 26, 2026** automatically.

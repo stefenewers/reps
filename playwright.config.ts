@@ -8,5 +8,19 @@ export default defineConfig({
   fullyParallel: false,
   use: { baseURL: `http://localhost:${PORT}`, trace: 'retain-on-failure' },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'], viewport: { width: 1440, height: 900 } } }],
-  webServer: { command: `npm run dev -- --port ${PORT}`, url: `http://localhost:${PORT}`, reuseExistingServer: true, timeout: 120_000 },
+  webServer: [
+    {
+      command: `node scripts/serve-test-pyodide.mjs ${PORT + 1}`,
+      url: `http://localhost:${PORT + 1}/pyodide.mjs`,
+      reuseExistingServer: !process.env.CI,
+      timeout: 30_000
+    },
+    {
+      command: `npm run dev -- --port ${PORT}`,
+      url: `http://localhost:${PORT}`,
+      reuseExistingServer: !process.env.CI,
+      timeout: 120_000,
+      env: { NEXT_PUBLIC_PYODIDE_INDEX_URL: `http://localhost:${PORT + 1}/` }
+    }
+  ]
 })

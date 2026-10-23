@@ -28,7 +28,9 @@ function problemMeta(lc: number): LeetcodeItem | undefined {
   const m = lcMeta(lc)
   if (m) return m
   const u = PROBLEM_URLS[lc]
-  return u ? ({ lc, title: u.title, difficulty: '', pattern: '', type: 'new', mode: null, video: null, url: u.neetcode ?? u.leetcode } as unknown as LeetcodeItem) : undefined
+  return u
+    ? ({ lc, title: u.title, difficulty: '', pattern: '', type: 'new', mode: null, video: null, url: u.neetcode ?? u.leetcode } as unknown as LeetcodeItem)
+    : undefined
 }
 
 /**
@@ -52,7 +54,10 @@ export default function CourseDashboard() {
 
   return (
     <main className="relative flex-1 bg-canvas">
-      <div aria-hidden="true" className="dot-grid pointer-events-none absolute inset-x-0 top-0 h-[360px] [mask-image:linear-gradient(to_bottom,black,transparent)]" />
+      <div
+        aria-hidden="true"
+        className="dot-grid pointer-events-none absolute inset-x-0 top-0 h-[360px] [mask-image:linear-gradient(to_bottom,black,transparent)]"
+      />
       <div className="relative mx-auto w-full max-w-[1120px] px-5 pb-10 pt-12 sm:px-8">
         <header className="flex flex-wrap items-end justify-between gap-x-10 gap-y-6">
           <div>
@@ -85,7 +90,9 @@ export default function CourseDashboard() {
 
         <details className="group mt-10" data-testid="more">
           <summary className="flex cursor-pointer list-none items-center gap-2 px-2 text-[13.5px] font-medium text-ink-2 hover:text-ink [&::-webkit-details-marker]:hidden">
-            <span aria-hidden="true" className="inline-block transition-transform group-open:rotate-90">›</span>
+            <span aria-hidden="true" className="inline-block transition-transform group-open:rotate-90">
+              ›
+            </span>
             More: session review, the road to ready, skills, progress file
           </summary>
           <SessionReviewCard training={training} />
@@ -106,7 +113,10 @@ export default function CourseDashboard() {
         </details>
 
         <div className="mt-10 flex flex-wrap items-end justify-between gap-4">
-          <WinstonPerch className="mx-2" />
+          <WinstonPerch
+            className="mx-2"
+            mood={cd.day.type !== 'training' ? 'rest' : cd.flame === 'blaze' ? 'celebrate' : cd.doneToday > 0 ? 'awake' : 'rest'}
+          />
           <ProgressIO />
         </div>
       </div>

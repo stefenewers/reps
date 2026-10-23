@@ -8,7 +8,7 @@ import type { TestCase } from '@/lib/types'
  */
 
 export const PYODIDE_VERSION = '314.0.7'
-export const PYODIDE_INDEX_URL = `https://cdn.jsdelivr.net/pyodide/v${PYODIDE_VERSION}/full/`
+export const PYODIDE_INDEX_URL = process.env.NEXT_PUBLIC_PYODIDE_INDEX_URL ?? `https://cdn.jsdelivr.net/pyodide/v${PYODIDE_VERSION}/full/`
 export const DEFAULT_TIMEOUT_MS = 5000
 const LOAD_TIMEOUT_MS = 90_000
 
@@ -134,9 +134,18 @@ export class PythonRunner {
           stdout: '',
           error: `Stopped after ${Math.round(timeoutMs / 1000)}s. Possible infinite loop: check that every loop makes progress. Python was restarted.`,
           errorLine: null,
-          tests: tests.map((t) => ({ name: t.name ?? t.call ?? 'test', passed: false, hidden: Boolean(t.hidden), call: t.call ?? null, expected: null, actual: null, error: 'Not run (timed out)', stdout: '' })),
+          tests: tests.map((t) => ({
+            name: t.name ?? t.call ?? 'test',
+            passed: false,
+            hidden: Boolean(t.hidden),
+            call: t.call ?? null,
+            expected: null,
+            actual: null,
+            error: 'Not run (timed out)',
+            stdout: ''
+          })),
           timedOut: true,
-          durationMs: performance.now() - started,
+          durationMs: performance.now() - started
         }
       }
       this.reset()
@@ -157,7 +166,7 @@ function withTimeout<T>(p: Promise<T>, ms: number, message: string): Promise<T> 
       (e) => {
         clearTimeout(timer)
         reject(e)
-      },
+      }
     )
   })
 }
