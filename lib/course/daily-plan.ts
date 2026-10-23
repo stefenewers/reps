@@ -1,8 +1,9 @@
 import { COURSE_END, COURSE_START, dailyTarget, dayType } from '@/data/course/calendar'
 import { DAY_PLAN, SCHEDULE } from '@/data/course/schedule'
+import { transferGrade } from '@/lib/course/readiness'
 import { UNIT_BY_ID } from '@/data/course/units'
 import { createContracts, type ContractInput } from '@/lib/course/contract'
-import { creditReason, dailyCredits } from '@/lib/course/credit'
+import { creditReason, dailyCredits, validAttempt } from '@/lib/course/credit'
 import { courseStatus, purposeOf, unitInventory, type CourseQueueItem } from '@/lib/course/routing'
 
 /** The course prescription shared by Today and the full-course simulation.
@@ -11,6 +12,7 @@ import { courseStatus, purposeOf, unitInventory, type CourseQueueItem } from '@/
  */
 export function courseDailyPlan(date: string, input: ContractInput): CourseQueueItem[] {
   if (date < COURSE_START || date > COURSE_END || dayType(date) === 'rest') return []
+  input = { ...input, attempts: input.attempts.filter((a) => validAttempt(a) && a.date <= date), entries: input.entries.filter((e) => e.date <= date) }
   const contract = createContracts(input).dayContract(date)
   const ctx = { ...input, today: date }
   const statuses = courseStatus(ctx)
@@ -33,13 +35,14 @@ export function courseDailyPlan(date: string, input: ContractInput): CourseQueue
   const rep = (id: string, unitId: string, required: boolean, purpose = purposeOf(input.exercises[id])) =>
     add({ key: id, exerciseId: id, unitId, required, purpose })
   for (const r of contract.repair) for (const id of r.reps) rep(id, statuses.find((s) => s.gates.some((g) => g.gate.id === r.gateId))!.unit.id, true, 'repair')
-  // Path reps are deliberately not skipped merely because a few drills produced
-  // placement evidence. A learner can still choose a placement checkpoint explicitly.
+  // Pre-course evidence opens placement; progress through today's teaching does not.
   for (const s of statuses) {
     if (s.locked || s.unit.week > (active?.unit.week ?? contract.week) || !introduced.has(s.unit.id) || s.gates.some((g) => g.failed && g.repair.length))
       continue
     if (s.state === 'ready' || s.state === 'maintenance') continue
-    for (const e of s.path) if (!passed.has(e.id)) rep(e.id, s.unit.id, true)
+    if (s.route === 'placement') {
+      for (const g of s.gates) for (const id of g.next) rep(id, s.unit.id, true, 'gate')
+    } else for (const e of s.path) if (!passed.has(e.id)) rep(e.id, s.unit.id, true)
   }
   for (const g of contract.gates)
     if (g.state === 'open' && statuses.find((s) => s.unit.id === g.unitId)?.done === statuses.find((s) => s.unit.id === g.unitId)?.total)
@@ -65,11 +68,18 @@ export function courseDailyPlan(date: string, input: ContractInput): CourseQueue
   const pathSlots = Math.max(0, Math.min(remaining - reserved, target - Math.ceil(0.15 * target) - reserved - pathCount))
   const required = out.filter((q) => q.purpose === 'repair' || q.purpose === 'gate' || q.purpose === 'problem')
   const paths = out.filter((q) => !required.includes(q)).slice(0, pathSlots)
-  const selected = [...out.filter((q) => q.purpose === 'repair'), ...paths, ...required.filter((q) => q.purpose !== 'repair')]
+  const placementGates = required.filter((q) => q.purpose === 'gate' && statuses.some((s) => s.unit.id === q.unitId && s.route === 'placement'))
+  const selected = [
+    ...out.filter((q) => q.purpose === 'repair'),
+    ...placementGates,
+    ...paths,
+    ...required.filter((q) => q.purpose !== 'repair' && !placementGates.includes(q))
+  ]
   if (selected.length >= remaining) return selected
 
   // Optional inventory is limited to introduced units and earlier skills.
-  // Use a fresh rep first, then a spaced repeat. Never repeat a rep twice today.
+  // Due retrieval precedes fresh practice. A repeated rep needs three calendar
+  // days of spacing; a first exposure is labeled practice, never cold retrieval.
   const focus = new Set(DAY_PLAN[date]?.focusUnits ?? [])
   const eligible = statuses.filter((s) => !s.locked && s.unit.week <= (active?.unit.week ?? contract.week) && introduced.has(s.unit.id))
   const ordered = [...eligible.filter((s) => focus.has(s.unit.id)), ...eligible.filter((s) => !focus.has(s.unit.id)).reverse()]
@@ -80,8 +90,29 @@ export function courseDailyPlan(date: string, input: ContractInput): CourseQueue
       )
       .map((e) => ({ key: e.id, exerciseId: e.id, unitId: s.unit.id, purpose: 'retrieve' as const, required: false }))
   )
+  // Week 14 keeps weak transfer evidence in practice rather than using mocks
+  // as a substitute for learning. Timed singles remain in the required path.
+  const transferBank = input.sections['c13-transfer']?.exercises ?? []
+  const grade = transferGrade(
+    input.attempts,
+    input.exercises,
+    transferBank.map((e) => e.id)
+  ).grade
+  const transferPractice: CourseQueueItem[] =
+    contract.week === 14 && active?.unit.week === 14 && grade !== 'green'
+      ? transferBank
+          .filter((e) => ['code', 'output', 'reorder'].includes(e.kind) && !passed.has(e.id))
+          .map((e) => ({ key: e.id, exerciseId: e.id, unitId: 'w13-transfer', purpose: 'transfer', required: false }))
+      : []
   const selectedKeys = new Set(selected.map((q) => q.key))
-  for (const q of [...flex.filter((q) => !passed.has(q.key)), ...flex.filter((q) => passed.has(q.key))]) {
+  const lastPass = new Map<string, string>()
+  for (const a of input.attempts)
+    if (passed.has(a.exerciseId) && a.passed && (!lastPass.has(a.exerciseId) || a.date > lastPass.get(a.exerciseId)!)) lastPass.set(a.exerciseId, a.date)
+  const due = flex
+    .filter((q) => lastPass.has(q.key) && Date.parse(date) - Date.parse(lastPass.get(q.key)!) >= 3 * 86_400_000)
+    .sort((a, b) => lastPass.get(a.key)!.localeCompare(lastPass.get(b.key)!))
+  const fresh = flex.filter((q) => !passed.has(q.key)).map((q) => ({ ...q, purpose: 'extra' as const }))
+  for (const q of [...transferPractice, ...due, ...fresh]) {
     if (selected.length >= Math.max(0, remaining - reserved + required.length)) break
     if (done.has(q.key) || selectedKeys.has(q.key)) continue
     // Do not pull a later required path rep into an earlier flex slot.

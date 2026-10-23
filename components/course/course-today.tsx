@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { useMockGate } from '@/components/use-mock-gate'
 import EarnedMoment from '@/components/course/earned-moment'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
@@ -31,7 +32,13 @@ export default function CourseToday({ plan, cd, lcUrl }: { plan: Plan; training:
   const router = useRouter()
   const [busy, setBusy] = useState(false)
   const [stopped, setStopped] = useState(false)
+  const mockGate = useMockGate()
   const c = cd.dayContract
+  const placement = cd.course.statuses.find((s) => !s.locked && s.route === 'placement' && s.unit.week <= cd.week.number)
+  const placementItems: PlanItem[] =
+    placement?.gates.flatMap((g) =>
+      g.next.map((exerciseId) => ({ key: exerciseId, exerciseId, title: g.gate.title, kind: 'gate' as const, units: 1, done: false }))
+    ) ?? []
   const complete = c.type === 'training' && c.complete
   const recovery = c.type === 'recovery'
   const target = recovery ? cd.day.optionalTarget : c.reps.target
@@ -64,22 +71,24 @@ export default function CourseToday({ plan, cd, lcUrl }: { plan: Plan; training:
   const gate = c.gates.find((g) => g.state === 'open')
   const outside = c.targets.find((t) => t.state === 'open')
   const openItems = c.labs.some((l) => l.state !== 'done') || c.gates.some((g) => g.state !== 'cleared') || c.targets.some((t) => t.state !== 'done')
-  const learningNeeded = !c.reps.met && !recovery && learn
+  const learningNeeded = !placement && !c.reps.met && !recovery && learn
   const main = complete
     ? { label: 'Day complete', href: '' }
     : repair.length
       ? { label: 'Do repair first', href: '' }
-      : learningNeeded
-        ? { label: 'Start today', href: learningNeeded.href }
-        : remainingReps.length
-          ? { label: c.reps.done ? 'Continue today' : 'Start today', href: '' }
-          : lab
-            ? { label: 'Start lab', href: `/lab/${lab.id}` }
-            : gate
-              ? { label: 'Start checkpoint', href: '' }
-              : outside
-                ? { label: 'Start target', href: lcUrl(outside.lc) ?? practiceUrl(outside.lc) ?? '/problems' }
-                : undefined
+      : placementItems.length
+        ? { label: 'Try placement checkpoint', href: '' }
+        : learningNeeded
+          ? { label: 'Start today', href: learningNeeded.href }
+          : remainingReps.length
+            ? { label: c.reps.done ? 'Continue today' : 'Start today', href: '' }
+            : lab
+              ? { label: 'Start lab', href: `/lab/${lab.id}` }
+              : gate
+                ? { label: 'Start checkpoint', href: '' }
+                : outside
+                  ? { label: 'Start target', href: lcUrl(outside.lc) ?? practiceUrl(outside.lc) ?? '/problems' }
+                  : undefined
 
   const startReps = async (items: PlanItem[], title = "Today's training") => {
     const ids = items.flatMap((i) => (i.exerciseId ? [i.exerciseId] : []))
@@ -119,6 +128,7 @@ export default function CourseToday({ plan, cd, lcUrl }: { plan: Plan; training:
   }
   const primary = () => {
     if (repair.length) void startReps(repair, 'Focused repair')
+    else if (placementItems.length) void startReps(placementItems, 'Placement checkpoint')
     else if (remainingReps.length) void startReps(remainingReps)
     else if (gate) startGate(gate.id)
   }
@@ -262,6 +272,30 @@ export default function CourseToday({ plan, cd, lcUrl }: { plan: Plan; training:
       </div>
       {!complete && (
         <div className="border-t border-line p-6 sm:px-8" data-testid="execution-stack">
+          {cd.week.number === 14 && (
+            <div className="mb-5 rounded-xl bg-surface p-4" data-testid="week14-route" data-grade={mockGate.grade}>
+              <p className="eyebrow text-muted">Interview route · {mockGate.grade}</p>
+              <p className="mt-2 text-sm">{mockGate.note}</p>
+              <p className="mt-1 text-sm text-muted">
+                {mockGate.done} mocks completed · {mockGate.allowed} allowed by your transfer evidence.
+              </p>
+              <Link className="btn btn-sm mt-3" href={mockGate.allowed > mockGate.done ? '/interview' : '/plan'}>
+                {mockGate.allowed > mockGate.done ? 'Open interview practice' : 'Review transfer and repair work'}
+              </Link>
+            </div>
+          )}
+          {placementItems.length > 0 && (
+            <div className="mb-5 rounded-xl bg-cold-soft p-4" data-testid="placement-step">
+              <p className="eyebrow text-cold">Prove what you already know</p>
+              <p className="mt-2 text-sm">
+                Earlier work suggests you know {placement!.unit.title.toLowerCase()}. Pass a cold checkpoint to skip its teaching. If it needs work, a short
+                repair comes first.
+              </p>
+              <button className="btn btn-sm mt-3" disabled={busy} onClick={() => void startReps(placementItems, 'Placement checkpoint')}>
+                Try placement checkpoint
+              </button>
+            </div>
+          )}
           {repair.length > 0 && (
             <div className="mb-5 rounded-xl bg-surface p-4" data-testid="repair-step">
               <p className="eyebrow text-repair">Repair first</p>
@@ -380,6 +414,18 @@ export default function CourseToday({ plan, cd, lcUrl }: { plan: Plan; training:
           <p className="text-sm text-ink-2">
             Week {cd.week.number} · {cd.weekContract.output.done} / {cd.weekContract.output.target} qualifying reps
           </p>
+          <p className="mt-2 text-sm text-muted">
+            {cd.weekContract.gates.filter((g) => g.cleared).length} checkpoints cleared · {cd.weekContract.labs.filter((l) => l.done && !l.optional).length}{' '}
+            builds completed this week.
+          </p>
+          {cd.weekContract.complete && (
+            <p className="mt-3 font-semibold text-green-ink" data-testid="week-complete">
+              Week {cd.week.number} complete. You met the output, build, checkpoint and target requirements.
+            </p>
+          )}
+          <Link href="/progress" className="mt-3 inline-block text-sm underline underline-offset-2">
+            See what changed and what comes next
+          </Link>
           {stopped ? (
             <p className="mt-4 font-medium" data-testid="stopped">
               Good. See you tomorrow.

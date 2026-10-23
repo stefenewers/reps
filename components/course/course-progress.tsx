@@ -21,8 +21,20 @@ import type { WeekState } from '@/lib/course/contract'
  * contract. Time is supporting telemetry, folded away.
  */
 
-const STATE_LABEL: Record<WeekState, string> = { upcoming: 'Upcoming', 'on-track': WEEK_STATUS_LABEL['on-track'], recoverable: WEEK_STATUS_LABEL.recoverable, 'off-track': WEEK_STATUS_LABEL['off-track'], complete: 'Complete' }
-const STATE_TONE: Record<WeekState, string> = { upcoming: 'text-faint', 'on-track': 'text-green-ink', recoverable: 'text-repair', 'off-track': 'text-repair', complete: 'text-green-ink' }
+const STATE_LABEL: Record<WeekState, string> = {
+  upcoming: 'Upcoming',
+  'on-track': WEEK_STATUS_LABEL['on-track'],
+  recoverable: WEEK_STATUS_LABEL.recoverable,
+  'off-track': WEEK_STATUS_LABEL['off-track'],
+  complete: 'Complete'
+}
+const STATE_TONE: Record<WeekState, string> = {
+  upcoming: 'text-faint',
+  'on-track': 'text-green-ink',
+  recoverable: 'text-repair',
+  'off-track': 'text-repair',
+  complete: 'text-green-ink'
+}
 const FRESH_DAYS = 10
 
 function Stat({ label, value, sub, testid }: { label: string; value: string; sub?: string; testid?: string }) {
@@ -67,7 +79,9 @@ export default function CourseProgress() {
     // Actionable weaknesses only: skills failing now, and the skills behind a checkpoint that needs repair.
     const weak = new Map<string, string>()
     for (const m of skills) if (m.status === 'weak') weak.set(m.skillId, 'failing recently')
-    for (const u of blocked) for (const g of u.gates.filter((x) => x.failed)) for (const s of g.gate.skills) if (!weak.has(s)) weak.set(s, `behind the ${g.gate.title.toLowerCase()} checkpoint`)
+    for (const u of blocked)
+      for (const g of u.gates.filter((x) => x.failed))
+        for (const s of g.gate.skills) if (!weak.has(s)) weak.set(s, `behind the ${g.gate.title.toLowerCase()} checkpoint`)
     const labs = LABS.map((lab) => ({ lab, p: labProgress(lab, repo.state<LabState>(labKey(lab.id)), attempts) }))
     // Supporting telemetry: minutes per course week (an attempt counts for at most 30 minutes).
     const minutes = WEEKS.filter((w) => w.number <= current).map((w) => {
@@ -91,10 +105,20 @@ export default function CourseProgress() {
         </h2>
         <div className="mt-3 grid grid-cols-2 gap-3 lg:grid-cols-5">
           <Stat label="Qualifying problems" value={`${cd.total}`} sub={`of ${COURSE_TARGET} in the course`} testid="course-total" />
-          <Stat label="Weeks complete" value={`${weeksComplete}`} sub={`of ${current - (thisWeek?.complete ? 0 : 1)} finished so far`} testid="weeks-complete" />
+          <Stat
+            label="Weeks complete"
+            value={`${weeksComplete}`}
+            sub={`of ${current - (thisWeek?.complete ? 0 : 1)} finished so far`}
+            testid="weeks-complete"
+          />
           <Stat label="Current week" value={`${current}`} sub={WEEKS[current - 1]?.title} />
           <Stat label="Units ready" value={`${data.ready}`} sub={`of ${data.units.length} units`} testid="units-ready" />
-          <Stat label="Units blocked" value={`${data.blocked.length}`} sub={data.blocked.length ? 'a checkpoint needs repair' : 'none'} testid="units-blocked" />
+          <Stat
+            label="Units blocked"
+            value={`${data.blocked.length}`}
+            sub={data.blocked.length ? 'a checkpoint needs repair' : 'none'}
+            testid="units-blocked"
+          />
         </div>
       </section>
 
@@ -108,7 +132,8 @@ export default function CourseProgress() {
             <span className={`text-[12px] font-semibold uppercase tracking-wide ${STATE_TONE[thisWeek.status]}`}>{STATE_LABEL[thisWeek.status]}</span>
           </div>
           <p className="num mt-2 text-[15px] text-ink">
-            {thisWeek.output.done} / {thisWeek.output.target} problems · {thisWeek.labs.filter((l) => !l.optional && l.done).length} / {thisWeek.labs.filter((l) => !l.optional).length} builds · {thisWeek.gates.filter((g) => g.cleared).length} / {thisWeek.gates.length} checkpoints
+            {thisWeek.output.done} / {thisWeek.output.target} problems · {thisWeek.labs.filter((l) => !l.optional && l.done).length} /{' '}
+            {thisWeek.labs.filter((l) => !l.optional).length} builds · {thisWeek.gates.filter((g) => g.cleared).length} / {thisWeek.gates.length} checkpoints
             {thisWeek.targets.length ? ` · ${thisWeek.targets.filter((t) => t.solved).length} / ${thisWeek.targets.length} targets` : ''}
           </p>
           {thisWeek.overdue.length > 0 && <p className="mt-1 text-[13px] text-repair">Overdue: {thisWeek.overdue.join(' · ')}</p>}
@@ -135,13 +160,16 @@ export default function CourseProgress() {
         <h2 id="mastery-h" className="h2">
           Mastery and freshness
         </h2>
-        <p className="mt-1 text-[13px] text-muted">Mastered means produced well and often; fresh means practised in the last {FRESH_DAYS} days. A skill can be mastered and stale: spaced retrieval brings it back.</p>
+        <p className="mt-1 text-[13px] text-muted">
+          Mastered means produced well and often; fresh means practised in the last {FRESH_DAYS} days. A skill can be mastered and stale: spaced retrieval
+          brings it back.
+        </p>
         <div className="mt-3 grid gap-3 md:grid-cols-3">
           {(
             [
               ['Mastered · fresh', data.masteredFresh, 'text-green-ink'],
               ['Mastered · stale', data.masteredStale, 'text-repair'],
-              ['Developing', data.developing, 'text-learn'],
+              ['Developing', data.developing, 'text-learn']
             ] as const
           ).map(([label, list, tone]) => (
             <div key={label} className="rounded-xl bg-bg p-4 shadow-[0_0_0_1px_var(--line)]" data-group={label}>
@@ -193,7 +221,7 @@ export default function CourseProgress() {
           {(
             [
               ['Junior SWE builds', swe],
-              ['Applied AI / FDE builds', ai],
+              ['Applied AI / FDE builds', ai]
             ] as const
           ).map(([label, list]) => (
             <div key={label} className="rounded-xl bg-bg p-4 shadow-[0_0_0_1px_var(--line)]">
@@ -239,16 +267,24 @@ export default function CourseProgress() {
                   <ul className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[13px]">
                     {k.labs.map((l) => (
                       <li key={l.id} className={l.done ? 'text-green-ink' : 'text-muted'}>
-                        {l.done ? '✓' : '—'} {l.title}
+                        <Link href={`/lab/${l.id}`} className="hover:underline">
+                          {l.done ? '✓' : '—'} {l.title}
+                        </Link>
                         {l.optional ? ' (optional)' : ''}
                       </li>
                     ))}
                     {k.gates.map((g) => (
                       <li key={g.id} className={g.cleared ? 'text-cold' : 'text-muted'}>
-                        {g.cleared ? '✓' : '—'} {g.title} checkpoint
+                        <Link href="/plan" className="hover:underline">
+                          {g.cleared ? '✓' : '—'} {g.title} checkpoint
+                        </Link>
                       </li>
                     ))}
                   </ul>
+                  <p className="mt-3 text-sm text-muted">{w.purpose}</p>
+                  <Link href="/" className="mt-2 inline-block text-sm font-medium underline underline-offset-2">
+                    {k.complete ? 'Continue with today’s next step' : 'Return to today’s recovery plan'}
+                  </Link>
                   {k.complete && <p className="mt-2 text-[13.5px] text-ink">{motivate('week-complete', { week: w.number, weekDone: k.output.done }).text}</p>}
                 </li>
               ))}

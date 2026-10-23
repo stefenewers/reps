@@ -16,7 +16,8 @@ import { labKey, labProgress, type LabState } from '@/lib/course/labs'
 export default function LabView({ lab }: { lab: Lab }) {
   const { repo, attempts } = useReps()
   const [local, setLocal] = useState<LabState | undefined>()
-  const saved = local ?? repo.state<LabState>(labKey(lab.id)) ?? { design: {}, review: {} }
+  const raw = local ?? repo.state<LabState>(labKey(lab.id))
+  const saved: LabState = { design: raw?.design ?? {}, review: raw?.review ?? {}, doneAt: raw?.doneAt }
   const save = (next: LabState) => {
     setLocal(next)
     void repo.setState(labKey(lab.id), next)

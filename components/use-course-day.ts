@@ -52,7 +52,7 @@ export function useCourseDay() {
       (_, i) => contracts.weekContract(i + 1, weekDates(i + 1)[6]).status
     )
     const done = credits.items[today] ?? []
-    const assistedToday = done.filter((c) => c.evidence === 'assisted' || c.evidence === 'reconstructed').length
+    const assistedToday = done.filter((c) => c.evidence === 'assisted' || c.evidence === 'reconstructed' || c.evidence === 'outside-hinted' || c.evidence === 'outside-reconstructed').length
     const streak = contracts.streak(today)
     const total = Object.entries(credits.byDate)
       .filter(([d]) => d >= COURSE_START && d <= today)

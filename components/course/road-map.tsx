@@ -113,7 +113,7 @@ export default function RoadMap() {
                   <p className="text-[13.5px] leading-relaxed text-ink-2">{w.purpose}</p>
                   <ul className="mt-3 flex flex-col gap-2">
                     {units.map((u) => (
-                      <li key={u.unit.id} className="rounded-lg bg-surface px-3 py-2.5" data-unit={u.unit.id} data-state={u.state}>
+                      <li key={u.unit.id} className="rounded-lg bg-surface px-3 py-2.5" id={`unit-${u.unit.id}`} data-unit={u.unit.id} data-state={u.state}>
                         <div className="flex flex-wrap items-baseline justify-between gap-2">
                           <span className="text-[14px] font-medium text-ink">{u.unit.title}</span>
                           <span className="text-[12px] text-muted">
@@ -122,6 +122,30 @@ export default function RoadMap() {
                           </span>
                         </div>
                         <p className="mt-0.5 text-[12.5px] text-muted">{u.unit.purpose}</p>
+                        {u.locked && (
+                          <p className="mt-2 text-[13px] text-repair">
+                            First clear:{' '}
+                            {u.blockedBy.map((id, i) => {
+                              const prerequisite = statuses.find((s) => s.unit.id === id)?.unit
+                              return (
+                                <span key={id}>
+                                  {i > 0 ? ', ' : ''}
+                                  <button
+                                    className="underline underline-offset-2"
+                                    onClick={() => {
+                                      setOpen(prerequisite?.week ?? current)
+                                      requestAnimationFrame(() => document.getElementById(`unit-${id}`)?.scrollIntoView({ block: 'center' }))
+                                    }}
+                                  >
+                                    {prerequisite?.title ?? id}
+                                  </button>
+                                </span>
+                              )
+                            })}
+                            . Today starts with the earliest unfinished prerequisite.
+                          </p>
+                        )}
+
                         <div className="mt-1.5 flex flex-wrap gap-x-3 gap-y-1 text-[12.5px]">
                           {u.unit.lessonIds.map((id) => {
                             const l = LESSON_BY_ID[id] ?? CONCEPT_BY_ID[id]

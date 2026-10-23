@@ -4,11 +4,35 @@ import { coldEvidence, dailyCredits, gateClean, masteryEvidence, qualifies } fro
 import type { SolveEntry } from '@/lib/solve-log'
 import type { Attempt, Exercise } from '@/lib/types'
 
-const ex = (id: string, over: Partial<Exercise> = {}) => ({ id, kind: 'code', stage: 'microbuild', repType: 'foundation', skills: ['while_loop'], ...over }) as Exercise
-const EX: Record<string, Exercise> = { a: ex('a'), b: ex('b'), pick: ex('pick', { kind: 'choice' }), lab: ex('lab', { lab: true }), cold: ex('cold', { repType: 'cold', stage: 'retrieval' }) }
+const ex = (id: string, over: Partial<Exercise> = {}) =>
+  ({ id, kind: 'code', stage: 'microbuild', repType: 'foundation', skills: ['while_loop'], ...over }) as Exercise
+const EX: Record<string, Exercise> = {
+  a: ex('a'),
+  b: ex('b'),
+  pick: ex('pick', { kind: 'choice' }),
+  lab: ex('lab', { lab: true }),
+  cold: ex('cold', { repType: 'cold', stage: 'retrieval' })
+}
 let n = 0
 const at = (exerciseId: string, date: string, over: Partial<Attempt> = {}): Attempt =>
-  ({ id: `t${n++}`, exerciseId, date, skills: ['while_loop'], stage: 'microbuild', mode: 'practice', passed: true, attemptsBeforePass: 0, hintsUsed: 0, solutionViewed: false, runtimeErrors: [], startedAt: `${date}T10:${String(n).padStart(2, '0')}:00Z`, completedAt: `${date}T10:${String(n).padStart(2, '0')}:30Z`, retrievalType: 'first-exposure', updatedAt: `${date}T10:00:00Z`, ...over }) as Attempt
+  ({
+    id: `t${n++}`,
+    exerciseId,
+    date,
+    skills: ['while_loop'],
+    stage: 'microbuild',
+    mode: 'practice',
+    passed: true,
+    attemptsBeforePass: 0,
+    hintsUsed: 0,
+    solutionViewed: false,
+    runtimeErrors: [],
+    startedAt: `${date}T10:${String(n).padStart(2, '0')}:00Z`,
+    completedAt: `${date}T10:${String(n).padStart(2, '0')}:30Z`,
+    retrievalType: 'first-exposure',
+    updatedAt: `${date}T10:00:00Z`,
+    ...over
+  }) as Attempt
 
 test('a guided pass counts toward the day; a hinted pass counts too, as assisted evidence', () => {
   const guided = at('a', '2026-10-26')
@@ -40,17 +64,26 @@ test('repeating the same rep on the same day counts once; failures, recognition 
   const day = '2026-10-26'
   const attempts = [at('a', day), at('a', day), at('a', day), at('b', day, { passed: false, completedAt: undefined }), at('pick', day), at('lab', day)]
   const credits = dailyCredits(day, attempts, [], EX)
-  assert.deepEqual(credits.map((c) => c.key), ['a'])
+  assert.deepEqual(
+    credits.map((c) => c.key),
+    ['a']
+  )
 })
 
 test('an outside problem solved and logged counts once; a failed one does not', () => {
   const entries = [
     { id: 'lc:1:new', lc: 1, title: 'Two Sum', date: '2026-10-26', kind: 'new', result: 'unaided', at: '' },
     { id: 'lc:217:review1', lc: 217, title: 'Contains Duplicate', date: '2026-10-26', kind: 'review1', result: 'hinted', at: '' },
-    { id: 'lc:242:review1', lc: 242, title: 'Valid Anagram', date: '2026-10-26', kind: 'review1', result: 'failed', at: '' },
+    { id: 'lc:242:review1', lc: 242, title: 'Valid Anagram', date: '2026-10-26', kind: 'review1', result: 'failed', at: '' }
   ] as SolveEntry[]
   const credits = dailyCredits('2026-10-26', [], entries, EX)
-  assert.deepEqual(credits.map((c) => [c.lc, c.evidence]), [[1, 'outside-unaided'], [217, 'outside-hinted']])
+  assert.deepEqual(
+    credits.map((c) => [c.lc, c.evidence]),
+    [
+      [1, 'outside-unaided'],
+      [217, 'outside-hinted']
+    ]
+  )
 })
 
 test('evidence separates a clean cold solve, a self-correction and a gate pass', () => {
@@ -86,7 +119,8 @@ test('self-graded explanations and multiple choice never count; test-writing cod
 })
 
 test('outside problems: unaided and small-hint solves count; a seen solution counts only when rebuilt from blank on a later day', () => {
-  const e = (over: Partial<SolveEntry>) => ({ id: 'lc:1:new', lc: 1, title: 'Two Sum', date: '2026-11-02', kind: 'new', result: 'unaided', at: '', ...over }) as SolveEntry
+  const e = (over: Partial<SolveEntry>) =>
+    ({ id: 'lc:1:new', lc: 1, title: 'Two Sum', date: '2026-11-02', kind: 'new', result: 'unaided', at: '', ...over }) as SolveEntry
   assert.deepEqual(outsideCredit(e({})), { date: '2026-11-02', evidence: 'outside-unaided' })
   assert.deepEqual(outsideCredit(e({ result: 'hinted' })), { date: '2026-11-02', evidence: 'outside-hinted' })
   assert.equal(outsideCredit(e({ result: 'solution' })), null, 'a seen solution is not finished')
@@ -96,9 +130,16 @@ test('outside problems: unaided and small-hint solves count; a seen solution cou
   // A later cold re-solve is the strongest outside evidence.
   assert.deepEqual(outsideCredit(e({ id: 'lc:1:review1', kind: 'review1', date: '2026-11-05' })), { date: '2026-11-05', evidence: 'outside-cold' })
   // The rebuild is credited on the day it happened, and only once per problem per day.
-  const entries = [e({ result: 'solution' }), e({ id: 'redo:1:2026-11-04', kind: 'redo', result: 'hinted', date: '2026-11-04' }), e({ id: 'x', result: 'solution', rebuiltOn: '2026-11-04' })]
+  const entries = [
+    e({ result: 'solution' }),
+    e({ id: 'redo:1:2026-11-04', kind: 'redo', result: 'hinted', date: '2026-11-04' }),
+    e({ id: 'x', result: 'solution', rebuiltOn: '2026-11-04' })
+  ]
   assert.deepEqual(dailyCredits('2026-11-02', [], entries, EX), [])
-  assert.deepEqual(dailyCredits('2026-11-04', [], entries, EX).map((c) => [c.lc, c.evidence]), [[1, 'outside-hinted']])
+  assert.deepEqual(
+    dailyCredits('2026-11-04', [], entries, EX).map((c) => [c.lc, c.evidence]),
+    [[1, 'outside-hinted']]
+  )
 })
 
 test('a rep keeps its strongest evidence: a later cold solve upgrades an earlier assisted pass', () => {
@@ -134,4 +175,21 @@ test('tied imported timestamps preserve reveal evidence; invalid dates and rever
   assert.equal(gateClean(warm, [warm]), false, 'gate evidence must be cold')
   const outside = { lc: 1, date: '2026-02-30', result: 'unaided' } as SolveEntry
   assert.equal(outsideCredit(outside), null)
+})
+
+test('another outside log entry cannot wash away a same-day solution reveal', () => {
+  const shown = { id: 'lc:1:new', lc: 1, title: 'Two Sum', date: '2026-11-02', kind: 'new', result: 'solution', at: '' } as SolveEntry
+  const claimed = { ...shown, id: 'another-entry', kind: 'redo', result: 'unaided' } as SolveEntry
+  assert.equal(outsideCredit(claimed, [shown, claimed]), null)
+  assert.deepEqual(dailyCredits(shown.date, [], [shown, claimed], EX), [])
+})
+
+test('local study dates survive UTC rollover and daylight-saving offsets', () => {
+  const local = at('a', '2026-11-01', { startedAt: '2026-11-01T23:50:00-05:00', completedAt: '2026-11-02T00:51:00-04:00' })
+  // These timestamps are in increasing absolute time despite their clock offsets.
+  local.completedAt = '2026-11-02T00:51:00-05:00'
+  assert.equal(dailyCredits('2026-11-01', [local], [], EX).length, 1)
+  assert.equal(dailyCredits('2026-11-02', [local], [], EX).length, 0)
+  const spring = at('a', '2027-03-14', { startedAt: '2027-03-14T01:59:00-05:00', completedAt: '2027-03-14T03:01:00-04:00' })
+  assert.equal(qualifies(spring, EX.a), true)
 })

@@ -58,7 +58,7 @@ export const EVIDENCE_RANK: Record<Evidence, number> = {
   'self-corrected': 3,
   independent: 4,
   retrieval: 5,
-  'cold-independent': 6,
+  'cold-independent': 6
 }
 
 /** Kinds that are active production. Recognition (multiple choice) and self-graded explanations are not. */
@@ -90,7 +90,10 @@ const clean = (a: Attempt) => passedAttempt(a) && a.hintsUsed === 0 && !a.soluti
 function lastRevealDate(a: Attempt, before: Attempt[]): string | null {
   const shown = before.filter((h) => h.solutionViewed)
   if (!shown.length) return null
-  return shown.map((h) => h.date).sort().pop()!
+  return shown
+    .map((h) => h.date)
+    .sort()
+    .pop()!
 }
 
 export function masteryEvidence(a: Attempt, history: Attempt[]): Evidence {
@@ -137,7 +140,9 @@ export function coldEvidence(a: Attempt, history: Attempt[]): boolean {
 /** The clean standard a gate requires: no hints, no solution, not a reconstruction; at most two failed runs. */
 export function gateClean(a: Attempt, history: Attempt[]): boolean {
   const e = masteryEvidence(a, history)
-  return a.retrievalType === 'cold' && (e === 'cold-independent' || e === 'independent' || e === 'retrieval' || e === 'self-corrected') && a.attemptsBeforePass <= 2
+  return (
+    a.retrievalType === 'cold' && (e === 'cold-independent' || e === 'independent' || e === 'retrieval' || e === 'self-corrected') && a.attemptsBeforePass <= 2
+  )
 }
 
 /** The strongest evidence any pass of a rep has produced (later, stronger passes upgrade earlier, weaker ones). */
@@ -161,11 +166,13 @@ const isResolve = (k: SolveEntry['kind']) => k === 'review1' || k === 'review2' 
  * - solution seen: nothing on its date; rebuilt from blank on a LATER day: on that day, as a reconstruction;
  * - failed: nothing.
  */
-export function outsideCredit(e: SolveEntry): { date: string; evidence: OutsideEvidence } | null {
+export function outsideCredit(e: SolveEntry, history: SolveEntry[] = []): { date: string; evidence: OutsideEvidence } | null {
   if (!Number.isInteger(e.lc) || e.lc! <= 0 || !validStudyDate(e.date)) return null
+  if (e.result !== 'solution' && history.some((h) => h.lc === e.lc && h.date === e.date && h.result === 'solution')) return null
   if (e.result === 'unaided') return { date: e.date, evidence: isResolve(e.kind) ? 'outside-cold' : 'outside-unaided' }
   if (e.result === 'hinted') return { date: e.date, evidence: 'outside-hinted' }
-  if (e.result === 'solution' && e.rebuiltOn && validStudyDate(e.rebuiltOn) && e.rebuiltOn > e.date) return { date: e.rebuiltOn, evidence: 'outside-reconstructed' }
+  if (e.result === 'solution' && e.rebuiltOn && validStudyDate(e.rebuiltOn) && e.rebuiltOn > e.date)
+    return { date: e.rebuiltOn, evidence: 'outside-reconstructed' }
   return null
 }
 
@@ -195,7 +202,7 @@ export function dailyCredits(date: string, attempts: Attempt[], entries: SolveEn
   const best = new Map<number, OutsideEvidence>()
   const RANK: Record<OutsideEvidence, number> = { 'outside-reconstructed': 1, 'outside-hinted': 2, 'outside-unaided': 3, 'outside-cold': 4 }
   for (const e of entries) {
-    const c = outsideCredit(e)
+    const c = outsideCredit(e, entries)
     if (!c || c.date !== date) continue
     const prev = best.get(e.lc!)
     if (!prev || RANK[c.evidence] > RANK[prev]) best.set(e.lc!, c.evidence)

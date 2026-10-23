@@ -86,7 +86,7 @@ export default function LeetcodeList({ day, items: given, heading = 'On LeetCode
           const state = i.type === 'new' ? byLc.get(i.lc) : undefined
           const nextRep = state && !r && state.nextRep ? EXERCISE_BY_ID[state.nextRep] : undefined
           // What the log says, and what it earns (lib/course/credit.ts decides; the copy below says the same thing).
-          const credit = entry ? outsideCredit(entry) : null
+          const credit = entry ? outsideCredit(entry, entries) : null
           const rebuiltToday = Boolean(entry?.rebuiltOn)
           const sawSolution = r === 'solution'
           const notFinished = r === 'failed'
