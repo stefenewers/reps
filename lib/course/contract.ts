@@ -5,7 +5,7 @@ import { LABS } from '@/data/course/lessons'
 import { DAY_PLAN, GATE_DUE, LAB_DUE, SCHEDULE, TARGET_DUE, type DayPlan } from '@/data/course/schedule'
 import { UNIT_BY_ID, UNITS } from '@/data/course/units'
 import { PROBLEM_URLS } from '@/data/problem-urls'
-import { dailyCredits, outsideCredit } from '@/lib/course/credit'
+import { dailyCredits, outsideCredit, validAttempt, masteryEvidence } from '@/lib/course/credit'
 import { labProgress, type LabState } from '@/lib/course/labs'
 import { courseStatus, type CourseContext, type UnitStatus } from '@/lib/course/routing'
 import type { SkillMastery } from '@/lib/mastery'
@@ -119,19 +119,27 @@ export function solvedDates(attempts: Attempt[], entries: SolveEntry[]): Map<num
     if (!out.has(lc) || d < out.get(lc)!) out.set(lc, d)
   }
   for (const e of entries) {
-    const c = outsideCredit(e)
+    const c = outsideCredit(e, entries)
     if (c && e.lc) note(e.lc, c.date)
   }
   for (const a of attempts) {
     const lc = CAPSTONE_LC[a.exerciseId]
-    if (lc && a.passed && a.completedAt && !a.solutionViewed) note(lc, a.date)
+    if (
+      lc &&
+      validAttempt(a) &&
+      a.passed &&
+      a.completedAt &&
+      !['failed', 'revealed'].includes(masteryEvidence(a, attempts)) &&
+      !attempts.some((h) => h.exerciseId === a.exerciseId && h.solutionViewed && h.date === a.date && Date.parse(time(h)) <= Date.parse(time(a)))
+    )
+      note(lc, a.date)
   }
   return out
 }
 
 export function createContracts(input: ContractInput) {
   const cache = new Map<string, Snapshot>()
-  const sorted = [...input.attempts].sort((x, y) => time(x).localeCompare(time(y)))
+  const sorted = input.attempts.filter(validAttempt).sort((x, y) => time(x).localeCompare(time(y)))
   const allSolved = solvedDates(input.attempts, input.entries)
   const labDoneOn = new Map<string, string>()
   for (const lab of LABS) {
@@ -151,7 +159,7 @@ export function createContracts(input: ContractInput) {
       byUnit: new Map(statuses.map((s) => [s.unit.id, s])),
       credits: dailyCredits(date, input.attempts, input.entries, input.exercises).length,
       labsDone: new Map([...labDoneOn].filter(([, d]) => d <= date)),
-      solved: new Map([...allSolved].filter(([, d]) => d <= date)),
+      solved: new Map([...allSolved].filter(([, d]) => d <= date))
     }
     cache.set(date, snap)
     return snap
@@ -204,11 +212,19 @@ export function createContracts(input: ContractInput) {
     const labs: ContractLab[] = due.labs
       .map((id) => LABS.find((l) => l.id === id)!)
       .filter((l) => l && !l.optional)
-      .map((l) => ({ id: l.id, title: l.title, unitId: l.unitId, state: snap.labsDone.has(l.id) ? ('done' as const) : ('open' as const), dueDate: LAB_DUE[l.id], carried: carried(LAB_DUE[l.id]) }))
+      .map((l) => ({
+        id: l.id,
+        title: l.title,
+        unitId: l.unitId,
+        state: snap.labsDone.has(l.id) ? ('done' as const) : ('open' as const),
+        dueDate: LAB_DUE[l.id],
+        carried: carried(LAB_DUE[l.id])
+      }))
       // Done labs from earlier days are not today's business; today's and carried open ones are.
       .filter((l) => l.state === 'open' || l.dueDate === date)
 
-    const gates: ContractGate[] = due.gates
+    const attemptedGates = snap.statuses.flatMap((s) => s.gates.filter((g) => g.attempted && !g.cleared).map((g) => g.gate.id))
+    const gates: ContractGate[] = [...new Set([...due.gates, ...attemptedGates])]
       .map((id) => ({ ...gateState(id, date, snap), carried: carried(GATE_DUE[id]) }))
       .filter((g) => g.state !== 'cleared' || g.dueDate === date)
 
@@ -222,7 +238,9 @@ export function createContracts(input: ContractInput) {
       .filter((t) => t.state !== 'done' || t.dueDate === date)
 
     // Repair is required as soon as a checkpoint fails, whichever day it was due.
-    const repair: ContractRepair[] = snap.statuses.flatMap((s) => s.gates.filter((g) => g.failed && g.repair.length).map((g) => ({ gateId: g.gate.id, title: g.gate.title, reps: g.repair })))
+    const repair: ContractRepair[] = snap.statuses.flatMap((s) =>
+      s.gates.filter((g) => g.failed && g.repair.length).map((g) => ({ gateId: g.gate.id, title: g.gate.title, reps: g.repair }))
+    )
 
     let complete = true
     const remaining: string[] = []
@@ -230,7 +248,9 @@ export function createContracts(input: ContractInput) {
       if (!reps.met) remaining.push(`${target - reps.done} more qualifying rep${target - reps.done === 1 ? '' : 's'}`)
       for (const r of repair) remaining.push(`Repair for ${r.title} (${r.reps.length} rep${r.reps.length === 1 ? '' : 's'})`)
       for (const l of labs) if (l.state !== 'done') remaining.push(`Lab: ${l.title}${l.carried ? ' (carried over)' : ''}`)
-      for (const g of gates) if (g.state !== 'cleared' && g.state !== 'handled') remaining.push(`Checkpoint: ${g.title}${g.state === 'locked' ? ' (finish the reps before it first)' : ''}`)
+      for (const g of gates)
+        if (g.state !== 'cleared' && g.state !== 'handled')
+          remaining.push(`Checkpoint: ${g.title}${g.state === 'locked' ? ' (finish the reps before it first)' : ''}`)
       for (const t of targets) if (t.state === 'open') remaining.push(`Target: LC ${t.lc} ${t.title}`)
       complete = remaining.length === 0
     }
@@ -247,12 +267,23 @@ export function createContracts(input: ContractInput) {
     for (const d of dates) if (d <= asOf) done += snapshot(d).credits
     const target = weekTarget(week)
     const units = UNITS.filter((u) => u.week === week)
-    const labs = LABS.filter((l) => l.week === week).map((l) => ({ id: l.id, title: l.title, optional: Boolean(l.optional), done: snap.labsDone.has(l.id), dueDate: LAB_DUE[l.id] }))
-    const gates = units.flatMap((u) => u.gateIds).filter((id) => GATE_BY_ID[id]).map((id) => {
-      const s = gateOf(id, snap).status
-      return { id, title: GATE_BY_ID[id].title, cleared: !s || s.available.length === 0 || s.cleared, dueDate: GATE_DUE[id] }
-    })
-    const targets = units.flatMap((u) => u.targets).map((lc) => ({ lc, title: PROBLEM_URLS[lc]?.title ?? `LC ${lc}`, solved: snap.solved.has(lc), dueDate: TARGET_DUE[lc] }))
+    const labs = LABS.filter((l) => l.week === week).map((l) => ({
+      id: l.id,
+      title: l.title,
+      optional: Boolean(l.optional),
+      done: snap.labsDone.has(l.id),
+      dueDate: LAB_DUE[l.id]
+    }))
+    const gates = units
+      .flatMap((u) => u.gateIds)
+      .filter((id) => GATE_BY_ID[id])
+      .map((id) => {
+        const s = gateOf(id, snap).status
+        return { id, title: GATE_BY_ID[id].title, cleared: !s || s.available.length === 0 || s.cleared, dueDate: GATE_DUE[id] }
+      })
+    const targets = units
+      .flatMap((u) => u.targets)
+      .map((lc) => ({ lc, title: PROBLEM_URLS[lc]?.title ?? `LC ${lc}`, solved: snap.solved.has(lc), dueDate: TARGET_DUE[lc] }))
     const daysComplete = days.filter((d) => d <= asOf && dayContract(d).complete).length
     const rate = dailyTarget(week)
     const pastDays = days.filter((d) => d < date)
@@ -262,7 +293,7 @@ export function createContracts(input: ContractInput) {
     const overdue = [
       ...labs.filter((l) => !l.optional && !l.done && l.dueDate && l.dueDate < date).map((l) => `Lab: ${l.title}`),
       ...gates.filter((g) => !g.cleared && g.dueDate && g.dueDate < date).map((g) => `Checkpoint: ${g.title}`),
-      ...targets.filter((t) => !t.solved && t.dueDate && t.dueDate < date).map((t) => `Target: LC ${t.lc} ${t.title}`),
+      ...targets.filter((t) => !t.solved && t.dueDate && t.dueDate < date).map((t) => `Target: LC ${t.lc} ${t.title}`)
     ]
     const complete = done >= target && labs.every((l) => l.optional || l.done) && gates.every((g) => g.cleared) && targets.every((t) => t.solved)
     let status: WeekState

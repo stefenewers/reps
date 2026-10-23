@@ -86,7 +86,7 @@ export default function LeetcodeList({ day, items: given, heading = 'On LeetCode
           const state = i.type === 'new' ? byLc.get(i.lc) : undefined
           const nextRep = state && !r && state.nextRep ? EXERCISE_BY_ID[state.nextRep] : undefined
           // What the log says, and what it earns (lib/course/credit.ts decides; the copy below says the same thing).
-          const credit = entry ? outsideCredit(entry) : null
+          const credit = entry ? outsideCredit(entry, entries) : null
           const rebuiltToday = Boolean(entry?.rebuiltOn)
           const sawSolution = r === 'solution'
           const notFinished = r === 'failed'
@@ -134,7 +134,7 @@ export default function LeetcodeList({ day, items: given, heading = 'On LeetCode
                   </p>
                 )}
               </div>
-              <div className="flex shrink-0 flex-wrap items-center gap-1.5">
+              <div className="flex min-w-0 max-w-full flex-wrap items-center gap-1.5 sm:shrink-0">
                 {i.video && (
                   <a href={i.video} target="_blank" rel="noreferrer" className="btn btn-ghost btn-sm" title={state ? learnAdvice(state.target, state.ready) : 'Only after a real attempt from a blank editor.'}>
                     <IconPlay size={10} /> Walkthrough

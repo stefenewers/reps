@@ -246,7 +246,7 @@ nums.sort(reverse=True)`,
     skills: ['sorting', 'list_index'],
     difficulty: 2,
     minutes: 5,
-    prompt: "`nums` is a non-empty list of numbers in any order. Write `median(nums)`: the middle value once the numbers are sorted, or the average of the two middle values when the length is even. `[3, 1, 2]` gives `2`; `[4, 1, 3, 2]` gives `2.5`. Do not reorder the caller's list.",
+    prompt: "`nums` is a non-empty list of numbers in any order. Write `median(nums)`. Return the middle value once the numbers are sorted, or the average of the two middle values when the length is even. `[3, 1, 2]` gives `2`; `[4, 1, 3, 2]` gives `2.5`. Do not reorder the caller's list.",
     starterCode: `def median(nums):
     pass`,
     solution: `def median(nums):
@@ -1548,7 +1548,7 @@ for start, end in intervals[1:]:
     style: 'write-test',
     difficulty: 3,
     minutes: 5,
-    prompt: "Write `test_merge(merge)`. Its argument `merge` is a function: some implementation of merge intervals (it takes a list of `[start, end]` ranges in any order, combines ranges that overlap or touch, and returns the result sorted by start). Your job is to call it and `assert` on what it returns.\n\nA correct `merge` must pass your asserts. Three buggy versions must each trip at least one assert: one uses `<` instead of `<=`, one sets the end to `end` instead of `max(...)`, and one forgets to sort.",
+    prompt: "Write `test_merge(merge)`. Its argument `merge` is a function that merges intervals. It takes `[start, end]` ranges in any order. It combines overlapping or touching ranges and returns them sorted by start. Your job is to call it and `assert` on what it returns.\n\nA correct `merge` must pass your asserts. Three buggy versions must each trip at least one assert: one uses `<` instead of `<=`, one sets the end to `end` instead of `max(...)`, and one forgets to sort.",
     starterCode: `def test_merge(merge):
     pass`,
     solution: `def test_merge(merge):

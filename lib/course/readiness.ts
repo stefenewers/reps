@@ -97,7 +97,7 @@ export function evidenceSummary(attempts: Attempt[], entries: SolveEntry[], exer
   const RANK: Record<OutsideEvidence, number> = { 'outside-reconstructed': 1, 'outside-hinted': 2, 'outside-unaided': 3, 'outside-cold': 4 }
   const outside = new Map<number, OutsideEvidence>()
   for (const e of entries) {
-    const c = outsideCredit(e)
+    const c = outsideCredit(e, entries)
     if (!c || !e.lc) continue
     const prev = outside.get(e.lc)
     if (!prev || RANK[c.evidence] > RANK[prev]) outside.set(e.lc, c.evidence)

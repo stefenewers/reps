@@ -1256,7 +1256,7 @@ print(dp[n])`,
     style: 'translate',
     difficulty: 2,
     minutes: 5,
-    prompt: 'This memoized `count_ways(n)` counts the ways to climb `n` steps taking 1 or 2 at a time. It is O(n), but it recurses `n` levels deep and crashes for `n = 3000`. Rewrite it **bottom-up**, with no recursion: build a list `dp` where `dp[i]` means exactly what `go(i)` returns (the number of ways to climb `i` steps), fill it with a loop from the smallest `i` upward, and return `dp[n]`.',
+    prompt: "This memoized `count_ways(n)` counts the ways to climb `n` steps taking 1 or 2 at a time. It is O(n), but it recurses `n` levels deep and crashes for `n = 3000`. Rewrite it **bottom-up**, without recursion. Build a list `dp` where `dp[i]` is the number of ways to climb `i` steps, just like `go(i)`. Fill it from the smallest `i` upward and return `dp[n]`.",
     starterCode: `def count_ways(n):
     memo = {}
     def go(i):

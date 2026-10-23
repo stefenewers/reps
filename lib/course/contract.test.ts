@@ -15,12 +15,42 @@ let n = 0
 const at = (exerciseId: string, date: string, over: Partial<Attempt> = {}): Attempt => {
   n++
   const t = `${date}T12:${String(Math.floor(n / 60) % 60).padStart(2, '0')}:${String(n % 60).padStart(2, '0')}Z`
-  return { id: `k${n}`, exerciseId, date, skills: EXERCISE_BY_ID[exerciseId]?.skills ?? [], stage: 'microbuild', mode: 'practice', passed: true, attemptsBeforePass: 0, hintsUsed: 0, solutionViewed: false, runtimeErrors: [], startedAt: t, completedAt: t, retrievalType: 'first-exposure', updatedAt: t, ...over } as Attempt
+  return {
+    id: `k${n}`,
+    exerciseId,
+    date,
+    skills: EXERCISE_BY_ID[exerciseId]?.skills ?? [],
+    stage: 'microbuild',
+    mode: 'practice',
+    passed: true,
+    attemptsBeforePass: 0,
+    hintsUsed: 0,
+    solutionViewed: false,
+    runtimeErrors: [],
+    startedAt: t,
+    completedAt: t,
+    retrievalType: 'first-exposure',
+    updatedAt: t,
+    ...over
+  } as Attempt
 }
-const input = (attempts: Attempt[], labStates: Record<string, LabState | undefined> = {}): ContractInput => ({ attempts, entries: [], mastery: {}, labStates, exercises: EXERCISE_BY_ID, sections: SECTION_BY_ID })
-const W1_PATH = ['w1-state-while', 'w1-loop-control', 'w1-running-state', 'w1-mutation-references', 'w1-integration'].flatMap((u) => unitPath(UNIT_BY_ID[u], { sections: SECTION_BY_ID, exercises: EXERCISE_BY_ID }).map((e) => e.id))
+const input = (attempts: Attempt[], labStates: Record<string, LabState | undefined> = {}): ContractInput => ({
+  attempts,
+  entries: [],
+  mastery: {},
+  labStates,
+  exercises: EXERCISE_BY_ID,
+  sections: SECTION_BY_ID
+})
+const W1_PATH = ['w1-state-while', 'w1-loop-control', 'w1-running-state', 'w1-mutation-references', 'w1-integration'].flatMap((u) =>
+  unitPath(UNIT_BY_ID[u], { sections: SECTION_BY_ID, exercises: EXERCISE_BY_ID }).map((e) => e.id)
+)
 const passes = (ids: string[], date: string) => ids.map((id) => at(id, date))
-const designed = (labId: string): LabState => ({ design: Object.fromEntries(LAB_BY_ID[labId].designQuestions.map((_, i) => [i, 'A real sentence about the design.'])), review: Object.fromEntries(LAB_BY_ID[labId].review.map((_, i) => [i, true])), doneAt: `${LAB_DUE[labId]}T15:00:00` })
+const designed = (labId: string): LabState => ({
+  design: Object.fromEntries(LAB_BY_ID[labId].designQuestions.map((_, i) => [i, 'A real sentence about the design.'])),
+  review: Object.fromEntries(LAB_BY_ID[labId].review.map((_, i) => [i, true])),
+  doneAt: `${LAB_DUE[labId]}T15:00:00`
+})
 const built = (labId: string) => [at(LAB_BY_ID[labId].buildExerciseId, LAB_DUE[labId]), at(LAB_BY_ID[labId].changeRequest.exerciseId, LAB_DUE[labId])]
 
 test('a training day is complete only when the rep target is met and nothing due is open', () => {
@@ -50,11 +80,20 @@ test('a checkpoint due today keeps the day open until it is cleared (or failed t
   assert.equal(open.complete, false)
   assert.ok(open.gates.length > 0 && open.gates.every((g) => g.state !== 'cleared'))
   // Clear every gate due that day with clean cold passes of its variants.
-  const clears = DAY_PLAN[gateDay].gatesDue.flatMap((g) => GATE_BY_ID[g].pool.slice(0, GATE_BY_ID[g].need).map((id) => at(id, gateDay, { retrievalType: 'cold' })))
-  const labs = Object.fromEntries(Object.keys(LAB_DUE).filter((l) => LAB_BY_ID[l].week === 1).map((l) => [l, designed(l)]))
+  const clears = DAY_PLAN[gateDay].gatesDue.flatMap((g) =>
+    GATE_BY_ID[g].pool.slice(0, GATE_BY_ID[g].need).map((id) => at(id, gateDay, { retrievalType: 'cold' }))
+  )
+  const labs = Object.fromEntries(
+    Object.keys(LAB_DUE)
+      .filter((l) => LAB_BY_ID[l].week === 1)
+      .map((l) => [l, designed(l)])
+  )
   const labBuilds = Object.keys(labs).flatMap(built)
   const cleared = createContracts(input([...allPath, ...reps, ...clears, ...labBuilds], labs)).dayContract(gateDay)
-  assert.ok(cleared.gates.every((g) => g.state === 'cleared'), JSON.stringify(cleared.gates))
+  assert.ok(
+    cleared.gates.every((g) => g.state === 'cleared'),
+    JSON.stringify(cleared.gates)
+  )
   assert.equal(cleared.complete, true, cleared.remaining.join('; '))
 })
 
@@ -67,7 +106,9 @@ test('planned rest owes nothing and protects the streak', () => {
 })
 
 test('the week is complete only with its output, builds, checkpoints and targets', () => {
-  const days = Object.values(DAY_PLAN).filter((d) => d.week === 1).map((d) => d.date)
+  const days = Object.values(DAY_PLAN)
+    .filter((d) => d.week === 1)
+    .map((d) => d.date)
   const reps = days.flatMap((d, i) => passes(W1_PATH.slice(i * 10, i * 10 + 10).length ? W1_PATH.slice(i * 10, i * 10 + 10) : [], d))
   const extra = days.flatMap((d) => passes(['o2-loops'].flatMap((s) => SECTION_BY_ID[s].exercises.map((e) => e.id)).slice(0, 0), d))
   const week = createContracts(input([...reps, ...extra])).weekContract(1, '2026-11-02')
@@ -75,4 +116,40 @@ test('the week is complete only with its output, builds, checkpoints and targets
   assert.ok(week.labs.some((l) => !l.done))
   assert.ok(week.gates.some((g) => !g.cleared))
   assert.equal(week.status, 'off-track')
+})
+
+test('a backdated imported lab marker cannot complete a lab before the build and change evidence', () => {
+  const id = 'lab-savings-goal'
+  const lab = LAB_BY_ID[id]
+  const state = designed(id)
+  state.doneAt = '2026-10-26T15:00:00Z'
+  const history = [at(lab.buildExerciseId, '2026-10-28'), at(lab.changeRequest.exerciseId, '2026-10-29')]
+  const c = createContracts(input(history, { [id]: state }))
+  assert.equal(c.snapshot('2026-10-28').labsDone.has(id), false)
+  assert.equal(c.snapshot('2026-10-29').labsDone.has(id), true)
+})
+
+test('a capstone revealed and rebuilt on the same day cannot mark its outside target solved', async () => {
+  const { solvedDates } = await import('@/lib/course/contract')
+  const shown = at('cap-two-sum', '2026-11-02', { solutionViewed: true })
+  const rebuilt = at('cap-two-sum', '2026-11-02')
+  assert.equal(solvedDates([shown, rebuilt], []).has(1), false)
+  const later = at('cap-two-sum', '2026-11-03')
+  assert.equal(solvedDates([shown, rebuilt, later], []).get(1), '2026-11-03')
+})
+
+test('an early failed checkpoint remains visible after repair, before its scheduled due date', () => {
+  const id = 'g-loop-control'
+  const unit = UNIT_BY_ID['w1-loop-control']
+  const history = [...UNIT_BY_ID['w1-state-while'].path!, ...unit.path!].map((rep) => at(rep, '2026-10-20'))
+  history.push(at(GATE_BY_ID[id].pool[0], '2026-10-28', { passed: false, completedAt: undefined, attemptsBeforePass: 3, retrievalType: 'cold' }))
+  const before = createContracts(input(history)).dayContract('2026-10-28')
+  const repair = before.repair.find((r) => r.gateId === id)!.reps
+  assert.ok(repair.length >= 2)
+  history.push(...repair.map((rep) => at(rep, '2026-10-28')))
+  const today = createContracts(input(history)).dayContract('2026-10-28').gates.find((g) => g.id === id)
+  assert.equal(today?.state, 'handled')
+  const next = createContracts(input(history)).dayContract('2026-10-29').gates.find((g) => g.id === id)
+  assert.equal(next?.state, 'open')
+  assert.notEqual(next?.next[0], GATE_BY_ID[id].pool[0])
 })

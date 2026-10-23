@@ -31,7 +31,7 @@ const br572: PackSection = {
       style: 'finish',
       skills: ['tree_dfs', 'recursion_return', 'recursion_base_case'],
       prompt:
-        '`root` and `shape` are the roots of two binary trees (`root` can be `None`: an empty tree has no nodes). `same_shape(a, b)` is given: it says whether two trees have exactly the same shape (values ignored).\n\nWrite `count_shape(root, shape)`: how many nodes of `root` have a subtree (that node and **everything** below it) with the same shape as `shape`? `shape` is never empty.\n\nExample: in `[1, 2, 3, 4, 5, 6, 7]` the shape `[0, 0, 0]` (a node with two leaf children) starts at node 2 and at node 3, so the answer is `2`.',
+        "`root` and `shape` are the roots of two binary trees (`root` can be `None`: an empty tree has no nodes). `same_shape(a, b)` is given: it says whether two trees have exactly the same shape (values ignored).\n\nWrite `count_shape(root, shape)`. Return the number of nodes whose subtree has the same shape as `shape`. A subtree includes that node and **everything** below it. `shape` is never empty.\n\nExample: in `[1, 2, 3, 4, 5, 6, 7]` the shape `[0, 0, 0]` (a node with two leaf children) starts at node 2 and at node 3, so the answer is `2`.",
       starterCode: `${SAME_SHAPE}
 
 def count_shape(root, shape):
@@ -107,7 +107,7 @@ def has_shape(root, shape):
       skills: ['tree_dfs', 'recursion_base_case', 'recursion_return'],
       transfer: true,
       prompt:
-        '`root` and `other` are the roots of two binary trees; either can be `None`.\n\nWrite `has_mirror_of(root, other)`: `True` if some node of `root` has a subtree (that node and everything below it) that is the **mirror image** of `other`: same values, left and right swapped at every level.\n\nExample: `root = [1, 2, 3, None, None, 5, 4]`, `other = [3, 4, 5]` → `True` (the subtree at node 3 is `[3, 5, 4]`).\n\nAn empty `other` is the mirror of an empty subtree, and every tree has one of those.',
+        "`root` and `other` are the roots of two binary trees; either can be `None`.\n\nWrite `has_mirror_of(root, other)`. Return `True` if any subtree of `root` is the **mirror image** of `other`. Values must match, with left and right swapped at every level.\n\nExample: `root = [1, 2, 3, None, None, 5, 4]`, `other = [3, 4, 5]` → `True` (the subtree at node 3 is `[3, 5, 4]`).\n\nAn empty `other` is the mirror of an empty subtree, and every tree has one of those.",
       starterCode: `def has_mirror_of(root, other):
     pass
 `,
@@ -164,7 +164,7 @@ const br235: PackSection = {
       title: 'Search a BST, one way only',
       skills: ['bst_property', 'while_loop', 'treenode'],
       prompt:
-        `A **binary search tree** (BST) keeps everything smaller than a node in its left subtree and everything bigger in its right subtree.\n\n${BST_PICTURE}\n\nWrite \`bst_has(root, x)\`: \`True\` if \`x\` is in the BST. Walk down **one** path with a loop: at each node go left or right, never both.\n\nExample: looking for \`7\` visits 8, 3, 6, 7 → \`True\`.`,
+        "A **binary search tree** (BST) keeps everything smaller than a node in its left subtree and everything bigger in its right subtree.\n\n```python\n#        8\n#      /   \\\n#     3     10\n#    / \\      \\\n#   1   6      14\n#      / \\\n#     4   7\n```\n\nWrite `bst_has(root, x)`. Return `True` if `x` is in the BST. Walk down **one** path with a loop: at each node go left or right, never both.\n\nExample: looking for `7` visits 8, 3, 6, 7 → `True`.",
       starterCode: `def bst_has(root, x):
     pass
 `,
@@ -204,7 +204,7 @@ const br235: PackSection = {
       title: 'The biggest value that is not above x',
       skills: ['bst_property', 'while_loop', 'state_tracking'],
       prompt:
-        `Write \`floor_in_bst(root, x)\`: the **largest** value in the BST that is \`<= x\`, or \`None\` if every value is bigger than \`x\`.\n\n${BST_PICTURE}\n\nExample: \`x = 5\` → \`4\`. The walk is 8 (too big, go left), 3 (fits, remember it, look for something bigger on the right), 6 (too big, go left), 4 (fits, remember it), then off the tree.`,
+        "Write `floor_in_bst(root, x)`. Return the **largest** value in the BST that is `<= x`, or `None` if every value is bigger than `x`.\n\n```python\n#        8\n#      /   \\\n#     3     10\n#    / \\      \\\n#   1   6      14\n#      / \\\n#     4   7\n```\n\nExample: `x = 5` → `4`. The walk is 8 (too big, go left), 3 (fits, remember it, look for something bigger on the right), 6 (too big, go left), 4 (fits, remember it), then off the tree.",
       starterCode: `def floor_in_bst(root, x):
     pass
 `,
@@ -245,7 +245,7 @@ const br235: PackSection = {
       title: 'Debug: the first node between two values',
       skills: ['bst_property', 'conditionals', 'while_loop'],
       prompt:
-        `\`first_between(root, a, b)\` walks down a BST from the root and should return the value of the **first** node it meets that lies between \`a\` and \`b\` (inclusive, and \`a\`, \`b\` can come in either order). While both numbers are on the same side of the node, it follows them. If it falls off the tree, it returns \`None\`.\n\n${BST_PICTURE}\n\nExample: \`first_between(root, 4, 7)\` → \`6\`. Fix it.`,
+        "`first_between(root, a, b)` walks down a BST from the root. Return the value of the **first** node between `a` and `b`, inclusive. The arguments `a` and `b` can come in either order. While both numbers are on the same side of the node, it follows them. If it falls off the tree, it returns `None`.\n\n```python\n#        8\n#      /   \\\n#     3     10\n#    / \\      \\\n#   1   6      14\n#      / \\\n#     4   7\n```\n\nExample: `first_between(root, 4, 7)` → `6`. Fix it.",
       brokenCode: `def first_between(root, a, b):
     node = root
     while node:
@@ -294,7 +294,7 @@ const br235: PackSection = {
       skills: ['bst_property', 'while_loop', 'conditionals'],
       transfer: true,
       prompt:
-        `\`root\` is the root of a BST: at every node, smaller values are in its left subtree and bigger values in its right. \`a\` and \`b\` are two values that are both in it (they can be equal). Searching for each one starts at the root, and for a while the two searches visit the same nodes.\n\nWrite \`shared_steps(root, a, b)\`: how many nodes do the two search paths have **in common**?\n\n${BST_PICTURE}\n\nExample: \`a = 4\`, \`b = 7\` → \`3\` (both searches visit 8, 3, 6, then part ways). \`a = 1\`, \`b = 14\` → \`1\` (they part at the root).`,
+        "`root` is the root of a BST: at every node, smaller values are in its left subtree and bigger values in its right. `a` and `b` are two values that are both in it (they can be equal). Searching for each one starts at the root, and for a while the two searches visit the same nodes.\n\nWrite `shared_steps(root, a, b)`. Return the number of nodes the two search paths have **in common**.\n\n```python\n#        8\n#      /   \\\n#     3     10\n#    / \\      \\\n#   1   6      14\n#      / \\\n#     4   7\n```\n\nExample: `a = 4`, `b = 7` → `3` (both searches visit 8, 3, 6, then part ways). `a = 1`, `b = 14` → `1` (they part at the root).",
       starterCode: `def shared_steps(root, a, b):
     pass
 `,
@@ -341,7 +341,7 @@ const br98: PackSection = {
       title: 'Is every value inside the bounds?',
       skills: ['bst_property', 'tree_dfs', 'recursion_return'],
       prompt:
-        'Write `all_between(root, low, high)`: `True` if **every** value in the tree is strictly between `low` and `high`. Any tree, not just a BST. An empty tree is fine.\n\nExample: `all_between([5, 3, 8], 0, 10)` → `True`; `all_between([5, 3, 12], 0, 10)` → `False`.',
+        "Write `all_between(root, low, high)`. Return `True` if **every** value in the tree is strictly between `low` and `high`. Any tree, not just a BST. An empty tree is fine.\n\nExample: `all_between([5, 3, 8], 0, 10)` → `True`; `all_between([5, 3, 12], 0, 10)` → `False`.",
       starterCode: `def all_between(root, low, high):
     pass
 `,
@@ -375,7 +375,7 @@ const br98: PackSection = {
       title: 'The window a value has to live in',
       skills: ['bst_property', 'while_loop', 'tuples'],
       prompt:
-        `Every step of a BST search narrows what the values further down can be: going **left** from 8 means everything below is under 8; going **right** from 3 means everything below is over 3.\n\nWrite \`window_at(root, x)\`. \`x\` is in the BST. Walk to it and return the tuple \`(low, high)\`: the tightest bounds collected on the way. Start from \`float('-inf')\` and \`float('inf')\`.\n\n${BST_PICTURE}\n\nExample: \`x = 6\` → \`(3, 8)\`. \`x = 14\` → \`(10, float('inf'))\`.`,
+        "Each BST search step narrows the bounds on later values. Going **left** from 8 puts everything below under 8. Going **right** from 3 puts everything below over 3.\n\nWrite `window_at(root, x)`. `x` is in the BST. Walk to it and return the tuple `(low, high)`: the tightest bounds collected on the way. Start from `float('-inf')` and `float('inf')`.\n\n```python\n#        8\n#      /   \\\n#     3     10\n#    / \\      \\\n#   1   6      14\n#      / \\\n#     4   7\n```\n\nExample: `x = 6` → `(3, 8)`. `x = 14` → `(10, float('inf'))`.",
       starterCode: `def window_at(root, x):
     pass
 `,
@@ -415,7 +415,7 @@ const br98: PackSection = {
       difficulty: 3,
       skills: ['bst_property', 'tree_dfs', 'recursion_return'],
       prompt:
-        '`is_ordered(root)` should return `True` only when the tree is a valid search tree: for **every** node, everything in its left subtree is smaller and everything in its right subtree is bigger (no duplicates). It accepts some trees it should reject. Fix it.\n\n```python\n#     5\n#    / \\\n#   3   8\n#    \\\n#     6      <- inside the left subtree of 5, but bigger than 5\n```',
+        "`is_ordered(root)` should return `True` only for a valid search tree, with no duplicates. For **every** node, all values in its left subtree must be smaller. All values in its right subtree must be bigger. It accepts some trees it should reject. Fix it.\n\n```python\n#     5\n#    / \\\n#   3   8\n#    \\\n#     6      <- inside the left subtree of 5, but bigger than 5\n```",
       brokenCode: `def is_ordered(root):
     if root is None:
         return True
@@ -534,7 +534,7 @@ visit(root)`,
       title: 'The k smallest values',
       skills: ['tree_inorder', 'tree_dfs', 'list_append'],
       prompt:
-        `Write \`smallest_k(root, k)\`: a list of the \`k\` smallest values of a BST, smallest first. If the tree has fewer than \`k\` values, return all of them. Do not call \`sorted\`: visit in order, collect into one shared list, and stop adding once it holds \`k\`.\n\n${BST_PICTURE}\n\nExample: \`k = 3\` → \`[1, 3, 4]\`.`,
+        "Write `smallest_k(root, k)`. Return a list of the `k` smallest values of a BST, smallest first. If the tree has fewer than `k` values, return all of them. Do not call `sorted`: visit in order, collect into one shared list, and stop adding once it holds `k`.\n\n```python\n#        8\n#      /   \\\n#     3     10\n#    / \\      \\\n#   1   6      14\n#      / \\\n#     4   7\n```\n\nExample: `k = 3` → `[1, 3, 4]`.",
       starterCode: `def smallest_k(root, k):
     pass
 `,
@@ -636,7 +636,7 @@ visit(root)`,
       skills: ['tree_inorder', 'tree_dfs', 'accumulator', 'recursion_base_case'],
       transfer: true,
       prompt:
-        `Write \`kth_largest(root, k)\`: the \`k\`-th **largest** value of a BST (\`k = 1\` is the largest). \`k\` is between 1 and the number of nodes. Do not sort, and do not collect every value first: stop as soon as you have the answer.\n\n${BST_PICTURE}\n\nExample: \`k = 3\` → \`8\` (the order is 14, 10, 8, ...).`,
+        "Write `kth_largest(root, k)`. Return the `k`-th **largest** value of a BST (`k = 1` is the largest). `k` is between 1 and the number of nodes. Do not sort, and do not collect every value first: stop as soon as you have the answer.\n\n```python\n#        8\n#      /   \\\n#     3     10\n#    / \\      \\\n#   1   6      14\n#      / \\\n#     4   7\n```\n\nExample: `k = 3` → `8` (the order is 14, 10, 8, ...).",
       starterCode: `def kth_largest(root, k):
     pass
 `,

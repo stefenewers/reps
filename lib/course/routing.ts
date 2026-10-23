@@ -1,6 +1,7 @@
+import { COURSE_START } from '@/data/course/calendar'
 import { GATE_BY_ID, GATE_OF_EXERCISE, type MasteryGate } from '@/data/course/gates'
 import { UNITS, type LearningUnit } from '@/data/course/units'
-import { gateClean, masteryEvidence } from '@/lib/course/credit'
+import { gateClean, masteryEvidence, validAttempt } from '@/lib/course/credit'
 import type { SkillMastery } from '@/lib/mastery'
 import type { Attempt, Exercise } from '@/lib/types'
 
@@ -173,12 +174,13 @@ export function gateStatus(gate: MasteryGate, ctx: CourseContext, index: Map<str
 /** Earlier production evidence: a good share of the path already passed, or the unit's skills already practised. */
 function priorEvidence(unit: LearningUnit, path: Exercise[], passed: Set<string>, ctx: CourseContext): boolean {
   if (path.length && path.filter((e) => passed.has(e.id)).length / path.length >= 0.4) return true
-  const skills = unit.retrievalSkills.map((s) => ctx.mastery[s]).filter(Boolean)
+  const skills = unit.retrievalSkills.map((s) => ctx.mastery[s]).filter((m) => m && m.lastPracticed && m.lastPracticed.slice(0, 10) < COURSE_START)
   return skills.length > 0 && skills.every((m) => m.attempts >= 3 && m.score >= 45 && !m.recognitionOnly)
 }
 
 /** Every unit's status, in teaching order. */
 export function courseStatus(ctx: CourseContext): UnitStatus[] {
+  ctx = { ...ctx, attempts: ctx.attempts.filter((a) => validAttempt(a) && a.date <= ctx.today) }
   const passed = passedIds(ctx.attempts)
   const index = byExercise(ctx.attempts)
   const out: UnitStatus[] = []
@@ -190,7 +192,7 @@ export function courseStatus(ctx: CourseContext): UnitStatus[] {
       .filter(Boolean)
       .map((g) => gateStatus(g, ctx, index))
     const liveGates = gates.filter((g) => g.available.length > 0)
-    const prior = priorEvidence(unit, path, passed, ctx)
+    const prior = priorEvidence(unit, path, passedIds(ctx.attempts.filter((a) => a.date < COURSE_START)), ctx)
     const anyGateFailed = liveGates.some((g) => g.failed)
     const gatesCleared = liveGates.length > 0 && liveGates.every((g) => g.cleared)
     const pathDone = path.every((e) => passed.has(e.id))
@@ -198,7 +200,7 @@ export function courseStatus(ctx: CourseContext): UnitStatus[] {
       const s = byId.get(p)
       return !s || (s.state !== 'ready' && s.state !== 'maintenance')
     })
-    const ready = liveGates.length ? gatesCleared : pathDone
+    const ready = blockedBy.length === 0 && (liveGates.length ? gatesCleared : pathDone)
     const placement = !ready && prior && liveGates.length > 0 && !liveGates.some((g) => g.attempted)
     const route: Route = ready ? 'maintenance' : placement ? 'placement' : 'full'
     const done = path.filter((e) => passed.has(e.id)).length

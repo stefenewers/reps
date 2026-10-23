@@ -1033,7 +1033,7 @@ def count_greater_ll(head, x):
           id: 'd05-rw-remove-second',
           title: 'Skip a node',
           skills: ['linked_list_reassignment'],
-          prompt: "`head` is the first node of a linked list (never `None` here). Write `remove_second(head)`: take the second node out of the chain if there is one, and return `head`. 1 -> 2 -> 3 becomes 1 -> 3; a single node 4 stays 4.\n\nYou do not delete anything. A node is out of the list once no `.next` points at it.",
+          prompt: "`head` is the first node of a linked list (never `None` here). Write `remove_second(head)`. Take the second node out of the chain if there is one, and return `head`. 1 -> 2 -> 3 becomes 1 -> 3; a single node 4 stays 4.\n\nYou do not delete anything. A node is out of the list once no `.next` points at it.",
           starterCode: `def remove_second(head):\n    pass\n`,
           solution: `def remove_second(head):
     if head.next:

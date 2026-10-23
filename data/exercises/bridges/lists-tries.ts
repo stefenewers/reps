@@ -149,7 +149,7 @@ const br141: PackSection = {
       skills: ['fast_slow', 'while_loop', 'list_index'],
       transfer: true,
       prompt:
-        '`jumps` is a non-empty list of whole numbers. Standing on index `i`, your next index is `jumps[i]`; a value of `-1` means stop. Every other value is a valid index of `jumps`. You start on index `0`.\n\nWrite `loops_forever(jumps)`: `True` if the walk never stops, `False` if it reaches a `-1`. Do not keep a record of the indexes you have been on: use only a fixed handful of variables, however long `jumps` is.\n\n`loops_forever([1, 2, 0])` → `True` (0 → 1 → 2 → 0 → …)\n`loops_forever([1, 2, -1])` → `False`',
+        "`jumps` is a non-empty list of whole numbers. Standing on index `i`, your next index is `jumps[i]`; a value of `-1` means stop. Every other value is a valid index of `jumps`. You start on index `0`.\n\nWrite `loops_forever(jumps)`. Return `True` if the walk never stops, `False` if it reaches a `-1`. Do not keep a record of the indexes you have been on: use only a fixed handful of variables, however long `jumps` is.\n\n`loops_forever([1, 2, 0])` → `True` (0 → 1 → 2 → 0 → …)\n`loops_forever([1, 2, -1])` → `False`",
       starterCode: `def loops_forever(jumps):\n    pass`,
       solution: `def loops_forever(jumps):
     slow = 0
@@ -197,7 +197,7 @@ const br19: PackSection = {
       title: 'k-th value from the end',
       skills: ['fast_slow', 'linked_list_traversal', 'range'],
       prompt:
-        'Write `kth_from_end(head, k)`: the value of the k-th node counting from the end (`k = 1` is the last node). `k` is always between 1 and the length.\n\nOne pass, without measuring the length: send a `lead` pointer `k` nodes ahead, then move `lead` and a second pointer together until `lead` falls off the end.\n\n`1 -> 2 -> 3 -> 4 -> 5`, `k = 2` → `4`',
+        "Write `kth_from_end(head, k)`. Return the value of the k-th node counting from the end (`k = 1` is the last node). `k` is always between 1 and the length.\n\nOne pass, without measuring the length: send a `lead` pointer `k` nodes ahead, then move `lead` and a second pointer together until `lead` falls off the end.\n\n`1 -> 2 -> 3 -> 4 -> 5`, `k = 2` → `4`",
       starterCode: `def kth_from_end(head, k):\n    pass`,
       solution: `def kth_from_end(head, k):
     lead = head
@@ -277,7 +277,7 @@ const br19: PackSection = {
       skills: ['fast_slow', 'dummy_node', 'linked_list_reassignment', 'linked_list_traversal'],
       transfer: true,
       prompt:
-        'Write `insert_from_end(head, k, val)`: put a new node holding `val` just in front of the k-th node from the end (`k = 1` is the last node; `k` is between 1 and the length). Return the head of the list. One pass.\n\n`1 -> 2 -> 3`, `k = 1`, `val = 9` → `1 -> 2 -> 9 -> 3`\n`1 -> 2 -> 3`, `k = 3`, `val = 9` → `9 -> 1 -> 2 -> 3`',
+        "Write `insert_from_end(head, k, val)`. Put a new node holding `val` just in front of the k-th node from the end (`k = 1` is the last node; `k` is between 1 and the length). Return the head of the list. One pass.\n\n`1 -> 2 -> 3`, `k = 1`, `val = 9` → `1 -> 2 -> 9 -> 3`\n`1 -> 2 -> 3`, `k = 3`, `val = 9` → `9 -> 1 -> 2 -> 3`",
       starterCode: `def insert_from_end(head, k, val):\n    pass`,
       solution: `def insert_from_end(head, k, val):
     dummy = ListNode(0, head)
@@ -761,7 +761,7 @@ True`,
       title: 'Walk down, creating as you go',
       skills: ['trie_node', 'dict_membership', 'dict_assign', 'string_iterate'],
       prompt:
-        '`tree` is a dict of dicts: each key is one letter, and its value is the dict of letters that may follow it.\n\nWrite `add_path(tree, word)`: walk down the letters of `word`, creating an empty dict wherever a letter is missing, and return `tree`.\n\n`add_path({}, \'cat\')` → `{\'c\': {\'a\': {\'t\': {}}}}`\n\nAdding `\'cab\'` to that gives `{\'c\': {\'a\': {\'t\': {}, \'b\': {}}}}`: the shared start is stored once.',
+        "`tree` is a dict of dicts: each key is one letter, and its value is the dict of letters that may follow it.\n\nWrite `add_path(tree, word)`. Walk down the letters of `word`, creating an empty dict wherever a letter is missing, and return `tree`.\n\n`add_path({}, 'cat')` → `{'c': {'a': {'t': {}}}}`\n\nAdding `'cab'` to that gives `{'c': {'a': {'t': {}, 'b': {}}}}`: the shared start is stored once.",
       starterCode: `def add_path(tree, word):\n    pass`,
       solution: `def add_path(tree, word):
     node = tree
@@ -794,7 +794,7 @@ True`,
       title: 'A node of your own',
       skills: ['trie_node', 'dict_create'],
       prompt:
-        'A dict of dicts cannot say "a word stops here". So each node of the letter tree (a tree like this is called a **trie**) becomes a small object with **two** fields: `children` (a dict: letter → the next node) and `end` (`True` when a word finishes on this node).\n\nYou make your own kind of object with a **class**. You have used one already, without having to write it:\n\n```python\nclass ListNode:\n    def __init__(self, val=0, next=None):\n        self.val = val\n        self.next = next\n```\n\nHow to read it:\n\n- `class ListNode:` names a new kind of object. Calling the name, as in `ListNode(5)`, makes a fresh one.\n- `__init__` (two underscores on each side) is a function inside the class. Python runs it by itself every time an object is made, to set the new object up.\n- `self` is that new object. Python passes it in for you, so it is in the `def` line but never in the call. (`val=0` is the value used when the caller leaves `val` out.)\n- `self.val = val` stores a **field** on the object. Later you read it with a dot: `node.val`.\n\nWrite `class TrieNode`. Its `__init__` takes nothing besides `self` (so a node is made with `TrieNode()`), and gives the new node an empty dict called `children` and an `end` flag that starts as `False`.',
+        "A dict of dicts cannot say \"a word stops here\". This letter tree is called a **trie**. Each node becomes an object with **two** fields. `children` maps each letter to the next node. `end` is `True` when a word finishes at this node.\n\nYou make your own kind of object with a **class**. You have used one already, without having to write it:\n\n```python\nclass ListNode:\n    def __init__(self, val=0, next=None):\n        self.val = val\n        self.next = next\n```\n\nHow to read it:\n\n- `class ListNode:` names a new kind of object. Calling the name, as in `ListNode(5)`, makes a fresh one.\n- `__init__` (two underscores on each side) is a function inside the class. Python runs it by itself every time an object is made, to set the new object up.\n- `self` is that new object. Python passes it in for you, so it is in the `def` line but never in the call. (`val=0` is the value used when the caller leaves `val` out.)\n- `self.val = val` stores a **field** on the object. Later you read it with a dot: `node.val`.\n\nWrite `class TrieNode`. Its `__init__` takes nothing besides `self` (so a node is made with `TrieNode()`), and gives the new node an empty dict called `children` and an `end` flag that starts as `False`.",
       starterCode: NODE_BLANK,
       solution: NODE,
       tests: [
@@ -859,7 +859,7 @@ const trInsert: PackSection = {
       style: 'from-signature',
       skills: ['trie_node', 'dict_membership', 'dict_assign'],
       prompt:
-        'Write `step(node, ch)`: return the child of `node` for the letter `ch`. If there is no such child yet, create a new `TrieNode`, store it under `ch`, and return that one.\n\nCalling `step(root, \'a\')` twice returns the **same** node both times.',
+        "Write `step(node, ch)`. Return the child of `node` for the letter `ch`. If there is no such child yet, create a new `TrieNode`, store it under `ch`, and return that one.\n\nCalling `step(root, 'a')` twice returns the **same** node both times.",
       starterCode: `${NODE}
 
 
@@ -889,7 +889,7 @@ def step(node, ch):
       style: 'from-signature',
       skills: ['trie_node', 'string_iterate', 'dict_membership'],
       prompt:
-        'Write `insert(root, word)`: start at `root`, move down one node per letter of `word` (creating the nodes that are missing), and mark the node you finish on as the end of a word. It returns nothing.\n\nAfter `insert(root, \'to\')`:\n`root.children[\'t\'].children[\'o\'].end` is `True`\n`root.children[\'t\'].end` is still `False`',
+        "Write `insert(root, word)`. Start at `root`, move down one node per letter of `word` (creating the nodes that are missing), and mark the node you finish on as the end of a word. It returns nothing.\n\nAfter `insert(root, 'to')`:\n`root.children['t'].children['o'].end` is `True`\n`root.children['t'].end` is still `False`",
       starterCode: `${NODE}
 
 
@@ -1010,7 +1010,7 @@ const trSearch: PackSection = {
       style: 'from-signature',
       skills: ['trie_search', 'early_return', 'string_iterate'],
       prompt:
-        '`TrieNode` and `insert` are given. Write `find_node(root, text)`: walk down from `root` one letter of `text` at a time and return the node you arrive at. If a letter has no child, return `None` straight away. Never create nodes here.\n\nWith only `\'car\'` inserted: `find_node(root, \'ca\')` is the node the `a` arrow leads to, and `find_node(root, \'co\')` is `None`.',
+        "`TrieNode` and `insert` are given. Write `find_node(root, text)`. Walk down from `root` one letter of `text` at a time and return the node you arrive at. If a letter has no child, return `None` straight away. Never create nodes here.\n\nWith only `'car'` inserted: `find_node(root, 'ca')` is the node the `a` arrow leads to, and `find_node(root, 'co')` is `None`.",
       starterCode: `${NODE}
 
 
@@ -1050,7 +1050,7 @@ def find_node(root, text):
       style: 'from-signature',
       skills: ['trie_search', 'early_return', 'string_iterate'],
       prompt:
-        'Write `has_word(root, word)`: `True` only if exactly `word` was inserted. A stretch of letters that merely leads somewhere is not enough.\n\nWith `\'car\'` and `\'cart\'` inserted: `\'car\'` → `True`, `\'cart\'` → `True`, `\'ca\'` → `False`, `\'cat\'` → `False`.',
+        "Write `has_word(root, word)`. Return `True` only if exactly `word` was inserted. A stretch of letters that merely leads somewhere is not enough.\n\nWith `'car'` and `'cart'` inserted: `'car'` → `True`, `'cart'` → `True`, `'ca'` → `False`, `'cat'` → `False`.",
       starterCode: `${NODE}
 
 
@@ -1157,7 +1157,7 @@ const trPrefix: PackSection = {
       style: 'from-signature',
       skills: ['trie_search', 'early_return', 'string_iterate'],
       prompt:
-        'Write `any_starts_with(root, prefix)`: `True` if at least one stored word begins with `prefix`. A stored word counts as starting with itself.\n\nWith `\'car\'` inserted: `\'ca\'` → `True`, `\'car\'` → `True`, `\'cars\'` → `False`, `\'o\'` → `False`.',
+        "Write `any_starts_with(root, prefix)`. Return `True` if at least one stored word begins with `prefix`. A stored word counts as starting with itself.\n\nWith `'car'` inserted: `'ca'` → `True`, `'car'` → `True`, `'cars'` → `False`, `'o'` → `False`.",
       starterCode: `${NODE}
 
 

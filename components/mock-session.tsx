@@ -218,6 +218,7 @@ function MockRunner({ mock }: { mock: (typeof MOCKS)[number] }) {
               type="button"
               className="btn btn-primary btn-lg mt-8"
               onClick={() => {
+                void repo.setState(`mock-start:${mockId}`, { mockId, startedAt: new Date().toISOString() })
                 setStartedAt(new Date())
                 setNow(Date.now())
                 setPhase('running')

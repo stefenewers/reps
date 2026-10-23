@@ -42,7 +42,7 @@ export function useDayRecords(): Map<string, DayRecord> {
     for (const e of entries) {
       if (!e.lc) continue
       get(e.date).minutes += e.minutes ?? 15
-      const credit = outsideCredit(e)
+      const credit = outsideCredit(e, entries)
       if (!credit) continue
       const key = `${credit.date}:lc:${e.lc}`
       if (counted.has(key)) continue

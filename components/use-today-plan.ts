@@ -100,7 +100,7 @@ export function useTodayPlan(pace: Pace, training: Training, dueLc: DueLc[]) {
     const passed = passedSet(attempts)
     const practice = practiceBySkill(attempts)
     const ctx = { mastery, practice }
-    const solvedLc = new Set(entries.filter((e) => e.kind === 'new' && e.lc && outsideCredit(e)).map((e) => e.lc!))
+    const solvedLc = new Set(entries.filter((e) => e.kind === 'new' && e.lc && outsideCredit(e, entries)).map((e) => e.lc!))
     const repKind = (id: string, sectionId?: string, gate?: boolean): ItemKind => {
       const e = EXERCISE_BY_ID[id]
       if (!e) return 'drill'
@@ -177,7 +177,7 @@ export function useTodayPlan(pace: Pace, training: Training, dueLc: DueLc[]) {
           kind: a.sessionKind === 'review' ? ('cold' as const) : before.has(a.exerciseId) ? ('warm' as const) : repKind(a.exerciseId)
         })),
       ...entries
-        .filter((e) => outsideCredit(e)?.date === today && e.lc)
+        .filter((e) => outsideCredit(e, entries)?.date === today && e.lc)
         .map((e) => ({
           key: e.id,
           units: e.kind === 'new' ? 3 : 2,

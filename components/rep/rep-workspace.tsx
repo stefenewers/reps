@@ -854,7 +854,7 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
   const isDebug = ex.style === 'debug'
   const kind = kindOf(ex)
   const crumbDay = day ? shortDate(day.date) : null
-  const crumbTitle = session ? session.title : (section?.title ?? (ex.generated ? 'Generated rep' : 'Rep'))
+  const crumbTitle = bare || unlabeled ? 'Independent practice' : session ? session.title : (section?.title ?? (ex.generated ? 'Generated rep' : 'Rep'))
   // Outside a session, show where you are in the section: days are a gauge now, not a container.
   const inSection = !session && section ? section.exercises.findIndex((e) => e.id === ex.id) : -1
   const total = session ? session.exerciseIds.length : inSection >= 0 ? section!.exercises.length : dayList.length

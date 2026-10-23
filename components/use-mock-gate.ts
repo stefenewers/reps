@@ -24,9 +24,9 @@ export function useMockGate(): { gated: boolean; grade: TransferGrade; allowed: 
     const started = new Set(
       repo.engine
         .all('study_state')
-        .filter((r) => r.id.startsWith('mock:'))
+        .filter((r) => r.id.startsWith('mock:') || r.id.startsWith('mock-start:'))
         .map((r) => (r.value as { mockId?: string }).mockId)
-        .filter(Boolean) as string[],
+        .filter(Boolean) as string[]
     )
     const done = program.mocks.completed
     return {
@@ -35,8 +35,8 @@ export function useMockGate(): { gated: boolean; grade: TransferGrade; allowed: 
       allowed: policy.mocksAllowed,
       done,
       // A mock already started stays open; a new one needs an allowance left.
-      canStart: (mockId: string) => !gated || started.has(mockId) || done < policy.mocksAllowed,
-      note: policy.note,
+      canStart: (mockId: string) => !gated || started.has(mockId) || Math.max(done, started.size) < policy.mocksAllowed,
+      note: policy.note
     }
   }, [attempts, today, program, repo, version])
 }
