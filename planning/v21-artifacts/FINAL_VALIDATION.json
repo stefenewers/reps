@@ -1,0 +1,78 @@
+{
+  "date": "2026-10-23",
+  "implementationCommit": "3452734",
+  "qualityChecks": [
+    {
+      "script": "lint",
+      "status": 0,
+      "seconds": 47
+    },
+    {
+      "script": "type-check",
+      "status": 0,
+      "seconds": 8
+    },
+    {
+      "script": "test",
+      "status": 0,
+      "seconds": 129
+    },
+    {
+      "script": "verify:content",
+      "status": 0,
+      "seconds": 15
+    },
+    {
+      "script": "verify:pyodide",
+      "status": 0,
+      "seconds": 28
+    },
+    {
+      "script": "audit:migration",
+      "status": 0,
+      "seconds": 4
+    },
+    {
+      "script": "audit:curriculum",
+      "status": 0,
+      "seconds": 2
+    },
+    {
+      "script": "build",
+      "status": 0,
+      "seconds": 42
+    }
+  ],
+  "unitTests": 335,
+  "pyodideRuns": 1214,
+  "exercises": 1169,
+  "primers": 67,
+  "builtAppReview": {
+    "widths": [
+      1440,
+      390
+    ],
+    "screens": 8,
+    "cases": 16,
+    "pageErrors": 0,
+    "overflow": 0
+  },
+  "prestartMobile": {
+    "viewport": 390,
+    "scrollWidth": 390
+  },
+  "production": {
+    "url": "https://reps-five-jade.vercel.app",
+    "commit": "8f2aa67",
+    "state": "READY",
+    "http": 200,
+    "changedByThisPass": false,
+    "knownLiveIssue": "Pre-start mobile overflow; fixed on v21-work, not released"
+  },
+  "fullBrowserRun": {
+    "status": "unresolved/interrupted for user budget handoff",
+    "passedBeforeStop": 24,
+    "failedBeforeStop": 2,
+    "failure": "Legacy reactivation navigation expectation timed out after 5 seconds; rerun single-worker"
+  }
+}

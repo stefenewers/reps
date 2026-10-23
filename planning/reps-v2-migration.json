@@ -9,9 +9,9 @@
    "STRETCH": 47
   },
   "existingReps": 1169,
-  "reused": 441,
+  "reused": 449,
   "moved": 0,
-  "reworded": 174,
+  "reworded": 166,
   "reclassifiedAsGates": 120,
   "bridges": 57,
   "retrieval": 1,
@@ -7555,7 +7555,7 @@
     "treenode"
    ],
    "planDate": "2026-11-11",
-   "action": "reword",
+   "action": "keep",
    "week": 7,
    "unitId": "w7-trees",
    "purpose": "learn",
@@ -8326,7 +8326,7 @@
     "dict_create"
    ],
    "planDate": "2026-11-17",
-   "action": "reword",
+   "action": "keep",
    "week": 12,
    "unitId": "w12-matrix-tries",
    "purpose": "drill",
@@ -9470,7 +9470,7 @@
     "list_comprehension"
    ],
    "planDate": "2026-11-30",
-   "action": "reword",
+   "action": "keep",
    "week": 8,
    "unitId": "w8-grids",
    "purpose": "drill",
@@ -9748,7 +9748,7 @@
     "grid_neighbors"
    ],
    "planDate": "2027-01-09",
-   "action": "reword",
+   "action": "keep",
    "week": 8,
    "unitId": "w8-grids",
    "purpose": "combine",
@@ -11180,7 +11180,7 @@
     "graph_dfs"
    ],
    "planDate": "2026-12-05",
-   "action": "reword",
+   "action": "keep",
    "week": 9,
    "unitId": "w9-cycles",
    "purpose": "learn",
@@ -12676,7 +12676,7 @@
     "edge_cases"
    ],
    "planDate": "2026-12-16",
-   "action": "reword",
+   "action": "keep",
    "week": 10,
    "unitId": "w10-intervals",
    "purpose": "drill",
@@ -13900,7 +13900,7 @@
     "recurrence"
    ],
    "planDate": "2026-12-28",
-   "action": "reword",
+   "action": "keep",
    "week": 11,
    "unitId": "w11-dp",
    "purpose": "drill",
@@ -16001,7 +16001,7 @@
     "treenode"
    ],
    "planDate": "2026-11-28",
-   "action": "reword",
+   "action": "keep",
    "week": 14,
    "unitId": "w14-interview",
    "purpose": "retrieval",

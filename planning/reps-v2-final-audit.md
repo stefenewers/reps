@@ -88,11 +88,51 @@ from the curated required path. Content and Python checks must pass afresh.
 
 ## Implementation checklist
 
-- [ ] C1–C5 strict evidence and target completion, with regressions.
-- [ ] C6 truthful lab completion date, with regression.
-- [ ] R1–R2 planner/placement and spaced retrieval, maintaining 14-week fit.
-- [ ] R3 and P1–P2 learner guidance and historical action links.
-- [ ] P3 updated operating documentation and final completion report.
+- [x] C1–C5 strict evidence and target completion, with regressions.
+- [x] C6 truthful lab completion date, with regression.
+- [x] R1–R2 planner/placement and spaced retrieval, maintaining 14-week fit.
+- [x] R3 and P1–P2 learner guidance and historical action links.
+- [x] P3 updated operating documentation and final completion report.
 
 This is the baseline checklist, not a completion claim. Final disposition and
 validation evidence will be appended after implementation.
+
+## Findings added during implementation walkthroughs
+
+- C7 (high, blocking): a failed checkpoint attempted before its scheduled due
+  date disappeared after repair. Fixed: attempted, uncleared gates join due
+  obligations; same-day repair is handled, next-day fresh variants stay visible.
+  Reproduced and verified by a browser repair journey and contract regression.
+- C8 (high, blocking): a second outside solve entry could conceal a same-day
+  solution reveal. Fixed across shared credit, targets, readiness and display;
+  regression prevents that credit. Outside assistance also contributes to
+  Today's assistance count.
+- C9 (high, blocking): imported later-unit passes could report readiness while
+  prerequisites were still locked. Ready now requires prerequisites as well as
+  the unit's own evidence; future history is excluded from current routing.
+- P4 (medium, blocking): 42 required-path prompts used noun-phrase instructions
+  or long sentences. Manually revised 41 authored prompts plus the derived cold
+  version. Structured/prose examples explain many remaining heuristic warnings;
+  they are not all missing examples or optional-inventory warnings.
+
+Implementation commits: `631f5e5` (evidence), `b1f344a` (learner routing and
+completion), `0b1e8a3` (content), `c84cb9a` (browser journeys).
+
+Remote-state correction: the original handoff's main SHA was stale. A read-only
+Vercel inspection found production READY at main `8f2aa67` (PR #4 merge), which
+already contains the preceding V2.1 work. This completion pass leaves main alone.
+
+P5 (medium, blocking) found during deployed comparison: mobile outside-solve
+actions overflowed the pre-start page. Fixed in `3452734`; built page verified
+with scroll width 390 at viewport width 390. Production remains unchanged.
+
+Scope closed at the user’s usage-budget request. `planning/CLAUDE_CODE_HANDOFF.md`
+is the continuation entry point; final verification is distinguished from product
+implementation completion below.
+
+## Final validation disposition
+
+All eight quality commands pass; final browser validation remains OPEN due to
+the legacy reactivation navigation timeout in the two-worker run. The user
+requested handoff at 3% usage. This is a validation blocker, not a claimed pass.
+Continue from `planning/CLAUDE_CODE_HANDOFF.md`.
