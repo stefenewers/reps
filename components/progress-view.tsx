@@ -1,5 +1,7 @@
 'use client'
 
+import ReadinessReport from '@/components/course/readiness-report'
+import { COURSE_START } from '@/data/course/calendar'
 import { useMemo } from 'react'
 import Link from 'next/link'
 import { useReps } from '@/components/reps-provider'
@@ -56,8 +58,13 @@ export default function ProgressView() {
       <div className="mx-auto w-full max-w-[1120px] px-5 pb-28 pt-10 sm:px-8">
         <h1 className="display-xl">Progress</h1>
         <p className="mt-2 max-w-[680px] text-[15px] leading-relaxed text-ink-2">
-          {started ? 'How the 90 days are going, from what you actually did.' : `The plan starts ${shortDate(PLAN_DAYS[0].date)}. This page fills in as you practice.`}
+          {today >= COURSE_START ? 'Where the course stands, from what you actually produced.' : started ? 'How the 90 days are going, from what you actually did.' : `The plan starts ${shortDate(PLAN_DAYS[0].date)}. This page fills in as you practice.`}
         </p>
+        {today >= COURSE_START && (
+          <div className="mt-8">
+            <ReadinessReport />
+          </div>
+        )}
 
         <dl className="mt-7 grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-3 lg:grid-cols-5">
           <Stat label="Streak" value={`${streak(active, today, PLAN_DAYS)}`} sub="working days in a row" />
