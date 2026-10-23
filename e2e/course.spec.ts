@@ -259,3 +259,131 @@ test('a seen outside solution earns credit only after a rebuild on a later train
   await expect(item.getByTestId('lc-outcome')).toContainText('Counted: rebuilt from blank')
   await expect(page.getByTestId('today-contract')).toContainText('1 / 12')
 })
+
+test('placement is a working cold session, and a locked Road unit names its prerequisite', async ({ page }) => {
+  const { UNITS } = await import('@/data/course/units')
+  const unit = UNITS[1]
+  await at(page, '2026-10-27T12:00:00-04:00')
+  await page.goto('/')
+  const earlier = [...UNITS[0].path!, ...unit.path!.slice(0, Math.ceil(unit.path!.length * 0.4))]
+  await page.getByLabel('Import progress file').setInputFiles(bundle(earlier.map((id) => ({ id, date: '2026-10-20' }))))
+  await page.goto('/')
+  await expect(page.getByTestId('placement-step')).toContainText('Prove what you already know')
+  await expect(page.getByTestId('training-start')).toHaveText('Try placement checkpoint')
+  await page.getByTestId('training-start').click()
+  await expect(page).toHaveURL(/\/rep\//, { timeout: 30_000 })
+  await expect(page.getByTestId('checkpoint')).toBeVisible()
+  await expect(page.getByRole('button', { name: /^Hint/ })).toHaveCount(0)
+  await expect(page.getByLabel('Breadcrumb')).toHaveText('Independent practice')
+  const id = new URL(page.url()).pathname.split('/').pop()!
+  const e = EXERCISE_BY_ID[id]
+  await page.locator('.cm-content').click()
+  await page.keyboard.press('ControlOrMeta+a')
+  await page.keyboard.insertText(e.solution!)
+  await page.getByTestId('submit').click()
+  await expect(page.getByTestId('rep-complete')).toBeVisible({ timeout: 90_000 })
+  await page.goto('/plan')
+  await page.locator('li[data-week="7"] > button').click()
+  await expect(page.locator('[data-unit="w7-trees"]')).toContainText('First clear: Recursion')
+})
+
+test('lab design, build evidence, change evidence and review combine into persisted completion without rep credit', async ({ page }) => {
+  const { LAB_BY_ID } = await import('@/data/course/lessons')
+  const lab = LAB_BY_ID['lab-savings-goal']
+  await at(page, '2026-10-27T16:00:00-04:00')
+  await page.goto('/')
+  await page
+    .getByLabel('Import progress file')
+    .setInputFiles(bundle([lab.buildExerciseId, lab.changeRequest.exerciseId].map((id) => ({ id, date: '2026-10-27' }))))
+  await page.goto(`/lab/${lab.id}`)
+  await expect(page.getByTestId('lab-finish')).toBeDisabled()
+  for (let i = 0; i < lab.designQuestions.length; i++)
+    await page.getByTestId(`design-${i}`).fill('The loop owns the balance and checks the goal before adding the next payment.')
+  for (const box of await page.getByRole('checkbox').all()) await box.check()
+  await expect(page.getByTestId('lab-finish')).toBeEnabled()
+  await page.getByTestId('lab-finish').click()
+  await expect(page.getByTestId('lab')).toHaveAttribute('data-done', 'true')
+  await page.reload()
+  await expect(page.getByTestId('lab')).toHaveAttribute('data-done', 'true')
+  await page.goto('/')
+  await expect(page.getByTestId('today-contract')).toContainText('0 / 10')
+})
+
+for (const grade of ['red', 'yellow', 'green'] as const) {
+  test(`Week 14 ${grade} explains and enforces its mock allowance`, async ({ page }) => {
+    const { MOCKS } = await import('@/data/mocks')
+    const bank = SECTION_BY_ID['c13-transfer'].exercises
+    const small = bank.filter((e) => e.stage !== 'interview' && e.minutes < 15)
+    const chosen = grade === 'green' ? bank : grade === 'yellow' ? small.slice(0, 6) : []
+    await at(page, '2027-01-25T12:00:00-05:00')
+    await page.goto('/')
+    if (chosen.length) {
+      await page.getByLabel('Import progress file').setInputFiles(bundle(chosen.map((e) => ({ id: e.id, date: '2027-01-22' }))))
+      await page.goto('/')
+    }
+    await expect(page.getByTestId('week14-route')).toHaveAttribute('data-grade', grade)
+    await page.goto('/interview')
+    await expect(page.getByTestId('mock-gate')).toContainText(`Transfer grade: ${grade}`)
+    await page.goto(`/interview/${MOCKS[0].id}`)
+    if (grade === 'red') await expect(page.getByTestId('mock-locked-page')).toBeVisible()
+    else {
+      await page.getByRole('button', { name: 'Start the clock' }).click()
+      await expect(page.getByRole('button', { name: /Hint|Solution|Basics/i })).toHaveCount(0)
+      await page.goto(`/interview/${MOCKS[1].id}`)
+      if (grade === 'yellow') await expect(page.getByTestId('mock-locked-page')).toBeVisible()
+      else await expect(page.getByRole('button', { name: 'Start the clock' })).toBeVisible()
+    }
+  })
+}
+
+test('a malformed progress file is rejected visibly and leaves saved progress intact', async ({ page }) => {
+  await at(page, '2026-10-26T16:00:00-04:00')
+  await page.goto('/')
+  await page.getByLabel('Import progress file').setInputFiles(bundle([{ id: WEEK1[0], date: '2026-10-26' }]))
+  await page.goto('/')
+  const before = await page.getByTestId('week-count').textContent()
+  await page.getByLabel('Import progress file').setInputFiles({ name: 'broken.json', mimeType: 'application/json', buffer: Buffer.from('{broken') })
+  await expect(page.getByRole('status').filter({ hasText: 'Import failed:' })).toBeVisible()
+  await page.reload()
+  await expect(page.getByTestId('week-count')).toHaveText(before!)
+})
+
+test('a failed checkpoint routes real repair, then offers fresh cold variants on the next day', async ({ page }) => {
+  const { UNITS } = await import('@/data/course/units')
+  const { GATE_BY_ID } = await import('@/data/course/gates')
+  const gate = GATE_BY_ID['g-loop-control']
+  const failedId = gate.pool[0]
+  const { courseStatus } = await import('@/lib/course/routing')
+  const history = [...UNITS[0].path!, ...UNITS[1].path!].map((id) => ({ id, date: '2026-10-20' }))
+  const file = bundle([
+    ...history,
+    { id: failedId, date: '2026-10-28', over: { passed: false, completedAt: undefined, attemptsBeforePass: 3, retrievalType: 'cold' } }
+  ])
+  const data = JSON.parse(file.buffer.toString())
+  const status = courseStatus({ attempts: data.attempts, mastery: {}, exercises: EXERCISE_BY_ID, sections: SECTION_BY_ID, today: '2026-10-28' })
+  const repair = status.find((s) => s.unit.id === gate.unitId)!.gates.find((g) => g.gate.id === gate.id)!.repair
+  expect(repair.length).toBeGreaterThanOrEqual(2)
+  await at(page, '2026-10-28T16:00:00-04:00')
+  await page.goto('/')
+  await page.getByLabel('Import progress file').setInputFiles(file)
+  await page.goto('/')
+  await expect(page.getByTestId('repair-step')).toBeVisible()
+  for (const id of repair) {
+    await page.goto(`/rep/${id}`)
+    await page.locator('.cm-content').click()
+    await page.keyboard.press('ControlOrMeta+a')
+    await page.keyboard.insertText(EXERCISE_BY_ID[id].solution!)
+    await page.getByTestId('submit').click()
+    await expect(page.getByTestId('rep-complete')).toBeVisible({ timeout: 90_000 })
+  }
+  await page.goto('/')
+  await expect(page.getByTestId('repair-step')).toHaveCount(0)
+  await at(page, '2026-10-29T12:00:00-04:00')
+  await page.goto('/')
+  const card = page.getByTestId('today-gate').filter({ hasText: gate.title }).first()
+  await expect(card).toHaveAttribute('data-state', 'open')
+  await card.getByRole('button', { name: 'Start checkpoint' }).click()
+  await expect(page).toHaveURL(/\/rep\//, { timeout: 30_000 })
+  expect(new URL(page.url()).pathname).not.toBe(`/rep/${failedId}`)
+  await expect(page.getByTestId('checkpoint')).toBeVisible()
+})
