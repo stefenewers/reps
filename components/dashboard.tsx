@@ -13,6 +13,8 @@ import BuildingToward from '@/components/building-toward'
 import ReactivateCard from '@/components/reactivate-card'
 import { SessionReviewCard } from '@/components/training-card'
 import TodayTraining from '@/components/today-training'
+import CourseDashboard from '@/components/course/course-dashboard'
+import { COURSE_START } from '@/data/course/calendar'
 import { useTodayPlan } from '@/components/use-today-plan'
 import { useTraining } from '@/components/use-training'
 import LeetcodeList from '@/components/leetcode-list'
@@ -44,8 +46,10 @@ export default function Dashboard() {
   // The page is prerendered at deploy time, so "today" on the server is the deploy date.
   // Draw the day only once we are in the browser and know the real one.
   const inBrowser = useSyncExternalStore(noop, () => true, () => false)
+  const { today } = useReps()
   if (!inBrowser) return <main className="relative flex-1 bg-canvas" aria-busy="true" />
-  return <DashboardToday />
+  // Reps 2.0: from Oct 26 Today is the course day; before it, the 90-day plan (with a heads-up).
+  return today >= COURSE_START ? <CourseDashboard /> : <DashboardToday />
 }
 
 function DashboardToday() {
@@ -130,6 +134,14 @@ function DashboardToday() {
           </div>
           <InterviewTargetCompact />
         </header>
+
+        {today < COURSE_START && (
+          <Link href="/plan" className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-1 rounded-xl bg-flame-soft px-4 py-3 text-[14px] text-ink shadow-[inset_0_0_0_1px_var(--flame-2)] hover:brightness-[0.98]" data-testid="course-banner">
+            <span aria-hidden="true">🔥</span>
+            <span className="font-semibold">Reps 2.0 starts Monday, Oct 26.</span>
+            <span className="text-ink-2">14 weeks to the Feb 1 interview checkpoint: 10 reps a day in week 1, 12 in week 2, then 15. See the road →</span>
+          </Link>
+        )}
 
         {/* Before Day 1, unless an earlier mastery check is still open: that comes first. */}
         {startsIn !== null && !carry && <PlanPreview first={PLAN_DAYS[0]} startsIn={startsIn} />}

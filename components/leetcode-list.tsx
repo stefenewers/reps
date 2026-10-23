@@ -35,13 +35,14 @@ function how(item: LeetcodeItem) {
   return item.mode === 'bridge-first' ? 'New · bridge first, then attempt for up to 30 min' : 'New · attempt for up to 30 min, then study'
 }
 
-export default function LeetcodeList({ day, heading = 'On LeetCode today' }: { day: DayModule; heading?: string }) {
+export default function LeetcodeList({ day, items: given, heading = 'On LeetCode today' }: { day?: DayModule; items?: (LeetcodeItem & { solveId: string; redoDue?: string })[]; heading?: string }) {
   const { entries, save, remove, today } = useSolveLog()
   const { repo } = useReps()
   const router = useRouter()
   const { byLc, passed } = useTargets()
   const [busy, setBusy] = useState(false)
-  const items = leetcodeFor(day, entries, DAYS, lcMeta)
+  // The course passes its own list (lib/course/resolves.ts); the 90-day days build theirs from the calendar.
+  const items = given ?? (day ? leetcodeFor(day, entries, DAYS, lcMeta) : [])
   if (!items.length) return null
   const byId = new Map(entries.map((e) => [e.id, e]))
   const done = items.filter((i) => byId.has(i.solveId)).length
@@ -87,7 +88,7 @@ export default function LeetcodeList({ day, heading = 'On LeetCode today' }: { d
               <span aria-hidden="true" className={`grid size-[22px] shrink-0 place-items-center rounded-md ${r ? (r === 'unaided' ? 'text-pass' : 'text-amber') : 'text-faint shadow-[inset_0_0_0_1px_var(--line-strong)]'}`}>
                 {r && <IconCheck size={12} strokeWidth={2.2} />}
               </span>
-              <div className="min-w-0 flex-1">
+              <div className="min-w-0 flex-1 basis-[240px]">
                 <a href={i.url} target="_blank" rel="noreferrer" className="inline-flex max-w-full items-center gap-1.5 text-[14.5px] font-medium text-ink hover:underline" title={`Practice on ${practiceSite(i.lc)}`}>
                   <span className="num text-muted">LC {i.lc}</span>
                   <span className="truncate">{i.title}</span>

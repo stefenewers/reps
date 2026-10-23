@@ -54,6 +54,19 @@
   --warn: #8a5a12;
   --warn-soft: var(--surface-2);
 
+  /* Reps 2.0 semantic colour: state, progress and energy, never decoration. */
+  --flame: #ea6a10;
+  --flame-2: #f4a12a;
+  --flame-soft: #fff4e6;
+  --learn: #2f6fdb;
+  --learn-soft: #eef4fd;
+  --repair: #a86a12;
+  --repair-soft: #fcf5e6;
+  --cold: #4b3bd8;
+  --cold-soft: #f1f0fd;
+  --rest: #8f7f6b;
+  --rest-soft: #f5f1eb;
+
   /* radius */
   --r-xs: 6px;
   --r-sm: 8px;
@@ -109,6 +122,17 @@
   --color-fail-soft: var(--fail-soft);
   --color-warn: var(--warn);
   --color-warn-soft: var(--warn-soft);
+  --color-flame: var(--flame);
+  --color-flame-2: var(--flame-2);
+  --color-flame-soft: var(--flame-soft);
+  --color-learn: var(--learn);
+  --color-learn-soft: var(--learn-soft);
+  --color-repair: var(--repair);
+  --color-repair-soft: var(--repair-soft);
+  --color-cold: var(--cold);
+  --color-cold-soft: var(--cold-soft);
+  --color-rest: var(--rest);
+  --color-rest-soft: var(--rest-soft);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --radius-sm: var(--r-sm);
@@ -878,7 +902,39 @@ a.chip:hover {
   100% { opacity: 0; }
 }
 
+/* Reps 2.0 motion: purposeful, short, never during typing. */
+@keyframes flame-flicker {
+  0%, 100% { transform: scaleY(1) translateY(0); }
+  50% { transform: scaleY(1.06) translateY(-0.5px); }
+}
+@keyframes flame-ignite {
+  0% { transform: scale(0.6); opacity: 0; }
+  60% { transform: scale(1.12); opacity: 1; }
+  100% { transform: scale(1); }
+}
+@keyframes spark-burst {
+  0% { transform: translate(0, 0) scale(1); opacity: 1; }
+  100% { transform: translate(var(--dx), var(--dy)) scale(0.4); opacity: 0; }
+}
+@keyframes rise-in-soft {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes ring-sweep {
+  from { stroke-dashoffset: var(--len); }
+  to { stroke-dashoffset: 0; }
+}
+.flame-live { animation: flame-flicker 2.4s ease-in-out infinite; transform-origin: 50% 100%; }
+.flame-ignite { animation: flame-ignite 600ms var(--ease-out) both; }
+.spark { position: absolute; left: 50%; top: 50%; width: 5px; height: 5px; border-radius: 9999px; background: var(--flame-2); animation: spark-burst 700ms var(--ease-out) forwards; }
+.celebrate-in { animation: rise-in-soft 500ms var(--ease-out) both; }
+.bar-flame > span { background: linear-gradient(90deg, var(--flame-2), var(--flame)); transition: width 450ms var(--ease-out); }
+
 @media (prefers-reduced-motion: reduce) {
+  .flame-live,
+  .spark {
+    animation: none !important;
+  }
   .pp-comet,
   .pp-fill::after {
     display: none;
