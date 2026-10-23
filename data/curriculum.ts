@@ -11,6 +11,7 @@ import { day as oct10 } from '@/data/exercises/oct10'
 import { day as oct11 } from '@/data/exercises/oct11'
 import { PACK_SECTIONS } from '@/data/exercises/bridges'
 import { MOCK_EXERCISES } from '@/data/mocks'
+import { COURSE_SECTIONS } from '@/data/exercises/course'
 import { OPTIONAL_SECTIONS, PICKS, REQUIRED_COLD_CAPSTONES, SCHEDULE, TRIM_FROM } from '@/data/schedule'
 import { PLAN_90, PLAN_START } from '@/data/schedule-90'
 import { PROGRAM_STAGES } from '@/data/program'
@@ -224,6 +225,8 @@ export const ALL_EXERCISES: Exercise[] = [
   // Reps inside a plan mastery check only count when passed without the solution.
   ...MODULES.flatMap((d) => d.sections.flatMap((s) => s.exercises)).map((e) => (PLAN_GATE_IDS.has(e.id) ? { ...e, cleanPass: true } : e)),
   ...MOCK_EXERCISES,
+  // Reps 2.0 course content (data/exercises/course): outside the 90-day calendar.
+  ...COURSE_SECTIONS.flatMap((s) => s.exercises),
 ]
 
 /** Where the 90-day plan begins. */
