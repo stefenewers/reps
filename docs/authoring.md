@@ -18,8 +18,8 @@ hand-holding.
 
 The learner: building toward SWE I / new-grad coding interviews in Python. General
 programming is understood; fluent Python, data structures, algorithms and pattern
-recognition are still developing. Python only. The 90-day plan runs Oct 12, 2026 →
-Jan 9, 2027.
+recognition are still developing. Python only. The Reps 2.0 course runs Oct 26, 2026 →
+Jan 31, 2027 (`docs/reps-2.md`).
 
 Confusion about the **problem statement** is not desirable difficulty. Reasoning
 about the **solution** is. The test every rep must pass, from a real question the

@@ -113,7 +113,7 @@ export class PythonRunner {
     this.pending.clear()
   }
 
-  async run(code: string, tests: TestCase[] = [], timeoutMs = DEFAULT_TIMEOUT_MS): Promise<RunResult> {
+  async run(code: string, tests: TestCase[] = [], timeoutMs = DEFAULT_TIMEOUT_MS, retried = false): Promise<RunResult> {
     const started = performance.now()
     try {
       await this.ensure()
@@ -148,6 +148,8 @@ export class PythonRunner {
           durationMs: performance.now() - started
         }
       }
+      // Queued behind a run that was stopped (a runaway starter, say): this code never ran. Run it once on the fresh interpreter.
+      if (msg === 'Python restarted' && !retried) return this.run(code, tests, timeoutMs, true)
       this.reset()
       this.setStatus('error')
       return { stdout: '', error: null, errorLine: null, tests: [], infraError: msg, durationMs: performance.now() - started }

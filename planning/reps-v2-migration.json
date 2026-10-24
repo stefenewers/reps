@@ -9,9 +9,9 @@
    "STRETCH": 47
   },
   "existingReps": 1169,
-  "reused": 449,
+  "reused": 451,
   "moved": 0,
-  "reworded": 166,
+  "reworded": 164,
   "reclassifiedAsGates": 120,
   "bridges": 57,
   "retrieval": 1,
@@ -2389,7 +2389,7 @@
     "dict_lookup"
    ],
    "planDate": "2026-10-14",
-   "action": "reword",
+   "action": "keep",
    "week": 2,
    "unitId": "w2-hashing",
    "purpose": "combine",
@@ -2411,7 +2411,7 @@
     "hash_reasoning"
    ],
    "planDate": "2026-10-14",
-   "action": "reword",
+   "action": "keep",
    "week": 2,
    "unitId": "w2-hashing",
    "purpose": "capstone",

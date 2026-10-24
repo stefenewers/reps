@@ -18,7 +18,7 @@ import { PROBLEM_BY_ID } from '@/data/problems'
 import { practiceSite } from '@/data/problem-urls'
 import { skillName } from '@/data/skills'
 import { firstDifference, hasBlanks, outputMatches } from '@/lib/answers'
-import { localDate, shortDate } from '@/lib/dates'
+import { localDate } from '@/lib/dates'
 import { KIND_VERB } from '@/lib/labels'
 import { kindOf } from '@/components/rep-kind'
 import { RepsBars } from '@/components/motif'
@@ -40,7 +40,7 @@ import { readiness, repairReps } from '@/lib/bridges'
 import { REPAIR_AFTER, nextInSession, planRepair } from '@/lib/session-planner'
 import { REPAIR_LABEL, TRAINING_LABEL, firstExposure, needsRelearn, practiceBySkill, type TrainingState } from '@/lib/training-state'
 import { IconArrowRight, IconBug, IconBulb, IconClock, IconDots, IconExternal, IconPlay, IconRotate, IconSpark, IconX } from '@/components/icons'
-import { followingExercise, lockedByGate, missingPrerequisites, nextInOrder, passedSet, retrievalTypeFor } from '@/lib/progress'
+import { lockedByGate, missingPrerequisites, passedSet, retrievalTypeFor } from '@/lib/progress'
 import { getRunner, type RunResult } from '@/lib/python/runner'
 import { buildRepairSet, createSession, findExercise, getSession, newId, skillDepth } from '@/lib/sessions'
 import {
@@ -379,16 +379,17 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
     if (ex.kind === 'code' || ex.kind === 'reorder') void getRunner().ensure().catch(() => undefined)
   }, [ex.kind])
 
-  // Debug Reps: once Python is ready, show how many tests the broken code fails.
+  // Debug Reps: once Python is ready, show how many tests the broken code fails. Once per rep: the run's own
+  // status changes must not cancel it, or a never-ending starter would be relaunched every time Python restarts
+  // and trap the learner's fix behind it. A short timeout frees Python quickly when the starter itself hangs.
+  const debugRunFor = useRef<string | null>(null)
   useEffect(() => {
-    if (ex.style !== 'debug' || pyStatus !== 'ready' || debugFailing !== null) return
-    let live = true
+    if (ex.style !== 'debug' || pyStatus !== 'ready' || debugFailing !== null || debugRunFor.current === ex.id) return
+    const id = ex.id
+    debugRunFor.current = id
     void getRunner()
-      .run(blankStarter(ex), (ex.tests ?? []).filter((t) => !t.hidden))
-      .then((r) => live && setDebugFailing(r.tests.filter((t) => !t.passed).length || (r.error ? 1 : 0)))
-    return () => {
-      live = false
-    }
+      .run(blankStarter(ex), (ex.tests ?? []).filter((t) => !t.hidden), 4000)
+      .then((r) => debugRunFor.current === id && setDebugFailing(r.tests.filter((t) => !t.passed).length || (r.error ? 1 : 0)))
   }, [ex, pyStatus, debugFailing])
 
   // Drafts: saved locally after a pause in typing, synced later in the background.
@@ -680,15 +681,9 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
       if (session.returnTo) return `/rep/${session.returnTo}`
       return '/'
     }
-    // The queue just continues: the next rep in the order of the work, whatever day it was first planned for.
-    const inOrder = nextInOrder(fromId ?? ex.id)
-    if (inOrder) return `/rep/${inOrder.id}`
-    if (day) {
-      const nxt = followingExercise(day, fromId ?? ex.id)
-      if (nxt) return `/rep/${nxt.id}`
-    }
+    // Outside a session, Today decides what comes next (the course order, not an older plan's queue).
     return '/'
-  }, [session, ex.id, day, fromId, attempts])
+  }, [session, ex.id, attempts])
 
   // ── coach actions ──────────────────────────────────────────────────────────
 
@@ -861,7 +856,6 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
   const labOf = ex.lab ? LABS.find((l) => l.buildExerciseId === ex.id || l.changeRequest.exerciseId === ex.id) : undefined
   const isDebug = ex.style === 'debug'
   const kind = kindOf(ex)
-  const crumbDay = day ? shortDate(day.date) : null
   const crumbTitle = bare || unlabeled ? 'Independent practice' : session ? session.title : (section?.title ?? (ex.generated ? 'Generated rep' : 'Rep'))
   // Outside a session, show where you are in the section: days are a gauge now, not a container.
   const inSection = !session && section ? section.exercises.findIndex((e) => e.id === ex.id) : -1
@@ -885,10 +879,10 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
       {/* Rep bar: where am I, how far, which mode, and how this attempt is going (independent, assisted, cold) */}
       <div className="rep-bar relative flex h-14 shrink-0 items-center gap-4 bg-bg px-4 sm:px-6">
         <nav aria-label="Breadcrumb" className="flex min-w-0 items-center gap-1.5 text-[13px]">
-          {crumbDay && !session && (
+          {!session && (
             <>
-              <Link href={`/day/${day!.date}`} className="shrink-0 text-muted hover:text-ink">
-                {crumbDay}
+              <Link href="/" className="shrink-0 text-muted hover:text-ink">
+                Today
               </Link>
               <span aria-hidden="true" className="text-faint">
                 /
@@ -1485,7 +1479,11 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
                     {coachBusy === 'same' ? 'Finding…' : 'Another rep'}
                   </button>
                   <Link href={nextHref} className={`cta-in btn btn-lg ${checkUncleared ? '' : 'btn-accent'}`} data-testid="next-rep" autoFocus={!checkUncleared}>
-                    {nextHref.endsWith('/summary') ? 'Finish the day' : session && session.exerciseIds.indexOf(ex.id) === session.exerciseIds.length - 1 && session.returnTo ? 'Retry capstone' : 'Next rep'}
+                    {nextHref === '/'
+                      ? 'Back to Today'
+                      : session && session.exerciseIds.indexOf(ex.id) === session.exerciseIds.length - 1 && session.returnTo
+                        ? 'Retry capstone'
+                        : 'Next rep'}
                     <IconArrowRight size={15} />
                   </Link>
                 </div>

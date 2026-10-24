@@ -1,6 +1,6 @@
 # Reps 2.0 — how the course works
 
-The canonical intent is `REPS_2_MASTER_SPEC.md`. This is the map of how the code delivers it. From **Oct 26, 2026** Today, Plan and Progress run on the course. Before that date the 90-day plan behaves exactly as it did.
+The canonical intent is `REPS_2_MASTER_SPEC.md`. This is the map of how the code delivers it. From **Oct 26, 2026** Today, the Road (Plan) and Progress run on the course. Before that date Today previews Day 1 (learning open, nothing counted; the real date is kept for every save), and the Road and Progress already show the course. The 90-day plan no longer drives any page.
 
 ## Layers
 

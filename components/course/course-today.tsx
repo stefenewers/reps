@@ -254,7 +254,18 @@ export default function CourseToday({
               }
             : remainingReps.length
               ? {
-                  label: c.reps.done === 0 ? (unlabeled ? 'Start transfer session' : cd.week.number === 14 ? 'Start timed reps' : 'Start today’s reps') : repsLeft ? `Continue reps · ${repsLeft} to go` : 'Continue reps',
+                  label:
+                    c.reps.done === 0
+                      ? recovery
+                        ? 'Start optional reps'
+                        : unlabeled
+                          ? 'Start transfer session'
+                          : cd.week.number === 14
+                            ? 'Start timed reps'
+                            : 'Start today’s reps'
+                      : repsLeft
+                        ? `Continue reps · ${repsLeft} to go`
+                        : 'Continue reps',
                   href: '',
                   why: unlabeled ? 'Unlabeled problems: choose the approach yourself.' : 'Reps open one after another. Each one you solve yourself counts.'
                 }
@@ -418,9 +429,10 @@ export default function CourseToday({
     : [
         {
           key: 'reps',
-          label: recovery ? `${target} optional reps` : `Solve ${target} qualifying reps`,
+          label: recovery ? `${target} reps would close the week` : `Solve ${target} qualifying reps`,
           detail: `${c.reps.done} / ${target}`,
-          done: c.reps.met
+          // On an optional Saturday the contract is always met; the row shows the reps actually done.
+          done: recovery ? target > 0 && c.reps.done >= target : c.reps.met
         },
         ...c.repair.map((r) => ({ key: `repair:${r.gateId}`, label: `Repair: ${r.title}`, detail: plural(r.reps.length, 'focused rep'), done: false })),
         ...c.labs.map((l) => ({ key: `lab:${l.id}`, label: `Finish the lab: ${l.title}`, detail: '', done: l.state === 'done', carried: l.carried })),
@@ -581,12 +593,19 @@ export default function CourseToday({
           <span className="min-w-0 flex-1">{i.title}</span>
         </span>
       ) : (
-        <Link href={`/rep/${i.exerciseId}`} className="rep-row">
+        // Starting from any row opens today's session from that rep, so "Next rep" keeps following today's plan.
+        <button
+          type="button"
+          className="rep-row w-full text-left hover:bg-surface"
+          disabled={busy}
+          onClick={() => void startReps([i, ...remainingReps.filter((r) => r.key !== i.key)])}
+        >
           <Check on={false} />
           <span className="min-w-0 flex-1">{unlabeled ? 'Independent practice' : i.title}</span>
           {i.kind === 'repair' && <span className="tag tag-repair">Repair</span>}
           {(i.kind === 'cold' || i.kind === 'warm') && <span className="tag tag-cold">Cold</span>}
-        </Link>
+          <IconArrowRight size={13} className="text-faint" />
+        </button>
       )}
     </li>
   )
@@ -704,7 +723,13 @@ export default function CourseToday({
                     {recovery ? (openItems ? 'Open work, if you choose' : target ? `${target} reps would close the week` : 'Week complete') : `${target} reps`}
                   </p>
                   <p className="mt-0.5 text-[12px] leading-snug text-muted">
-                    {preview ? 'Counted from Monday.' : c.reps.met ? 'Target met.' : `${repsLeft} to go. Only work you produce counts.`}
+                    {preview
+                      ? 'Counted from Monday.'
+                      : recovery
+                        ? 'Optional. Each one still counts toward the week.'
+                        : c.reps.met
+                          ? 'Target met.'
+                          : `${repsLeft} to go. Only work you produce counts.`}
                   </p>
                 </div>
                 <div className="col-span-2 grid grid-cols-2 gap-3 sm:col-span-1 sm:grid-cols-1">
@@ -791,7 +816,7 @@ export default function CourseToday({
             {/* The finish line: what must be true before today counts. */}
             <aside className={`rounded-2xl p-5 ${complete ? 'tile-pass' : 'bg-surface'}`} data-testid="finish-line" aria-labelledby="finish-h">
               <p id="finish-h" className="text-[15px] font-semibold">
-                Today&apos;s finish line
+                {recovery ? 'Open work, all optional' : 'Today’s finish line'}
               </p>
               {preview ? (
                 <p className="mt-2 text-[13.5px] leading-relaxed text-ink-2">

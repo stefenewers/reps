@@ -81,6 +81,19 @@ async function snap(page: Page, name: string, path: string, opts: { click?: stri
 
 test.use({ reducedMotion: 'reduce' })
 
+// A release candidate is quiet: every captured state must render without console or page errors.
+let errors: string[] = []
+test.beforeEach(({ page }) => {
+  errors = []
+  page.on('pageerror', (e) => errors.push(`pageerror ${page.url()}: ${e.message}`))
+  page.on('console', (m) => {
+    if (m.type() === 'error') errors.push(`console ${page.url()}: ${m.text()}`)
+  })
+})
+test.afterEach(() => {
+  expect(errors, errors.join('\n')).toEqual([])
+})
+
 test('pre-course', async ({ page }) => {
   await load(page, '2026-10-23T09:30:00-04:00')
   await snap(page, '01-today-precourse', '/')
@@ -119,6 +132,16 @@ test('rep target met, required work open', async ({ page }) => {
 test('week 3 normal day', async ({ page }) => {
   await load(page, '2026-11-10T10:00:00-05:00')
   await snap(page, '09-today-week3', '/')
+})
+
+test('saturday recovery', async ({ page }) => {
+  await load(page, '2026-10-31T11:00:00-04:00', history('2026-10-31'))
+  await snap(page, '05b-today-saturday', '/')
+})
+
+test('feb 1 final decision', async ({ page }) => {
+  await load(page, '2027-02-01T09:00:00-05:00')
+  await snap(page, '17-today-feb1', '/')
 })
 
 test('rest day', async ({ page }) => {

@@ -475,7 +475,7 @@ Write three functions. Each does one job.
 
 **\`validate_event(stock, event)\`** returns \`None\` if the event can be applied. Otherwise it returns the reason, checked in this order:
 1. \`kind\` is not \`'receive'\`, \`'sell'\` or \`'return'\` → \`'unknown kind'\`.
-2. \`qty\` is not an \`int\` above 0 → \`'bad quantity'\`.
+2. \`qty\` is not an \`int\` above 0 → \`'bad quantity'\`. (\`type(qty) is int\` checks for a whole number; \`2.5\` is not one.)
 3. A sale of more units than are on hand → \`'not enough stock'\`. An item missing from \`stock\` has 0 on hand.
 4. A return of an item that is not in \`stock\` → \`'unknown item'\`.
 
@@ -567,7 +567,7 @@ Examples:
 A line item is a dict like \`{'sku': 'tea', 'price_cents': 250, 'qty': 2, 'category': 'drinks'}\`. \`price_order(items, coupon=None)\` returns \`{'subtotal': …, 'discount': …, 'tax': …, 'total': …}\`.
 
 The rules, in this order:
-1. **Validate.** If any item has \`qty\` below 1 or \`price_cents\` below 0, raise \`ValueError\`.
+1. **Validate.** If any item has \`qty\` below 1 or \`price_cents\` below 0, raise \`ValueError\`. To raise it, write \`raise ValueError('bad quantity')\`: the function stops there and the caller gets the error instead of an answer.
 2. **Subtotal.** Add up \`price_cents * qty\` for every line.
 3. **Bulk discount.** A line with 10 or more units gets 10% off that line. Round down to a whole cent: \`line_total * 10 // 100\`.
 4. **Coupon.** \`COUPONS\` maps a code to a rule. \`'SAVE10'\` is 10% off (rounded down) and \`'FIVEOFF'\` is 500 cents off.
@@ -657,7 +657,7 @@ Examples:
 \`shipping_options(order)\` returns a dict from method to cost in dollars, like \`{'standard': 5, 'express': 20}\`. An empty dict means the order cannot ship.
 
 The rules:
-1. If \`weight_kg\` is 0 or less, or \`value\` is below 0, raise \`ValueError\`.
+1. If \`weight_kg\` is 0 or less, or \`value\` is below 0, raise \`ValueError\` (for example \`raise ValueError('bad weight')\`).
 2. \`'US'\` is domestic. \`'CA'\`, \`'MX'\`, \`'GB'\` and \`'DE'\` are international. Any other country cannot ship.
 3. An order over 30 kg cannot ship. Exactly 30 kg can.
 4. A \`'hazmat'\` order gets standard only. Internationally, a \`'hazmat'\` order cannot ship at all.

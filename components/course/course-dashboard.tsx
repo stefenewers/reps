@@ -14,7 +14,7 @@ import { lcMeta, useSolveLog } from '@/components/use-solve-log'
 import { useTodayPlan } from '@/components/use-today-plan'
 import { useTraining } from '@/components/use-training'
 import RoadMini from '@/components/course/road-mini'
-import { INTERVIEW_CHECKPOINT } from '@/data/course/calendar'
+import { COURSE_END, INTERVIEW_CHECKPOINT } from '@/data/course/calendar'
 import { PROBLEM_URLS } from '@/data/problem-urls'
 import { courseLeetcode } from '@/lib/course/resolves'
 import { parseLocal } from '@/lib/dates'
@@ -54,8 +54,12 @@ export default function CourseDashboard({ preview = false }: { preview?: boolean
       <CourseToday plan={plan} training={training} cd={cd} lcUrl={(lc) => problemMeta(lc)?.url} preview={preview} />
 
       <div className="mx-auto mt-16 w-full max-w-[1180px] px-5 sm:px-8">
-        <h2 className="section-title mb-5">This week</h2>
-        <WeekCard cd={cd} />
+        {today <= COURSE_END && (
+          <>
+            <h2 className="section-title mb-5">This week</h2>
+            <WeekCard cd={cd} />
+          </>
+        )}
         <div className="mt-12 mb-5 flex flex-wrap items-baseline justify-between gap-3">
           <h2 className="section-title">The bigger picture</h2>
           <p className="text-[13px] text-muted">

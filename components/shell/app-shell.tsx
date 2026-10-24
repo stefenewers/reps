@@ -23,7 +23,7 @@ import type { SyncStatus } from '@/lib/storage/types'
 type Item = { href: string; label: string; short?: string; icon: (p: { size?: number }) => ReactNode; match: (p: string) => boolean }
 
 const PRIMARY: Item[] = [
-  { href: '/', label: 'Today', icon: IconHome, match: (p) => p === '/' || p.startsWith('/day') || p.startsWith('/rep') },
+  { href: '/', label: 'Today', icon: IconHome, match: (p) => p === '/' || p.startsWith('/rep') },
   { href: '/plan', label: 'Road to Ready', short: 'Road', icon: IconRoad, match: (p) => p.startsWith('/plan') },
   { href: '/progress', label: 'Progress', icon: IconChart, match: (p) => p.startsWith('/progress') },
   { href: '/learn', label: 'Learn', icon: IconBook, match: (p) => p.startsWith('/learn') || p.startsWith('/example') || p.startsWith('/lab') },

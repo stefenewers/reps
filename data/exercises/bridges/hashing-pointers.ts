@@ -119,7 +119,7 @@ print(x, length)`,
         title: 'How long is the run from here',
         skills: ['sequence_start', 'while_loop', 'set_membership'],
         prompt:
-          '`seen` is a set of whole numbers and `start` is one of them.\n\nWrite `run_length(seen, start)`: how many numbers are in the unbroken run `start, start + 1, start + 2, ...` that are all in `seen`.\n\n`run_length({4, 5, 6, 10}, 4)` → `3`',
+          '`seen` is a set of whole numbers and `start` is one of them.\n\nWrite `run_length(seen, start)`. Count up from `start`: `start`, `start + 1`, `start + 2`, and so on, stopping at the first number that is not in `seen`. Return how many numbers you counted. `start` itself counts.\n\n`run_length({4, 5, 6, 10}, 4)` → `3` (4, 5, 6)\n`run_length({4, 5, 6, 10}, 10)` → `1` (11 is missing)',
         starterCode: `def run_length(seen, start):
     pass`,
         solution: `def run_length(seen, start):
@@ -144,7 +144,7 @@ print(x, length)`,
         title: 'Where do the runs begin',
         skills: ['sequence_start', 'set_create', 'set_membership', 'sorting'],
         prompt:
-          '`nums` is a list of whole numbers in any order, possibly with repeats.\n\nA number **starts a run** when the number one below it is not in the list. Write `run_starts(nums)` returning every number that starts a run, smallest first, each one once.\n\n`run_starts([4, 10, 5, 6, 11])` → `[4, 10]`',
+          '`nums` is a list of whole numbers in any order, possibly with repeats.\n\nA number **starts a run** when the number one below it is not in the list. Write `run_starts(nums)` returning every number that starts a run, smallest first, each one once.\n\n`run_starts([4, 10, 5, 6, 11])` → `[4, 10]`\n`run_starts([])` → `[]`',
         starterCode: `def run_starts(nums):
     pass`,
         solution: `def run_starts(nums):
@@ -173,7 +173,7 @@ print(x, length)`,
         skills: ['sequence_start', 'while_loop', 'set_membership'],
         difficulty: 3,
         prompt:
-          '`run_sizes(nums)` should return the size of every run of consecutive numbers in `nums`, smallest size first: **one** size per run.\n\n`run_sizes([4, 10, 5, 6, 11])` → `[2, 3]` (the run 10, 11 and the run 4, 5, 6)\n\nIt returns too many sizes. Fix it.',
+          '`nums` is a list of whole numbers in any order, possibly with repeats. A **run** is a group of numbers that each go up by 1, like 4, 5, 6. `run_sizes(nums)` should return the size of every run in `nums`, smallest size first: **one** size per run.\n\n`run_sizes([4, 10, 5, 6, 11])` → `[2, 3]` (the run 10, 11 and the run 4, 5, 6)\n\nIt returns too many sizes. Fix it.',
         brokenCode: `def run_sizes(nums):
     seen = set(nums)
     sizes = []

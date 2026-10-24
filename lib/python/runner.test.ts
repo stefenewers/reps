@@ -10,6 +10,8 @@ class FakeWorker implements WorkerLike {
   onmessage: ((e: MessageEvent) => void) | null = null
   onerror: ((e: ErrorEvent) => void) | null = null
   terminated = false
+  /** Like the real worker, one run at a time: a hung run blocks everything queued behind it. */
+  blocked = false
   constructor(private behaviour: { hang?: boolean; crash?: boolean; failLoad?: boolean }) {}
   postMessage(msg: { id: number; type: string; code?: string }) {
     setTimeout(() => {
@@ -19,7 +21,11 @@ class FakeWorker implements WorkerLike {
         return this.onmessage?.({ data: { id: msg.id, type: 'ready' } } as MessageEvent)
       }
       if (this.behaviour.crash) return this.onerror?.({ message: 'worker crashed' } as ErrorEvent)
-      if (this.behaviour.hang || msg.code?.includes('while True')) return // never answers
+      if (this.blocked) return
+      if (this.behaviour.hang || msg.code?.includes('while True')) {
+        this.blocked = true
+        return // never answers
+      }
       this.onmessage?.({ data: { id: msg.id, type: 'result', result: { stdout: 'ok\n', error: null, errorLine: null, tests: [] } } } as MessageEvent)
     }, 1)
   }
@@ -71,4 +77,19 @@ test('Python is loaded lazily, only on first use', async () => {
   await r.run('x = 1')
   await r.run('x = 2')
   assert.equal(created, 1)
+})
+
+test('a run queued behind a runaway one is not lost: it runs on the fresh interpreter', async () => {
+  const workers: FakeWorker[] = []
+  const r = new PythonRunner(() => {
+    const w = new FakeWorker({})
+    workers.push(w)
+    return w
+  })
+  // A debug rep's broken starter loops forever while the learner submits the fix.
+  const [stuck, fix] = await Promise.all([r.run('while True:\n    pass', [], 50), r.run('print("ok")', [], 200)])
+  assert.equal(stuck.timedOut, true)
+  assert.equal(fix.infraError, undefined)
+  assert.equal(fix.stdout, 'ok\n')
+  assert.equal(workers.length, 2)
 })

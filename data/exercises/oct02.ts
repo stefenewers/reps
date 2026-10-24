@@ -2621,7 +2621,7 @@ def breaking_input():
     return True`,
     tests: [t.eq("is_anagram('ab', 'a')", 'False'), t.eq("is_anagram('listen', 'silent')", 'True'), t.hidden("is_anagram('', '')", 'True'), t.hidden("is_anagram('a', 'ab')", 'False')],
     hints: ['Try `s` longer than `t`. Does any count go negative?'],
-    explanation: '"No count goes negative" only proves t ⊆ s. With equal lengths it also proves equality, so the length check is part of the algorithm.',
+    explanation: '"No count goes negative" only proves that every character of `t` is also in `s`; `s` may still have extra characters (`\'ab\'` and `\'a\'`). When the lengths are equal, there is no room for extras, so checking the length first is part of the answer.',
     signature: 'debug:anagram-length',
     minutes: 4,
   }),
@@ -2996,7 +2996,7 @@ answer [0, 2]`,
     stage: 'combine',
     repType: 'combine',
     difficulty: 3,
-    prompt: "`nums` is a list of numbers and `target` is a number. This returns the two **values** of the first pair that adds up to `target`. Change it so it returns their **indexes** `[i, j]` with `i < j`, or `[]` if there is no pair.\n\n`pair_indexes([2, 7, 11], 9)` → `[0, 1]`\n\nA set cannot remember where a value was; something else can.",
+    prompt: "`nums` is a list of numbers and `target` is a number. This returns the two **values** of the first pair that adds up to `target`. Change it so it returns their **indexes** `[i, j]` with `i < j`, or `[]` if there is no pair.\n\n`pair_indexes([2, 7, 11], 9)` → `[0, 1]`\n\nA set only remembers which values it has seen, not where they were. Swap it for a dict from each value to its index.",
     starterCode: `def pair_indexes(nums, target):
     seen = set()
     for num in nums:
@@ -3025,7 +3025,7 @@ answer [0, 2]`,
     title: 'Capstone: Two Sum',
     problemId: 'two-sum',
     skills: ['enumerate', 'index_map', 'dict_membership', 'dict_lookup', 'dict_assign', 'complement', 'hash_reasoning'],
-    prompt: 'Given a list of integers `nums` and an integer `target`, return the indexes `[i, j]` (with `i < j`) of the two numbers that add up to target. Exactly one such pair exists, and you may not use the same position twice.\n\nAim for one pass.',
+    prompt: 'Given a list of integers `nums` and an integer `target`, return the indexes `[i, j]` (with `i < j`) of the two numbers that add up to target. Exactly one such pair exists, and you may not use the same position twice.\n\n`two_sum([2, 7, 11, 15], 9)` → `[0, 1]` (2 + 7)\n`two_sum([3, 3], 6)` → `[0, 1]` (two different positions, same value)\n\nAim for one pass.',
     starterCode: `def two_sum(nums, target):
     pass`,
     solution: `def two_sum(nums, target):

@@ -7,40 +7,32 @@ LeetCode problems are capstones of skill graphs, not the teaching material, so R
 trains the Python primitives and patterns underneath them until they come out
 automatically, then asks for the capstone.
 
-It began as a ten-day sprint (Oct 2–10, 2026) and now runs a **90-day ladder plan**
-(Mon Oct 12, 2026 → Sat Jan 9, 2027). The doctrine: **a LeetCode problem is the final
-integration test of a prerequisite graph.** Every pattern has a primer, a ladder of reps
-from the ground up and a cold mastery check passed without the solution. Every target
-problem lists its building blocks (named moves, each demonstrated by reps); the ones its
-pattern ladder does not cover are taught by the problem's **bridge**, a few reps placed
-directly before it. Then the problem, then spaced re-solves. When a problem feels
-impossible, Reps can point to the missing block, train it, and ask again.
+**Reps 2.0** is a 14-week course, **Mon Oct 26, 2026 → Sun Jan 31, 2027**, ending at the
+Feb 1 interview-start checkpoint. The product map is `docs/reps-2.md`, the design system
+`docs/reps-2-design.md`, the release record `docs/reps-2-release.md`, and the canonical
+intent `REPS_2_MASTER_SPEC.md`.
 
-**Teach first, then remove the scaffolding.** A concept is explained the first time it is met (concept, mental model, a small example, then the rep), drilled with shorter and shorter prompts, combined, tested once without its label (a `transfer` rep), and only then met as a LeetCode-style problem. Cold and maintenance reps are terse on purpose. `docs/authoring.md` is the operating standard; `lib/pedagogy.test.ts` enforces its shape.
+The doctrine: **a LeetCode problem is the final integration test of a prerequisite graph.**
+Each unit is taught (lesson, a demo you can step through, a worked example you rebuild),
+practised in qualifying reps, proven at a cold checkpoint, and only then unlocks what
+depends on it. **The calendar can slide; the order cannot.** A failed checkpoint routes to
+a short repair aimed at the smallest broken skill. Mastery and freshness are separate, and
+spaced retrieval keeps earlier skills fresh.
 
-**Training, not testing.** The queue (`lib/pacing.ts`) is the roadmap: the long-term order,
-and what counts as done. Over it sits a deterministic session planner that answers "what
-will help most right now": Today opens with a goal, where the last session left off, and
-ordered blocks (reactivate → learn → drill → combine → prove → maintain). Mastery is
-history and never decays; **freshness** is separate (was this produced recently enough
-to lean on today?), and a stale prerequisite is warmed up with a rep or two before the
-work that needs it. A rep that keeps failing gets a small repair set aimed at the
-smallest thing that broke, then returns to the session.
+**Today is the product.** It names the day's topic and why, the one next action, the
+three kinds of progress (qualifying reps, learning, required milestones), and a finish
+line that says exactly when the day is done. Before Oct 26 it previews Day 1 (learning
+open, nothing counted).
 
-The plan, its research basis and its generator are in `planning/` (the canonical plan);
-`npx tsx scripts/export-ladders.ts && python3 planning/gen.py` rewrites
-`data/schedule-90.ts`, which the app reads.
+Pages: **Today**, **Road to Ready** (`/plan`: the 14 weeks, each unit and what unlocks
+it), **Progress** (readiness by domain, what moved forward, evidence, what needs work,
+builds), **Learn** (lessons, demos, worked examples, labs), **Interview** (the Week 14
+route, readiness-gated mocks), and the practice library: **Skills**, **Problems**,
+**Solve log**. CI (`.github/workflows/ci.yml`) runs lint, tests, content verification and
+the build.
 
-Pages: **Today** (the next rep, the problem it builds toward, the day's blocks and LeetCode list), **Plan** (all 13
-weeks), **Skills**, **Problems** (each target's building blocks, readiness, first solve and re-solves), **Log** (every solve, the re-solve queue, a form for
-outside problems), **Progress** (heatmap, time against plan, pattern readiness,
-checkpoints) and **Interview** (mocks, a mock log, the design track and the stories
-checklist). CI (`.github/workflows/ci.yml`) runs lint, tests, content verification and
-the build on Node 20.
-
-`archive/first-plan/` keeps the first 90-day plan (`plan.md`), its problem list
-(`problems.csv`, which the generator still reads for metadata and verified video links)
-and the original app-rebuild prompt. They are history, not the plan.
+`archive/first-plan/` and `data/schedule-90.ts` are the earlier 90-day plan: history. The
+rep library and some engine code still come from it, but no page runs on it.
 
 ## Run it
 

@@ -1,3 +1,5 @@
+> **Superseded.** This describes Today before Reps 2.0 (the 90-day plan's Today). The current Today is documented in `docs/reps-2-design.md` ("The training day"). Kept as history.
+
 > Superseded in part (Oct 15): the target/maintenance/bonus hero is replaced by *Today's training*, a fixed daily load in reps that grows week by week. See planning/plan.md §5c. The single-next-thing principle stays.
 
 # Today: target, maintenance, bonus

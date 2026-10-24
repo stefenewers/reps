@@ -17,7 +17,7 @@ import { skillName } from '@/data/skills'
 import { shortDate } from '@/lib/dates'
 
 /**
- * Every target problem of the 90-day plan as a destination at the end of a
+ * Every target problem as a destination at the end of a
  * skill graph: its building blocks, which are in place, the bridge reps left,
  * how the first solve went, and where its re-solves stand.
  */
@@ -74,7 +74,7 @@ export default function ProblemsView() {
                 When you are ahead
               </h2>
               <p className="mb-3 max-w-[680px] text-[13px] leading-relaxed text-muted">
-                These have their bridges ready but do not fit inside the 90 days at the plan’s pace. They are next in, most valuable first, whenever the gauge says you are ahead. Their bridge reps are in the day pages as extras.
+                These have their bridges ready but are not on the course path. They are extra practice, most valuable first, for when the day’s training is done and you want more.
               </p>
               <ul className="grid gap-3 md:grid-cols-2">
                 {ahead.map((s) => (

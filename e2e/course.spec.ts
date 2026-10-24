@@ -454,3 +454,66 @@ test('Day 1 as one coached journey: lesson → lesson → worked example → rep
   await expect(page.getByTestId('day-status')).toHaveAttribute('data-status', 'in-progress')
   await expect(page.getByTestId('training-start')).toHaveText(/^Start today’s reps/)
 })
+
+test('Monday, Day 1, end to end: every rep solved through the session, the day completes, and nothing logs an error', async ({ page }) => {
+  test.setTimeout(420_000)
+  const errors: string[] = []
+  page.on('pageerror', (e) => errors.push(`pageerror: ${e.message}`))
+  page.on('console', (m) => {
+    if (m.type() === 'error') errors.push(`console: ${m.text()}`)
+  })
+  await at(page, '2026-10-26T08:30:00-04:00')
+  await page.goto('/')
+  // The coach path: lesson, lesson, worked example, then straight into the reps.
+  await page.getByTestId('training-start').click()
+  for (const url of [/\/learn\/l-state$/, /\/learn\/l-while$/, /\/example\//]) {
+    await expect(page).toHaveURL(url)
+    for (let g = 0; g < 8 && (await page.getByTestId('next-goal').count()); g++) await page.getByTestId('next-goal').click()
+    await page.getByRole('button', { name: 'Mark learning step complete' }).click()
+    await page.getByTestId('learn-next').getByRole('link').click()
+  }
+  await expect(page).toHaveURL(/\/rep\/.+\?s=/, { timeout: 30_000 })
+
+  for (let n = 0; n < 16; n++) {
+    const id = new URL(page.url()).pathname.split('/').pop()!
+    const e = EXERCISE_BY_ID[id]
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
+    if (e.kind === 'output') await page.getByTestId('output-input').fill(e.expectedOutput!)
+    else if (e.kind === 'choice') await page.getByRole('group', { name: 'Choose one answer' }).getByRole('radio').nth(e.answer!).check({ force: true })
+    else if (e.kind === 'reorder') {
+      const target = e.lines!
+      for (let pass = 0; pass < target.length * target.length; pass++) {
+        const labels = await page.locator('[aria-label^="Line "][aria-label$="to move."]').evaluateAll((els) => els.map((x) => x.getAttribute('aria-label')!))
+        const cur = labels.map((l) => l.replace(/^Line \d+: /, '').replace(/\. Alt\+Up or Alt\+Down to move\.$/, ''))
+        const i = cur.findIndex((t, k) => t !== target[k])
+        if (i < 0) break
+        const j = cur.findIndex((t, k) => k > i && t === target[i])
+        await page.getByRole('button', { name: `Move line ${j + 1} up` }).click()
+      }
+    } else {
+      await page.locator('.cm-content').click()
+      await page.keyboard.press('ControlOrMeta+a')
+      await page.keyboard.press('Backspace')
+      await page.keyboard.insertText(e.solution!)
+    }
+    await page.getByTestId('submit').click()
+    await expect(page.getByTestId('rep-complete')).toBeVisible({ timeout: 90_000 })
+    await expect(page.getByTestId('day-count')).toBeVisible()
+    const next = page.getByTestId('next-rep')
+    if ((await next.textContent())?.includes('Back to Today')) {
+      await next.click()
+      break
+    }
+    await next.click()
+    await page.waitForURL((u) => u.pathname.startsWith('/rep/') && u.pathname !== `/rep/${id}`)
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText(EXERCISE_BY_ID[new URL(page.url()).pathname.split('/').pop()!].title)
+  }
+  await expect(page).toHaveURL(/\/$/)
+  await expect(page.getByTestId('course-today')).toHaveAttribute('data-complete', 'true')
+  await expect(page.getByTestId('day-status')).toHaveText('Training complete')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Training complete.')
+  await expect(page.getByTestId('training-flame')).toHaveAttribute('data-flame', 'blaze')
+  await page.getByTestId('stop-today').click()
+  await expect(page.getByTestId('stopped')).toBeVisible()
+  expect(errors, errors.join('\n')).toEqual([])
+})
