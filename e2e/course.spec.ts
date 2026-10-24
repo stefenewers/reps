@@ -548,3 +548,27 @@ test('the applied / design thread: Today teaches it before the lab, checks are t
   await expect(page.getByTestId('applied-evidence').locator('[data-capability="program-design"]')).toHaveAttribute('data-status', 'practiced')
   await expect(page.getByTestId('applied-evidence')).not.toContainText('%')
 })
+
+test('the Learn library: every track is findable, each lesson says its week and what uses it, browsing ahead is labelled, Progress links back', async ({ page }) => {
+  await at(page, '2026-10-27T09:00:00-04:00')
+  await page.goto('/learn')
+  const tracks = page.getByTestId('learn-tracks')
+  await expect(tracks).toContainText('Core SWE')
+  await expect(tracks).toContainText('Applied Engineering')
+  await expect(tracks).toContainText('System Design')
+  // Applied Engineering: the eval lesson, its week, length, and the builds that use it.
+  const evals = page.getByTestId('learn-applied').locator('[data-lesson="ae-evals"]')
+  await expect(evals).toContainText('Week 12 · ahead')
+  await expect(evals).toContainText('min')
+  await expect(evals).toContainText('Used in:')
+  await expect(page.getByTestId('learn-design').locator('[data-lesson="sd-program-design"]')).toContainText('This week')
+  // Browsing ahead is allowed and labelled, never blocked.
+  await evals.getByRole('link').first().click()
+  await expect(page).toHaveURL(/\/learn\/ae-evals$/)
+  await expect(page.getByTestId('schedule-note')).toContainText('Browsing ahead')
+  await expect(page.getByRole('button', { name: 'Mark learning step complete' })).toBeEnabled()
+  // Progress evidence leads back to the library.
+  await page.goto('/progress')
+  await page.getByRole('link', { name: /Browse the Applied Engineering lessons/ }).click()
+  await expect(page).toHaveURL(/\/learn#applied$/)
+})

@@ -12,6 +12,7 @@ import TrainingFlame from '@/components/course/training-flame'
 import WeekStrip from '@/components/course/week-strip'
 import WinstonPerch from '@/components/winston-perch'
 import { LEARN_ACTION, LEARN_LABEL, useTodayLearning, type LearnItem } from '@/components/course/use-today-learning'
+import { THREAD_LABEL } from '@/lib/course/library'
 import { IconArrowRight, IconCheck, IconClock, IconLock, IconMoon, IconRepair } from '@/components/icons'
 import type { useCourseDay } from '@/components/use-course-day'
 import type { useTodayPlan } from '@/components/use-today-plan'
@@ -569,7 +570,7 @@ export default function CourseToday({
         <span className="min-w-0 flex-1">
           {LEARN_LABEL[l.kind]}: {l.title}
         </span>
-        {l.thread && <span className={`tag ${l.thread === 'applied' ? 'tag-cold' : 'tag-plain'}`}>{l.thread === 'applied' ? 'Applied' : 'Design'}</span>}
+        {l.thread && <span className={`tag ${l.thread === 'applied' ? 'tag-cold' : 'tag-plain'}`}>{THREAD_LABEL[l.thread]}</span>}
         <span className="hidden items-center gap-1 text-[12px] text-muted sm:inline-flex">
           <IconClock size={12} /> {l.minutes} min
         </span>

@@ -152,6 +152,11 @@ test('applied thread: lessons, Week 12 Today, the retrieval mini-build', async (
   await snap(page, '33-lab-grounded-answer', '/lab/lab-grounded-answer')
 })
 
+test('learn library', async ({ page }) => {
+  await load(page, '2026-10-27T09:00:00-04:00')
+  await snap(page, '25-learn-library', '/learn')
+})
+
 test('rest day', async ({ page }) => {
   await load(page, '2026-11-01T10:00:00-05:00', history('2026-11-01'))
   await snap(page, '05-today-rest', '/')

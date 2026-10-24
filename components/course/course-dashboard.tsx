@@ -96,7 +96,7 @@ export default function CourseDashboard({ preview = false }: { preview?: boolean
               Readiness report
             </Link>
             <Link href="/learn" className="btn btn-sm">
-              Lessons and concepts
+              Learn library: every lesson and build
             </Link>
             <Link href="/skills" className="btn btn-sm">
               Skills

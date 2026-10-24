@@ -461,8 +461,8 @@ export default function CourseProgress() {
         <p className="mt-1 text-[13.5px] text-muted">Small, real programs: designed, built, changed and reviewed. Done or not done.</p>
         {(
           [
-            ['Junior SWE builds', swe],
-            ['Applied AI / FDE builds', ai]
+            ['Core SWE builds', swe],
+            ['Applied Engineering builds', ai]
           ] as const
         ).map(([label, list]) => (
           <div key={label} className="mt-5">

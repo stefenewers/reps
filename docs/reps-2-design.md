@@ -257,3 +257,20 @@ He perches on Today's deck with one small pixel prop:
 - nothing on a completed day, in the preview, or in interview mode.
 
 Props never appear while he walks and are decoration only.
+
+## Learn and the vocabulary (final IA pass)
+
+- **Browse everything; train what is scheduled.**
+  - Today assigns the day's work.
+  - `/learn` is the library: tracks, then sections, in course order, with jump links that stay usable on a phone.
+  - Headings and week spans are derived from data, never hard-coded.
+- **Track names, used everywhere:** **Core SWE**, **Applied Engineering** and **System Design** (`THREAD_LABEL` in `lib/course/library.ts`).
+  - "FDE" survives only as context inside lessons and lab briefs, never as a label.
+  - "Junior" describes scope in copy, not a track name.
+- **Kinds of object:** Lesson, Concept guide, Watch it move (demo), Worked example, Build (lab), Checkpoint, Practice, Interview.
+- **Every teaching surface links both ways:**
+  - Lesson → "Used in" builds.
+  - Build → "Taught first".
+  - Progress evidence → the lessons and "Browse the … lessons".
+  - Road unit cards → their Applied and Design lessons.
+  - An applied lesson's breadcrumb names its track and week, not an unrelated unit.

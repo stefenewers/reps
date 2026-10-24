@@ -3,6 +3,8 @@ import { notFound } from 'next/navigation'
 import { ConceptLesson } from '@/components/concept-guide'
 import LearningComplete from '@/components/course/learning-complete'
 import LessonChecks from '@/components/course/lesson-checks'
+import ScheduleNote from '@/components/course/schedule-note'
+import { THREAD_LABEL } from '@/lib/course/library'
 import { APPLIED_SCHEDULE, LAB_PREREQUISITES } from '@/data/course/applied'
 import LessonBody, { lessonAnchors } from '@/components/course/lesson-body'
 import DemoEmbed from '@/components/demos/demo-embed'
@@ -99,10 +101,14 @@ export default async function LearnPage({ params }: { params: Promise<{ id: stri
     return (
       <main className="flex-1 bg-canvas">
         <LearnHero
-          kind={lesson.thread === 'applied' ? 'Applied Engineering' : lesson.thread === 'design' ? 'System design' : 'Lesson'}
+          kind={lesson.thread ? THREAD_LABEL[lesson.thread] : 'Lesson'}
           crumbs={[
             { href: '/learn', label: 'Learn' },
-            ...(unit ? [{ href: '/plan', label: `Week ${unit.week} · ${unit.title}` }] : [])
+            ...(lesson.thread
+              ? [{ href: `/learn#${lesson.thread}`, label: THREAD_LABEL[lesson.thread] }, ...(unit ? [{ href: '/plan', label: `Week ${unit.week}` }] : [])]
+              : unit
+                ? [{ href: '/plan', label: `Week ${unit.week} · ${unit.title}` }]
+                : [])
           ]}
           title={lesson.title}
           meta={
@@ -119,6 +125,7 @@ export default async function LearnPage({ params }: { params: Promise<{ id: stri
         />
         <div className="mx-auto grid w-full max-w-[1180px] gap-12 px-5 pt-10 pb-24 sm:px-8 lg:grid-cols-[minmax(0,720px)_220px] lg:justify-between">
           <div className="min-w-0">
+            <ScheduleNote lessonId={lesson.id} week={unit?.week} />
             <LessonBody lesson={lesson} next={lesson.checks?.length ? [] : next} />
             <LessonChecks lesson={lesson} />
             <LearningComplete stateKey={`lesson:${id}`} />

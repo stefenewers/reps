@@ -67,7 +67,7 @@ export default function LabView({ lab }: { lab: Lab }) {
         <section className="rounded-2xl bg-bg p-5 shadow-[0_0_0_1px_var(--hairline)] sm:p-6">
           <p className="eyebrow text-[#b9500b]">The brief</p>
           <Markdown text={lab.brief} className="mt-2 !text-[16px] !leading-relaxed" />
-          {lab.aiFde && <p className="tag tag-cold mt-3">Applied AI · FDE lane</p>}
+          {lab.aiFde && <p className="tag tag-cold mt-3">Applied Engineering build</p>}
           <p className="label mt-5">Requirements</p>
           <ul className="mt-2 flex flex-col gap-2">
             {lab.requirements.map((r, i) => (

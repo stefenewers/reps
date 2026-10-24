@@ -57,6 +57,9 @@ Model behaviour is always **simulated deterministically** (an injected fake mode
 
 ## Where it appears
 
+- **Learn (the library):** browse everything, train what is scheduled. `/learn` groups everything Reps teaches into three tracks, all derived from course data (`lib/course/library.ts`): **Core SWE**, **Applied Engineering** and **System Design**. Builds, demos and worked examples each have their own section.
+  - Every item shows its week relative to now (This week, Week N · ahead, or earlier), its minutes, its state (done, checks answered, built) and the builds that use it.
+  - Reading ahead is fine. A lesson that is not taught yet says "Browsing ahead" and when Today will assign it. Nothing read early is counted.
 - **Today:** applied lessons join the "Learn first" step on their unit's days, after the unit's own lesson, demo and example, tagged *Applied* or *Design*. An optional two-minute **recall** of an earlier applied lesson appears once it was learned two or more weeks ago and its checks have not been revisited for three weeks.
 - **Road to Ready:** the lessons are tagged on their unit's card.
 - **Labs:** each lab shows "Taught first" links to the lessons and concept guides its design questions assume (`LAB_PREREQUISITES`).

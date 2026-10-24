@@ -69,7 +69,7 @@ export interface Lab {
   changeRequest: { title: string; description: string; exerciseId: string }
   /** What to check before calling it done. */
   review: string[]
-  /** Applied AI / FDE lane. */
+  /** Applied Engineering lane (AI builds; learner-facing label "Applied Engineering"). */
   aiFde?: boolean
   /** Not required (a holiday week's second build). */
   optional?: boolean

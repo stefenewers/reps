@@ -1,7 +1,7 @@
 import ClientOnly from '@/components/client-only'
 import InterviewView from '@/components/interview-view'
 
-export const metadata = { title: 'Interview Reps' }
+export const metadata = { title: 'Interview' }
 
 export default function InterviewPage() {
   return (

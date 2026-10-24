@@ -256,7 +256,7 @@ export function readiness(input: ReadinessInput): Readiness {
     why: !t || t.attempted === 0 ? 'Tested in Week 13, on unlabeled problems.' : `${t.independent} of ${t.attempted} unlabeled problems solved independently (${t.grade}).`,
   }
   const swe = labDomain('building', 'Software building', input.labs.filter((l) => !l.lab.aiFde && !l.lab.optional), 'software')
-  const ai = labDomain('ai-fde', 'Applied AI / FDE', input.labs.filter((l) => l.lab.aiFde), 'AI')
+  const ai = labDomain('ai-fde', 'Applied Engineering (AI builds)', input.labs.filter((l) => l.lab.aiFde), 'AI')
   const interview: Domain = {
     id: 'interview',
     title: 'Interview execution',
