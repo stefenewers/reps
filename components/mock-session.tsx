@@ -1,11 +1,14 @@
 'use client'
 
+import '@/components/rep/focus.css'
+
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { useEffect, useEffectEvent, useRef, useState } from 'react'
 import { useReps } from '@/components/reps-provider'
 import { useMockGate } from '@/components/use-mock-gate'
 import Markdown from '@/components/markdown'
+import PageHero from '@/components/page-hero'
 import { TestResults } from '@/components/rep/results'
 import { MOCKS } from '@/data/mocks'
 import { EXERCISE_BY_ID } from '@/data/curriculum'
@@ -17,7 +20,7 @@ import { requestInterviewReview } from '@/lib/coach/client'
 import { IconCheck, IconClock, IconFile, IconPlay, IconX } from '@/components/icons'
 import type { Attempt, MockResult } from '@/lib/types'
 
-const CodeEditor = dynamic(() => import('@/components/code-editor'), { ssr: false, loading: () => <div className="h-full min-h-[280px] bg-surface" /> })
+const CodeEditor = dynamic(() => import('@/components/code-editor'), { ssr: false, loading: () => <div className="h-full min-h-[280px] bg-[#0f1a2a]" /> })
 
 /** Neutral interviewer prompts. No hints, no AI, unless asked for after the session. */
 const NUDGES = ['What are you optimizing?', 'What’s the invariant?', 'What edge case could break this?', 'What’s the time complexity?', 'What’s the space complexity?', 'Can you walk through an example?']
@@ -47,9 +50,21 @@ function GatedMock({ mock }: { mock: (typeof MOCKS)[number] }) {
   const gate = useMockGate()
   if (!gate.canStart(mock.id))
     return (
-      <main className="mx-auto w-full max-w-[720px] flex-1 px-5 py-16" data-testid="mock-locked-page">
-        <h1 className="h1">Not yet</h1>
-        <p className="mt-2 text-[15px] leading-relaxed text-ink-2">Mocks open with the evidence, not the calendar. Transfer grade: {gate.grade}. {gate.note}</p>
+      <main className="flex-1 bg-canvas" data-testid="mock-locked-page">
+        <PageHero mood="night" eyebrow={mock.title} title="Not yet" sub="The scaffolding comes off when your transfer evidence says a mock will be useful." deck />
+        <div className="relative mx-auto -mt-24 w-full max-w-[1180px] px-5 sm:px-8">
+          <div className="deck flex flex-col gap-4 p-6 sm:p-8">
+            <p className="flex items-center gap-2 text-[15px] font-semibold">
+              Transfer grade: <span className={`tag ${gate.grade === 'green' ? 'tag-pass' : gate.grade === 'yellow' ? 'tag-repair' : 'tag-cold'}`}>{gate.grade}</span>
+            </p>
+            <p className="max-w-[680px] text-[15px] leading-relaxed text-ink-2">
+              Mocks open with the evidence, not the calendar. Transfer grade: {gate.grade}. {gate.note}
+            </p>
+            <Link href="/" className="btn btn-accent self-start">
+              Back to today&apos;s transfer and repair work
+            </Link>
+          </div>
+        </div>
       </main>
     )
   return <MockRunner mock={mock} />
@@ -193,15 +208,25 @@ function MockRunner({ mock }: { mock: (typeof MOCKS)[number] }) {
   if (phase === 'ready') {
     return (
       <main className="flex-1 bg-canvas">
-        <div className="mx-auto w-full max-w-[720px] px-5 pb-28 pt-12 sm:px-8">
-          <Link href="/interview" className="text-[13px] text-muted hover:text-ink">
-            ← Interview Reps
-          </Link>
-          <div className="panel mt-5 p-8">
+        <PageHero
+          mood="night"
+          eyebrow={
+            <Link href="/interview" className="hover:underline">
+              ← Interview Reps
+            </Link>
+          }
+          title={mock.title}
+          sub={mock.note}
+          deck
+        />
+        <div className="relative mx-auto -mt-24 w-full max-w-[1180px] px-5 pb-28 sm:px-8">
+          <div className="deck p-6 sm:p-8">
             <p className="label">Mock interview · {mock.minutes} minutes</p>
-            <h1 className="display mt-2">{mock.title}</h1>
-            <p className="mt-3 text-[15px] leading-relaxed text-ink-2">{mock.note}</p>
-            <ul className="mt-6 grid gap-3 text-[14px] text-ink-2 sm:grid-cols-2">
+            <p className="mt-2 max-w-[640px] text-[15px] leading-relaxed text-ink-2">
+              When the clock starts, the training room goes away: no lessons, no hints, no technique names. The problem, a plain editor, your own tests, and a
+              scratchpad. Review comes afterward.
+            </p>
+            <ul className="mt-6 grid gap-3 text-[14px] text-ink-2 sm:grid-cols-2 lg:grid-cols-4">
               {[
                 [`${problems.length} problems`, 'Switch between them any time.'],
                 ['Plain editor', 'No autocomplete, no hints, no AI.'],
@@ -216,7 +241,7 @@ function MockRunner({ mock }: { mock: (typeof MOCKS)[number] }) {
             </ul>
             <button
               type="button"
-              className="btn btn-primary btn-lg mt-8"
+              className="btn btn-primary btn-lg mt-8 !bg-shell !text-white"
               onClick={() => {
                 void repo.setState(`mock-start:${mockId}`, { mockId, startedAt: new Date().toISOString() })
                 setStartedAt(new Date())
@@ -239,10 +264,11 @@ function MockRunner({ mock }: { mock: (typeof MOCKS)[number] }) {
   if (phase === 'done') {
     return (
       <main className="flex-1 bg-canvas">
-        <div className="mx-auto w-full max-w-[720px] px-5 pb-28 pt-12 sm:px-8">
-          <div className="panel p-8">
+        <PageHero mood="night" eyebrow={mock.title} title="Interview Rep complete" sub="Now the review, while it is fresh: what went well, and what to repair." deck />
+        <div className="relative mx-auto -mt-24 w-full max-w-[1180px] px-5 pb-28 sm:px-8">
+          <div className="deck p-6 sm:p-8">
             <p className="label">{mock.title}</p>
-            <h1 className="display mt-2">Interview Rep complete</h1>
+            <h2 className="section-title mt-2">How it went</h2>
             <p className="mt-2 text-[14px] text-muted">{Math.round(used / 60)} of {mock.minutes} minutes used.</p>
             <ul className="mt-6 flex flex-col gap-2 text-[14px]">
               {problems.map((p, i) => (
@@ -294,43 +320,45 @@ function MockRunner({ mock }: { mock: (typeof MOCKS)[number] }) {
 
   // The running interview is a focused room: it covers the app chrome.
   return (
-    <main data-mode="interview" className="fixed inset-0 z-40 flex flex-col bg-canvas" aria-label={`Mock interview: ${mock.title}`}>
-      <div className="flex h-14 shrink-0 items-center gap-4 bg-bg px-4 sm:px-6" style={{ boxShadow: '0 1px 0 var(--hairline)' }}>
+    <main data-mode="interview" className="mock-room fixed inset-0 z-40 flex flex-col" aria-label={`Mock interview: ${mock.title}`}>
+      <div className="mock-bar flex h-16 shrink-0 items-center gap-4 px-4 sm:px-6">
         <div role="tablist" aria-label="Problems" className="seg">
           {problems.map((p, i) => (
-            <button key={p.id} role="tab" aria-selected={i === active} type="button" onClick={() => setActive(i)}>
-              Problem {i + 1}
+            <button key={p.id} role="tab" aria-selected={i === active} type="button" onClick={() => setActive(i)} aria-label={`Problem ${i + 1}`}>
+              <span className="sm:hidden">P{i + 1}</span>
+              <span className="hidden sm:inline">Problem {i + 1}</span>
               {state[i].passed && <IconCheck size={12} className="ml-1 inline text-pass" />}
             </button>
           ))}
         </div>
         <span
-          className={`mono num mx-auto rounded-lg px-3 py-1 text-[22px] font-medium tracking-tight ${left < 300 ? 'bg-fail-soft text-fail' : 'text-ink'}`}
+          className="mock-clock mono num mx-auto font-medium"
+          data-low={left < 300 ? 'true' : 'false'}
           role="timer"
           aria-label={`${mm} minutes ${ss} seconds left`}
         >
           {mm}:{ss}
         </span>
-        <button type="button" className="btn" onClick={() => void finish()}>
+        <button type="button" className="btn mock-end" onClick={() => void finish()}>
           End interview
         </button>
       </div>
 
       <div className="flex min-h-0 flex-1 flex-col lg:flex-row">
-        <section className="flex flex-col gap-5 overflow-y-auto bg-bg px-6 py-6 lg:w-[38%] lg:shrink-0 lg:px-8" style={{ boxShadow: '1px 0 0 var(--line)' }}>
-          <h1 className="h1">{ex.title}</h1>
+        <section className="mock-problem flex flex-col gap-5 overflow-y-auto px-6 py-6 lg:w-[38%] lg:shrink-0 lg:px-8">
+          <h1 className="font-display text-[30px] font-semibold leading-tight tracking-tight">{ex.title}</h1>
           <Markdown text={ex.prompt} />
           {ex.examples && ex.examples.length > 0 && (
-            <div className="well divide-y divide-line overflow-hidden">
+            <ol className="flex flex-col gap-2">
               {ex.examples.map((x, i) => (
-                <div key={i} className="grid grid-cols-[34px_1fr] gap-x-3 gap-y-1 px-4 py-3 text-[13px]">
-                  <span className="mono text-faint">in</span>
+                <li key={i} className="grid grid-cols-[64px_1fr] gap-x-3 gap-y-1.5 rounded-xl bg-bg px-4 py-3 text-[13px] shadow-[inset_0_0_0_1px_var(--line)]">
+                  <span className="text-[11px] font-semibold uppercase tracking-[0.08em] text-muted">Input</span>
                   <span className="mono break-all">{x.input}</span>
-                  <span className="mono text-faint">out</span>
-                  <span className="mono break-all font-medium">{x.output}</span>
-                </div>
+                  <span className="text-[11px] font-semibold uppercase tracking-[0.08em] text-muted">Output</span>
+                  <span className="mono break-all font-semibold">{x.output}</span>
+                </li>
               ))}
-            </div>
+            </ol>
           )}
           <p className="text-[13.5px] italic text-muted" aria-live="off">
             {nudge}
@@ -350,23 +378,23 @@ function MockRunner({ mock }: { mock: (typeof MOCKS)[number] }) {
         </section>
 
         <section className="flex min-h-0 flex-1 flex-col p-3 lg:p-4">
-          <div className="panel flex min-h-0 flex-1 flex-col overflow-hidden">
-            <div className="flex h-11 shrink-0 items-center gap-3 px-4" style={{ boxShadow: '0 1px 0 var(--line)' }}>
+          <div className="mock-editor-card flex min-h-0 flex-1 flex-col">
+            <div className="flex h-11 shrink-0 items-center gap-3 bg-[#0b1422] px-4 text-[#e6ecf5]" style={{ boxShadow: '0 1px 0 rgba(255,255,255,0.06)' }}>
               <span className="flex items-center gap-1.5 text-[13px] font-medium">
-                <IconFile size={14} className="text-muted" /> main.py
+                <IconFile size={14} className="opacity-70" /> main.py
               </span>
-              <span className="text-[12px] text-faint">Python · plain editor</span>
+              <span className="text-[12px] text-[#a3b0c2]">Python · plain editor</span>
             </div>
-            <div className="min-h-0 flex-1 bg-editor">
+            <div className="min-h-0 flex-1 bg-[#0f1a2a]">
               <CodeEditor key={ex.id} value={cur.code} onChange={(v) => patch(active, { code: v })} onRun={runExamples} onSubmit={submit} assist={false} ariaLabel="Interview editor" minHeight={280} />
             </div>
             {(cur.customResult || cur.result) && (
-              <div className="fade-in max-h-[38%] shrink-0 overflow-y-auto px-4 py-3" style={{ boxShadow: '0 -1px 0 var(--line)' }} aria-live="polite">
+              <div className="mock-results fade-in max-h-[38%] shrink-0 overflow-y-auto px-4 py-3" aria-live="polite">
                 {cur.customResult && <pre className="code-view mb-3 !py-2 text-[12.5px]">{cur.customResult}</pre>}
                 {cur.result && <TestResults result={cur.result} mode="interview" submitted={cur.submitted} />}
               </div>
             )}
-            <div className="flex shrink-0 flex-wrap items-center gap-2 px-3 py-3" style={{ boxShadow: '0 -1px 0 var(--line)' }}>
+            <div className="mock-tools flex shrink-0 flex-wrap items-center gap-2 px-3 py-3">
               <input
                 className="input mono !h-[34px] min-w-[200px] flex-1 !py-1 !text-[12.5px] sm:max-w-[340px]"
                 value={cur.custom}

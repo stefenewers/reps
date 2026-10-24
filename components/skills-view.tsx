@@ -1,5 +1,6 @@
 'use client'
 
+import PageHero from '@/components/page-hero'
 import Link from 'next/link'
 import { useMemo, useState } from 'react'
 import { useReps } from '@/components/reps-provider'
@@ -69,9 +70,8 @@ export default function SkillsView() {
 
   return (
     <main className="flex-1 bg-canvas">
-      <div className="mx-auto w-full max-w-[1120px] px-5 pb-28 pt-10 sm:px-8">
-        <h1 className="display-xl">Skills</h1>
-        <p className="mt-2 max-w-[640px] text-[14.5px] text-muted">Mastery comes from what you actually wrote, debugged and recalled cold. Recognising something is never enough to look fluent.</p>
+      <PageHero mood="cold" title="Skills" sub={<p>Mastery comes from what you actually wrote, debugged and recalled cold. Recognising something is never enough to look fluent.</p>} />
+      <div className="mx-auto w-full max-w-[1180px] px-5 pb-28 pt-8 sm:px-8">
         <dl className="mt-6 flex flex-wrap gap-x-10 gap-y-3">
           {[
             ['Practiced', `${seen.length} of ${SKILLS.length}`],

@@ -1,0 +1,190 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Focus surfaces: the rep workspace and Interview Mode (docs/reps-2-design.md).
+   The prompt reads on a light page; the code is written on a dark navy canvas.
+   Cold work strips the room down and turns it violet; interview turns it to night.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.rep-bar {
+  box-shadow: 0 1px 0 var(--hairline);
+}
+.rep-room[data-cold='true'] .rep-bar {
+  box-shadow: inset 0 -2px 0 var(--cold);
+}
+
+/* The cold checkpoint banner: unmistakable, calm. */
+.cold-banner {
+  background: linear-gradient(135deg, var(--cold-soft), rgba(241, 240, 253, 0.35));
+  box-shadow: inset 3px 0 0 var(--cold), inset 0 0 0 1px rgba(75, 59, 216, 0.12);
+}
+
+.example-card {
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+
+/* The workspace card: a dark editor on top, light results and actions below. */
+.workspace-card {
+  background: var(--bg);
+  border-radius: 18px;
+  box-shadow: 0 0 0 1px var(--hairline), 0 14px 36px -16px rgba(15, 26, 42, 0.3);
+}
+.workspace-card--code {
+  box-shadow: 0 0 0 1px rgba(15, 26, 42, 0.5), 0 18px 44px -18px rgba(15, 26, 42, 0.55);
+}
+.editor-chrome {
+  box-shadow: 0 1px 0 var(--line);
+  color: var(--ink);
+}
+.editor-chrome.is-dark {
+  background: #0b1422;
+  color: #e6ecf5;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+.editor-chip {
+  background: var(--surface-2);
+  color: var(--muted);
+}
+.editor-chrome.is-dark .editor-chip {
+  background: rgba(255, 255, 255, 0.08);
+  color: #a3b0c2;
+}
+.py-status {
+  color: var(--muted);
+}
+.editor-chrome.is-dark .py-status {
+  color: #a3b0c2;
+}
+.editor-chrome.is-dark .editor-icon {
+  color: #a3b0c2;
+}
+.editor-chrome.is-dark .editor-icon:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+.custom-run {
+  background: #0b1422;
+  color: #a3b0c2;
+  box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.06);
+}
+.custom-run label {
+  color: #a3b0c2 !important;
+}
+.custom-run-toggle {
+  color: #a3b0c2;
+  text-decoration-color: rgba(163, 176, 194, 0.4);
+}
+.custom-run-toggle:hover {
+  color: #fff;
+}
+.results-pane {
+  box-shadow: 0 -1px 0 var(--line);
+}
+
+/* Interview: the scaffolding disappears. Night chrome, the problem, the editor, the clock. */
+.rep-room[data-mode='interview'] .rep-bar {
+  background: var(--shell);
+  color: var(--shell-ink);
+  box-shadow: none;
+}
+.rep-room[data-mode='interview'] .rep-bar .text-ink,
+.rep-room[data-mode='interview'] .rep-bar .eyebrow {
+  color: var(--shell-ink);
+}
+.rep-room[data-mode='interview'] .rep-bar .text-muted,
+.rep-room[data-mode='interview'] .rep-bar .text-faint {
+  color: var(--shell-muted);
+}
+.rep-room[data-mode='interview'] .rep-bar .seg {
+  background: var(--shell-2);
+}
+.rep-room[data-mode='interview'] .rep-bar .seg > button {
+  color: var(--shell-muted);
+}
+.rep-room[data-mode='interview'] .rep-bar .seg > button[aria-checked='true'] {
+  background: var(--shell-3);
+  color: #fff;
+  box-shadow: none;
+}
+.rep-room[data-mode='interview'] .rep-bar .bg-surface-2 {
+  background: var(--shell-2);
+  color: #fff;
+}
+
+/* The mock room. */
+.mock-room {
+  background: #0b1220;
+}
+.mock-bar {
+  background: var(--shell);
+  color: var(--shell-ink);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+.mock-bar .seg {
+  background: var(--shell-2);
+}
+.mock-bar .seg > button {
+  color: var(--shell-muted);
+}
+.mock-bar .seg > button[aria-selected='true'] {
+  background: var(--shell-3);
+  color: #fff;
+  box-shadow: none;
+}
+.mock-clock {
+  font-size: 26px;
+  letter-spacing: -0.02em;
+  color: #fff;
+}
+.mock-clock[data-low='true'] {
+  color: #ffb4a8;
+}
+.mock-end {
+  background: transparent;
+  color: var(--shell-ink);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+}
+.mock-end:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+.mock-problem {
+  background: #f6f6f3;
+}
+.mock-editor-card {
+  border-radius: 18px;
+  overflow: hidden;
+  background: #0f1a2a;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 24px 48px -24px rgba(0, 0, 0, 0.6);
+}
+.mock-tools {
+  background: #0b1422;
+  box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.06);
+}
+.mock-tools .input {
+  background: #172437;
+  color: #e6ecf5;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+.mock-tools .input::placeholder {
+  color: #6f7f96;
+}
+.mock-tools .btn:not(.btn-primary):not(.btn-accent) {
+  background: #172437;
+  color: #e6ecf5;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+}
+.mock-tools .btn:not(.btn-primary):not(.btn-accent):hover {
+  background: #213149;
+}
+.mock-tools .btn-primary {
+  background: #fff;
+  color: #0b1220;
+}
+.mock-results {
+  background: #f6f6f3;
+}
+@media (min-width: 640px) {
+  .mock-clock {
+    font-size: 32px;
+  }
+}

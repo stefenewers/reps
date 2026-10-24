@@ -30,6 +30,8 @@ import { BarsPattern, EmptyState, RepsBars } from '@/components/motif'
 import { ConceptGlyph } from '@/components/concept-icons'
 import { IconArrowRight, IconClock, IconSnow, IconSpark } from '@/components/icons'
 import WinstonPerch from '@/components/winston-perch'
+import PageHero from '@/components/page-hero'
+import TrainingFlame from '@/components/course/training-flame'
 import { ALL_EXERCISES, DAY_BY_DATE, DAY_OF_EXERCISE, DAYS, EXERCISE_BY_ID, MODULE_OF_EXERCISE, PLAN_DAYS, PLAN_START, dayExercises, dayLabel } from '@/data/curriculum'
 import { PROGRAM_STAGES } from '@/data/program'
 import { skillName } from '@/data/skills'
@@ -118,31 +120,30 @@ function DashboardToday() {
 
   return (
     <main className="relative flex-1 bg-canvas">
-      {/* Atmosphere: a faint dot field that fades out under the hero. */}
-      <div aria-hidden="true" className="dot-grid pointer-events-none absolute inset-x-0 top-0 h-[360px] [mask-image:linear-gradient(to_bottom,black,transparent)]" />
+      <PageHero
+        eyebrow={<span suppressHydrationWarning>{LONG_DAY.format(parseLocal(localDate()))}</span>}
+        title="Today's Reps"
+        sub={
+          <p data-testid="day-heading">
+            {day.planDay ? `${dayLabel(day)} · ${day.title}` : startsIn !== null ? `Day 1 starts ${startsIn === 1 ? 'tomorrow' : `in ${startsIn} days`}` : day.title}
+          </p>
+        }
+        aside={
+          today < COURSE_START ? (
+            <Link href="/plan" className="glass flex max-w-[360px] items-start gap-3 self-start rounded-2xl px-4 py-3.5 hover:brightness-[0.98]" data-testid="course-banner">
+              <TrainingFlame state="ember" size={36} testId="course-banner-flame" />
+              <span className="text-[13.5px] leading-snug">
+                <span className="block font-semibold text-ink">Reps 2.0 starts Monday, Oct 26.</span>
+                <span className="text-ink-2">14 weeks to the Feb 1 interview checkpoint: 10 reps a day in week 1, 12 in week 2, then 15. See the road →</span>
+              </span>
+            </Link>
+          ) : (
+            <InterviewTargetCompact />
+          )
+        }
+      />
 
-      <div className="relative mx-auto w-full max-w-[1120px] px-5 pb-10 pt-12 sm:px-8">
-        <header className="flex flex-wrap items-end justify-between gap-x-10 gap-y-6">
-          <div>
-            <p className="eyebrow text-muted" suppressHydrationWarning>
-              {LONG_DAY.format(parseLocal(localDate()))}
-            </p>
-            <h1 className="display-xl mt-2">Today&apos;s Reps</h1>
-            <p className="mt-2 text-[16px] text-ink-2" data-testid="day-heading">
-              {day.planDay ? `${dayLabel(day)} · ${day.title}` : startsIn !== null ? `Day 1 starts ${startsIn === 1 ? 'tomorrow' : `in ${startsIn} days`}` : day.title}
-            </p>
-          </div>
-          <InterviewTargetCompact />
-        </header>
-
-        {today < COURSE_START && (
-          <Link href="/plan" className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-1 rounded-xl bg-flame-soft px-4 py-3 text-[14px] text-ink shadow-[inset_0_0_0_1px_var(--flame-2)] hover:brightness-[0.98]" data-testid="course-banner">
-            <span aria-hidden="true">🔥</span>
-            <span className="font-semibold">Reps 2.0 starts Monday, Oct 26.</span>
-            <span className="text-ink-2">14 weeks to the Feb 1 interview checkpoint: 10 reps a day in week 1, 12 in week 2, then 15. See the road →</span>
-          </Link>
-        )}
-
+      <div className="relative mx-auto w-full max-w-[1120px] px-5 pb-10 sm:px-8">
         {/* Before Day 1, unless an earlier mastery check is still open: that comes first. */}
         {startsIn !== null && !carry && <PlanPreview first={PLAN_DAYS[0]} startsIn={startsIn} />}
 

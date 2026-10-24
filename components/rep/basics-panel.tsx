@@ -281,7 +281,7 @@ function TryIt({ initial }: { initial: string }) {
         </div>
       </div>
       <div className="overflow-hidden rounded-lg shadow-[inset_0_0_0_1px_var(--line)]">
-        <CodeEditor value={code} onChange={setCode} onRun={run} assist={false} ariaLabel="Example code" minHeight={120} />
+        <CodeEditor value={code} onChange={setCode} onRun={run} assist={false} ariaLabel="Example code" minHeight={120} tone="light" />
       </div>
       {out ? (
         <pre className={`code-view mt-2 !py-2 !text-[12.5px] ${out.error ? '!text-fail' : ''}`} aria-live="polite">

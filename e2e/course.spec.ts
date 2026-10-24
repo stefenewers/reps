@@ -389,3 +389,30 @@ test('a failed checkpoint routes real repair, then offers fresh cold variants on
   expect(new URL(page.url()).pathname).not.toBe(`/rep/${failedId}`)
   await expect(page.getByTestId('checkpoint')).toBeVisible()
 })
+
+test('Reps 2.0 shell: Today leads, the Road trail focuses a week, mobile has tabs and More, a rep is a focus surface', async ({ page }) => {
+  await at(page, '2026-10-26T09:30:00-04:00')
+  await page.goto('/')
+  const main = page.getByRole('navigation', { name: 'Main' })
+  await expect(main.getByRole('link').first()).toHaveText('Today')
+  await expect(main.getByRole('link', { name: 'Today' })).toHaveAttribute('aria-current', 'page')
+  await expect(page.getByTestId('today-hero')).toBeVisible()
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Learn first, then train.')
+  // The road: a node on the trail focuses its week, and the index shows every week.
+  await page.goto('/plan')
+  await page.getByTestId('road-trail').getByRole('button', { name: /^Week 3,/ }).click()
+  await expect(page.getByTestId('week-focus')).toContainText('Week 3 —')
+  await expect(page.getByTestId('road-map').locator('li[data-week]')).toHaveCount(14)
+  // A rep: the sidebar collapses to a rail and no tab bar competes with the editor.
+  await page.goto(`/rep/${WEEK1[0]}`)
+  await expect(page.locator('[data-shell]')).toHaveAttribute('data-shell', 'focus')
+  // Mobile: the tab bar, and More for the library.
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.goto('/')
+  const tabs = page.getByRole('navigation', { name: 'Tabs' })
+  await expect(tabs).toBeVisible()
+  await tabs.getByRole('button', { name: 'More' }).click()
+  await page.getByRole('dialog', { name: 'More' }).getByRole('link', { name: 'Skills' }).click()
+  await expect(page).toHaveURL(/\/skills$/)
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true)
+})

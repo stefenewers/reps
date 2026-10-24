@@ -7,11 +7,11 @@ const LABEL: Record<Flame, string> = { unlit: 'Not started', ember: 'Ember', bur
  * qualifying work and blazes when the target is met. Text equivalent always
  * present; it never animates under reduced motion.
  */
-export default function TrainingFlame({ state, size = 44, ignite = false }: { state: Flame; size?: number; ignite?: boolean }) {
+export default function TrainingFlame({ state, size = 44, ignite = false, testId = 'training-flame' }: { state: Flame; size?: number; ignite?: boolean; testId?: string }) {
   const scale = state === 'unlit' ? 0.55 : state === 'ember' ? 0.7 : state === 'burning' ? 0.86 : 1
   const outer = state === 'unlit' ? 'var(--line-strong)' : state === 'blaze' ? 'url(#flame-hot)' : 'url(#flame-warm)'
   return (
-    <span className="relative inline-grid place-items-center" style={{ width: size, height: size }} role="img" aria-label={`Training flame: ${LABEL[state]}`} data-testid="training-flame" data-flame={state}>
+    <span className="relative inline-grid place-items-center" style={{ width: size, height: size }} role="img" aria-label={`Training flame: ${LABEL[state]}`} data-testid={testId} data-flame={state}>
       <svg viewBox="0 0 48 48" width={size} height={size} aria-hidden="true" className={`${state !== 'unlit' ? 'flame-live' : ''} ${ignite ? 'flame-ignite' : ''}`}>
         <defs>
           <linearGradient id="flame-warm" x1="0" y1="1" x2="0" y2="0">

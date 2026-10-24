@@ -1,6 +1,6 @@
-import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import LabView from '@/components/course/lab-view'
+import LearnHero from '@/components/demos/learn-hero'
 import { LABS, LAB_BY_ID } from '@/data/course/lessons'
 
 export function generateStaticParams() {
@@ -18,17 +18,21 @@ export default async function LabPage({ params }: { params: Promise<{ id: string
   if (!lab) notFound()
   return (
     <main className="flex-1 bg-canvas">
-      <div className="mx-auto w-full max-w-[760px] px-5 pb-24 pt-10 sm:px-8">
-        <p className="eyebrow text-muted">
-          <Link href="/plan" className="hover:text-ink">
-            Week {lab.week}
-          </Link>{' '}
-          · Lab{lab.optional ? ' · optional' : ''}
-        </p>
-        <h1 className="mt-2 text-[32px] font-semibold leading-tight tracking-tight">{lab.title}</h1>
-        <div className="panel mt-6 p-6">
-          <LabView lab={lab} />
-        </div>
+      <LearnHero
+        kind="Lab"
+        crumbs={[{ href: '/plan', label: `Week ${lab.week}` }]}
+        title={lab.title}
+        sub="A small, real program. Design it, build it against acceptance tests, change it when the requirements move, then review it."
+        meta={
+          <>
+            <span className="rounded-full bg-white/70 px-2.5 py-1">Design → build → change → review</span>
+            <span className="rounded-full bg-white/70 px-2.5 py-1">Done or not done · not counted as reps</span>
+            {lab.optional && <span className="rounded-full bg-white/70 px-2.5 py-1">Optional this week</span>}
+          </>
+        }
+      />
+      <div className="mx-auto w-full max-w-[1180px] px-5 pt-10 pb-24 sm:px-8">
+        <LabView lab={lab} />
       </div>
     </main>
   )

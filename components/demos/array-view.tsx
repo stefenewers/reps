@@ -1,6 +1,11 @@
+import type { CSSProperties } from 'react'
+
 /**
- * A row of cells with pointers above, a highlighted region, and cells marked as
- * ruled out. Shared by two pointers, sliding window and binary search.
+ * A row of cells with pointers above, a live region (window, search space) as
+ * one band behind them, and cells marked hot, ruled out or found. Pointers and
+ * the band are positioned by index, so they glide to their new place when the
+ * state changes: the learner sees the window slide and the pointers move.
+ * Shared by two pointers, sliding window, binary search and heaps.
  */
 export interface ArrayPointer {
   name: string
@@ -8,7 +13,15 @@ export interface ArrayPointer {
   tone?: 'learn' | 'flame' | 'cold' | 'ink'
 }
 
-const TONE: Record<NonNullable<ArrayPointer['tone']>, string> = { learn: 'bg-learn text-white', flame: 'bg-flame text-white', cold: 'bg-cold text-white', ink: 'bg-ink text-white' }
+const TONE: Record<NonNullable<ArrayPointer['tone']>, string> = {
+  learn: 'var(--learn)',
+  flame: 'var(--flame)',
+  cold: 'var(--cold)',
+  ink: 'var(--ink)'
+}
+
+/** One cell step: cell width plus the gap (see .cells in learning.css). */
+const STEP = 'calc(var(--cell) + var(--gap))'
 
 export default function ArrayView({
   values,
@@ -17,7 +30,7 @@ export default function ArrayView({
   ruledOut = [],
   highlight = [],
   regionLabel,
-  found = [],
+  found = []
 }: {
   values: (number | string)[]
   pointers?: ArrayPointer[]
@@ -29,54 +42,62 @@ export default function ArrayView({
   found?: number[]
 }) {
   const inRegion = (i: number) => Boolean(region && i >= region[0] && i <= region[1])
+  const live = pointers.filter((p) => p.index >= 0 && p.index < values.length)
+  // Pointers on the same cell stack upward, so none hides another.
+  const stackAt = (p: ArrayPointer) => live.filter((q) => q.index === p.index).indexOf(p)
+  const rows = Math.max(1, ...live.map((p) => stackAt(p) + 1))
+  const validRegion = region && region[1] >= region[0] && region[0] >= 0 && region[1] < values.length ? region : null
   return (
-    <div className="overflow-x-auto pb-1" data-testid="array-view">
-      <div className="inline-flex min-w-full flex-col gap-1.5">
-        {/* Pointers above their cells */}
-        <div className="flex gap-1.5">
-          {values.map((_, i) => (
-            <div key={i} className="flex w-11 shrink-0 flex-col items-center gap-0.5">
-              {pointers
-                .filter((p) => p.index === i)
-                .map((p) => (
-                  <span key={p.name} className={`rounded-md px-1.5 py-px text-[10.5px] font-semibold ${TONE[p.tone ?? 'ink']} transition-transform duration-300`} data-pointer={p.name}>
-                    {p.name}
-                  </span>
-                ))}
-              <span aria-hidden="true" className="h-2 text-[10px] leading-none text-faint">
-                {pointers.some((p) => p.index === i) ? '▼' : ''}
+    <div className="overflow-x-auto pb-2" data-testid="array-view">
+      <div className="cells inline-flex min-w-full flex-col">
+        {/* Pointers: positioned by index, so they travel. */}
+        <div className="relative" style={{ height: `${(rows - 1) * 22 + 30}px` }} aria-hidden="true">
+          {live.map((p) => (
+            <span
+              key={p.name}
+              className="ptr"
+              style={{ transform: `translate(calc(${p.index} * ${STEP}), ${(rows - 1 - stackAt(p)) * 22}px)` } as CSSProperties}
+              data-pointer={p.name}
+            >
+              <span className="ptr-label" style={{ background: TONE[p.tone ?? 'ink'] }}>
+                {p.name}
               </span>
-            </div>
+              {stackAt(p) === 0 && <span className="ptr-stem" style={{ background: TONE[p.tone ?? 'ink'] }} />}
+            </span>
           ))}
         </div>
-        {/* Cells */}
-        <div className="flex gap-1.5">
+        {/* Cells, with the live region as one gliding band behind them. */}
+        <div className="relative flex gap-[var(--gap)] pt-[5px] pb-[5px]">
+          <span
+            aria-hidden="true"
+            className="cells-band"
+            style={{
+              left: validRegion ? `calc(${validRegion[0]} * ${STEP} - 5px)` : '0px',
+              width: validRegion ? `calc(${validRegion[1] - validRegion[0] + 1} * ${STEP} - var(--gap) + 10px)` : '0px',
+              top: 0,
+              opacity: validRegion ? 1 : 0
+            }}
+          />
           {values.map((v, i) => {
             const out = ruledOut.includes(i)
             const hit = found.includes(i)
+            const state = hit ? 'found' : out ? 'ruled-out' : highlight.includes(i) ? 'hot' : inRegion(i) ? 'region' : 'idle'
             return (
-              <div
-                key={i}
-                className={`grid h-11 w-11 shrink-0 place-items-center rounded-lg text-[15px] font-semibold tabular-nums transition-all duration-300 ${
-                  hit ? 'bg-pass text-white' : out ? 'bg-surface-2 text-faint line-through' : highlight.includes(i) ? 'bg-flame-soft text-ink shadow-[inset_0_0_0_2px_var(--flame)]' : inRegion(i) ? 'bg-learn-soft text-ink shadow-[inset_0_0_0_1.5px_var(--learn)]' : 'bg-bg text-ink shadow-[inset_0_0_0_1px_var(--line-strong)]'
-                }`}
-                data-cell={i}
-                data-state={hit ? 'found' : out ? 'ruled-out' : inRegion(i) ? 'region' : 'idle'}
-              >
+              <div key={i} className="cell relative" data-cell={i} data-state={state === 'hot' && inRegion(i) ? 'hot' : state}>
                 {v}
               </div>
             )
           })}
         </div>
         {/* Indexes */}
-        <div className="flex gap-1.5">
+        <div className="mt-1 flex gap-[var(--gap)]">
           {values.map((_, i) => (
-            <span key={i} className="mono w-11 shrink-0 text-center text-[10.5px] text-faint">
+            <span key={i} className="mono shrink-0 text-center text-[10.5px] text-faint" style={{ width: 'var(--cell)' }}>
               {i}
             </span>
           ))}
         </div>
-        {regionLabel && <p className="mt-1 text-[12px] text-learn">{regionLabel}</p>}
+        {regionLabel && <p className="mt-2 text-[12.5px] font-medium text-learn">{regionLabel}</p>}
       </div>
     </div>
   )

@@ -1,6 +1,6 @@
-import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import WorkedExampleView from '@/components/course/worked-example'
+import LearnHero from '@/components/demos/learn-hero'
 import { WORKED_EXAMPLES, WORKED_EXAMPLE_BY_ID } from '@/data/course/lessons'
 import { UNIT_BY_ID } from '@/data/course/units'
 
@@ -20,17 +20,20 @@ export default async function ExamplePage({ params }: { params: Promise<{ id: st
   const unit = UNIT_BY_ID[ex.unitId]
   return (
     <main className="flex-1 bg-canvas">
-      <div className="mx-auto w-full max-w-[760px] px-5 pb-24 pt-10 sm:px-8">
-        <p className="eyebrow text-muted">
-          <Link href="/plan" className="hover:text-ink">
-            Week {unit?.week ?? ''}
-          </Link>
-          {unit ? ` · ${unit.title}` : ''} · Worked example
-        </p>
-        <h1 className="mt-2 text-[32px] font-semibold leading-tight tracking-tight">{ex.title}</h1>
-        <div className="panel mt-6 p-6">
-          <WorkedExampleView example={ex} />
-        </div>
+      <LearnHero
+        kind="Worked example"
+        crumbs={[{ href: '/learn', label: 'Learn' }, ...(unit ? [{ href: '/plan', label: `Week ${unit.week} · ${unit.title}` }] : [])]}
+        title={ex.title}
+        sub="A complete solution, one goal at a time. Read each goal, then rebuild the whole thing from a blank editor."
+        meta={
+          <>
+            <span className="rounded-full bg-white/70 px-2.5 py-1">{ex.subgoals.length} goals</span>
+            <span className="rounded-full bg-white/70 px-2.5 py-1">Then: rebuild it yourself</span>
+          </>
+        }
+      />
+      <div className="mx-auto w-full max-w-[1180px] px-5 pt-10 pb-24 sm:px-8">
+        <WorkedExampleView example={ex} />
       </div>
     </main>
   )

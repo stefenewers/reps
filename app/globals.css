@@ -67,6 +67,15 @@
   --rest: #8f7f6b;
   --rest-soft: #f5f1eb;
 
+  /* Reps 2.0 shell: a deep training-room navy around a warm, light floor. */
+  --shell: #0f1a2a;
+  --shell-2: #172437;
+  --shell-3: #213149;
+  --shell-ink: #eef2f8;
+  --shell-muted: #a3b0c2;
+  --shell-faint: #6f7f96;
+  --accent-bright: #3b6cff;
+
   /* radius */
   --r-xs: 6px;
   --r-sm: 8px;
@@ -133,6 +142,14 @@
   --color-cold-soft: var(--cold-soft);
   --color-rest: var(--rest);
   --color-rest-soft: var(--rest-soft);
+  --color-shell: var(--shell);
+  --color-shell-2: var(--shell-2);
+  --color-shell-3: var(--shell-3);
+  --color-shell-ink: var(--shell-ink);
+  --color-shell-muted: var(--shell-muted);
+  --color-shell-faint: var(--shell-faint);
+  --color-accent-bright: var(--accent-bright);
+  --font-display: var(--font-fraunces), ui-serif, Georgia, serif;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --radius-sm: var(--r-sm);
@@ -178,16 +195,20 @@ body {
 /* ── type ─────────────────────────────────────────────────────────────────── */
 
 .display {
+  font-family: var(--font-display);
   font-size: 34px;
   line-height: 1.1;
   font-weight: 600;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.02em;
+  font-variation-settings: 'opsz' 96;
 }
 .display-xl {
-  font-size: 42px;
+  font-family: var(--font-display);
+  font-size: 46px;
   line-height: 1.04;
-  font-weight: 650;
-  letter-spacing: -0.035em;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  font-variation-settings: 'opsz' 144;
 }
 @media (max-width: 640px) {
   .display-xl {
@@ -743,206 +764,6 @@ a.chip:hover {
 }
 
 
-/* ── whole-program progress rail (components/program-progress.tsx) ───────── */
-
-/* Inside the header's bottom edge, so its markers never hang over the page below. */
-.pp {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 1px;
-  height: 3px;
-  z-index: 1;
-}
-.pp-track {
-  position: absolute;
-  inset: 0;
-  background: rgba(15, 15, 20, 0.06);
-  outline: none;
-}
-.pp-clip {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-}
-.pp-fill {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, #2445b8 0%, var(--accent) 75%, #4566dd 100%);
-  transform: translateX(-100%);
-  transition: transform 560ms var(--ease-out);
-  will-change: transform;
-}
-.pp[data-ready='false'] .pp-fill {
-  opacity: 0;
-}
-.pp[data-snap='true'] .pp-fill {
-  transition: none;
-}
-/* The comet: a short highlight riding the leading edge, only while advancing. */
-.pp-comet {
-  position: absolute;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  width: 120px;
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.75));
-  opacity: 0;
-}
-.pp-comet::after {
-  content: '';
-  position: absolute;
-  right: -2px;
-  top: 50%;
-  width: 6px;
-  height: 6px;
-  margin-top: -3px;
-  border-radius: 999px;
-  background: #fff;
-  box-shadow: 0 0 6px 2px rgba(74, 114, 240, 0.75), 0 0 14px 4px rgba(74, 114, 240, 0.35);
-}
-.pp[data-advancing='true'] .pp-comet {
-  animation: pp-comet 900ms var(--ease-out) both;
-}
-@keyframes pp-comet {
-  0% { opacity: 0; }
-  12% { opacity: 1; }
-  62% { opacity: 1; }
-  100% { opacity: 0; }
-}
-/* Completion: one shimmer across the whole rail. */
-.pp[data-finale='true'] .pp-fill::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.85) 50%, transparent 100%);
-  background-size: 30% 100%;
-  background-repeat: no-repeat;
-  animation: pp-shimmer 1400ms var(--ease-out) both;
-}
-@keyframes pp-shimmer {
-  from { background-position: -40% 0; }
-  to { background-position: 140% 0; }
-}
-
-/* Day milestones: tiny marks at the end of each day's share of the work. */
-.pp-mark {
-  position: absolute;
-  top: 50%;
-  width: 5px;
-  height: 5px;
-  margin: -2.5px 0 0 -2.5px;
-  border-radius: 999px;
-  background: var(--bg);
-  box-shadow: 0 0 0 1px rgba(15, 15, 20, 0.22);
-  pointer-events: none;
-  transition: background-color 220ms var(--ease-out), box-shadow 220ms var(--ease-out);
-}
-.pp-mark[data-done='true'] {
-  background: var(--accent);
-  box-shadow: 0 0 0 1.5px var(--bg);
-}
-/* The finish marker sits fully inside the rail's right edge, the same size as the others. */
-.pp-mark-end {
-  margin-left: -7px;
-  box-shadow: 0 0 0 1px var(--ink);
-}
-.pp-mark-end[data-done='true'] {
-  background: var(--ink);
-  box-shadow: 0 0 0 1.5px var(--bg), 0 0 0 2.5px var(--ink);
-}
-.pp-mark[data-pop='true'] {
-  animation: pp-pop 240ms var(--ease-out);
-}
-@keyframes pp-pop {
-  50% { transform: scale(1.8); }
-}
-
-/* Hover zones per day: tall enough to find, tips only after a deliberate pause. */
-.pp-seg {
-  position: absolute;
-  top: -6px;
-  height: 14px;
-}
-.pp-tip,
-.pp-focus-tip {
-  position: absolute;
-  top: 16px;
-  left: 50%;
-  transform: translateX(-50%);
-  white-space: nowrap;
-  padding: 7px 10px;
-  border-radius: 9px;
-  font-size: 12px;
-  line-height: 1.35;
-  color: #fff;
-  background: var(--ink);
-  box-shadow: var(--shadow-lg);
-  display: none;
-  pointer-events: none;
-  z-index: 40;
-}
-@keyframes pp-tip-in {
-  from {
-    opacity: 0;
-    translate: 0 -2px;
-  }
-}
-.pp-tip b,
-.pp-focus-tip b {
-  font-weight: 600;
-}
-.pp-tip-sub {
-  display: block;
-  color: rgba(255, 255, 255, 0.6);
-}
-.pp-seg:hover .pp-tip {
-  display: block;
-  animation: pp-tip-in 140ms 450ms var(--ease-out) both;
-}
-.pp-seg-first .pp-tip {
-  left: 12px;
-  transform: none;
-}
-.pp-seg-last .pp-tip {
-  left: auto;
-  right: 12px;
-  transform: none;
-}
-.pp-focus-tip {
-  left: 24px;
-  transform: none;
-}
-.pp-track:focus-visible {
-  box-shadow: 0 0 0 2px var(--ring);
-}
-.pp-track:focus-visible .pp-focus-tip {
-  display: block;
-  animation: pp-tip-in 140ms var(--ease-out) both;
-}
-
-.pp-toast {
-  position: absolute;
-  top: 12px;
-  transform: translateX(-50%);
-  white-space: nowrap;
-  padding: 5px 11px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--accent-ink);
-  background: var(--bg);
-  box-shadow: 0 0 0 1px var(--hairline), var(--shadow-md);
-  pointer-events: none;
-  animation: pp-toast 2600ms var(--ease-out) both;
-}
-@keyframes pp-toast {
-  0% { opacity: 0; transform: translate(-50%, -4px); }
-  10% { opacity: 1; transform: translate(-50%, 0); }
-  85% { opacity: 1; }
-  100% { opacity: 0; }
-}
-
 /* Reps 2.0 motion: purposeful, short, never during typing. */
 @keyframes flame-flicker {
   0%, 100% { transform: scaleY(1) translateY(0); }
@@ -976,15 +797,354 @@ a.chip:hover {
   .spark {
     animation: none !important;
   }
-  .pp-comet,
-  .pp-fill::after {
-    display: none;
-  }
   *,
   *::before,
   *::after {
     transition-duration: 0ms !important;
     animation-duration: 0ms !important;
     animation-delay: 0ms !important;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Reps 2.0 surfaces (docs/reps-2-design.md).
+   Training, not a dashboard: a scene that states the day, one overlapping
+   "training deck" for what matters now, then quieter context below.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.font-display {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+}
+.headline {
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 144;
+  font-weight: 600;
+  font-size: clamp(34px, 4.6vw, 58px);
+  line-height: 1.02;
+  letter-spacing: -0.028em;
+}
+.section-title {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  font-weight: 600;
+  font-size: 26px;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+}
+
+/* The hero: a landscape that carries the day's state. */
+.hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-radius: 0 0 28px 28px;
+}
+@media (min-width: 1024px) {
+  .hero {
+    border-radius: 0 0 0 28px;
+  }
+}
+.hero > svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+.hero[data-mood='dusk'],
+.hero[data-mood='night'] {
+  color: #f3f1ec;
+}
+/* A soft reading veil behind the headline, so type never fights the scene. */
+.hero-veil {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.62) 0%, rgba(255, 255, 255, 0.28) 46%, rgba(255, 255, 255, 0) 70%);
+}
+.hero[data-mood='dusk'] .hero-veil,
+.hero[data-mood='night'] .hero-veil {
+  background: linear-gradient(90deg, rgba(10, 14, 28, 0.55) 0%, rgba(10, 14, 28, 0.2) 50%, rgba(10, 14, 28, 0) 75%);
+}
+@media (max-width: 640px) {
+  .hero-veil {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.35) 55%, rgba(255, 255, 255, 0) 100%);
+  }
+}
+
+/* Glass chips that sit on the scene. */
+.glass {
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.6), 0 6px 20px rgba(20, 30, 50, 0.1);
+}
+.hero[data-mood='dusk'] .glass,
+.hero[data-mood='night'] .glass {
+  background: rgba(20, 26, 46, 0.55);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12);
+  color: #f3f1ec;
+}
+
+/* The training deck: raised tiles that overlap the scene's foot. */
+.deck {
+  background: var(--bg);
+  border-radius: 20px;
+  box-shadow: 0 0 0 1px var(--hairline), 0 18px 48px -18px rgba(15, 26, 42, 0.28), 0 2px 6px rgba(15, 26, 42, 0.05);
+}
+.tile {
+  border-radius: 16px;
+  padding: 20px;
+}
+.tile-learn {
+  background: linear-gradient(180deg, var(--learn-soft), rgba(238, 244, 253, 0.4));
+}
+.tile-repair {
+  background: linear-gradient(180deg, var(--repair-soft), rgba(252, 245, 230, 0.4));
+}
+.tile-cold {
+  background: linear-gradient(180deg, var(--cold-soft), rgba(241, 240, 253, 0.4));
+}
+.tile-flame {
+  background: linear-gradient(180deg, var(--flame-soft), rgba(255, 244, 230, 0.4));
+}
+.tile-plain {
+  background: var(--surface);
+}
+.tile-pass {
+  background: linear-gradient(180deg, var(--pass-soft), rgba(238, 246, 241, 0.4));
+}
+.icon-tile {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+/* Progress ring. --p is 0..1. The arc sweeps in on first paint. */
+.progress-ring circle {
+  fill: none;
+  stroke-linecap: round;
+}
+.progress-ring .ring-track {
+  stroke: var(--surface-3);
+}
+.progress-ring .ring-arc {
+  transition: stroke-dashoffset 600ms var(--ease-out);
+}
+
+/* Steps: today's ordered training, as a path rather than a list. */
+.steps {
+  position: relative;
+}
+.step {
+  position: relative;
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  column-gap: 16px;
+  padding-bottom: 22px;
+}
+.step:last-child {
+  padding-bottom: 0;
+}
+.step::before {
+  content: '';
+  position: absolute;
+  left: 19px;
+  top: 40px;
+  bottom: 0;
+  width: 2px;
+  background: var(--line);
+}
+.step:last-child::before {
+  display: none;
+}
+.step[data-state='done']::before {
+  background: var(--pass);
+  opacity: 0.45;
+}
+.step-dot {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  background: var(--bg);
+  box-shadow: inset 0 0 0 2px var(--line-strong);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+}
+.step[data-state='now'] .step-dot {
+  box-shadow: inset 0 0 0 2px var(--accent), 0 0 0 5px var(--accent-soft);
+  color: var(--accent);
+}
+.step[data-state='done'] .step-dot {
+  background: var(--pass);
+  box-shadow: none;
+  color: white;
+}
+.step[data-state='locked'] .step-dot {
+  background: var(--surface-2);
+  box-shadow: none;
+  color: var(--faint);
+}
+.step[data-state='repair'] .step-dot {
+  background: var(--repair-soft);
+  box-shadow: inset 0 0 0 2px var(--repair);
+  color: var(--repair);
+}
+
+/* Rep rows inside a step. */
+.rep-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 40px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 14px;
+  transition: background-color var(--dur-fast) var(--ease-out);
+}
+a.rep-row:hover {
+  background: var(--surface);
+}
+.rep-row[data-state='done'] {
+  color: var(--muted);
+}
+.check {
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  flex-shrink: 0;
+  box-shadow: inset 0 0 0 1.5px var(--line-strong);
+}
+.check[data-on='true'] {
+  background: var(--pass);
+  box-shadow: none;
+  color: white;
+}
+
+/* Kind tags: one word, semantic colour, never a rainbow. */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 20px;
+  padding: 0 7px;
+  border-radius: 6px;
+  font-size: 10.5px;
+  font-weight: 650;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.tag-learn { background: var(--learn-soft); color: var(--learn); }
+.tag-repair { background: var(--repair-soft); color: var(--repair); }
+.tag-cold { background: var(--cold-soft); color: var(--cold); }
+.tag-flame { background: var(--flame-soft); color: #b9500b; }
+.tag-pass { background: var(--pass-soft); color: var(--green-ink); }
+.tag-rest { background: var(--rest-soft); color: #6d604f; }
+.tag-plain { background: var(--surface-2); color: var(--ink-2); }
+.tag-locked { background: var(--surface-2); color: var(--faint); }
+
+/* The Road trail. */
+.trail-node {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.trail-dot {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.88);
+  color: var(--ink-2);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.9), 0 4px 12px rgba(15, 26, 42, 0.18);
+  transition: transform var(--dur) var(--ease-out);
+}
+.trail-node button:hover .trail-dot,
+.trail-node button:focus-visible .trail-dot {
+  transform: scale(1.1);
+}
+.trail-node[data-state='complete'] .trail-dot {
+  background: var(--pass);
+  color: white;
+}
+.trail-node[data-state='active'] .trail-dot {
+  width: 44px;
+  height: 44px;
+  font-size: 15px;
+  background: #fff;
+  color: #b9500b;
+  box-shadow: 0 0 0 3px var(--flame), 0 0 0 9px rgba(234, 106, 16, 0.22), 0 8px 18px rgba(15, 26, 42, 0.25);
+}
+.trail-node[data-state='repair'] .trail-dot {
+  background: var(--repair-soft);
+  color: var(--repair);
+  box-shadow: 0 0 0 3px var(--repair), 0 4px 12px rgba(15, 26, 42, 0.18);
+}
+.trail-node[data-state='locked'] .trail-dot {
+  background: rgba(255, 255, 255, 0.55);
+  color: rgba(30, 40, 60, 0.55);
+}
+.trail-node[data-selected='true'] .trail-dot {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+@keyframes node-breathe {
+  0%, 100% { box-shadow: 0 0 0 3px var(--flame), 0 0 0 9px rgba(234, 106, 16, 0.22), 0 8px 18px rgba(15, 26, 42, 0.25); }
+  50% { box-shadow: 0 0 0 3px var(--flame), 0 0 0 14px rgba(234, 106, 16, 0.08), 0 8px 18px rgba(15, 26, 42, 0.25); }
+}
+.trail-node[data-state='active'] .trail-dot {
+  animation: node-breathe 3.2s ease-in-out infinite;
+}
+@keyframes trail-draw {
+  from { stroke-dashoffset: var(--len); }
+  to { stroke-dashoffset: 0; }
+}
+.trail-done {
+  stroke-dasharray: var(--len);
+  animation: trail-draw 1100ms var(--ease-out) both;
+}
+
+/* Earned moments: each has its own, short shape. */
+@keyframes stamp-in {
+  0% { opacity: 0; transform: scale(1.25) rotate(-6deg); }
+  60% { opacity: 1; transform: scale(0.96) rotate(1deg); }
+  100% { transform: none; }
+}
+.stamp-in {
+  animation: stamp-in 520ms var(--ease-out) both;
+}
+@keyframes sheet-in {
+  from { transform: translateY(24px); opacity: 0; }
+}
+.sheet-in {
+  animation: sheet-in 220ms var(--ease-out) both;
+}
+@keyframes unlock-glow {
+  0% { box-shadow: 0 0 0 0 rgba(47, 82, 201, 0.35); }
+  100% { box-shadow: 0 0 0 14px rgba(47, 82, 201, 0); }
+}
+.unlock-glow {
+  animation: unlock-glow 900ms var(--ease-out) 2;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trail-node[data-state='active'] .trail-dot,
+  .trail-done {
+    animation: none !important;
   }
 }

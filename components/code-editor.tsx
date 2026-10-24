@@ -18,7 +18,8 @@ import { python } from '@codemirror/lang-python'
 import { tags } from '@lezer/highlight'
 
 /**
- * The Python editor. Light, quiet, monospaced. Cmd/Ctrl+Enter runs,
+ * The Python editor. A dark navy canvas by default (the coding surface of the
+ * training room), light where it sits inside reading content. Monospaced. Cmd/Ctrl+Enter runs,
  * Shift+Cmd/Ctrl+Enter submits. Tab indents; Escape then Tab leaves the editor.
  * In Interview mode autocomplete and auto-closing brackets are off.
  */
@@ -33,6 +34,40 @@ const style = HighlightStyle.define([
   { tag: tags.className, color: '#0e7490' },
   { tag: tags.propertyName, color: '#2b2b2e' },
 ])
+
+// The coding canvas: deep navy, high-contrast syntax, calm gutters.
+const darkStyle = HighlightStyle.define([
+  { tag: tags.keyword, color: '#c4a4ff' },
+  { tag: [tags.string, tags.special(tags.string)], color: '#9fdc9a' },
+  { tag: [tags.number, tags.bool, tags.null], color: '#ffb37a' },
+  { tag: tags.comment, color: '#7d8ba1', fontStyle: 'italic' },
+  { tag: tags.definition(tags.variableName), color: '#7cb4ff' },
+  { tag: tags.function(tags.definition(tags.variableName)), color: '#7cb4ff' },
+  { tag: tags.className, color: '#6fd6e6' },
+  { tag: tags.propertyName, color: '#e3e9f3' },
+  { tag: [tags.operator, tags.punctuation], color: '#aab7ca' },
+])
+
+const darkTheme = EditorView.theme(
+  {
+    '&': { fontSize: '14px', height: '100%', backgroundColor: '#0f1a2a', color: '#e6ecf5' },
+    '.cm-scroller': { fontFamily: 'var(--font-geist-mono), ui-monospace, monospace', lineHeight: '1.7' },
+    '.cm-content': { padding: '16px 0', caretColor: '#9cc2ff' },
+    '.cm-cursor': { borderLeftWidth: '2px', borderLeftColor: '#9cc2ff' },
+    '.cm-gutters': { backgroundColor: '#0f1a2a', border: 'none', color: '#4b5b73' },
+    '.cm-lineNumbers .cm-gutterElement': { padding: '0 14px 0 18px', minWidth: '44px' },
+    '.cm-activeLine': { backgroundColor: 'rgba(124,180,255,0.06)' },
+    '.cm-activeLineGutter': { backgroundColor: 'transparent', color: '#a3b0c2' },
+    '&.cm-focused': { outline: 'none' },
+    '.cm-selectionBackground, &.cm-focused .cm-selectionBackground, ::selection': { backgroundColor: '#2a4470 !important' },
+    '.cm-matchingBracket': { backgroundColor: '#24385a', outline: 'none' },
+    '.cm-placeholder': { color: '#5d6d85' },
+    '.cm-tooltip': { border: '1px solid #2a3a54', borderRadius: '6px', backgroundColor: '#172437', color: '#e6ecf5' },
+    '.cm-tooltip-autocomplete ul li[aria-selected]': { backgroundColor: '#2a4470', color: '#fff' },
+    '.cm-errorLine': { backgroundColor: 'rgba(240,90,80,0.12)' },
+  },
+  { dark: true },
+)
 
 const theme = EditorView.theme({
   '&': { fontSize: '14px', height: '100%', backgroundColor: '#fbfbfc' },
@@ -64,9 +99,11 @@ export interface CodeEditorProps {
   minHeight?: number
   /** Bump to move focus into the editor (e.g. "Back to code"). */
   focusToken?: number
+  /** The dark coding canvas (default), or light inside reading content. */
+  tone?: 'dark' | 'light'
 }
 
-export default function CodeEditor({ value, onChange, onRun, onSubmit, assist = true, readOnly = false, ariaLabel = 'Python editor', placeholder, autoFocus, minHeight = 220, focusToken }: CodeEditorProps) {
+export default function CodeEditor({ value, onChange, onRun, onSubmit, assist = true, readOnly = false, ariaLabel = 'Python editor', placeholder, autoFocus, minHeight = 220, focusToken, tone = 'dark' }: CodeEditorProps) {
   const host = useRef<HTMLDivElement>(null)
   const view = useRef<EditorView | null>(null)
   const assistC = useRef(new Compartment())
@@ -92,8 +129,8 @@ export default function CodeEditor({ value, onChange, onRun, onSubmit, assist = 
         indentUnit.of('    '),
         EditorState.tabSize.of(4),
         python(),
-        syntaxHighlighting(style),
-        theme,
+        syntaxHighlighting(tone === 'dark' ? darkStyle : style),
+        tone === 'dark' ? darkTheme : theme,
         placeholder ? placeholderExt(placeholder) : [],
         assistC.current.of(assistExt(assist)),
         readOnlyC.current.of(EditorState.readOnly.of(readOnly)),

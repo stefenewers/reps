@@ -1,5 +1,6 @@
 'use client'
 
+import PageHero from '@/components/page-hero'
 import { useMemo, useState } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
@@ -125,9 +126,8 @@ export default function SolveLogView() {
 
   return (
     <main className="flex-1 bg-canvas">
-      <div className="mx-auto w-full max-w-[1040px] px-5 pb-28 pt-10 sm:px-8">
-        <h1 className="display-xl">Solve log</h1>
-        <p className="mt-2 max-w-[680px] text-[15px] leading-relaxed text-ink-2">Every problem you have solved, how it went, and when it comes back. Log LeetCode problems from Today; add notes or outside problems here.</p>
+      <PageHero mood="dawn" title="Solve log" sub={<p>Every problem you have solved, how it went, and when it comes back. Log LeetCode problems from Today; add notes or outside problems here.</p>} />
+      <div className="mx-auto w-full max-w-[1180px] px-5 pb-28 pt-8 sm:px-8">
 
         <dl className="mt-7 grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-4">
           <Stat label="Problems logged" value={String(rows.length)} />

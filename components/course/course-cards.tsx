@@ -57,9 +57,9 @@ export function WeekCard({ cd }: { cd: CourseDayState }) {
     shortfall: progress.shortfall
   })
   return (
-    <section aria-labelledby="week-h" className="panel p-6" data-testid="week-card" data-status={progress.status}>
+    <section aria-labelledby="week-h" className="rounded-2xl bg-bg p-6 shadow-[0_0_0_1px_var(--hairline)]" data-testid="week-card" data-status={progress.status}>
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h2 id="week-h" className="h2">
+        <h2 id="week-h" className="font-display text-[20px] font-semibold tracking-tight">
           Week {week.number} · {week.short}
         </h2>
         <span
@@ -145,9 +145,9 @@ export function WeekCard({ cd }: { cd: CourseDayState }) {
 export function ReadinessCard({ cd }: { cd: CourseDayState }) {
   const r = cd.readiness
   return (
-    <section aria-labelledby="ready-h" className="panel p-6" data-testid="readiness-card" data-track={r.track}>
+    <section aria-labelledby="ready-h" className="rounded-2xl bg-bg p-6 shadow-[0_0_0_1px_var(--hairline)]" data-testid="readiness-card" data-track={r.track}>
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h2 id="ready-h" className="h2">
+        <h2 id="ready-h" className="font-display text-[20px] font-semibold tracking-tight">
           Feb 1 readiness
         </h2>
         <span
@@ -189,9 +189,9 @@ export function InterviewCard({ cd }: { cd: CourseDayState }) {
   const decision = cd.week.number >= 14 ? finalDecision(cd.readiness, t.grade, mocksDone) : null
   const GRADE = { green: 'Green', yellow: 'Yellow', red: 'Red' } as const
   return (
-    <section aria-labelledby="interview-h" className="panel p-6" data-testid="interview-card" data-grade={t.grade}>
+    <section aria-labelledby="interview-h" className="rounded-2xl bg-bg p-6 shadow-[0_0_0_1px_var(--hairline)]" data-testid="interview-card" data-grade={t.grade}>
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h2 id="interview-h" className="h2">
+        <h2 id="interview-h" className="font-display text-[20px] font-semibold tracking-tight">
           {cd.week.number >= 14 ? 'Interview execution' : 'Independent transfer'}
         </h2>
         <span

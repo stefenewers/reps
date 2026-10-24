@@ -1,6 +1,7 @@
 'use client'
 
 import CourseProgress from '@/components/course/course-progress'
+import PageHero from '@/components/page-hero'
 import { COURSE_START } from '@/data/course/calendar'
 import { useMemo } from 'react'
 import Link from 'next/link'
@@ -57,9 +58,12 @@ export default function ProgressView() {
   if (today >= COURSE_START)
     return (
       <main className="flex-1 bg-canvas">
-        <div className="mx-auto w-full max-w-[1120px] px-5 pb-28 pt-10 sm:px-8">
-          <h1 className="display-xl">Progress</h1>
-          <p className="mt-2 max-w-[680px] text-[15px] leading-relaxed text-ink-2">Today, the week, the course and readiness: each built from the one below it, from what you actually produced.</p>
+        <PageHero
+          deck
+          title="Your progress"
+          sub="Evidence that you are becoming capable: what you produced, how you produced it, and what it proves for February 1."
+        />
+        <div className="relative mx-auto w-full max-w-[1180px] px-5 pb-28 sm:px-8">
           <CourseProgress />
         </div>
       </main>

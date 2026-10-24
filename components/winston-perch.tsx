@@ -9,7 +9,7 @@ import './winston-ambient.css'
  * no text, no clicks, no knowledge of progress. While a perch is on screen the
  * corner Winston stays away, so there is only ever one of him.
  */
-export default function WinstonPerch({ className = '', mood = 'awake' }: { className?: string; mood?: 'rest' | 'awake' | 'celebrate' }) {
+export default function WinstonPerch({ className = '', mood = 'awake', ground = true }: { className?: string; mood?: 'rest' | 'awake' | 'celebrate'; ground?: boolean }) {
   const host = useRef<HTMLDivElement>(null)
   const [x, setX] = useState(0)
   const [walking, setWalking] = useState(false)
@@ -51,7 +51,7 @@ export default function WinstonPerch({ className = '', mood = 'awake' }: { class
 
   return (
     <div ref={host} data-winston-perch="" data-mood={mood} aria-hidden="true" className={`relative h-16 ${className}`}>
-      <span className="absolute inset-x-0 bottom-[3px] h-px bg-line" />
+      {ground && <span className="absolute inset-x-0 bottom-[3px] h-px bg-line" />}
       <div className="wa-perch" style={{ transform: `translateX(${x}px)`, '--walk-ms': `${walkMs}ms` } as CSSProperties}>
         <span className={`wa-sprite ${walking ? 'wa-sprite--walk' : 'wa-sprite--idle'}`} style={{ '--face': facing } as CSSProperties} />
       </div>

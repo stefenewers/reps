@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import RoadMap from '@/components/course/road-map'
+import RoadView from '@/components/course/road-view'
 import { COURSE_START } from '@/data/course/calendar'
 import { useReps } from '@/components/reps-provider'
 import { useSolveLog } from '@/components/use-solve-log'
@@ -45,18 +45,7 @@ export default function PlanView() {
   const checkpoint = new Map<string, string>(CHECKPOINTS.map((c) => [c.date, c.label]))
 
   // Reps 2.0: from Oct 26 the plan is the 14-week course, as a Road to Ready.
-  if (today >= COURSE_START)
-    return (
-      <main className="flex-1 bg-canvas">
-        <div className="mx-auto w-full max-w-[1000px] px-5 pb-28 pt-10 sm:px-8">
-          <h1 className="display-xl">Plan</h1>
-          <p className="mt-2 max-w-[680px] text-[15px] leading-relaxed text-muted">From state and while loops to interview execution: what each week teaches, what proves it, and what it builds.</p>
-          <div className="mt-8">
-            <RoadMap />
-          </div>
-        </div>
-      </main>
-    )
+  if (today >= COURSE_START) return <RoadView />
 
   return (
     <main className="flex-1 bg-canvas">

@@ -133,3 +133,60 @@ export const IconExternal = (p: P) => (
     <path d="M9 2.5h4.5V7M13.5 2.5 7.5 8.5M12 9.5v3a1 1 0 0 1-1 1H3.5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h3" />
   </I>
 )
+export const IconHome = (p: P) => (
+  <I {...p}>
+    <path d="M2.5 7.2 8 2.5l5.5 4.7V13a.5.5 0 0 1-.5.5H9.5V10h-3v3.5H3a.5.5 0 0 1-.5-.5Z" />
+  </I>
+)
+export const IconRoad = (p: P) => (
+  <I {...p}>
+    <path d="M3.5 13.5c0-3 3-3.5 4.5-5.5S9.5 4 12.5 2.5" />
+    <circle cx="3.5" cy="13.5" r="1" />
+    <path d="M12.5 2.5v3M12.5 2.5h2.2l-.7.8.7.7h-2.2" />
+  </I>
+)
+export const IconChart = (p: P) => (
+  <I {...p}>
+    <path d="M2.5 13.5h11M4.5 11V8.5M8 11V5M11.5 11V2.8" />
+  </I>
+)
+export const IconBook = (p: P) => (
+  <I {...p}>
+    <path d="M8 4.2C6.8 3.2 5 2.8 2.5 3v9.5c2.5-.2 4.3.2 5.5 1.2 1.2-1 3-1.4 5.5-1.2V3c-2.5-.2-4.3.2-5.5 1.2ZM8 4.2v9.5" />
+  </I>
+)
+export const IconMic = (p: P) => (
+  <I {...p}>
+    <rect x="6" y="2" width="4" height="7.5" rx="2" />
+    <path d="M3.8 8a4.2 4.2 0 0 0 8.4 0M8 12.2v1.8" />
+  </I>
+)
+export const IconGrid = (p: P) => (
+  <I {...p}>
+    <rect x="2.5" y="2.5" width="4.2" height="4.2" rx="1" />
+    <rect x="9.3" y="2.5" width="4.2" height="4.2" rx="1" />
+    <rect x="2.5" y="9.3" width="4.2" height="4.2" rx="1" />
+    <rect x="9.3" y="9.3" width="4.2" height="4.2" rx="1" />
+  </I>
+)
+export const IconMoon = (p: P) => (
+  <I {...p}>
+    <path d="M13 9.8A5.5 5.5 0 0 1 6.2 3a5.5 5.5 0 1 0 6.8 6.8Z" />
+  </I>
+)
+export const IconTarget = (p: P) => (
+  <I {...p}>
+    <circle cx="8" cy="8" r="5.5" />
+    <circle cx="8" cy="8" r="2.5" />
+  </I>
+)
+export const IconRepair = (p: P) => (
+  <I {...p}>
+    <path d="M10.2 2.7a3 3 0 0 0-3.6 3.9L2.8 10.4a1.3 1.3 0 0 0 1.8 1.8l3.8-3.8a3 3 0 0 0 3.9-3.6l-1.9 1.9-1.6-.4-.4-1.6Z" />
+  </I>
+)
+export const IconLog = (p: P) => (
+  <I {...p}>
+    <path d="M4 2.5h8a.5.5 0 0 1 .5.5v10a.5.5 0 0 1-.5.5H4a.5.5 0 0 1-.5-.5V3a.5.5 0 0 1 .5-.5ZM6 5.5h4M6 8h4M6 10.5h2.5" />
+  </I>
+)

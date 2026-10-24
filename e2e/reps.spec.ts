@@ -42,17 +42,15 @@ test('today → first rep → correct answer → mastery updates → reload → 
   await expect(page.getByRole('heading', { name: 'Road to Ready' })).toBeHidden()
   await page.getByTestId('more').locator('summary').click()
   await expect(page.getByRole('heading', { name: 'Road to Ready' })).toBeVisible()
-  const rail = page.getByRole('progressbar', { name: /Overall Reps curriculum progress/ })
-  await expect(rail).toHaveAttribute('aria-valuenow', '0')
+  // Reps 2.0: one progress model. No global whole-program rail competes with the course.
+  await expect(page.getByRole('progressbar', { name: /Overall Reps curriculum progress/ })).toHaveCount(0)
+  await expect(page.getByRole('navigation', { name: 'Main' }).getByRole('link', { name: 'Today' })).toHaveAttribute('aria-current', 'page')
   await page.getByTestId(/^(start-today|roadmap-start)$/).click()
   await expect(page).toHaveURL(new RegExp(`/rep/${firstRep.id}`))
   await expect(page.getByRole('heading', { name: firstRep.title })).toBeVisible()
 
   await answer(page, firstRep)
   await expect(page.getByTestId('rep-complete')).toBeVisible({ timeout: 60_000 })
-  // The whole-program rail moves immediately and animates for a genuine completion.
-  await expect(rail).toHaveAttribute('aria-valuenow', '1')
-  await expect(page.locator('.pp')).toHaveAttribute('data-advancing', 'true')
 
   const skill = firstRep.skills[0]
   await page.goto(`/skills/${skill}`)
@@ -63,8 +61,6 @@ test('today → first rep → correct answer → mastery updates → reload → 
 
   await page.reload()
   await expect(page.getByRole('link', { name: firstRep.title })).toBeVisible()
-  await expect(rail).toHaveAttribute('aria-valuenow', '1')
-  await expect(page.locator('.pp')).toHaveAttribute('data-advancing', 'false')
   await page.goto('/')
   await page.getByTestId('more').locator('summary').click()
   await expect(page.getByText(blockingGate(today, 0, []) ? /Carried over · \d+ left to clear/ : /Rep 2 of \d+/)).toBeVisible()

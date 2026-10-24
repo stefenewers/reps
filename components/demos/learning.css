@@ -1,0 +1,468 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Reps 2.0 learning surfaces: lessons, worked examples, "watch it move" demos
+   and labs. Learn-blue is the identity of understanding; labs (building) are
+   warm. Motion only shows state changing, and stops under reduced motion.
+   ────────────────────────────────────────────────────────────────────────── */
+
+/* The page band: a blueprint, not a landscape. Learning is a drawing table. */
+.learn-hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background:
+    radial-gradient(120% 140% at 85% -20%, rgba(47, 111, 219, 0.22), rgba(47, 111, 219, 0) 60%),
+    linear-gradient(180deg, #e8f0fc 0%, #f2f6fc 60%, var(--canvas) 100%);
+}
+.learn-hero[data-tone='build'] {
+  background:
+    radial-gradient(120% 140% at 85% -20%, rgba(234, 106, 16, 0.2), rgba(234, 106, 16, 0) 60%),
+    linear-gradient(180deg, #fbeee0 0%, #fbf4ec 60%, var(--canvas) 100%);
+}
+.learn-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    linear-gradient(rgba(47, 111, 219, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(47, 111, 219, 0.07) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: linear-gradient(180deg, black 0%, transparent 92%);
+}
+.learn-hero[data-tone='build']::before {
+  background-image:
+    linear-gradient(rgba(168, 106, 18, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(168, 106, 18, 0.07) 1px, transparent 1px);
+}
+/* A faint drawn figure in the corner: the shape of the idea. */
+.learn-hero-mark {
+  position: absolute;
+  right: -20px;
+  top: 10px;
+  z-index: -1;
+  opacity: 0.55;
+  pointer-events: none;
+}
+@media (max-width: 640px) {
+  .learn-hero-mark {
+    opacity: 0.25;
+    right: -90px;
+  }
+}
+
+/* Lesson: a reading measure, sections with a spine. */
+.lesson-block {
+  position: relative;
+  scroll-margin-top: 80px;
+}
+.lesson-num {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  background: var(--learn-soft);
+  color: var(--learn);
+  font-size: 12.5px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.mental-model {
+  position: relative;
+  border-radius: 20px;
+  padding: 22px 24px 22px 26px;
+  background: linear-gradient(135deg, #1d3f86 0%, #2f6fdb 100%);
+  color: #f4f8ff;
+  box-shadow: 0 18px 40px -22px rgba(29, 63, 134, 0.7);
+}
+.mental-model code {
+  background: rgba(255, 255, 255, 0.16) !important;
+  color: #fff !important;
+}
+.mental-model strong {
+  color: #fff;
+}
+.toc-link {
+  display: block;
+  border-left: 2px solid var(--line);
+  padding: 5px 0 5px 12px;
+  font-size: 13px;
+  color: var(--muted);
+  transition: color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out);
+}
+.toc-link:hover {
+  color: var(--ink);
+  border-color: var(--learn);
+}
+
+/* ── the demo player: a stage, a script, and a dark code listing ─────────── */
+
+.demo-stage {
+  position: relative;
+  border-radius: 20px;
+  background-color: #fbfcfe;
+  background-image: radial-gradient(rgba(47, 111, 219, 0.11) 1px, transparent 1px);
+  background-size: 16px 16px;
+  box-shadow: 0 0 0 1px var(--hairline), 0 10px 30px -18px rgba(15, 26, 42, 0.25);
+}
+.demo-code {
+  border-radius: 20px;
+  background: #0f1a2a;
+  color: #c9d4e5;
+  box-shadow: 0 10px 30px -18px rgba(15, 26, 42, 0.6);
+}
+.demo-code-line {
+  position: relative;
+  display: flex;
+  gap: 12px;
+  border-radius: 6px;
+  padding: 0 8px;
+  transition: background-color 220ms var(--ease-out), color 220ms var(--ease-out);
+}
+.demo-code-line[data-active='true'] {
+  background: rgba(59, 108, 255, 0.24);
+  color: #ffffff;
+  box-shadow: inset 3px 0 0 #7aa2ff;
+}
+.demo-code-line .ln {
+  width: 18px;
+  flex-shrink: 0;
+  text-align: right;
+  color: #56657c;
+  user-select: none;
+}
+.demo-code-line[data-active='true'] .ln {
+  color: #9db7ff;
+}
+
+/* Narration: the step and its reason, read like a caption. */
+.demo-caption {
+  animation: caption-in 260ms var(--ease-out) both;
+}
+@keyframes caption-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+/* A variable whose value just changed flashes once. */
+.var-chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  border-radius: 8px;
+  padding: 4px 9px;
+  background: var(--bg);
+  box-shadow: inset 0 0 0 1px var(--line);
+  font-size: 12.5px;
+}
+.var-chip[data-changed='true'] {
+  animation: var-flash 900ms var(--ease-out) both;
+}
+@keyframes var-flash {
+  0% {
+    background: #ffe9cc;
+    box-shadow: inset 0 0 0 1.5px var(--flame);
+  }
+  100% {
+    background: var(--bg);
+    box-shadow: inset 0 0 0 1px var(--line);
+  }
+}
+
+/* The scrubber: a range input styled as the demo's timeline. */
+.scrubber {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 22px;
+  background: transparent;
+  cursor: pointer;
+}
+.scrubber::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--learn) 0 var(--fill, 0%), var(--surface-3) var(--fill, 0%) 100%);
+}
+.scrubber::-moz-range-track {
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--learn) 0 var(--fill, 0%), var(--surface-3) var(--fill, 0%) 100%);
+}
+.scrubber::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  margin-top: -6px;
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 0 0 2px var(--learn), 0 2px 6px rgba(15, 26, 42, 0.25);
+}
+.scrubber::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border: 0;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 0 0 2px var(--learn), 0 2px 6px rgba(15, 26, 42, 0.25);
+}
+.round-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  background: var(--bg);
+  color: var(--ink);
+  box-shadow: 0 0 0 1px var(--line-strong), var(--shadow-xs);
+  transition: transform var(--dur-fast) var(--ease-out), background-color var(--dur-fast) var(--ease-out);
+}
+.round-btn:hover:not(:disabled) {
+  background: var(--surface);
+}
+.round-btn:active:not(:disabled) {
+  transform: scale(0.95);
+}
+.round-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.round-btn-primary {
+  width: auto;
+  padding: 0 20px;
+  background: var(--learn);
+  color: #fff;
+  box-shadow: 0 6px 16px -6px rgba(47, 111, 219, 0.7);
+  font-size: 14px;
+  font-weight: 600;
+  gap: 6px;
+  display: inline-flex;
+  align-items: center;
+}
+.round-btn-primary:hover:not(:disabled) {
+  background: #2560c4;
+}
+
+/* ── views: cells, pointers that travel, a window that slides ───────────── */
+
+.cells {
+  position: relative;
+  --cell: 48px;
+  --gap: 6px;
+}
+@media (max-width: 640px) {
+  .cells {
+    --cell: 40px;
+    --gap: 5px;
+  }
+}
+.cell {
+  display: grid;
+  place-items: center;
+  width: var(--cell);
+  height: var(--cell);
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  background: var(--bg);
+  box-shadow: inset 0 0 0 1px var(--line-strong), 0 1px 2px rgba(15, 26, 42, 0.06);
+  transition: background-color 260ms var(--ease-out), color 260ms var(--ease-out), box-shadow 260ms var(--ease-out), transform 260ms var(--ease-out), opacity 260ms var(--ease-out);
+}
+.cell[data-state='region'] {
+  background: var(--learn-soft);
+  box-shadow: inset 0 0 0 1.5px var(--learn);
+}
+.cell[data-state='hot'] {
+  background: var(--flame-soft);
+  box-shadow: inset 0 0 0 2px var(--flame), 0 6px 14px -6px rgba(234, 106, 16, 0.55);
+  transform: translateY(-3px);
+}
+.cell[data-state='found'] {
+  background: var(--pass);
+  color: #fff;
+  box-shadow: 0 6px 14px -6px rgba(31, 148, 97, 0.6);
+  transform: translateY(-3px);
+}
+.cell[data-state='ruled-out'] {
+  background: var(--surface-2);
+  color: var(--faint);
+  box-shadow: none;
+  opacity: 0.55;
+  text-decoration: line-through;
+}
+/* The live region (window, search space) as one band that glides. */
+.cells-band {
+  position: absolute;
+  top: -5px;
+  height: calc(var(--cell) + 10px);
+  border-radius: 15px;
+  background: rgba(47, 111, 219, 0.08);
+  box-shadow: inset 0 0 0 2px rgba(47, 111, 219, 0.45);
+  transition: left 320ms var(--ease-out), width 320ms var(--ease-out), opacity 200ms;
+  pointer-events: none;
+}
+.ptr {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: var(--cell);
+  transition: transform 320ms var(--ease-out);
+}
+.ptr-label {
+  border-radius: 7px;
+  padding: 2px 7px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+  box-shadow: 0 3px 8px -3px rgba(15, 26, 42, 0.4);
+}
+.ptr-stem {
+  width: 2px;
+  height: 8px;
+  border-radius: 2px;
+}
+
+/* Call stack: frames push in from above. */
+.frame {
+  animation: frame-in 280ms var(--ease-out) both;
+}
+@keyframes frame-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.98);
+  }
+}
+.chip-in {
+  animation: chip-in 240ms var(--ease-out) both;
+}
+@keyframes chip-in {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+}
+.svg-node circle,
+.svg-node text,
+.svg-edge {
+  transition: fill 260ms var(--ease-out), stroke 260ms var(--ease-out), opacity 260ms var(--ease-out);
+}
+.node-halo {
+  animation: halo 1600ms ease-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+@keyframes halo {
+  0% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.6);
+  }
+}
+
+/* Worked example: the guided path to the rebuild. */
+.goal-rail {
+  position: relative;
+}
+.goal {
+  position: relative;
+  padding-left: 52px;
+  padding-bottom: 24px;
+}
+.goal::before {
+  content: '';
+  position: absolute;
+  left: 17px;
+  top: 38px;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(var(--learn), rgba(47, 111, 219, 0.15));
+}
+.goal-dot {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  background: var(--learn);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: 0 0 0 5px var(--learn-soft);
+}
+.goal[data-latest='true'] {
+  animation: caption-in 320ms var(--ease-out) both;
+}
+
+/* Lab: four stages as one path. */
+.lab-stage {
+  position: relative;
+  padding-left: 56px;
+  padding-bottom: 30px;
+}
+.lab-stage::before {
+  content: '';
+  position: absolute;
+  left: 19px;
+  top: 42px;
+  bottom: 0;
+  width: 2px;
+  background: var(--line);
+}
+.lab-stage[data-done='true']::before {
+  background: var(--pass);
+  opacity: 0.5;
+}
+.lab-stage:last-child::before {
+  display: none;
+}
+.lab-dot {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  background: var(--bg);
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 700;
+  box-shadow: inset 0 0 0 2px var(--line-strong);
+}
+.lab-stage[data-done='true'] .lab-dot {
+  background: var(--pass);
+  color: #fff;
+  box-shadow: none;
+}
+.lab-stage[data-now='true'] .lab-dot {
+  color: #b9500b;
+  box-shadow: inset 0 0 0 2px var(--flame), 0 0 0 5px var(--flame-soft);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cells-band,
+  .ptr,
+  .cell,
+  .frame,
+  .chip-in,
+  .node-halo,
+  .demo-caption,
+  .var-chip[data-changed='true'],
+  .goal[data-latest='true'] {
+    animation: none !important;
+    transition: none !important;
+  }
+}

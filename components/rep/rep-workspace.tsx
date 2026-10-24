@@ -1,5 +1,7 @@
 'use client'
 
+import './focus.css'
+
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -869,9 +871,13 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
   const submitLabel = isDebug ? 'Submit fix' : 'Submit'
 
   return (
-    <main data-mode={mode} className="flex flex-1 flex-col bg-canvas lg:h-[calc(100dvh-56px)] lg:flex-none lg:overflow-hidden">
-      {/* Rep bar: where am I, how far, which mode */}
-      <div className="relative flex h-12 shrink-0 items-center gap-4 bg-bg px-4 sm:px-6" style={{ boxShadow: '0 1px 0 var(--hairline)' }}>
+    <main
+      data-mode={mode}
+      data-cold={checkpoint || transferWeek ? 'true' : 'false'}
+      className="rep-room flex flex-1 flex-col bg-canvas lg:h-[100dvh] lg:flex-none lg:overflow-hidden"
+    >
+      {/* Rep bar: where am I, how far, which mode, and how this attempt is going (independent, assisted, cold) */}
+      <div className="rep-bar relative flex h-14 shrink-0 items-center gap-4 bg-bg px-4 sm:px-6">
         <nav aria-label="Breadcrumb" className="flex min-w-0 items-center gap-1.5 text-[13px]">
           {crumbDay && !session && (
             <>
@@ -899,6 +905,15 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
           </div>
         )}
         <div className="ml-auto flex items-center gap-3">
+          <span className="hidden sm:inline">
+          <span
+            className={`tag ${checkpoint || transferWeek ? 'tag-cold' : interview ? 'tag-plain' : passed ? 'tag-pass' : assisted ? 'tag-flame' : 'tag-pass'}`}
+            data-testid="attempt-state"
+            title={assisted && !bare ? 'Help was used on this attempt: it counts as assisted evidence.' : undefined}
+          >
+            {checkpoint ? 'Cold checkpoint' : transferWeek ? 'Cold · unlabeled' : interview ? 'Interview conditions' : assisted ? 'Assisted · help used' : 'Independent'}
+          </span>
+          </span>
           {interview && (
             <span className="mono num inline-flex items-center gap-1.5 rounded-md bg-surface-2 px-2 py-1 text-[14px] font-medium text-ink" aria-label={`Elapsed ${mm} minutes ${ss} seconds`}>
               <IconClock size={14} className="text-muted" />
@@ -965,7 +980,7 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
                   </button>
                 )}
               </div>
-              <h1 id="rep-title" className="h1">
+              <h1 id="rep-title" className="font-display text-[28px] font-semibold leading-[1.15] tracking-tight sm:text-[32px]">
                 {ex.title}
               </h1>
             </div>
@@ -980,9 +995,14 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
             {/* The Learn layer: open on a first exposure, one click away while practising, and on a rep that proves
                 something, collapsed and counted as help when opened. Never in Interview mode. */}
             {checkpoint && (
-              <div className="rounded-xl bg-cold-soft px-4 py-3 shadow-[inset_2px_0_0_var(--cold)]" data-testid="checkpoint">
-                <p className="eyebrow text-cold">Checkpoint{gateId ? ` · ${GATE_BY_ID[gateId]?.title}` : ''}</p>
-                <p className="mt-1 text-[13.5px] leading-relaxed text-ink-2">
+              <div className="cold-banner rounded-2xl px-5 py-4" data-testid="checkpoint">
+                <p className="flex items-center gap-2 text-[15px] font-semibold text-cold">
+                  <span aria-hidden="true" className="grid size-6 place-items-center rounded-full bg-cold text-[12px] text-white">
+                    ❄
+                  </span>
+                  <span className="eyebrow !text-[12px] text-cold">Checkpoint{gateId ? ` · ${GATE_BY_ID[gateId]?.title}` : ''}</span>
+                </p>
+                <p className="mt-2 text-[13.5px] leading-relaxed text-ink-2">
                   Cold: no lesson panel, no hints, no solution. {gateId ? GATE_BY_ID[gateId]?.proves : ''} If it does not go cleanly, that is information: a short repair comes next, then a fresh checkpoint.
                 </p>
               </div>
@@ -1014,7 +1034,7 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
                 )}
               </div>
             )}
-            {teach && !interview && <p className="label -mb-2">Your rep</p>}
+            {!interview && <p className="label -mb-3 !text-ink-2">{teach ? 'Your rep' : 'The task'}</p>}
 
             <Markdown text={ex.prompt} />
             {ex.code && ex.kind !== 'code' && <CodeView code={ex.code} />}
@@ -1028,18 +1048,18 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
 
             {ex.examples && ex.examples.length > 0 && (
               <div className="flex flex-col gap-2">
-                <p className="label">Examples</p>
-                <div className="well divide-y divide-line overflow-hidden">
+                <p className="label !text-ink-2">{ex.examples.length === 1 ? 'Example' : 'Examples'}</p>
+                <ol className="flex flex-col gap-2">
                   {ex.examples.map((x, i) => (
-                    <div key={i} className="grid grid-cols-[34px_1fr] gap-x-3 gap-y-1 px-4 py-3 text-[13px]">
-                      <span className="mono text-faint">in</span>
+                    <li key={i} className="example-card grid grid-cols-[64px_1fr] gap-x-3 gap-y-1.5 rounded-xl px-4 py-3 text-[13px]">
+                      <span className="text-[11px] font-semibold uppercase tracking-[0.08em] text-muted">Input</span>
                       <span className="mono break-all text-ink-2">{x.input}</span>
-                      <span className="mono text-faint">out</span>
-                      <span className="mono break-all font-medium text-ink">{x.output}</span>
+                      <span className="text-[11px] font-semibold uppercase tracking-[0.08em] text-muted">Output</span>
+                      <span className="mono break-all font-semibold text-ink">{x.output}</span>
                       {x.note && <span className="col-start-2 text-[12.5px] text-muted">{x.note}</span>}
-                    </div>
+                    </li>
                   ))}
-                </div>
+                </ol>
               </div>
             )}
 
@@ -1268,15 +1288,15 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
 
         {/* Workspace */}
         <section aria-label="Workspace" className="flex min-h-[520px] min-w-0 flex-1 flex-col p-3 lg:min-h-0 lg:p-4">
-          <div className="rep-in panel flex min-h-0 flex-1 flex-col overflow-hidden">
+          <div className={`rep-in workspace-card flex min-h-0 flex-1 flex-col overflow-hidden ${ex.kind === 'code' ? 'workspace-card--code' : ''}`}>
             {/* Editor chrome */}
-            <div className="flex h-11 shrink-0 items-center gap-3 px-4" style={{ boxShadow: '0 1px 0 var(--line)' }}>
+            <div className={`editor-chrome flex h-11 shrink-0 items-center gap-3 px-4 ${ex.kind === 'code' ? 'is-dark' : ''}`}>
               {ex.kind === 'code' ? (
                 <>
-                  <span className="flex items-center gap-2 text-[13px] font-medium text-ink">
+                  <span className="flex items-center gap-2 text-[13px] font-medium">
                     <PyMark /> main.py
                   </span>
-                  <span className="rounded-md bg-surface-2 px-1.5 py-0.5 text-[11px] font-medium capitalize text-muted">{mode}</span>
+                  <span className="editor-chip rounded-md px-1.5 py-0.5 text-[11px] font-medium capitalize">{mode}</span>
                 </>
               ) : (
                 <span className="text-[13px] font-medium text-ink">{KIND_VERB[ex.kind]}</span>
@@ -1284,14 +1304,14 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
               {runnable && <PyStatusDot status={phase === 'running' ? 'running' : pyStatus} />}
               <div className="ml-auto flex items-center gap-2">
                 {ex.kind === 'code' && !passed && (
-                  <button type="button" className="icon-btn" onClick={() => setCode(blankStarter(ex))} aria-label="Reset code" title="Reset code">
+                  <button type="button" className="icon-btn editor-icon" onClick={() => setCode(blankStarter(ex))} aria-label="Reset code" title="Reset code">
                     <IconRotate size={14} />
                   </button>
                 )}
               </div>
             </div>
 
-            <div className={`min-h-0 flex-1 ${ex.kind === 'code' ? 'bg-editor' : 'overflow-y-auto px-5 py-5 sm:px-6'}`}>
+            <div className={`min-h-0 flex-1 ${ex.kind === 'code' ? 'bg-[#0f1a2a]' : 'overflow-y-auto px-5 py-5 sm:px-6'}`}>
               {ex.kind === 'code' && (
                 <CodeEditor
                   value={code}
@@ -1326,7 +1346,7 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
             </div>
 
             {ex.kind === 'code' && !interview && (
-              <div className="shrink-0 bg-bg px-4 py-2" style={{ boxShadow: '0 -1px 0 var(--line)' }} data-testid="custom-run">
+              <div className="custom-run shrink-0 px-4 py-2" data-testid="custom-run">
                 {customOpen ? (
                   <div className="flex flex-col gap-2">
                     <div className="flex flex-wrap items-center gap-2">
@@ -1357,7 +1377,7 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
                     )}
                   </div>
                 ) : (
-                  <button type="button" className="text-[12.5px] text-muted underline decoration-line-strong underline-offset-4 hover:text-ink" onClick={() => setCustomOpen(true)}>
+                  <button type="button" className="custom-run-toggle text-[12.5px] underline underline-offset-4" onClick={() => setCustomOpen(true)}>
                     Try my own input
                   </button>
                 )}
@@ -1369,7 +1389,7 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
               {announce}
             </p>
             {hasFeedback && (
-              <div className="fade-in max-h-[44%] shrink-0 overflow-y-auto bg-bg px-4 py-3" style={{ boxShadow: '0 -1px 0 var(--line)' }}>
+              <div className="fade-in results-pane max-h-[44%] shrink-0 overflow-y-auto bg-bg px-4 py-3" aria-label="Test results">
                 {coachError && <p className="mb-2 text-[13px] text-warn">{coachError}</p>}
                 {coachBusy && ['same', 'harder', 'easier'].includes(coachBusy) && <p className="mb-2 text-[13px] text-muted">Getting another rep and checking it runs…</p>}
                 {phase === 'failed' && ex.kind === 'choice' && <FailLine>Not quite. Try another option.</FailLine>}
@@ -1528,7 +1548,7 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
                       <IconPlay size={12} /> {runLabel} <span className="kbd">⌘↵</span>
                     </button>
                   )}
-                  <button type="button" className="btn btn-primary" onClick={onSubmit} disabled={phase === 'running'} data-testid="submit">
+                  <button type="button" className="btn btn-accent" onClick={onSubmit} disabled={phase === 'running'} data-testid="submit">
                     {phase === 'running' ? 'Running…' : phase === 'failed' && !runnable ? 'Try again' : submitLabel}
                     <span className="kbd">{ex.kind === 'code' ? '⇧⌘↵' : '⌘↵'}</span>
                   </button>
@@ -1551,7 +1571,7 @@ const MODE_HINT: Record<Mode, string> = {
 /** A tiny monochrome Python mark for the editor tab. */
 function PyMark() {
   return (
-    <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" className="text-ink-2">
+    <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" className="opacity-80">
       <path d="M7.9 1.5c-3.3 0-3.1 1.4-3.1 1.4v1.5H8v.5H3.5S1.5 4.7 1.5 8s1.8 3.2 1.8 3.2h1.1V9.6s-.1-1.8 1.8-1.8h3.1s1.7 0 1.7-1.7V3.3s.3-1.8-3.1-1.8Zm-1.7 1a.6.6 0 1 1 0 1.1.6.6 0 0 1 0-1.1Z" fill="currentColor" />
       <path d="M8.1 14.5c3.3 0 3.1-1.4 3.1-1.4v-1.5H8v-.5h4.5s2 .2 2-3.1-1.8-3.2-1.8-3.2h-1.1v1.6s.1 1.8-1.8 1.8H6.7S5 8.2 5 9.9v2.8s-.3 1.8 3.1 1.8Zm1.7-1a.6.6 0 1 1 0-1.1.6.6 0 0 1 0 1.1Z" fill="currentColor" opacity="0.45" />
     </svg>
@@ -1576,7 +1596,7 @@ function PyStatusDot({ status }: { status: string }) {
   }
   const [cls, label] = map[status] ?? map.idle
   return (
-    <span className="inline-flex items-center gap-1.5 text-[12px] text-muted" role="status">
+    <span className="py-status inline-flex items-center gap-1.5 text-[12px]" role="status">
       <span className={`dot !size-1.5 ${cls}`} aria-hidden="true" />
       {label}
     </span>

@@ -1,5 +1,6 @@
 'use client'
 
+import PageHero from '@/components/page-hero'
 import Link from 'next/link'
 import { Blocks, learnAdvice } from '@/components/building-toward'
 import { IconArrowRight, IconCheck, IconExternal, IconPlay } from '@/components/icons'
@@ -31,11 +32,8 @@ export default function ProblemsView() {
 
   return (
     <main className="flex-1 bg-canvas">
-      <div className="mx-auto w-full max-w-[1120px] px-5 pb-28 pt-10 sm:px-8">
-        <h1 className="display-xl">Problems</h1>
-        <p className="mt-2 max-w-[680px] text-[14.5px] leading-relaxed text-muted">
-          Each problem is the last step of a short ladder. Its building blocks are moves you can name; when every block is in place, the problem is those moves assembled. If one feels impossible, the missing block is listed here.
-        </p>
+      <PageHero mood="dawn" title="Problems" sub={<p>Each problem is the last step of a short ladder. Its building blocks are moves you can name; when every block is in place, the problem is those moves assembled. If one feels impossible, the missing block is listed here.</p>} />
+      <div className="mx-auto w-full max-w-[1180px] px-5 pb-28 pt-8 sm:px-8">
         <dl className="mt-6 grid max-w-[680px] grid-cols-3 gap-6">
           {[
             [`${solved}`, `of ${planned.length} solved`],
