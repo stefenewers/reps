@@ -144,6 +144,14 @@ test('feb 1 final decision', async ({ page }) => {
   await snap(page, '17-today-feb1', '/')
 })
 
+test('applied thread: lessons, Week 12 Today, the retrieval mini-build', async ({ page }) => {
+  await load(page, '2027-01-11T09:00:00-05:00')
+  await snap(page, '18-today-week12', '/')
+  await snap(page, '23-applied-lesson-design', '/learn/sd-program-design')
+  await snap(page, '24-applied-lesson-tools', '/learn/ae-tools-workflows')
+  await snap(page, '33-lab-grounded-answer', '/lab/lab-grounded-answer')
+})
+
 test('rest day', async ({ page }) => {
   await load(page, '2026-11-01T10:00:00-05:00', history('2026-11-01'))
   await snap(page, '05-today-rest', '/')

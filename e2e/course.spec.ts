@@ -517,3 +517,34 @@ test('Monday, Day 1, end to end: every rep solved through the session, the day c
   await expect(page.getByTestId('stopped')).toBeVisible()
   expect(errors, errors.join('\n')).toEqual([])
 })
+
+test('the applied / design thread: Today teaches it before the lab, checks are think-then-reveal, the lab links back, Progress shows evidence', async ({ page }) => {
+  await at(page, '2026-10-27T09:00:00-04:00')
+  await page.goto('/')
+  // Day 2: the design lesson joins Learn first, after the unit's own learning, before the lab due today.
+  const learn = page.getByTestId('learn-first')
+  await expect(learn).toContainText('Designing a small program')
+  await expect(learn.locator('a', { hasText: 'Designing a small program' })).toContainText('Design')
+  await expect(page.getByTestId('day-target')).toHaveText('10 reps')
+  await learn.locator('a', { hasText: 'Designing a small program' }).click()
+  await expect(page).toHaveURL(/\/learn\/sd-program-design$/)
+  // Think, then reveal: nothing is revealed until something is written.
+  const check = page.getByTestId('check-0')
+  await expect(page.getByTestId('reveal-0')).toBeDisabled()
+  for (let i = 0; i < 3; i++) {
+    await page.getByTestId(`check-${i}`).locator('textarea').fill('An empty list divides by zero; a rating outside 1 to 5 is bad input.')
+    await page.getByTestId(`reveal-${i}`).click()
+    await page.getByTestId(`check-${i}`).getByRole('button', { name: 'I had it' }).click()
+  }
+  await expect(check).toHaveAttribute('data-marked', 'had-it')
+  await expect(page.getByTestId('checks-done')).toBeVisible()
+  await page.getByRole('button', { name: 'Mark learning step complete' }).click()
+  // The lesson leads into the lab that uses it, and the lab links back to it.
+  await page.getByRole('link', { name: /Used in: Savings Goal Simulator/ }).first().click()
+  await expect(page).toHaveURL(/\/lab\/lab-savings-goal$/)
+  await expect(page.getByTestId('lab-prerequisites')).toContainText('Designing a small program')
+  // Progress: program design is now practiced, from evidence, with no percentage.
+  await page.goto('/progress')
+  await expect(page.getByTestId('applied-evidence').locator('[data-capability="program-design"]')).toHaveAttribute('data-status', 'practiced')
+  await expect(page.getByTestId('applied-evidence')).not.toContainText('%')
+})

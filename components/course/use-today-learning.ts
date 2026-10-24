@@ -7,6 +7,8 @@ import { LESSON_BY_ID, WORKED_EXAMPLE_BY_ID } from '@/data/course/lessons'
 import { DAY_PLAN } from '@/data/course/schedule'
 import { UNIT_BY_ID } from '@/data/course/units'
 import { demosForConcept } from '@/lib/demos'
+import { APPLIED_BY_UNIT, APPLIED_SCHEDULE, checksKey } from '@/data/course/applied'
+import { daysBetween } from '@/lib/dates'
 import type { LearningUnit } from '@/data/course/units'
 
 export type LearnKind = 'lesson' | 'demo' | 'example'
@@ -19,14 +21,32 @@ export interface LearnItem {
   /** A reading/working estimate, for planning the session (not a target). */
   minutes: number
   done: boolean
+  /** Applied Engineering or system design teaching (after the unit's own learning). */
+  thread?: 'applied' | 'design'
 }
 
 const ORDER: LearnKind[] = ['lesson', 'demo', 'example']
+/** The unit's own lessons, demos and examples first; its applied / design lessons after them. */
+const rank = (x: { kind: LearnKind; thread?: string }) => (x.thread ? ORDER.length : ORDER.indexOf(x.kind))
+
+/** One applied lesson to recall today, if any is due (two or more weeks since learned, three since last recalled). */
+function appliedRecall(today: string, state: (key: string) => unknown): { lessonId: string; title: string; href: string } | undefined {
+  for (const { lessonId } of APPLIED_SCHEDULE) {
+    const learned = state(`lesson:${lessonId}`) as { completedOn?: string } | null
+    if (!learned?.completedOn || daysBetween(learned.completedOn, today) < 14) continue
+    const checks = state(checksKey(lessonId)) as { answeredOn?: string } | null
+    if (checks?.answeredOn && daysBetween(checks.answeredOn, today) < 21) continue
+    const l = LESSON_BY_ID[lessonId]
+    if (l?.checks?.length) return { lessonId, title: l.title, href: `/learn/${lessonId}#checks` }
+  }
+  return undefined
+}
 const words = (s: string) => s.split(/\s+/).filter(Boolean).length
 
 function lessonMinutes(id: string): number {
   const l = LESSON_BY_ID[id]
   if (!l) return 5
+  if (l.minutes) return l.minutes
   const text = [l.concept, l.mentalModel, l.whyItMatters, ...l.sections.map((s) => `${s.body} ${s.code ?? ''}`), ...l.mistakes].join(' ')
   return Math.max(3, Math.round(words(text) / 160))
 }
@@ -69,13 +89,27 @@ export function useTodayLearning() {
             title: WORKED_EXAMPLE_BY_ID[id]?.title ?? id,
             href: `/example/${id}`,
             minutes: 3 + (WORKED_EXAMPLE_BY_ID[id]?.subgoals.length ?? 3)
-          }))
+          })),
+          // The applied / design thread: short engineering lessons taught alongside this unit, after its own learning.
+          ...(APPLIED_BY_UNIT[u.id] ?? [])
+            .filter((id) => LESSON_BY_ID[id])
+            .map((id) => ({
+              key: `lesson:${id}`,
+              kind: 'lesson' as const,
+              title: LESSON_BY_ID[id].title,
+              href: `/learn/${id}`,
+              minutes: lessonMinutes(id),
+              thread: LESSON_BY_ID[id].thread
+            }))
         ])
         .filter((x, i, xs) => xs.findIndex((y) => y.key === x.key) === i)
-        .sort((a, b) => ORDER.indexOf(a.kind) - ORDER.indexOf(b.kind))
+        .sort((a, b) => rank(a) - rank(b))
         .map((x) => ({ ...x, done: Boolean(repo.state(x.key)) }))
   const next = items.find((l) => !l.done)
   const catchingUp = learningUnits.some((u) => !units.some((x) => x.id === u.id))
-  return { units, learningUnits, catchingUp, items, next, unlabeled, done: items.filter((l) => l.done).length }
+  // Spaced recall (optional, never counted): one applied lesson learned two or more weeks ago whose checks
+  // have not been revisited for three weeks comes back as a two-minute question.
+  const recall = unlabeled ? undefined : appliedRecall(today, (id) => repo.state(id))
+  return { units, learningUnits, catchingUp, items, next, unlabeled, recall, done: items.filter((l) => l.done).length }
 }
 

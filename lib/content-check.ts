@@ -161,3 +161,18 @@ export function verifyPromptExamples(exercises: Exercise[]): string[] {
   const out = JSON.parse(res.stdout) as { id: string; errors: string[] }[]
   return out.flatMap((r) => r.errors.map((err) => `[${r.id}] prompt example: ${err}`))
 }
+
+/** Lesson code blocks are Python and must run; when a lesson states the output, Python must print exactly that. */
+export function verifyLessons(lessons: { id: string; sections: { heading: string; code?: string; output?: string }[] }[]): string[] {
+  const problems: string[] = []
+  const jobs = lessons.flatMap((l) => l.sections.flatMap((s, i) => (s.code ? [{ id: `${l.id}#${i}`, code: s.code, output: s.output, heading: s.heading }] : [])))
+  const results = runPythonBatch(jobs.map((j) => ({ id: j.id, code: j.code, tests: [] })))
+  for (const j of jobs) {
+    const r = results.get(j.id)
+    if (!r) problems.push(`[lesson ${j.id}] no result`)
+    else if (r.error) problems.push(`[lesson ${j.id} "${j.heading}"] raised: ${r.error}`)
+    else if (j.output !== undefined && !outputMatches(r.stdout, j.output))
+      problems.push(`[lesson ${j.id} "${j.heading}"] output mismatch. Python printed:\n${r.stdout}\n--- but the lesson says:\n${j.output}`)
+  }
+  return problems
+}

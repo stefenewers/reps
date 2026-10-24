@@ -12,6 +12,7 @@ import { CONCEPT_BY_ID } from '@/data/concepts'
 import { COURSE_TARGET, courseWeekOf } from '@/data/course/calendar'
 import { LAB_BY_ID, LESSON_BY_ID } from '@/data/course/lessons'
 import { WEEKS } from '@/data/course/weeks'
+import { APPLIED_BY_UNIT } from '@/data/course/applied'
 import { PROBLEM_URLS } from '@/data/problem-urls'
 import { shortDate } from '@/lib/dates'
 import type { UnitState, UnitStatus } from '@/lib/course/routing'
@@ -438,6 +439,13 @@ function UnitCard({ u, index, statuses, onGoto }: { u: UnitStatus; index: string
             </Link>
           ) : null
         })}
+        {(APPLIED_BY_UNIT[u.unit.id] ?? []).map((id) =>
+          LESSON_BY_ID[id] ? (
+            <Link key={id} href={`/learn/${id}`} className="tag tag-plain !normal-case !tracking-normal hover:underline" data-thread={LESSON_BY_ID[id].thread}>
+              {LESSON_BY_ID[id].thread === 'applied' ? 'Applied' : 'Design'}: {LESSON_BY_ID[id].title}
+            </Link>
+          ) : null
+        )}
         {u.gates.map((g) => (
           <span key={g.gate.id} className={`tag !normal-case !tracking-normal ${g.cleared ? 'tag-cold' : g.failed ? 'tag-repair' : 'tag-plain'}`}>
             {g.cleared ? '✓ ' : ''}Checkpoint: {g.gate.title}

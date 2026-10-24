@@ -219,7 +219,7 @@ export default function CourseToday({
   const complete = !preview && c.type === 'training' && c.complete
   const recovery = c.type === 'recovery'
   const target = recovery ? cd.day.optionalTarget : c.reps.target
-  const { units, learningUnits, catchingUp, items: learning, next: learn, unlabeled, done: learnDone } = learningState
+  const { units, learningUnits, catchingUp, items: learning, next: learn, unlabeled, recall, done: learnDone } = learningState
   const reps = plan.items.filter((i) => i.exerciseId && i.kind !== 'gate' && i.kind !== 'problem')
   const remainingReps = reps.filter((i) => !i.done)
   const repair = remainingReps.filter((i) => i.kind === 'repair')
@@ -569,6 +569,7 @@ export default function CourseToday({
         <span className="min-w-0 flex-1">
           {LEARN_LABEL[l.kind]}: {l.title}
         </span>
+        {l.thread && <span className={`tag ${l.thread === 'applied' ? 'tag-cold' : 'tag-plain'}`}>{l.thread === 'applied' ? 'Applied' : 'Design'}</span>}
         <span className="hidden items-center gap-1 text-[12px] text-muted sm:inline-flex">
           <IconClock size={12} /> {l.minutes} min
         </span>
@@ -919,12 +920,24 @@ export default function CourseToday({
               state={step.learn.state}
               title="Learn"
               tag={<span className="tag tag-learn">Not counted</span>}
-              why="Understand the idea first: read it, watch it move, then rebuild a worked example. About 20 minutes."
+              why={
+                learning.some((l) => l.thread)
+                  ? 'Understand the idea first: read it, watch it move, rebuild the example, then a short engineering lesson.'
+                  : 'Understand the idea first: read it, watch it move, then rebuild a worked example.'
+              }
               meta={`${learnDone}/${learning.length}`}
             >
               <ol className="flex flex-col gap-0.5" data-testid="learn-first">
                 {learning.map(learnRow)}
               </ol>
+              {recall && (
+                <Link href={recall.href} className="rep-row mt-1 text-muted" data-testid="applied-recall">
+                  <Check on={false} tone="learn" />
+                  <span className="min-w-0 flex-1">Recall · {recall.title}</span>
+                  <span className="text-[12px]">2 min</span>
+                  <span className="tag tag-locked">Optional</span>
+                </Link>
+              )}
             </Step>
           )}
           <li className="contents" data-testid="today-blocks">

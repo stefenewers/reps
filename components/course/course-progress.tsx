@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useMemo } from 'react'
 import { WEEK_STATUS_LABEL } from '@/components/course/course-cards'
 import ReadinessReport from '@/components/course/readiness-report'
+import AppliedEvidence from '@/components/course/applied-evidence'
 import TrainingFlame from '@/components/course/training-flame'
 import { IconArrowRight, IconCheck, IconRepair } from '@/components/icons'
 import Ring from '@/components/ring'
@@ -487,6 +488,9 @@ export default function CourseProgress() {
           </div>
         ))}
       </section>
+
+      {/* APPLIED ENGINEERING and SYSTEM DESIGN evidence */}
+      <AppliedEvidence />
 
       {/* TIME: supporting telemetry */}
       <details className="group border-t border-line pt-6" data-testid="time-telemetry">

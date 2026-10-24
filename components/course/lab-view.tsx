@@ -3,6 +3,9 @@
 import Link from 'next/link'
 import { useState, type ReactNode } from 'react'
 import { useReps } from '@/components/reps-provider'
+import { LAB_PREREQUISITES } from '@/data/course/applied'
+import { LESSON_BY_ID } from '@/data/course/lessons'
+import { CONCEPT_BY_ID } from '@/data/concepts'
 import { IconArrowRight, IconCheck, IconLock } from '@/components/icons'
 import Markdown from '@/components/markdown'
 import type { Lab } from '@/data/course/types'
@@ -80,6 +83,27 @@ export default function LabView({ lab }: { lab: Lab }) {
 
         <div>
           <Stage n={1} done={stages[0].done} now={now === 'design'} title="Design first" sub="A sentence or two each. Decide before you type code.">
+            {(LAB_PREREQUISITES[lab.id] ?? []).length > 0 && (
+              <div className="mb-4 rounded-xl bg-learn-soft px-4 py-3" data-testid="lab-prerequisites">
+                <p className="eyebrow text-learn">Taught first</p>
+                <p className="mt-0.5 text-[13px] text-ink-2">These questions build on ideas from these lessons. Skim one again if a question feels unfamiliar.</p>
+                <ul className="mt-2 flex flex-wrap gap-1.5">
+                  {(LAB_PREREQUISITES[lab.id] ?? []).map((id) => {
+                    const l = LESSON_BY_ID[id] ?? CONCEPT_BY_ID[id]
+                    if (!l) return null
+                    const read = Boolean(repo.state(`lesson:${id}`))
+                    return (
+                      <li key={id}>
+                        <Link href={`/learn/${id}`} className={`tag !normal-case !tracking-normal hover:underline ${read ? 'tag-pass' : 'tag-learn'}`}>
+                          {read ? '✓ ' : ''}
+                          {l.title}
+                        </Link>
+                      </li>
+                    )
+                  })}
+                </ul>
+              </div>
+            )}
             <div className="flex flex-col gap-3">
               {lab.designQuestions.map((q, i) => {
                 const ok = (saved.design[i] ?? '').trim().length >= DESIGN_MIN_CHARS

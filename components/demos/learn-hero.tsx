@@ -7,7 +7,7 @@ import '@/components/demos/learning.css'
  * labs, which are building), the trail back, what kind of step this is, and a
  * serif title. The figure in the corner is decorative.
  */
-export type LearnKind = 'Lesson' | 'Concept' | 'Worked example' | 'Watch it move' | 'Lab'
+export type LearnKind = 'Lesson' | 'Concept' | 'Worked example' | 'Watch it move' | 'Lab' | 'Applied Engineering' | 'System design'
 
 export default function LearnHero({
   kind,

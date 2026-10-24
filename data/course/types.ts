@@ -17,6 +17,24 @@ export interface Lesson {
   /** The usual ways it goes wrong. */
   mistakes: string[]
   resources?: { title: string; url: string; note?: string }[]
+  /** Applied Engineering / FDE or junior system design (docs/applied-engineering.md). Absent: the SWE spine. */
+  thread?: 'applied' | 'design'
+  /** A reading estimate for planning the day (not a target). */
+  minutes?: number
+  /**
+   * Think-then-reveal checks: the learner writes an answer, then compares it with the model answer.
+   * Self-checked understanding, never a qualifying rep and never counted toward the day.
+   */
+  checks?: LessonCheck[]
+}
+
+export interface LessonCheck {
+  /** The question: classify, choose and justify, find the missing check, predict, explain a tradeoff. */
+  prompt: string
+  /** What a good answer contains. */
+  answer: string
+  /** Optional choices, used sparingly; the learner still explains. */
+  options?: string[]
 }
 
 /** A complete solution organised by subgoals, then rebuilt from a blank editor. */

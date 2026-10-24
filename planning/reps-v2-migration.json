@@ -2,20 +2,20 @@
  "summary": {
   "classifications": {
    "REQUIRED PATH": 502,
-   "OPTIONAL": 171,
+   "OPTIONAL": 173,
    "REPAIR INVENTORY": 166,
    "RETRIEVAL": 163,
    "PLACEMENT": 120,
    "STRETCH": 47
   },
-  "existingReps": 1169,
+  "existingReps": 1171,
   "reused": 451,
   "moved": 0,
   "reworded": 164,
   "reclassifiedAsGates": 120,
   "bridges": 57,
   "retrieval": 1,
-  "optional": 376,
+  "optional": 378,
   "retired": 0,
   "unmapped": 0,
   "newReps": 193,
@@ -23,10 +23,10 @@
   "newWeek2Reps": 36,
   "newGateVariants": 57,
   "newTransferProblems": 48,
-  "newLabExercises": 46,
-  "newLessons": 11,
+  "newLabExercises": 48,
+  "newLessons": 27,
   "newWorkedExamples": 17,
-  "labs": 23,
+  "labs": 24,
   "gates": 30
  },
  "unmapped": [],
@@ -20493,6 +20493,45 @@
    "action": "optional",
    "week": 13,
    "unitId": "w13-transfer",
+   "purpose": "combine",
+   "note": "Lab part: no rep credit; required lab obligation is scheduled separately.",
+   "classification": "OPTIONAL"
+  },
+  {
+   "exerciseId": "lab-grounded-answer-build",
+   "title": "Grounded Support Answer: build",
+   "section": "labs-applied",
+   "module": "course",
+   "stage": "combine",
+   "skills": [
+    "set_membership",
+    "sort_key",
+    "dict_get",
+    "edge_cases"
+   ],
+   "planDate": null,
+   "action": "optional",
+   "week": 12,
+   "unitId": "w12-matrix-tries",
+   "purpose": "combine",
+   "note": "Lab part: no rep credit; required lab obligation is scheduled separately.",
+   "classification": "OPTIONAL"
+  },
+  {
+   "exerciseId": "lab-grounded-answer-change",
+   "title": "Grounded Support Answer: change request",
+   "section": "labs-applied",
+   "module": "course",
+   "stage": "combine",
+   "skills": [
+    "sort_key",
+    "dict_get",
+    "edge_cases"
+   ],
+   "planDate": null,
+   "action": "optional",
+   "week": 12,
+   "unitId": "w12-matrix-tries",
    "purpose": "combine",
    "note": "Lab part: no rep credit; required lab obligation is scheduled separately.",
    "classification": "OPTIONAL"

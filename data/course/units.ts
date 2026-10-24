@@ -1127,7 +1127,7 @@ export const UNITS: LearningUnit[] = [
     retrieval: ['tr-check', 'o11-name-it'],
     readinessTargets: [48],
     gateIds: ['g-matrix'],
-    labIds: [],
+    labIds: ['lab-grounded-answer'],
     targets: [54, 208],
     retrievalSkills: ['matrix_layers', 'trie_node']
   },

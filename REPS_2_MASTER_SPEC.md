@@ -2583,7 +2583,14 @@ Topics:
 11. cost/latency awareness;
 12. customer discovery and requirement change.
 
-The lane appears primarily through Labs and builds.
+The lane appears through Labs and builds, **taught first** by a short teaching thread woven through the course (`docs/applied-engineering.md`, `data/course/applied.ts`):
+
+- one short lesson (5–10 minutes) with runnable examples and think-then-reveal checks, attached to the unit of the week where it can be understood;
+- in order: software as a system, then application boundaries, reliability and production, then the model as one component (customer discovery, model boundary and structured output, tools and workflows vs agents, evals, retrieval);
+- never qualifying reps, never a change to the 10 / 12 / 15 targets, never a required lab beyond the existing ones (the retrieval mini-build is optional);
+- every lab names the lessons its design questions assume, and `npm run audit:applied` checks each is taught before the lab is due.
+
+> **Teach an idea before seriously evaluating the learner on it.**
 
 Do not create a second 14-week tree of extra homework.
 
@@ -2619,6 +2626,8 @@ failure modes
 validation
 tradeoffs
 ```
+
+These are taught explicitly before the labs ask them: `sd-program-design` (Week 1), then application design (APIs, persistence, design micro-cases), production awareness (reliability, observability, permissions, caches and queues) and AI system design (Weeks 11–12). See `docs/applied-engineering.md`.
 
 Do not require:
 
