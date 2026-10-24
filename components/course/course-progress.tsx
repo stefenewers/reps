@@ -52,6 +52,34 @@ const EVIDENCE_KINDS = [
   { key: 'reconstructed', label: 'Rebuilt after a solution', color: 'var(--repair)' }
 ] as const
 
+/** The week's wins: what you can do now that you could not before. */
+function MovedForward({ wins }: { wins: { key: string; kind: 'gate' | 'lab' | 'skill'; title: string; detail: string }[] }) {
+  return (
+    <section aria-labelledby="moved-h" data-testid="moved-forward">
+      <h2 id="moved-h" className="section-title">
+        What moved forward this week
+      </h2>
+      {wins.length ? (
+        <ul className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+          {wins.map((w) => (
+            <li key={w.key} className={`flex items-center gap-3 rounded-xl px-4 py-3 ${w.kind === 'gate' ? 'tile-cold' : w.kind === 'lab' ? 'tile-flame' : 'tile-pass'}`}>
+              <span className={`grid size-8 shrink-0 place-items-center rounded-full bg-white ${w.kind === 'gate' ? 'text-cold' : w.kind === 'lab' ? 'text-flame' : 'text-green-ink'}`} aria-hidden="true">
+                <IconCheck size={14} strokeWidth={2.6} />
+              </span>
+              <span className="min-w-0">
+                <span className="block text-[14px] font-semibold text-ink">{w.title}</span>
+                <span className="block text-[12.5px] text-muted">{w.detail}</span>
+              </span>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="mt-3 text-[14px] text-muted">Nothing new in the last seven days yet. Your first cleared checkpoint, finished build or newly solid skill will show here.</p>
+      )}
+    </section>
+  )
+}
+
 function Tile({ title, children, testid }: { title: string; children: React.ReactNode; testid?: string }) {
   return (
     <div className="tile flex flex-col bg-surface" data-testid={testid}>
@@ -105,7 +133,20 @@ export default function CourseProgress() {
       return { w: w.number, m: Math.round(attempts.filter((a) => dates.has(a.date)).reduce((n, a) => n + Math.min(1800, a.durationSeconds ?? 0), 0) / 60) }
     })
     const gates = units.flatMap((u) => u.gates).filter((g) => g.available.length)
+    // What moved forward in the last seven days: checkpoints cleared, builds finished, skills newly solid.
+    const since = addDays(today, -6)
+    const wins: { key: string; kind: 'gate' | 'lab' | 'skill'; title: string; detail: string }[] = [
+      ...units.flatMap((u) =>
+        u.gates.filter((g) => g.cleared && g.clearedOn && g.clearedOn >= since).map((g) => ({ key: `g:${g.gate.id}`, kind: 'gate' as const, title: `${g.gate.title} checkpoint cleared`, detail: `${u.unit.title} is proven` }))
+      ),
+      ...labs.filter((l) => l.p.done && l.p.doneOn && l.p.doneOn >= since).map((l) => ({ key: `l:${l.lab.id}`, kind: 'lab' as const, title: `${l.lab.title} built`, detail: 'designed, built, changed and reviewed' })),
+      ...masteredFresh
+        .filter((m) => m.lastPracticed && m.lastPracticed.slice(0, 10) >= since)
+        .slice(0, 8)
+        .map((m) => ({ key: `s:${m.skillId}`, kind: 'skill' as const, title: skillName(m.skillId), detail: m.status === 'fluent' ? 'fluent' : 'solid, and fresh' }))
+    ]
     return {
+      wins,
       weeks,
       days,
       trainingDays,
@@ -137,8 +178,18 @@ export default function CourseProgress() {
 
   return (
     <div className="flex flex-col gap-14" data-testid="course-progress">
-      {/* THE PROOF, at a glance */}
-      <section aria-label="At a glance" className="deck relative -mt-24 p-3 sm:p-4">
+      {/* WHAT YOU CAN DO: interview readiness by domain, with reasons */}
+      <div className="deck relative -mt-24 p-5 sm:p-7">
+        <ReadinessReport />
+      </div>
+
+      <MovedForward wins={data.wins} />
+
+      {/* THE EVIDENCE: what you produced and how */}
+      <div>
+        <h2 id="evidence-h" className="section-title mb-1">The evidence</h2>
+        <p className="mb-5 text-[13.5px] text-muted">What you produced, and how: each problem counted once, at its strongest.</p>
+      <section aria-labelledby="evidence-h" className="rounded-[20px] bg-bg p-3 shadow-[0_0_0_1px_var(--hairline)] sm:p-4">
         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
           <Tile title="Qualifying reps" testid="course-total">
             <p className="num mt-2 text-[34px] font-semibold leading-none tracking-tight">
@@ -263,9 +314,7 @@ export default function CourseProgress() {
           </div>
         )}
       </section>
-
-      {/* WHAT YOU CAN DO: readiness by domain, with reasons */}
-      <ReadinessReport />
+      </div>
 
       {/* THE STORY: week by week */}
       <section aria-labelledby="weeks-h" data-testid="week-summaries">
@@ -331,6 +380,40 @@ export default function CourseProgress() {
         </ol>
       </section>
 
+      {/* WEAK SKILLS: actionable only */}
+      <section aria-labelledby="weak-h" data-testid="weak-skills">
+        <h2 id="weak-h" className="section-title">
+          What needs work
+        </h2>
+        {data.weak.size ? (
+          <ul className="mt-4 grid gap-2 sm:grid-cols-2">
+            {[...data.weak].map(([s, why]) => (
+              <li key={s} className="flex items-center gap-3 rounded-xl bg-repair-soft px-4 py-3">
+                <span className="text-repair" aria-hidden="true">
+                  <IconRepair size={16} />
+                </span>
+                <span className="min-w-0 flex-1 text-[14px]">
+                  <Link href={`/skills/${s}`} className="font-medium text-ink hover:underline">
+                    {skillName(s)}
+                  </Link>
+                  <span className="text-muted"> · {why}</span>
+                </span>
+                <Link href="/" className="text-[12.5px] font-medium text-repair hover:underline">
+                  Fix on Today
+                </Link>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="mt-3 flex items-center gap-2 text-[14px] text-ink-2">
+            <span className="check" data-on="true" aria-hidden="true">
+              <IconCheck size={10} strokeWidth={3} />
+            </span>
+            Nothing is failing right now. Today&apos;s list brings back what is due.
+          </p>
+        )}
+      </section>
+
       {/* MASTERY vs FRESHNESS */}
       <section aria-labelledby="mastery-h" data-testid="mastery-freshness">
         <h2 id="mastery-h" className="section-title">
@@ -367,40 +450,6 @@ export default function CourseProgress() {
             </div>
           ))}
         </div>
-      </section>
-
-      {/* WEAK SKILLS: actionable only */}
-      <section aria-labelledby="weak-h" data-testid="weak-skills">
-        <h2 id="weak-h" className="section-title">
-          What to repair
-        </h2>
-        {data.weak.size ? (
-          <ul className="mt-4 grid gap-2 sm:grid-cols-2">
-            {[...data.weak].map(([s, why]) => (
-              <li key={s} className="flex items-center gap-3 rounded-xl bg-repair-soft px-4 py-3">
-                <span className="text-repair" aria-hidden="true">
-                  <IconRepair size={16} />
-                </span>
-                <span className="min-w-0 flex-1 text-[14px]">
-                  <Link href={`/skills/${s}`} className="font-medium text-ink hover:underline">
-                    {skillName(s)}
-                  </Link>
-                  <span className="text-muted"> · {why}</span>
-                </span>
-                <Link href="/" className="text-[12.5px] font-medium text-repair hover:underline">
-                  Fix on Today
-                </Link>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="mt-3 flex items-center gap-2 text-[14px] text-ink-2">
-            <span className="check" data-on="true" aria-hidden="true">
-              <IconCheck size={10} strokeWidth={3} />
-            </span>
-            Nothing is failing right now. Today&apos;s list brings back what is due.
-          </p>
-        )}
       </section>
 
       {/* BUILDING */}

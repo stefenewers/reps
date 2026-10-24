@@ -34,7 +34,7 @@ function problemMeta(lc: number): LeetcodeItem | undefined {
  * Today in Reps 2.0: the course day (target, flame, streak, path), the week
  * scoreboard, the readiness snapshot, outside problems, and the rest folded away.
  */
-export default function CourseDashboard() {
+export default function CourseDashboard({ preview = false }: { preview?: boolean }) {
   const { today } = useReps()
   const pace = usePacing()
   // The course does not run on the 90-day calendar: training reads an empty day, and prescribes warm-ups from freshness.
@@ -50,22 +50,21 @@ export default function CourseDashboard() {
   const daysLeft = Math.max(0, Math.round((parseLocal(INTERVIEW_CHECKPOINT).getTime() - parseLocal(today).getTime()) / 86_400_000))
 
   return (
-    <main className="relative flex-1 bg-canvas pb-16">
-      <CourseToday plan={plan} training={training} cd={cd} lcUrl={(lc) => problemMeta(lc)?.url} />
+    <main className="relative flex-1 bg-canvas pb-32 lg:pb-16">
+      <CourseToday plan={plan} training={training} cd={cd} lcUrl={(lc) => problemMeta(lc)?.url} preview={preview} />
 
       <div className="mx-auto mt-16 w-full max-w-[1180px] px-5 sm:px-8">
-        <div className="mb-5 flex flex-wrap items-baseline justify-between gap-3">
-          <h2 className="section-title">Where today fits</h2>
+        <h2 className="section-title mb-5">This week</h2>
+        <WeekCard cd={cd} />
+        <div className="mt-12 mb-5 flex flex-wrap items-baseline justify-between gap-3">
+          <h2 className="section-title">The bigger picture</h2>
           <p className="text-[13px] text-muted">
             Today → this week → the road → February 1{daysLeft ? ` (${daysLeft} days)` : ''}
           </p>
         </div>
-        <div className="grid gap-5 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
-          <WeekCard cd={cd} />
-          <ReadinessCard cd={cd} />
-        </div>
+        <RoadMini cd={cd} />
         <div className="mt-5">
-          <RoadMini cd={cd} />
+          <ReadinessCard cd={cd} />
         </div>
         {cd.week.number >= 13 && (
           <div className="mt-5">

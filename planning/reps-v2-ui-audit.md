@@ -249,3 +249,38 @@ No surface keeps the old composition with rearranged text. **Pass.**
 - A new test in `course.spec.ts` covers the shell: Today first, a trail node focusing its week, the 14-week index, the rep as a focus surface, and the mobile tabs and More sheet with no horizontal overflow.
 
 **Training-engine code:** none of the contract, credit, routing, readiness, lab, transfer, mock gating, persistence or Pyodide logic changed.
+
+---
+
+## Final UX pass: following the day
+
+The redesign made Reps look new. This pass made the day followable. The captures are in `planning/ui-audit/ux/`, under the same names as `before/` and `after/`. New states:
+
+- `04b-today-reps-met`: rep target met, lab still due;
+- `09-today-week3`: a Week 3 day that is behind.
+
+| Problem found in the browser | Change |
+|---|---|
+| Oct 23–25 showed the old 90-day homepage, then switched products on Oct 26 | One product: Day 1 as a labelled preview. Learning is open, nothing is startable that would count, and real dates are kept. Plan and Progress are course views at every date. The legacy homepage, pace gauge and reactivation card were removed. |
+| "Start today" did not say what would happen | The button names the behaviour (Start lesson: State, Continue reps · 4 to go, Start lab: Savings Goal Simulator, Start repair · 3 reps, Stop for today) with a one-line reason. |
+| 10/10 looked like done when a lab was still due | A status chip and sentence ("Rep target complete. 1 required item remains."), separate Learn / Reps / Milestones meters, and a finish line that ticks every requirement with "N of M requirements complete". |
+| Learning materials sat in a list under the panel | Learning is step 1 on the path, with each item's kind and minutes; the next one is highlighted and is the primary action. |
+| After a lesson the learner had to navigate back and choose | Each learning page hands off to the next; the last one starts today's reps directly. The rep-complete bar shows the day's count. |
+| Demos could never be marked done, so Learn first could stick on a demo all day | Demos record completion. |
+| Steps all looked the same | The current step is a raised "You are here" card, done steps fold away, and optional learning steps aside after the target. |
+| A day that is behind said "Today: Two pointers" while teaching State | "Catching up: State and while loops", naming the scheduled unit and why it waits. |
+| Carried work made a 15-line finish line | Carried items fold into one group. |
+| Readiness analytics competed with the first lesson | Order: Today's training → path → This week → The bigger picture → optional. |
+| Road said little about what to do this week | Reps / Builds / Checkpoints / Unlocks summary on the focused week; locked weeks name what they wait on. |
+| Progress led with volume | Readiness first, then what moved forward, then evidence, needs work, built, telemetry. |
+
+**Day 1 journey, verified end to end** (browser test "Day 1 as one coached journey"):
+
+1. Today shows "Not started", the finish line "Solve 10 qualifying reps", Learn 0 / 3, and Learn as "You are here".
+2. "Start lesson: State" is the action.
+3. Mark complete, then "Next: Lesson · While loops".
+4. Mark complete, then the worked example; step through its goals and mark complete.
+5. "Start your reps" starts a session on the first rep.
+6. Back on Today: Learn 3 / 3, "In progress", and the action is "Start today's reps".
+
+**Other journeys checked** (browser tests plus captures): completed day ("Training complete.", Stop for today), rep target met with a lab due, repair, placement, planned rest, Saturday optional, Week 13, Week 14 red / yellow / green, and the interview session.

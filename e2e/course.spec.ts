@@ -62,7 +62,10 @@ const WEEK1 = ['c1-state', 'c1-while'].flatMap((id) => SECTION_BY_ID[id].exercis
 test('before Oct 26 Today announces the course; on Oct 26 Today is the course day: 10 reps, learn first, the week and readiness', async ({ page }) => {
   await at(page, '2026-10-23T09:30:00-04:00')
   await page.goto('/')
-  await expect(page.getByTestId('course-banner')).toContainText('Reps 2.0 starts Monday, Oct 26.')
+  // Before the course, Today is Day 1 as a preview, not a separate older homepage.
+  await expect(page.getByTestId('course-today')).toHaveAttribute('data-day', 'preview')
+  await expect(page.getByTestId('today-hero')).toContainText('Day 1 starts Monday, October 26')
+  await expect(page.getByTestId('day-status')).toHaveText('Preview')
 
   await at(page, '2026-10-26T09:30:00-04:00')
   await page.goto('/')
@@ -178,7 +181,7 @@ test('Today exposes every due lab, checkpoint and target, including locked and c
 test('the primary action starts learning first, then required labs when the rep target is met', async ({ page }) => {
   await at(page, '2026-10-26T12:00:00-04:00')
   await page.goto('/')
-  await expect(page.getByTestId('training-start')).toHaveText('Start today')
+  await expect(page.getByTestId('training-start')).toHaveText(/^Start lesson: State/)
   await expect(page.getByTestId('training-start')).toHaveAttribute('href', '/learn/l-state')
   await page.getByTestId('training-start').click()
   await page.getByRole('button', { name: 'Mark learning step complete' }).click()
@@ -193,7 +196,10 @@ test('the primary action starts learning first, then required labs when the rep 
   await page.getByLabel('Import progress file').setInputFiles(bundle(qualifying.map((e) => ({ id: e.id, date: '2026-10-27' }))))
   await page.goto('/')
   await expect(page.getByTestId('course-today')).toHaveAttribute('data-complete', 'false')
-  await expect(page.getByTestId('training-start')).toHaveText('Start lab')
+  await expect(page.getByTestId('training-start')).toHaveText(/^Start lab: /)
+  // Ten reps are not the day: the status says what is still required.
+  await expect(page.getByTestId('day-status')).toHaveAttribute('data-status', 'reps-met')
+  await expect(page.getByTestId('day-status-line')).toContainText(/^Rep target complete\. \d+ required items? remains?\./)
   await expect(page.getByTestId('training-start')).toHaveAttribute('href', '/lab/lab-savings-goal')
   await expect(page.getByTestId('training-flame')).not.toHaveAttribute('data-flame', 'blaze')
 })
@@ -233,7 +239,7 @@ test('a failed checkpoint makes focused repair the primary action', async ({ pag
     .getByLabel('Import progress file')
     .setInputFiles(bundle([{ id: 'c1-g-countdown-steps', date: '2026-10-30', over: { passed: false, attemptsBeforePass: 1, retrievalType: 'cold' } }]))
   await page.goto('/')
-  await expect(page.getByTestId('training-start')).toHaveText('Do repair first')
+  await expect(page.getByTestId('training-start')).toHaveText(/^Start repair · \d+ reps?/)
   await expect(page.getByTestId('repair-step')).toBeVisible()
   await expect(page.getByTestId('today-gate').filter({ hasText: 'Loop control' })).toHaveAttribute('data-state', 'repair')
 })
@@ -415,4 +421,36 @@ test('Reps 2.0 shell: Today leads, the Road trail focuses a week, mobile has tab
   await page.getByRole('dialog', { name: 'More' }).getByRole('link', { name: 'Skills' }).click()
   await expect(page).toHaveURL(/\/skills$/)
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true)
+})
+
+test('Day 1 as one coached journey: lesson → lesson → worked example → reps start, with the finish line and status at every point', async ({ page }) => {
+  await at(page, '2026-10-26T09:00:00-04:00')
+  await page.goto('/')
+  await expect(page.getByTestId('day-status')).toHaveAttribute('data-status', 'not-started')
+  await expect(page.getByTestId('today-contract')).toContainText('Solve 10 qualifying reps')
+  await expect(page.getByTestId('finish-count')).toHaveText('0 of 1 requirements complete')
+  await expect(page.getByTestId('learn-meter')).toContainText('0 / 3')
+  // Step 1 is learning, and it is where you are.
+  await expect(page.locator('.step[data-state="now"]')).toContainText('Learn')
+  // The button names the next thing to do; each learning page hands off to the next.
+  await page.getByTestId('training-start').click()
+  await expect(page).toHaveURL(/\/learn\/l-state$/)
+  await page.getByRole('button', { name: 'Mark learning step complete' }).click()
+  await expect(page.getByTestId('learn-next')).toContainText('While loops')
+  await page.getByTestId('learn-next').getByRole('link').click()
+  await expect(page).toHaveURL(/\/learn\/l-while$/)
+  await page.getByRole('button', { name: 'Mark learning step complete' }).click()
+  await page.getByTestId('learn-next').getByRole('link').click()
+  await expect(page).toHaveURL(/\/example\//)
+  for (let i = 0; i < 8 && (await page.getByTestId('next-goal').count()); i++) await page.getByTestId('next-goal').click()
+  await page.getByRole('button', { name: 'Mark learning step complete' }).click()
+  // Learning done: the hand-off goes straight into today's reps, in a session.
+  await expect(page.getByTestId('learn-next')).toContainText('now produce it')
+  await page.getByTestId('learn-next').getByRole('link', { name: /Start your reps/ }).click()
+  await expect(page).toHaveURL(/\/rep\/.+\?s=/, { timeout: 30_000 })
+  // Back on Today, learning is complete and the next action is the reps.
+  await page.goto('/')
+  await expect(page.getByTestId('learn-meter')).toContainText('3 / 3')
+  await expect(page.getByTestId('day-status')).toHaveAttribute('data-status', 'in-progress')
+  await expect(page.getByTestId('training-start')).toHaveText(/^Start today’s reps/)
 })

@@ -7,6 +7,8 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useReps } from '@/components/reps-provider'
+import { useCredits } from '@/components/use-credits'
+import { COURSE_START, courseWeekOf, dailyTarget, dayType } from '@/data/course/calendar'
 import Markdown from '@/components/markdown'
 import CodeView from '@/components/code-view'
 import { ChoiceInput, ExplainInput, OutputInput, ReorderInput } from '@/components/rep/answer-inputs'
@@ -823,6 +825,10 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
 
   const passed = phase === 'passed'
   // What this pass earns today, by the one credit rule (lib/course/credit.ts): the badge never says more than that.
+  // The day's running count, so every rep shows its place in today's training.
+  const credits = useCredits()
+  const dayCount =
+    today >= COURSE_START && dayType(today) === 'training' ? { done: credits.byDate[today] ?? 0, target: dailyTarget(courseWeekOf(today)) } : null
   const passCredit = (() => {
     if (!passed) return null
     const mine = attempts.filter((a) => a.exerciseId === ex.id && a.date === today && a.passed && a.completedAt).sort((x, y) => (x.completedAt ?? '').localeCompare(y.completedAt ?? ''))
@@ -1441,6 +1447,11 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
                       )}
                     </p>
                     <p className="mt-1 flex flex-wrap items-center gap-1.5 text-[12px] text-muted">
+                      {dayCount && (
+                        <span className="num mr-1 font-semibold text-ink-2" data-testid="day-count">
+                          {dayCount.done >= dayCount.target ? `Rep target met · ${dayCount.done} / ${dayCount.target} today` : `${dayCount.done} / ${dayCount.target} qualifying reps today`}
+                        </span>
+                      )}
                       {runnable && testsTotal ? <span className="mr-1 font-medium">{testsTotal}/{testsTotal} tests</span> : null}
                       {evidence.slice(0, 3).map((name, i) => (
                         <span key={name} className="evidence-in rounded-full bg-bg px-2 py-0.5 text-[11.5px] text-ink-2 shadow-[inset_0_0_0_1px_var(--line-strong)]" style={{ animationDelay: `${220 + i * 70}ms` }}>

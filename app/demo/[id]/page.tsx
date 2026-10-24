@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import BrandMark from '@/components/brand-mark'
 import DemoEmbed from '@/components/demos/demo-embed'
 import LearnHero from '@/components/demos/learn-hero'
+import LearningComplete from '@/components/course/learning-complete'
 import { IconArrowLeft } from '@/components/icons'
 import { CONCEPT_BY_ID } from '@/data/concepts'
 import { DEMOS, DEMO_BY_ID } from '@/lib/demos'
@@ -54,6 +55,7 @@ export default async function DemoPage({ params }: { params: Promise<{ id: strin
       />
       <div className="mx-auto w-full max-w-[1180px] px-5 pb-24 sm:px-8">
         <DemoEmbed id={demo.id} />
+        <LearningComplete stateKey={`demo:${demo.id}`} kind="demo" />
       </div>
     </main>
   )

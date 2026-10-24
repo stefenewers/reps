@@ -174,3 +174,86 @@ Winston is visual only: no text, no clicks, no knowledge of scores, readiness or
 - Reuse `PageHero`, `.deck`, `.tile-*`, `.tag-*`, `Ring` and the step path before inventing a container.
 - If a new state matters to the learner, give it a scene mood or a tile, not just a sentence.
 - Never add a global metric, XP, or a celebration for something that is not qualifying production or a real course event.
+
+## The training day (final UX pass)
+
+Today is a training session with a finish line. It must answer, without the learner remembering the plan:
+
+1. What am I learning?
+2. Why?
+3. What first?
+4. What next?
+5. How much counts?
+6. What else is required?
+7. When can I stop?
+
+- **One product.** Before Oct 26, Today is Day 1 as a preview (`PreviewToday` in `components/reps-provider.tsx`).
+  - Learning is open; reps, labs and checkpoints are not startable.
+  - Every save keeps the real date, so nothing counts early. There is no separate pre-course homepage.
+  - Plan and Progress are the course views at every date.
+- **Hero.** It shows the state headline ("Learn first, then train.", "6 reps to go.", "Reps done. 1 item left.", "Training complete.") and "Week N · Title · Day D". It also shows the unit being trained:
+  - "Today: …" when on schedule;
+  - "Catching up: …" when the order has overtaken the calendar, naming what is scheduled and why it waits.
+- **Today's training deck:**
+  - **Status chip.** One of: Not started, In progress, Rep target met, Training complete, Optional day, Preview. A plain sentence follows ("Rep target complete. 2 required items remain.").
+  - **Three kinds of progress, never one ring.**
+    - Qualifying reps: the ring, the production.
+    - Learn first: lessons, demos, worked examples; not counted.
+    - Required milestones: labs, checkpoints, targets.
+  - **One primary action, named for the behaviour:**
+    - Start lesson: X
+    - Watch it move: X
+    - Rebuild the example
+    - Start today's reps
+    - Continue reps · N to go
+    - Start lab: X
+    - Start checkpoint: X
+    - Start repair · N reps
+    - Try placement checkpoint
+    - Start transfer session
+    - Start timed reps
+    - Start mock interview
+    - Stop for today
+
+    Never a generic "Continue" or "Start". A one-line reason sits under it. On a phone, a copy of the action sticks above the tab bar only after the deck's own button has scrolled away.
+  - **Today's finish line.** Every requirement of the day contract, ticked or not, with "N of M requirements complete". Carried-over items fold into their own group. "What counts as a qualifying rep?" is one tap away (`QUALIFYING` in `course-today.tsx`).
+- **Today's path.** An ordered list of steps that exist that day (Repair → Prove what you know → Learn → Drill → Combine → Retrieve → Build → Prove → Target → Finish). Week 13 calls its practice "Independent transfer".
+  - The current step is a raised card marked "You are here".
+  - Done steps fold to one line.
+  - Future steps stay readable but quiet.
+  - Optional learning steps aside once the rep target is met.
+- **Progressive disclosure.** Below the path: This week (strip with optional Saturday and rest Sunday, "N of 5 required training days complete", builds, checkpoints), then The bigger picture (Road preview, readiness), then outside problems and More.
+- **Completion.** The scene turns golden, the headline reads "Training complete.", and the action is "Stop for today", with "Review what you learned" as the secondary. One quiet line names the next training day; nothing invites more grinding.
+
+## The coach hand-off
+
+Learning steps chain. Every lesson, demo and worked example ends in a completion card (`components/course/learning-complete.tsx`). Once marked done, it names the next step from today's sequence (`useTodayLearning`, the single source):
+
+- Lesson → Watch it move → Rebuild the example → "Start your reps".
+- "Start your reps" lands on `/?go=reps`, and Today starts the day's session directly.
+
+Demos now record completion too, so the sequence can advance. Inside a session, each rep's completion bar shows "N / 10 qualifying reps today" next to Next rep.
+
+## Road and Progress (final)
+
+- **Road:** the focused week opens with what it asks for: Reps (and required days), Builds, Checkpoints, and Unlocks (the next week, "as this week's checkpoints clear"). Locked weeks in the index say in plain English what they wait on ("Opens after Two pointers (Week 3) clears its checkpoint.").
+- **Progress order:**
+  1. Interview readiness (ladders with reasons);
+  2. What moved forward this week (checkpoints cleared, builds finished, skills newly solid);
+  3. The evidence (output, how it was produced, consistency, position);
+  4. Week by week;
+  5. What needs work;
+  6. Mastery and freshness;
+  7. What you have built;
+  8. Telemetry, folded away.
+
+## Winston (final)
+
+He perches on Today's deck with one small pixel prop:
+
+- a dumbbell while training;
+- a clipboard during repair;
+- "z z" on a rest day;
+- nothing on a completed day, in the preview, or in interview mode.
+
+Props never appear while he walks and are decoration only.

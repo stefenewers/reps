@@ -1148,3 +1148,31 @@ a.rep-row:hover {
     animation: none !important;
   }
 }
+
+/* The current step on Today's path leads: a raised card, everything else recedes. */
+.step-current {
+  margin-top: -6px;
+  padding: 14px 18px 16px;
+  border-radius: 16px;
+  background: var(--bg);
+  box-shadow: 0 0 0 1.5px var(--accent), 0 10px 28px -14px rgba(47, 82, 201, 0.35);
+}
+.step[data-state='done'] .step-dot {
+  width: 30px;
+  height: 30px;
+  margin: 5px;
+}
+.step[data-state='done'] {
+  padding-bottom: 14px;
+}
+.step[data-state='todo'] h3,
+.step[data-state='locked'] h3 {
+  color: var(--ink-2);
+}
+.check[data-tone='learn'][data-on='true'] {
+  background: var(--learn);
+}
+a.rep-row[data-next='true'] {
+  background: var(--learn-soft);
+  font-weight: 500;
+}

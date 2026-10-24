@@ -9,7 +9,43 @@ import './winston-ambient.css'
  * no text, no clicks, no knowledge of progress. While a perch is on screen the
  * corner Winston stays away, so there is only ever one of him.
  */
-export default function WinstonPerch({ className = '', mood = 'awake', ground = true }: { className?: string; mood?: 'rest' | 'awake' | 'celebrate'; ground?: boolean }) {
+/** A small pixel prop, drawn on the same 2px grid as the sprite. Decoration only. */
+function Prop({ kind }: { kind: 'dumbbell' | 'clipboard' | 'zzz' }) {
+  if (kind === 'zzz')
+    return (
+      <svg className="wa-prop wa-prop--zzz" width="22" height="18" viewBox="0 0 11 9" shapeRendering="crispEdges">
+        <path d="M0 5h3v1H1v1h1v1H0zM5 1h4v1H8v1H7v1H6v1h3v1H5V5h1V4h1V3h1V2H5z" fill="var(--rest)" />
+      </svg>
+    )
+  if (kind === 'clipboard')
+    return (
+      <svg className="wa-prop wa-prop--hand" width="14" height="18" viewBox="0 0 7 9" shapeRendering="crispEdges">
+        <path d="M0 1h7v8H0z" fill="#8a6a3b" />
+        <path d="M1 2h5v6H1z" fill="#f6f1e6" />
+        <path d="M2 0h3v2H2z" fill="#56606e" />
+        <path d="M2 4h3v1H2zM2 6h2v1H2z" fill="var(--repair)" />
+      </svg>
+    )
+  return (
+    <svg className="wa-prop wa-prop--hand" width="22" height="10" viewBox="0 0 11 5" shapeRendering="crispEdges">
+      <path d="M0 0h2v5H0zM9 0h2v5H9z" fill="#2b3446" />
+      <path d="M2 1h1v3H2zM8 1h1v3H8z" fill="#4a5568" />
+      <path d="M3 2h5v1H3z" fill="#8b94a3" />
+    </svg>
+  )
+}
+
+export default function WinstonPerch({
+  className = '',
+  mood = 'awake',
+  ground = true,
+  prop
+}: {
+  className?: string
+  mood?: 'rest' | 'awake' | 'celebrate'
+  ground?: boolean
+  prop?: 'dumbbell' | 'clipboard' | 'zzz'
+}) {
   const host = useRef<HTMLDivElement>(null)
   const [x, setX] = useState(0)
   const [walking, setWalking] = useState(false)
@@ -54,6 +90,7 @@ export default function WinstonPerch({ className = '', mood = 'awake', ground = 
       {ground && <span className="absolute inset-x-0 bottom-[3px] h-px bg-line" />}
       <div className="wa-perch" style={{ transform: `translateX(${x}px)`, '--walk-ms': `${walkMs}ms` } as CSSProperties}>
         <span className={`wa-sprite ${walking ? 'wa-sprite--walk' : 'wa-sprite--idle'}`} style={{ '--face': facing } as CSSProperties} />
+        {prop && !walking && <Prop kind={prop} />}
       </div>
     </div>
   )

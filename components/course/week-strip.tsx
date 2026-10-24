@@ -54,7 +54,11 @@ export default function WeekStrip({ week, today, credits, contracts }: { week: n
                 />
               )}
             </span>
-            <span className="sr-only">{label}</span>
+            {type === 'training' ? (
+              <span className="sr-only">{label}</span>
+            ) : (
+              <span className="text-[9.5px] leading-none text-muted">{type === 'rest' ? 'rest' : 'optional'}</span>
+            )}
           </li>
         )
       })}

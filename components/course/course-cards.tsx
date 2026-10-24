@@ -85,7 +85,10 @@ export function WeekCard({ cd }: { cd: CourseDayState }) {
           >
             <span style={{ width: `${Math.min(100, Math.round((100 * progress.done) / Math.max(1, progress.target)))}%` }} />
           </span>
-          <p className="mt-2 text-[13px] leading-relaxed text-ink-2">{line.text}</p>
+          <p className="num mt-2 text-[13.5px] font-medium text-ink" data-testid="week-days">
+            {contract.daysComplete} of {contract.trainingDays} required training days complete
+          </p>
+          <p className="mt-1 text-[13px] leading-relaxed text-ink-2">{line.text}</p>
           <div className="mt-4">
             <WeekStrip week={week.number} today={cd.day.date} credits={cd.credits} contracts={cd.contracts} />
           </div>

@@ -230,6 +230,48 @@ export default function RoadView() {
             </div>
           </div>
 
+          {/* What the week asks for, at a glance: the answer to "what do I need to do?" */}
+          <dl className="mt-5 grid gap-2 sm:grid-cols-2 lg:grid-cols-4" data-testid="week-asks">
+            <div className="rounded-xl bg-surface px-4 py-3">
+              <dt className="label">Reps</dt>
+              <dd className="num mt-1 text-[14px] font-semibold">
+                {sel.contract.output.done} / {sel.contract.output.target}
+                <span className="ml-1 font-normal text-muted">· {sel.contract.daysComplete} of {sel.contract.trainingDays} days</span>
+              </dd>
+            </div>
+            <div className="rounded-xl bg-surface px-4 py-3">
+              <dt className="label">Builds</dt>
+              <dd className="mt-1 text-[13.5px]">
+                {sel.contract.labs.filter((l) => !l.optional).length
+                  ? sel.contract.labs
+                      .filter((l) => !l.optional)
+                      .map((l) => `${l.done ? '✓ ' : ''}${l.title}`)
+                      .join(' · ')
+                  : 'None this week'}
+              </dd>
+            </div>
+            <div className="rounded-xl bg-surface px-4 py-3">
+              <dt className="label">Checkpoints</dt>
+              <dd className="mt-1 text-[13.5px]">
+                {sel.contract.gates.length ? `${sel.contract.gates.filter((g) => g.cleared).length} of ${sel.contract.gates.length} cleared` : 'None this week'}
+                {sel.contract.gates.length > 0 && <span className="block text-[12px] text-muted">{sel.contract.gates.map((g) => g.title).join(' · ')}</span>}
+              </dd>
+            </div>
+            <div className="rounded-xl bg-surface px-4 py-3">
+              <dt className="label">Unlocks</dt>
+              <dd className="mt-1 text-[13.5px]">
+                {selected < 14 ? (
+                  <>
+                    Week {selected + 1} · {weeks[selected].w.title}
+                    <span className="block text-[12px] text-muted">as this week&apos;s checkpoints clear</span>
+                  </>
+                ) : (
+                  'The February 1 checkpoint'
+                )}
+              </dd>
+            </div>
+          </dl>
+
           <ul className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
             {sel.units.map((u, i) => (
               <UnitCard key={u.unit.id} u={u} index={`${sel.w.number}.${i + 1}`} statuses={statuses} onGoto={(week) => choose(week, true)} />
@@ -275,7 +317,7 @@ export default function RoadView() {
               <ol className="mt-3 flex flex-col">
                 {weeks
                   .filter((x) => x.w.number >= p.from && x.w.number <= p.to)
-                  .map(({ w, state, contract }) => (
+                  .map(({ w, state, contract, units }) => (
                     <li key={w.number} data-week={w.number} data-state={state} className="relative">
                       <button
                         type="button"
@@ -301,6 +343,9 @@ export default function RoadView() {
                         </span>
                         <span className="min-w-0 flex-1">
                           <span className="block text-[15px] font-semibold tracking-tight text-ink">{w.title}</span>
+                          {state === 'locked' && (
+                            <span className="block text-[12.5px] text-ink-2">{lockedReason(units, statuses)}</span>
+                          )}
                           <span className="block text-[12.5px] text-muted">
                             {shortDate(w.startsOn)}–{shortDate(w.endsOn)} · {w.focus}
                             {w.plannedOffDays.length ? ` · rest: ${w.plannedOffDays.map((d) => d.label).join(', ')}` : ''}
@@ -324,6 +369,16 @@ export default function RoadView() {
       </section>
     </main>
   )
+}
+
+/** Why a week is locked, in plain English: the earliest units it is waiting on. */
+function lockedReason(units: UnitStatus[], statuses: UnitStatus[]): string {
+  const waiting = [...new Set(units.flatMap((u) => u.blockedBy))]
+    .map((id) => statuses.find((s) => s.unit.id === id)?.unit)
+    .filter((u): u is UnitStatus['unit'] => Boolean(u) && !units.some((x) => x.unit.id === u!.id))
+  if (!waiting.length) return 'Opens when the week before it is under way.'
+  const names = waiting.slice(0, 2).map((u) => `${u.title} (Week ${u.week})`)
+  return `Opens after ${names.join(' and ')}${waiting.length > 2 ? ` and ${waiting.length - 2} more` : ''} ${waiting.length === 1 ? 'clears its checkpoint' : 'clear their checkpoints'}.`
 }
 
 function UnitCard({ u, index, statuses, onGoto }: { u: UnitStatus; index: string; statuses: UnitStatus[]; onGoto: (week: number) => void }) {

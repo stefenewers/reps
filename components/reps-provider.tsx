@@ -23,6 +23,8 @@ import type { Attempt, MockResult, ReviewItem } from '@/lib/types'
  */
 
 interface RepsContextValue {
+  /** Set only inside PreviewToday: the real calendar date while `today` shows the previewed day. */
+  realToday?: string
   repo: RepsRepository
   version: number
   loaded: boolean
@@ -159,4 +161,16 @@ export function useReps(): RepsContextValue {
   const ctx = useContext(RepsContext)
   if (!ctx) throw new Error('useReps must be used inside RepsProvider')
   return ctx
+}
+
+/**
+ * Before the course starts, Today previews Day 1. Only the calendar date this
+ * subtree reads changes: every save (attempts, learning steps, drafts) still
+ * goes through the same repository and is stamped with the real date, so a
+ * preview never creates course credit, streak days or fake history.
+ */
+export function PreviewToday({ date, children }: { date: string; children: ReactNode }) {
+  const ctx = useReps()
+  const value = useMemo(() => ({ ...ctx, today: date, realToday: ctx.today }), [ctx, date])
+  return <RepsContext.Provider value={value}>{children}</RepsContext.Provider>
 }

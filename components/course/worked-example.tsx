@@ -83,7 +83,7 @@ export default function WorkedExampleView({ example }: { example: WorkedExample 
                 Rebuild it <IconArrowRight size={14} />
               </Link>
             </div>
-            <LearningComplete stateKey={`example:${example.id}`} />
+            <LearningComplete stateKey={`example:${example.id}`} kind="example" />
           </section>
         ) : (
           <button type="button" className="btn btn-accent btn-lg self-start" onClick={() => setShown((n) => n + 1)} data-testid="next-goal">

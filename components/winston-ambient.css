@@ -105,3 +105,26 @@
 
 [data-winston-perch][data-mood="rest"] .wa-sprite { animation: none; opacity: .65; }
 [data-winston-perch][data-mood="celebrate"] .wa-perch { filter: drop-shadow(0 0 5px var(--flame)); }
+
+/* Winston's props (components/winston-perch.tsx): one at a time, never while walking. */
+.wa-prop {
+  position: absolute;
+  image-rendering: pixelated;
+  pointer-events: none;
+}
+.wa-prop--hand {
+  left: 44px;
+  top: 36px;
+}
+.wa-prop--zzz {
+  left: 40px;
+  top: -8px;
+  animation: wa-zzz 3.2s ease-in-out infinite;
+}
+@keyframes wa-zzz {
+  0%, 100% { transform: translateY(0); opacity: 0.85; }
+  50% { transform: translateY(-3px); opacity: 0.5; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wa-prop--zzz { animation: none; }
+}

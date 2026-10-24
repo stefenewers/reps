@@ -111,6 +111,16 @@ test('completed day', async ({ page }) => {
   await snap(page, '04-today-complete', '/')
 })
 
+test('rep target met, required work open', async ({ page }) => {
+  await load(page, '2026-10-27T16:00:00-04:00', WEEK1.slice(0, 10).map((id) => ({ id, date: '2026-10-27' })))
+  await snap(page, '04b-today-reps-met', '/')
+})
+
+test('week 3 normal day', async ({ page }) => {
+  await load(page, '2026-11-10T10:00:00-05:00')
+  await snap(page, '09-today-week3', '/')
+})
+
 test('rest day', async ({ page }) => {
   await load(page, '2026-11-01T10:00:00-05:00', history('2026-11-01'))
   await snap(page, '05-today-rest', '/')
