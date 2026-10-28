@@ -4,9 +4,9 @@ import { SECTION_BY_ID } from '@/data/course'
 import { EXERCISE_BY_ID } from '@/data/curriculum'
 import { UNITS } from '@/data/course/units'
 import { GATE_BY_ID } from '@/data/course/gates'
+import { createContracts, type ContractInput } from '@/lib/course/contract'
 import { courseDailyPlan } from '@/lib/course/daily-plan'
 import { courseStatus, unitInventory } from '@/lib/course/routing'
-import type { ContractInput } from '@/lib/course/contract'
 import type { Attempt } from '@/lib/types'
 
 const input = (): ContractInput => ({ attempts: [], entries: [], mastery: {}, labStates: {}, exercises: EXERCISE_BY_ID, sections: SECTION_BY_ID })
@@ -38,6 +38,29 @@ test('Today offers placement before teaching; passing it skips that unit rather 
   for (const g of unit.gateIds) i.attempts.push(...GATE_BY_ID[g].pool.slice(0, GATE_BY_ID[g].need).map((id) => pass(id, '2026-10-27')))
   assert.equal(courseStatus({ ...i, today: '2026-10-27' })[1].state, 'ready')
   assert.ok(!courseDailyPlan('2026-10-27', i).some((q) => q.required && q.unitId === unit.id && q.purpose !== 'problem'))
+})
+
+test('a placement half passed stays placement: the next variant stays open, not locked behind the path', () => {
+  const i = input()
+  const unit = UNITS.find((u) => u.id === 'w1-mutation-references')!
+  const gate = GATE_BY_ID[unit.gateIds[0]]
+  i.attempts = [...UNITS[0].path!, ...unit.path!.slice(0, Math.ceil(unit.path!.length * 0.4))].map((id) => pass(id, '2026-10-20'))
+  i.attempts.push(pass(gate.pool[0], '2026-10-27'))
+  const g = createContracts(i).dayContract('2026-10-27').gates.find((x) => x.id === gate.id)!
+  assert.equal(g.state, 'open')
+  assert.ok(courseDailyPlan('2026-10-27', i).some((q) => q.purpose === 'gate' && q.exerciseId === g.next[0]))
+})
+
+test('a failed placement, once repaired, offers the unit’s path even before the calendar introduces it', () => {
+  const i = input()
+  const unit = UNITS.find((u) => u.id === 'w1-mutation-references')!
+  const gate = GATE_BY_ID[unit.gateIds[0]]
+  i.attempts = [...UNITS[0].path!, ...unit.path!.slice(0, Math.ceil(unit.path!.length * 0.4))].map((id) => pass(id, '2026-10-20'))
+  i.attempts.push({ ...pass(gate.pool[0], '2026-10-26'), passed: false, completedAt: undefined, attemptsBeforePass: 2 })
+  const repair = createContracts(i).dayContract('2026-10-26').repair[0].reps
+  i.attempts.push(...repair.map((id) => pass(id, '2026-10-26')))
+  const plan = courseDailyPlan('2026-10-27', i)
+  assert.ok(plan.some((q) => q.required && q.unitId === unit.id && unit.path!.includes(q.exerciseId!)), 'the path reps that unlock the checkpoint are offered')
 })
 
 test('today’s own teaching never silently converts a novice into placement', () => {

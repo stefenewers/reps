@@ -21,6 +21,8 @@ export function courseDailyPlan(date: string, input: ContractInput): CourseQueue
       .filter((d) => d.date <= date)
       .flatMap((d) => d.focusUnits)
   )
+  // A checkpoint already taken (placement) opens its unit early, so the reps it routes are never hidden behind the calendar.
+  for (const s of statuses) if (s.gates.some((g) => g.attempted)) introduced.add(s.unit.id)
   const done = new Set(dailyCredits(date, input.attempts, input.entries, input.exercises).map((c) => c.key))
   const passed = new Set(input.attempts.filter((a) => a.passed && a.completedAt && !a.solutionViewed).map((a) => a.exerciseId))
   const active = statuses.find((s) => !s.locked && introduced.has(s.unit.id) && s.state !== 'ready' && s.state !== 'maintenance')

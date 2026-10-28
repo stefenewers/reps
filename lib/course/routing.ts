@@ -15,7 +15,8 @@ import type { Attempt, Exercise } from '@/lib/types'
  * - A unit is locked until every prerequisite unit is ready. The calendar never
  *   overrides that: dependency order may not slide.
  * - A unit with earlier evidence starts with its gate (placement). Passing it
- *   skips the teaching; failing it routes repair, then the path's unpassed reps.
+ *   skips the teaching, however many variants that takes; failing any variant
+ *   routes repair, then the path's unpassed reps.
  * - A failed gate is diagnostic: 2–4 repair reps on the skills the failure
  *   touched, then a different variant. The exact failed rep is not next.
  * - A unit with a gate is ready when the gate is cleared; without one, when its
@@ -33,6 +34,8 @@ export interface GateStatus {
   clean: string[]
   /** The latest gate attempt was not clean (and the gate is not cleared). */
   failed: boolean
+  /** Some attempt on it was not clean, even if a later one was. */
+  everFailed: boolean
   failedRep?: string
   failedAt?: string
   /** The local date of that failure. */
@@ -131,6 +134,7 @@ export function gateStatus(gate: MasteryGate, ctx: CourseContext, index: Map<str
   const cleared = Boolean(clearedOn)
   const last = tries[tries.length - 1]
   const failed = !cleared && Boolean(last) && !gateClean(last, index.get(last.exerciseId) ?? [])
+  const everFailed = tries.some((a) => !gateClean(a, index.get(a.exerciseId) ?? []))
   let repair: string[] = []
   let repairPlan: string[] = []
   if (failed && last) {
@@ -160,6 +164,7 @@ export function gateStatus(gate: MasteryGate, ctx: CourseContext, index: Map<str
     clearedOn,
     clean,
     failed,
+    everFailed,
     failedRep: failed ? last?.exerciseId : undefined,
     failedAt: failed && last ? time(last) : undefined,
     failedOn: failed && last ? last.date : undefined,
@@ -201,7 +206,8 @@ export function courseStatus(ctx: CourseContext): UnitStatus[] {
       return !s || (s.state !== 'ready' && s.state !== 'maintenance')
     })
     const ready = blockedBy.length === 0 && (liveGates.length ? gatesCleared : pathDone)
-    const placement = !ready && prior && liveGates.length > 0 && !liveGates.some((g) => g.attempted)
+    // Placement holds while its variants are passed clean (one of two passed is still placement); a slip routes the full path.
+    const placement = !ready && prior && liveGates.length > 0 && !liveGates.some((g) => g.everFailed)
     const route: Route = ready ? 'maintenance' : placement ? 'placement' : 'full'
     const done = path.filter((e) => passed.has(e.id)).length
     const ids = new Set([...path.map((e) => e.id), ...unit.gateIds.flatMap((g) => GATE_BY_ID[g]?.pool ?? [])])
