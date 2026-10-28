@@ -227,6 +227,8 @@ export function createContracts(input: ContractInput) {
     const gates: ContractGate[] = [...new Set([...due.gates, ...attemptedGates])]
       .map((id) => ({ ...gateState(id, date, snap), carried: carried(GATE_DUE[id]) }))
       .filter((g) => g.state !== 'cleared' || g.dueDate === date)
+      // A checkpoint tried early that still waits on its reps is not today's business until it is due.
+      .filter((g) => g.state !== 'locked' || due.gates.includes(g.id))
 
     const targets: ContractTarget[] = due.targets
       .map((lc) => {

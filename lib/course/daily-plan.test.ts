@@ -63,6 +63,35 @@ test('a failed placement, once repaired, offers the unit’s path even before th
   assert.ok(plan.some((q) => q.required && q.unitId === unit.id && unit.path!.includes(q.exerciseId!)), 'the path reps that unlock the checkpoint are offered')
 })
 
+test('a checkpoint tried early and still waiting on its reps does not hold today open', () => {
+  const i = input()
+  const pool = GATE_BY_ID['g-mutation-references'].pool
+  const unit = (id: string) => UNITS.find((u) => u.id === id)!.path!
+  i.attempts = [
+    ...unit('w1-state-while').map((id) => pass(id, '2026-10-26')),
+    ...[...unit('w1-loop-control'), 'c1-state-counter', 'c1-state-swap', 'c1-state-overdrawn', pool[0]].map((id) => pass(id, '2026-10-27'))
+  ]
+  const c = createContracts(i).dayContract('2026-10-27')
+  assert.ok(c.reps.met)
+  assert.ok(!c.gates.some((g) => g.id === 'g-mutation-references'), 'not due until its day')
+})
+
+test('a due checkpoint still locked after the rep target is met keeps the reps that open it on offer', () => {
+  const i = input()
+  const unit = (id: string) => UNITS.find((u) => u.id === id)!.path!
+  i.attempts = [
+    ...['w1-state-while', 'w1-loop-control', 'w1-running-state'].flatMap(unit).map((id) => pass(id, '2026-10-26')),
+    ...['c1-state-counter', 'c1-state-swap', 'c1-state-overdrawn', ...unit('w1-mutation-references').slice(0, 1), ...unit('w1-loop-control').slice(0, 6)].map((id) =>
+      pass(id, '2026-10-30')
+    )
+  ]
+  const c = createContracts(i).dayContract('2026-10-30')
+  assert.ok(c.reps.met)
+  assert.equal(c.gates.find((g) => g.id === 'g-mutation-references')!.state, 'locked')
+  const plan = courseDailyPlan('2026-10-30', i)
+  assert.ok(unit('w1-mutation-references').slice(1).every((id) => plan.some((q) => q.exerciseId === id && q.required)))
+})
+
 test('today’s own teaching never silently converts a novice into placement', () => {
   const i = input()
   i.attempts = UNITS[0].path!.slice(0, Math.ceil(UNITS[0].path!.length * 0.4)).map((id) => pass(id, '2026-10-26'))

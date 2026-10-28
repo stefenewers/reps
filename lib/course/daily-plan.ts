@@ -70,6 +70,9 @@ export function courseDailyPlan(date: string, input: ContractInput): CourseQueue
   const pathSlots = Math.max(0, Math.min(remaining - reserved, target - Math.ceil(0.15 * target) - reserved - pathCount))
   const required = out.filter((q) => q.purpose === 'repair' || q.purpose === 'gate' || q.purpose === 'problem')
   const paths = out.filter((q) => !required.includes(q)).slice(0, pathSlots)
+  // Once the rep target is met, a due checkpoint still locked keeps its unit's path on offer: the day's last item always has a way in.
+  const lockedGateUnits = new Set(contract.gates.filter((g) => g.state === 'locked').map((g) => g.unitId))
+  if (remaining === 0) paths.push(...out.filter((q) => lockedGateUnits.has(q.unitId) && !required.includes(q) && !paths.includes(q)))
   const placementGates = required.filter((q) => q.purpose === 'gate' && statuses.some((s) => s.unit.id === q.unitId && s.route === 'placement'))
   const selected = [
     ...out.filter((q) => q.purpose === 'repair'),
