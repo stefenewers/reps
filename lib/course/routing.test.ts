@@ -4,7 +4,7 @@ import { SECTION_BY_ID } from '@/data/course'
 import { GATE_BY_ID } from '@/data/course/gates'
 import { UNIT_BY_ID, UNITS } from '@/data/course/units'
 import { EXERCISE_BY_ID } from '@/data/curriculum'
-import { courseQueue, courseStatus, unitReps, type CourseContext } from '@/lib/course/routing'
+import { catchUpUnits, courseQueue, courseStatus, unitReps, type CourseContext } from '@/lib/course/routing'
 import type { Attempt } from '@/lib/types'
 
 let n = 0
@@ -95,4 +95,22 @@ test('a gate pass needs the clean standard: a solution or hints do not clear it'
   const earlier = unitReps(UNIT_BY_ID['w2-hashing'], ctx([])).map((e) => at(e.id, '2026-10-05'))
   const assisted = [...earlier, ...pool.map((id) => at(id, '2026-10-26', { retrievalType: 'cold', hintsUsed: 2 }))]
   assert.notEqual(status(ctx(assisted), 'w2-hashing').state, 'ready')
+})
+
+test('catching up teaches every earlier unit with reps still to learn, not just the first one waiting on a checkpoint', () => {
+  const path = (u: string) => UNIT_BY_ID[u].path!
+  const c = ctx(
+    [
+      ...path('w1-state-while').map((id) => at(id, '2026-10-26')),
+      ...path('w1-loop-control').map((id) => at(id, '2026-10-27')),
+      ...path('w1-running-state').map((id) => at(id, '2026-10-28'))
+    ],
+    '2026-11-02'
+  )
+  const s = courseStatus(c)
+  assert.equal(s.find((x) => !x.locked && x.state !== 'ready' && x.state !== 'maintenance')!.unit.id, 'w1-loop-control', 'the first unfinished unit only waits on its checkpoint')
+  assert.deepEqual(
+    catchUpUnits(s, 2).map((u) => u.id),
+    ['w1-mutation-references']
+  )
 })

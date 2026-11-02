@@ -226,6 +226,17 @@ export function courseStatus(ctx: CourseContext): UnitStatus[] {
   return out
 }
 
+/**
+ * The units to teach when the course is behind the calendar: every earlier unit
+ * that still has path reps to learn, in teaching order. A unit whose path is done
+ * and only waits on its (cold) checkpoint has nothing left to teach.
+ */
+export function catchUpUnits(statuses: UnitStatus[], week: number): LearningUnit[] {
+  return statuses
+    .filter((s) => !s.locked && s.unit.week < week && s.state !== 'ready' && s.state !== 'maintenance' && s.route !== 'placement' && s.done < s.total)
+    .map((s) => s.unit)
+}
+
 function daysBefore(a: string, b: string): number {
   return Math.round((Date.parse(b) - Date.parse(a)) / 86_400_000)
 }

@@ -10,6 +10,7 @@ import { demosForConcept } from '@/lib/demos'
 import { APPLIED_BY_UNIT, APPLIED_SCHEDULE, checksKey } from '@/data/course/applied'
 import { daysBetween } from '@/lib/dates'
 import type { LearningUnit } from '@/data/course/units'
+import { catchUpUnits } from '@/lib/course/routing'
 
 export type LearnKind = 'lesson' | 'demo' | 'example'
 
@@ -66,8 +67,10 @@ export function useTodayLearning() {
   const cd = useCourseDay()
   const focus = (DAY_PLAN[today]?.focusUnits ?? []).map((id) => UNIT_BY_ID[id]).filter(Boolean)
   const units: LearningUnit[] = focus.length ? focus : cd.course.current ? [cd.course.current.unit] : []
-  // When the course is behind the calendar, teach the unit the learner is actually on.
-  const learningUnits = cd.course.current && cd.course.current.unit.week < cd.week.number ? [cd.course.current.unit] : units
+  // When the course is behind the calendar, teach the earlier units whose reps are still to learn (not just the first unfinished one,
+  // which may only be waiting on its checkpoint), else the unit the learner is actually on.
+  const behind = catchUpUnits(cd.course.statuses, cd.week.number)
+  const learningUnits = behind.length ? behind : cd.course.current && cd.course.current.unit.week < cd.week.number ? [cd.course.current.unit] : units
   const unlabeled = cd.week.unlabeled
   const items: LearnItem[] = unlabeled
     ? []
