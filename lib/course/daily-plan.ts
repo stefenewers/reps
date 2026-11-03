@@ -36,7 +36,13 @@ export function courseDailyPlan(date: string, input: ContractInput): CourseQueue
   }
   const rep = (id: string, unitId: string, required: boolean, purpose = purposeOf(input.exercises[id])) =>
     add({ key: id, exerciseId: id, unitId, required, purpose })
-  for (const r of contract.repair) for (const id of r.reps) rep(id, statuses.find((s) => s.gates.some((g) => g.gate.id === r.gateId))!.unit.id, true, 'repair')
+  // A repair rep has to be passed after the failure, so one already credited earlier today is still offered (under its own key: it earns no second credit).
+  for (const r of contract.repair)
+    for (const id of r.reps) {
+      if (seen.has(id)) continue
+      seen.add(id)
+      out.push({ key: done.has(id) ? `repair:${id}` : id, exerciseId: id, unitId: statuses.find((s) => s.gates.some((g) => g.gate.id === r.gateId))!.unit.id, required: true, purpose: 'repair' })
+    }
   // Pre-course evidence opens placement; progress through today's teaching does not.
   for (const s of statuses) {
     if (s.locked || s.unit.week > (active?.unit.week ?? contract.week) || !introduced.has(s.unit.id) || s.gates.some((g) => g.failed && g.repair.length))
@@ -70,9 +76,9 @@ export function courseDailyPlan(date: string, input: ContractInput): CourseQueue
   const pathSlots = Math.max(0, Math.min(remaining - reserved, target - Math.ceil(0.15 * target) - reserved - pathCount))
   const required = out.filter((q) => q.purpose === 'repair' || q.purpose === 'gate' || q.purpose === 'problem')
   const paths = out.filter((q) => !required.includes(q)).slice(0, pathSlots)
-  // Once the rep target is met, a due checkpoint still locked keeps its unit's path on offer: the day's last item always has a way in.
-  const lockedGateUnits = new Set(contract.gates.filter((g) => g.state === 'locked').map((g) => g.unitId))
-  if (remaining === 0) paths.push(...out.filter((q) => lockedGateUnits.has(q.unitId) && !required.includes(q) && !paths.includes(q)))
+  // A locked checkpoint cannot use its reserved slots, and no slots may be what keeps it locked. While one is due, the path
+  // reps in teaching order stay on offer (they include its prerequisites), so the day's last item always has a way in.
+  if (!paths.length && contract.gates.some((g) => g.state === 'locked')) paths.push(...out.filter((q) => !required.includes(q)))
   const placementGates = required.filter((q) => q.purpose === 'gate' && statuses.some((s) => s.unit.id === q.unitId && s.route === 'placement'))
   const selected = [
     ...out.filter((q) => q.purpose === 'repair'),

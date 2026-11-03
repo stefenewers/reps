@@ -229,6 +229,12 @@ export function createContracts(input: ContractInput) {
       .filter((g) => g.state !== 'cleared' || g.dueDate === date)
       // A checkpoint tried early that still waits on its reps is not today's business until it is due.
       .filter((g) => g.state !== 'locked' || due.gates.includes(g.id))
+    // A failed checkpoint, repaired today, retries next training day. Checkpoints that can only open after it have nothing to do until then.
+    const retrying = new Set(gates.filter((g) => g.state === 'handled').map((g) => g.unitId))
+    const waitsOnRetry = (unitId: string): boolean => {
+      const s = snap.byUnit.get(unitId)
+      return Boolean(s?.locked) && s!.blockedBy.some((p) => retrying.has(p) || waitsOnRetry(p))
+    }
 
     const targets: ContractTarget[] = due.targets
       .map((lc) => {
@@ -251,7 +257,7 @@ export function createContracts(input: ContractInput) {
       for (const r of repair) remaining.push(`Repair for ${r.title} (${r.reps.length} rep${r.reps.length === 1 ? '' : 's'})`)
       for (const l of labs) if (l.state !== 'done') remaining.push(`Lab: ${l.title}${l.carried ? ' (carried over)' : ''}`)
       for (const g of gates)
-        if (g.state !== 'cleared' && g.state !== 'handled')
+        if (g.state !== 'cleared' && g.state !== 'handled' && !(g.state === 'locked' && waitsOnRetry(g.unitId)))
           remaining.push(`Checkpoint: ${g.title}${g.state === 'locked' ? ' (finish the reps before it first)' : ''}`)
       for (const t of targets) if (t.state === 'open') remaining.push(`Target: LC ${t.lc} ${t.title}`)
       complete = remaining.length === 0

@@ -92,6 +92,22 @@ test('a due checkpoint still locked after the rep target is met keeps the reps t
   assert.ok(unit('w1-mutation-references').slice(1).every((id) => plan.some((q) => q.exerciseId === id && q.required)))
 })
 
+test('target met with later checkpoints locked: the earlier unit that opens them is still offered', () => {
+  const i = input()
+  const unit = (id: string) => UNITS.find((u) => u.id === id)!.path!
+  const gates = ['g-loop-control', 'g-index-scan', 'g-running-state', 'g-mutation-references']
+  i.attempts = [
+    ...['w1-state-while', 'w1-loop-control', 'w1-running-state', 'w1-mutation-references'].flatMap(unit).map((id) => pass(id, '2026-10-28')),
+    ...gates.flatMap((g) => GATE_BY_ID[g].pool.slice(0, 2)).map((id) => pass(id, '2026-11-03')),
+    ...['c1-state-counter', 'c1-state-swap', 'c1-state-overdrawn', 'c1-state-predict'].map((id) => pass(id, '2026-11-03'))
+  ]
+  const c = createContracts(i).dayContract('2026-11-03')
+  assert.ok(c.reps.met)
+  assert.deepEqual(c.gates.filter((g) => g.state === 'locked').map((g) => g.id).sort(), ['g-contract', 'g-decomposition'])
+  const plan = courseDailyPlan('2026-11-03', i)
+  assert.ok(unit('w1-integration').every((id) => plan.some((q) => q.exerciseId === id && q.required)))
+})
+
 test('today’s own teaching never silently converts a novice into placement', () => {
   const i = input()
   i.attempts = UNITS[0].path!.slice(0, Math.ceil(UNITS[0].path!.length * 0.4)).map((id) => pass(id, '2026-10-26'))
