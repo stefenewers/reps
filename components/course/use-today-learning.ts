@@ -69,7 +69,12 @@ export function useTodayLearning() {
   const units: LearningUnit[] = focus.length ? focus : cd.course.current ? [cd.course.current.unit] : []
   // When the course is behind the calendar, teach the earlier units whose reps are still to learn (not just the first unfinished one,
   // which may only be waiting on its checkpoint), else the unit the learner is actually on.
-  const behind = catchUpUnits(cd.course.statuses, cd.week.number)
+  const scheduledBefore = new Set(
+    Object.entries(DAY_PLAN)
+      .filter(([d]) => d < today)
+      .flatMap(([, p]) => p.focusUnits)
+  )
+  const behind = catchUpUnits(cd.course.statuses, cd.week.number, scheduledBefore)
   const learningUnits = behind.length ? behind : cd.course.current && cd.course.current.unit.week < cd.week.number ? [cd.course.current.unit] : units
   const unlabeled = cd.week.unlabeled
   const items: LearnItem[] = unlabeled

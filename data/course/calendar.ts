@@ -50,6 +50,13 @@ export function holidayOf(date: string): PlannedOffDay | undefined {
 
 export const inCourse = (date: string) => date >= COURSE_START && date <= COURSE_END
 
+/**
+ * A training day the learner marked off (study state). Today then shows the next
+ * training day, read-only until it starts. It changes no credit and no due date:
+ * the day's open work simply carries, as it would anyway.
+ */
+export const dayOffKey = (date: string) => `dayoff:${date}`
+
 /** Week 1–14 for a date in the course; 0 before it starts, 15 after it ends. */
 export function courseWeekOf(date: string): number {
   if (date < COURSE_START) return 0

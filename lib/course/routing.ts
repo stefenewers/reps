@@ -227,13 +227,22 @@ export function courseStatus(ctx: CourseContext): UnitStatus[] {
 }
 
 /**
- * The units to teach when the course is behind the calendar: every earlier unit
- * that still has path reps to learn, in teaching order. A unit whose path is done
- * and only waits on its (cold) checkpoint has nothing left to teach.
+ * The units to teach when the course is behind the calendar: every unit from an
+ * earlier week, or scheduled on an earlier day (`scheduledBefore`), that still has
+ * path reps to learn, in teaching order. A unit whose path is done and only waits
+ * on its (cold) checkpoint has nothing left to teach.
  */
-export function catchUpUnits(statuses: UnitStatus[], week: number): LearningUnit[] {
+export function catchUpUnits(statuses: UnitStatus[], week: number, scheduledBefore: Set<string> = new Set()): LearningUnit[] {
   return statuses
-    .filter((s) => !s.locked && s.unit.week < week && s.state !== 'ready' && s.state !== 'maintenance' && s.route !== 'placement' && s.done < s.total)
+    .filter(
+      (s) =>
+        !s.locked &&
+        (s.unit.week < week || scheduledBefore.has(s.unit.id)) &&
+        s.state !== 'ready' &&
+        s.state !== 'maintenance' &&
+        s.route !== 'placement' &&
+        s.done < s.total
+    )
     .map((s) => s.unit)
 }
 

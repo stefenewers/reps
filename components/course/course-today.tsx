@@ -17,7 +17,7 @@ import { IconArrowRight, IconCheck, IconClock, IconLock, IconMoon, IconRepair } 
 import type { useCourseDay } from '@/components/use-course-day'
 import type { useTodayPlan } from '@/components/use-today-plan'
 import { trainingKey, type useTraining } from '@/components/use-training'
-import { COURSE_END, INTERVIEW_CHECKPOINT, dayType, weekDates } from '@/data/course/calendar'
+import { COURSE_END, INTERVIEW_CHECKPOINT, dayOffKey, dayType, weekDates } from '@/data/course/calendar'
 import { motivate } from '@/data/course/motivation'
 import { DAY_PLAN } from '@/data/course/schedule'
 import { UNIT_BY_ID } from '@/data/course/units'
@@ -205,7 +205,10 @@ export default function CourseToday({
   /** Before the course starts: Day 1, shown as a preview. Learning is open; nothing counts yet. */
   preview?: boolean
 }) {
-  const { repo, today } = useReps()
+  const { repo, today, realToday } = useReps()
+  // A training day marked off shows the next one, read-only until it starts: lessons open, nothing that counts.
+  const lookahead = !preview && Boolean(realToday && realToday < today)
+  const locked = preview || lookahead
   const router = useRouter()
   const [busy, setBusy] = useState(false)
   const [stopped, setStopped] = useState(false)
@@ -237,7 +240,11 @@ export default function CourseToday({
     ? learn
       ? { label: `${LEARN_ACTION[learn.kind]}: ${learn.title}`, href: learn.href, why: 'Preview the teaching now. Reps, labs and checkpoints open Monday.' }
       : undefined
-    : complete
+    : lookahead
+      ? learn
+        ? { label: `${LEARN_ACTION[learn.kind]}: ${learn.title}`, href: learn.href, why: 'Lessons are open tonight. Reps, labs and checkpoints open at midnight.' }
+        : undefined
+      : complete
       ? { label: 'Stop for today', href: '', why: '' }
       : repair.length
         ? {
@@ -282,7 +289,7 @@ export default function CourseToday({
 
   const startReps = async (items: PlanItem[], title = "Today's training") => {
     const ids = items.flatMap((i) => (i.exerciseId ? [i.exerciseId] : []))
-    if (busy || !ids.length || preview) return
+    if (busy || !ids.length || locked) return
     setBusy(true)
     try {
       const extras = items.filter((i) => i.kind === 'cold' || i.kind === 'warm' || i.kind === 'redo').map((i) => i.exerciseId!)
@@ -338,7 +345,7 @@ export default function CourseToday({
   // The coach hand-off: a learning page's "Start your reps" lands here with ?go=reps and the session starts.
   const handedOff = useRef(false)
   useEffect(() => {
-    if (handedOff.current || preview || typeof window === 'undefined') return
+    if (handedOff.current || locked || typeof window === 'undefined') return
     const go = new URLSearchParams(window.location.search).get('go')
     if (go !== 'reps') return
     handedOff.current = true
@@ -465,7 +472,7 @@ export default function CourseToday({
   )
   const milestones = requirements.filter((r) => r.key !== 'reps')
   const milestonesDone = milestones.filter((r) => r.done).length
-  const status: DayStatus = preview
+  const status: DayStatus = locked
     ? 'preview'
     : recovery
       ? 'optional'
@@ -477,15 +484,16 @@ export default function CourseToday({
             ? 'in-progress'
             : 'not-started'
   const STATUS_LABEL: Record<DayStatus, string> = {
-    preview: 'Preview',
+    preview: lookahead ? 'Opens at midnight' : 'Preview',
     'not-started': 'Not started',
     'in-progress': 'In progress',
     'reps-met': 'Rep target met',
     complete: 'Training complete',
     optional: 'Optional day'
   }
-  const statusLine =
-    status === 'preview'
+  const statusLine = lookahead
+    ? 'Opens at midnight. Nothing done tonight counts toward it; the lessons are open if you want to read ahead.'
+    : status === 'preview'
       ? 'Training starts Monday, October 26. Explore the lessons now; nothing counts yet.'
       : status === 'complete'
         ? 'Training complete. You did enough today.'
@@ -589,7 +597,7 @@ export default function CourseToday({
           <Check on />
           <span>{unlabeled ? 'Independent practice' : i.title}</span>
         </span>
-      ) : preview ? (
+      ) : locked ? (
         <span className="rep-row text-muted">
           <Check on={false} />
           <span className="min-w-0 flex-1">{i.title}</span>
@@ -639,6 +647,13 @@ export default function CourseToday({
           preview ? (
             <>
               <span className="tag tag-learn mr-2 align-middle">Preview</span>Day 1 starts Monday, October 26
+            </>
+          ) : lookahead ? (
+            <>
+              <span className="tag tag-learn mr-2 align-middle">Tomorrow</span>Today is off. This is {LONG_DAY.format(parseLocal(today))}.{' '}
+              <button type="button" className="underline underline-offset-2" onClick={() => void repo.setState(dayOffKey(realToday!), { off: false })}>
+                Back to today
+              </button>
             </>
           ) : (
             <>
@@ -801,10 +816,20 @@ export default function CourseToday({
                   <div className="flex flex-col gap-2" ref={ctaRef}>
                     {cta('training-start', 'w-full justify-center sm:w-auto sm:self-start')}
                     {main?.why && <p className="text-[13px] text-muted">{main.why}</p>}
-                    {!main && !preview && <p className="text-sm text-muted">Finish the prerequisite reps to open the remaining checkpoints and targets.</p>}
-                    {!main && preview && (
+                    {!main && !locked && <p className="text-sm text-muted">Finish the prerequisite reps to open the remaining checkpoints and targets.</p>}
+                    {!main && locked && (
                       <button className="btn btn-lg w-full justify-center sm:w-auto sm:self-start" disabled data-testid="training-start">
-                        Reps open Monday, October 26
+                        {lookahead ? 'Reps open at midnight' : 'Reps open Monday, October 26'}
+                      </button>
+                    )}
+                    {!locked && !complete && c.type === 'training' && (
+                      <button
+                        type="button"
+                        className="self-start text-[12.5px] text-muted underline underline-offset-2 hover:text-ink"
+                        onClick={() => void repo.setState(dayOffKey(today), { off: true })}
+                        data-testid="day-off"
+                      >
+                        Taking today off? Show tomorrow instead
                       </button>
                     )}
                   </div>
@@ -976,9 +1001,13 @@ export default function CourseToday({
                 {c.labs.map((l) => (
                   <li key={l.id} className="flex flex-wrap items-center gap-3 rounded-xl bg-surface px-4 py-3" data-testid="today-lab" data-state={l.state}>
                     <Check on={l.state === 'done'} />
-                    <Link href={`/lab/${l.id}`} className="text-[14px] font-medium hover:underline">
-                      {l.title}
-                    </Link>
+                    {lookahead ? (
+                      <span className="text-[14px] font-medium">{l.title}</span>
+                    ) : (
+                      <Link href={`/lab/${l.id}`} className="text-[14px] font-medium hover:underline">
+                        {l.title}
+                      </Link>
+                    )}
                     <span className="ml-auto text-[12px] text-muted">
                       Lab · {l.state === 'done' ? 'Done' : preview ? 'Preview' : recovery ? 'Optional recovery' : l.carried ? 'Carried over' : 'Required today'}
                     </span>
@@ -1004,10 +1033,12 @@ export default function CourseToday({
                     <span className="text-[14px] font-medium">{g.title}</span>
                     <span className="sr-only">Checkpoint · {g.state}</span>
                     <span className="ml-auto">
-                      {g.state === 'open' && !preview ? (
+                      {g.state === 'open' && !locked ? (
                         <button className="btn btn-sm" disabled={busy} onClick={() => startGate(g.id)}>
                           Start checkpoint
                         </button>
+                      ) : g.state === 'open' && lookahead ? (
+                        <span className="text-[12.5px] text-muted">Opens at midnight.</span>
                       ) : g.state === 'locked' || preview ? (
                         <span className="text-[12.5px] text-muted">Finish the prerequisite reps first.</span>
                       ) : g.state === 'repair' ? (
@@ -1044,7 +1075,7 @@ export default function CourseToday({
                     <span className="ml-auto">
                       {t.state === 'locked' ? (
                         <span className="text-[12.5px] text-muted">Opens after checkpoint.</span>
-                      ) : t.state === 'open' && !preview ? (
+                      ) : t.state === 'open' && !locked ? (
                         <Link href={lcUrl(t.lc) ?? '/problems'} className="btn btn-sm">
                           Start target
                         </Link>

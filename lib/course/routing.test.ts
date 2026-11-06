@@ -114,3 +114,20 @@ test('catching up teaches every earlier unit with reps still to learn, not just 
     ['w1-mutation-references']
   )
 })
+
+test('catching up within a week teaches the earlier days\u2019 units that still have reps to learn', () => {
+  const path = (u: string) => UNIT_BY_ID[u].path!
+  const c = ctx(
+    ['w1-state-while', 'w1-loop-control', 'w1-running-state', 'w1-mutation-references', 'w1-integration', 'w2-contract']
+      .flatMap(path)
+      .map((id) => at(id, '2026-10-28'))
+      .concat(['g-loop-control', 'g-index-scan', 'g-running-state', 'g-mutation-references', 'g-contract', 'g-decomposition'].flatMap((g) => GATE_BY_ID[g].pool.slice(0, 2)).map((id) => at(id, '2026-11-02', { retrievalType: 'cold' }))),
+    '2026-11-06'
+  )
+  const s = courseStatus(c)
+  assert.deepEqual(catchUpUnits(s, 2).map((u) => u.id), [], 'nothing from an earlier week is left')
+  assert.deepEqual(
+    catchUpUnits(s, 2, new Set(['w2-contract', 'w2-manual', 'w2-testing', 'w2-improve'])).map((u) => u.id),
+    ['w2-testing', 'w2-improve']
+  )
+})
