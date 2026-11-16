@@ -327,6 +327,34 @@ export const GATES: MasteryGate[] = [
     pool: ['mx-c-swap-axes', 'mx-c-half-turn', 'mx-c-frame', 'mx-c-warm-up'],
     need: 2,
     skills: ['matrix_transform', 'matrix_layers', 'matrix_marking']
+  },
+  // Sprint (data/course/sprint.ts): new units, new gates. Absent before SPRINT_START because their units are.
+  {
+    id: 'g-queue-basics',
+    title: 'Queue mechanics',
+    unitId: 's-queue-basics',
+    proves: 'You serve items first in, first out from both ends of a deque without an O(n) pop.',
+    pool: ['s-q-g-a', 's-q-g-b', 's-q-g-c'],
+    need: 2,
+    skills: ['queue_deque']
+  },
+  {
+    id: 'g-course-schedule',
+    title: 'Dependencies with a queue',
+    unitId: 's-course-schedule',
+    proves: 'Count what each task waits on, start from what is ready, and spot a loop when tasks are left over.',
+    pool: ['s-cs-g-a', 's-cs-g-b', 's-cs-g-c'],
+    need: 2,
+    skills: ['queue_deque', 'cycle_detection']
+  },
+  {
+    id: 'g-design-class',
+    title: 'Design a class',
+    unitId: 's-design-class',
+    proves: 'A dict plus the right ordering structure behind a small class API, every method doing what it promises.',
+    pool: ['s-dc-g-a', 's-dc-g-b', 's-dc-g-c'],
+    need: 2,
+    skills: ['dict_assign', 'dict_membership']
   }
 ]
 

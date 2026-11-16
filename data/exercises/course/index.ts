@@ -8,6 +8,9 @@ import { sections as labsW1W2 } from '@/data/exercises/course/labs-w1w2'
 import { sections as labsW3W8 } from '@/data/exercises/course/labs-w3w8'
 import { sections as labsW9W13 } from '@/data/exercises/course/labs-w9w13'
 import { sections as labsApplied } from '@/data/exercises/course/labs-applied'
+import { sections as sprint } from '@/data/exercises/course/sprint'
+import { sections as labsSprint } from '@/data/exercises/course/labs-sprint'
+import { sections as prep } from '@/data/exercises/course/prep'
 
 /**
  * Reps 2.0 course content: the sections the 14-week course needs that the
@@ -15,4 +18,4 @@ import { sections as labsApplied } from '@/data/exercises/course/labs-applied'
  * 13 transfer bank, lab builds). Referenced by id from data/course/units.ts,
  * gates.ts and labs. Not part of the 90-day calendar, so it never changes the old plan.
  */
-export const COURSE_SECTIONS: Section[] = [...week1, ...week2, ...gatesLater, ...week13, ...labsW1W2, ...labsW3W8, ...labsW9W13, ...labsApplied, ...visualRebuilds]
+export const COURSE_SECTIONS: Section[] = [...week1, ...week2, ...gatesLater, ...week13, ...labsW1W2, ...labsW3W8, ...labsW9W13, ...labsApplied, ...visualRebuilds, ...sprint, ...labsSprint, ...prep]
