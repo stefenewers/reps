@@ -4,6 +4,10 @@ import { labs as labsW1W2 } from '@/data/course/content/labs-w1w2'
 import { labs as labsW3W8 } from '@/data/course/content/labs-w3w8'
 import { labs as labsW9W13 } from '@/data/course/content/labs-w9w13'
 import { labs as labsApplied } from '@/data/course/content/labs-applied'
+import { labs as labsSprint } from '@/data/course/content/labs-sprint'
+import { scaffolds as scaffoldsW3W8 } from '@/data/course/content/scaffolds/w3w8'
+import { scaffolds as scaffoldsW9W13 } from '@/data/course/content/scaffolds/w9w13'
+import { scaffolds as scaffoldsSprint } from '@/data/course/content/scaffolds/sprint'
 import { visualWorkedExamples } from '@/data/course/content/visual-examples'
 import { APPLIED_LESSONS } from '@/data/course/applied'
 import type { Lab, Lesson, WorkedExample } from '@/data/course/types'
@@ -15,5 +19,7 @@ export const LESSON_BY_ID: Record<string, Lesson> = Object.fromEntries(LESSONS.m
 export const WORKED_EXAMPLES: WorkedExample[] = [...week1Examples, ...week2Examples, ...visualWorkedExamples]
 export const WORKED_EXAMPLE_BY_ID: Record<string, WorkedExample> = Object.fromEntries(WORKED_EXAMPLES.map((w) => [w.id, w]))
 
-export const LABS: Lab[] = [...labsW1W2, ...labsW3W8, ...labsW9W13, ...labsApplied]
+const SCAFFOLDS = { ...scaffoldsW3W8, ...scaffoldsW9W13, ...scaffoldsSprint }
+/** Every lab; scaffolded labs carry their step-by-step scaffold (content in data/course/content/scaffolds). */
+export const LABS: Lab[] = [...labsW1W2, ...labsW3W8, ...labsW9W13, ...labsApplied, ...labsSprint].map((l) => (SCAFFOLDS[l.id] ? { ...l, scaffold: SCAFFOLDS[l.id] } : l))
 export const LAB_BY_ID: Record<string, Lab> = Object.fromEntries(LABS.map((l) => [l.id, l]))
