@@ -48,6 +48,8 @@ export interface LearningUnit {
   /** Targets offered once the unit is ready and their bridge is clean; never required. */
   readinessTargets?: number[]
   retrievalSkills: SkillId[]
+  /** New in the Sprint (data/course/sprint.ts): absent from every day before SPRINT_START. */
+  sprintOnly?: boolean
 }
 
 export const UNITS: LearningUnit[] = [
@@ -753,6 +755,24 @@ export const UNITS: LearningUnit[] = [
     retrievalSkills: ['queue_deque', 'bfs_levels']
   },
   {
+    id: 's-queue-basics',
+    week: 8,
+    title: 'Queues with deque',
+    phase: 'core-dsa',
+    purpose: 'A queue serves things in the order they arrived; collections.deque makes both ends O(1). Grid BFS and Course Schedule stand on it.',
+    prerequisites: ['w1-loop-control'],
+    lessonIds: ['bfs'],
+    workedExampleIds: [],
+    sections: ['s-queue-gates'],
+    path: ['o7-dq-trace-basic', 'o7-dq-drain', 'o7-dq-rotate-elim', 'o7-dq-dbg-pop-end'],
+    optional: [],
+    gateIds: ['g-queue-basics'],
+    labIds: [],
+    targets: [],
+    retrievalSkills: ['queue_deque'],
+    sprintOnly: true
+  },
+  {
     id: 'w8-grids',
     week: 8,
     title: 'Grids',
@@ -859,6 +879,24 @@ export const UNITS: LearningUnit[] = [
     retrievalSkills: ['cycle_detection']
   },
   {
+    id: 's-course-schedule',
+    week: 9,
+    title: 'Course Schedule with a queue',
+    phase: 'patterns',
+    purpose: "In-degrees and a queue of what is ready (Kahn's algorithm): an order for every task, or proof that a loop blocks some. No recursion.",
+    prerequisites: ['s-queue-basics', 'w2-hashing'],
+    lessonIds: ['graphs'],
+    workedExampleIds: [],
+    sections: ['s-course-schedule', 's-course-schedule-gates'],
+    path: ['o8-a-in-degree', 's-cs-kahn-trace', 'o8-y-kahn-write', 'cap-course-schedule', 's-cap-course-schedule-ii'],
+    optional: [],
+    gateIds: ['g-course-schedule'],
+    labIds: ['lab-dependency-planner'],
+    targets: [],
+    retrievalSkills: ['queue_deque'],
+    sprintOnly: true
+  },
+  {
     id: 'w9-heaps',
     week: 9,
     title: 'Sorting keys and heaps',
@@ -955,6 +993,35 @@ export const UNITS: LearningUnit[] = [
   },
 
   // ── Week 11: backtracking and basic DP ───────────────────────────────────
+  {
+    id: 's-design-class',
+    week: 10,
+    title: 'Design a class',
+    phase: 'patterns',
+    purpose: 'A dict plus one ordering structure behind a small class API: LRU cache, time-based store, hit counter, bank system, O(1) random set.',
+    prerequisites: ['w2-hashing'],
+    lessonIds: ['dictionaries'],
+    workedExampleIds: [],
+    sections: ['s-design-class', 's-design-class-gates'],
+    path: [
+      's-dc-lru-trace',
+      's-dc-lru-build',
+      's-dc-lru-dbg',
+      's-dc-cap-lru',
+      's-dc-timemap-trace',
+      's-dc-timemap-build',
+      's-dc-hit-counter',
+      's-dc-bank-build',
+      's-dc-randomized-set',
+      's-dc-cap-timemap'
+    ],
+    optional: [],
+    gateIds: ['g-design-class'],
+    labIds: ['lab-bank-system'],
+    targets: [],
+    retrievalSkills: ['dict_assign', 'dict_membership'],
+    sprintOnly: true
+  },
   {
     id: 'w11-backtracking',
     week: 11,

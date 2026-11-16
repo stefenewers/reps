@@ -70,3 +70,48 @@ npx playwright test e2e/course.spec.ts
 Final completion evidence: `docs/reps-2-completion.md` and `planning/reps-v2-final-audit.md`.
 
 Reports: `planning/reps-v2-baseline.md`, `planning/reps-v2-migration.{md,json}`, `planning/reps-v2-content-gaps.md`.
+
+## Sprint and Prep (from Nov 16)
+
+From 2026-11-16 a date-gated overlay replaces the curated weeks 4–14 schedule. Every date before that is computed exactly as before; `lib/course/sprint.test.ts` checks this against a snapshot recorded from `main` (`lib/course/__fixtures__/pre-sprint-snapshot.json`).
+
+- **Model** (`data/course/sprint.ts`):
+  - The `SPRINT_UNITS` order is:
+    1. windows
+    2. stacks
+    3. heaps (sorting with `key=` first)
+    4. intervals
+    5. design a class (new)
+    6. binary search
+    7. linked lists (light)
+    8. queue basics (new)
+    9. grids (BFS first)
+    10. Course Schedule with Kahn's algorithm (new)
+  - `SPRINT_PATHS` holds subsets of existing path ids. `SPRINT_PREREQS`: grids needs queue basics, not trees.
+  - `BIG_TECH_PACK` and `DP_LIGHT` are defined here too. `units.ts` paths and prerequisites are untouched; the overlay is applied in `unitsOn(date)` (`lib/course/routing.ts`).
+  - The three new units are `sprintOnly`. They don't exist before 11/16.
+- **Plan** (`lib/course/sprint-plan.ts`, `sprint-day.ts`): pure functions, recomputed from attempts, nothing stored.
+  - **Required work:** unpassed sprint-path reps, uncleared checkpoints and unfinished labs. Any weeks 1–3 unit that isn't ready comes first.
+  - **Due dates:** a checkpoint and its lab are due the training day after the unit's path is first fully passed.
+  - **Review block:** each day starts with up to 4 pending review-queue items: `shaky` first, then sprint skills, then the oldest. On Saturdays there is also an unaided LC 49 / LC 128 redo.
+  - **Target:** `ceil(remaining ÷ remaining weighted days) + 4`, between 20 and 24. Saturdays get 60%. The target is fixed at the start of the day.
+  - **Behind:** when 24 a day can't hold the work, the plan says "behind by N" and spills linked lists, then binary search, into Dec 1–5.
+  - **Days:** Sundays, 11/26 and 11/27 are rest; Saturdays are light training days.
+- **Prep** (`lib/course/prep-plan.ts`, from Dec 1): a fixed template filled from ready units only:
+  - two timed problems (a miss returns after 3 days)
+  - Mon–Sat format practice: CodeSignal-style builds, offline API integration, debugging, and SQL done outside the app
+  - the AI ramp
+  - one story prompt, saved under `story:<id>`
+  - 1D DP in the week of Dec 14
+  - up to 4 review items
+
+  Rest days are Sundays, Dec 24–26, Dec 31 and Jan 1. Mocks open from Dec 7, only when every unit they draw on is ready; big-tech units also need their checkpoint cleared.
+- **Scaffolded labs** (`Lab.scaffold`, `lib/course/scaffold.ts`, `components/course/lab-scaffold.tsx`):
+  - A scaffold has a worked example, 4–7 locked steps with checkpoint tests (run against the learner's draft), a hint ladder, a reference reveal (the step is marked revealed, not own work) and an explain-back.
+  - Progress is stored under `scaffold:<labId>`.
+  - The fade is derived: full for the first two scaffolded labs and after any reveal, then partial, then minimal after two clean partial labs.
+  - Content is in `data/course/content/scaffolds/`. `npm run verify:content` (or `-- scaffolds`) checks every step against Python.
+- **Export guard** (`RepsRepository.exportGuard`): before exporting, a signed-out, local-only or not-yet-pulled device warns that the export will be incomplete. Bundles now carry `rowCounts` and `syncStatus`; version-1 bundles without them still import.
+- **Scripts:**
+  - `npx tsx scripts/progress-snapshot.ts private/progress.json [date]` (read-only status)
+  - `npx tsx scripts/print-sprint.ts private/progress.json [as-of] [prep dates…]` (the plan, with hours)

@@ -1,5 +1,6 @@
 'use client'
 
+import { phaseOf } from '@/data/course/calendar'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState, type ReactNode } from 'react'
@@ -107,7 +108,7 @@ function Momentum({ compact = false }: { compact?: boolean }) {
             {cd.streak} day streak
           </span>
           <span className="block text-[11.5px] text-shell-muted">
-            Week {cd.week.number} of 14 · {cd.week.short}
+            {phaseOf(today) === 'course' ? `Week ${cd.week.number} of 14 · ${cd.week.short}` : phaseOf(today) === 'sprint' ? 'Sprint · to Nov 30' : 'Prep · interview practice'}
           </span>
         </span>
       )}

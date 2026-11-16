@@ -1,3 +1,4 @@
+import { SPRINT_START } from '@/data/course/sprint'
 import { APPLIED_SCHEDULE, CAPABILITIES, LAB_PREREQUISITES } from '@/data/course/applied'
 import { COURSE_START, COURSE_END, dailyTarget, dayType } from '@/data/course/calendar'
 import { CONCEPT_BY_ID } from '@/data/concepts'
@@ -107,7 +108,8 @@ export function auditApplied(): string[] {
   for (const lab of LABS) if (lab.id === 'lab-grounded-answer' && !lab.optional) problems.push('lab-grounded-answer must stay optional (no new required work)')
   const expected = (w: number) => (w === 1 ? 10 : w === 2 ? 12 : 15)
   for (let w = 1; w <= 14; w++) if (dailyTarget(w) !== expected(w)) problems.push(`Week ${w}: daily target changed to ${dailyTarget(w)}`)
-  for (let d = COURSE_START; d <= COURSE_END; d = addDays(d, 1))
+  // The curated plan schedules days before the Sprint; from SPRINT_START due dates are derived from progress and never land on rest.
+  for (let d = COURSE_START; d <= COURSE_END && d < SPRINT_START; d = addDays(d, 1))
     if (dayType(d) === 'rest' && (DAY_PLAN[d]?.labsDue?.length || DAY_PLAN[d]?.gatesDue?.length)) problems.push(`${d}: planned rest has work due`)
 
   return problems

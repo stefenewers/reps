@@ -318,31 +318,26 @@ test('lab design, build evidence, change evidence and review combine into persis
   await expect(page.getByTestId('today-contract')).toContainText('0 / 10')
 })
 
-for (const grade of ['red', 'yellow', 'green'] as const) {
-  test(`Week 14 ${grade} explains and enforces its mock allowance`, async ({ page }) => {
-    const bank = SECTION_BY_ID['c13-transfer'].exercises
-    const small = bank.filter((e) => e.stage !== 'interview' && e.minutes < 15)
-    const chosen = grade === 'green' ? bank : grade === 'yellow' ? small.slice(0, 6) : []
-    await at(page, '2027-01-25T12:00:00-05:00')
-    await page.goto('/')
-    if (chosen.length) {
-      await page.getByLabel('Import progress file').setInputFiles(bundle(chosen.map((e) => ({ id: e.id, date: '2027-01-22' }))))
-      await page.goto('/')
-    }
-    await expect(page.getByTestId('week14-route')).toHaveAttribute('data-grade', grade)
+test('mocks: the Week 14 route still gates them before Prep; from Dec 1 Prep opens interview mode, mocks from Dec 7 on ready units only', async ({ page }) => {
+  // Before Prep (the Sprint): the old readiness policy, closed without transfer evidence.
+  await at(page, '2026-11-20T12:00:00-05:00')
+  await page.goto('/interview')
+  await expect(page.getByTestId('mock-gate')).toContainText('Transfer grade: red')
+  await page.goto(`/interview/${MOCKS[0].id}`)
+  await expect(page.getByTestId('mock-locked-page')).toBeVisible()
+  // Prep (Dec 1 on): interview mode is open whatever Week 13 says; before Dec 7, and on units not ready, mocks stay closed.
+  for (const date of ['2026-12-04T12:00:00-05:00', '2027-01-25T12:00:00-05:00']) {
+    await at(page, date)
     await page.goto('/interview')
-    await expect(page.getByTestId('mock-gate')).toContainText(`Transfer grade: ${grade}`)
+    await expect(page.getByTestId('prep-mocks')).toBeVisible()
+    await expect(page.getByTestId('mock-gate')).not.toContainText('Transfer grade')
     await page.goto(`/interview/${MOCKS[0].id}`)
-    if (grade === 'red') await expect(page.getByTestId('mock-locked-page')).toBeVisible()
-    else {
-      await page.getByRole('button', { name: 'Start the clock' }).click()
-      await expect(page.getByRole('button', { name: /Hint|Solution|Basics/i })).toHaveCount(0)
-      await page.goto(`/interview/${MOCKS[1].id}`)
-      if (grade === 'yellow') await expect(page.getByTestId('mock-locked-page')).toBeVisible()
-      else await expect(page.getByRole('button', { name: 'Start the clock' })).toBeVisible()
-    }
-  })
-}
+    await expect(page.getByTestId('mock-locked-page')).toBeVisible()
+  }
+  await at(page, '2026-12-04T12:00:00-05:00')
+  await page.goto('/interview')
+  await expect(page.getByTestId('mock-gate')).toContainText('mocks open on Dec 7')
+})
 
 test('a malformed progress file is rejected visibly and leaves saved progress intact', async ({ page }) => {
   await at(page, '2026-10-26T16:00:00-04:00')
@@ -521,6 +516,11 @@ test('Monday, Day 1, end to end: every rep solved through the session, the day c
 test('the applied / design thread: Today teaches it before the lab, checks are think-then-reveal, the lab links back, Progress shows evidence', async ({ page }) => {
   await at(page, '2026-10-27T09:00:00-04:00')
   await page.goto('/')
+  // Day 1 done (since main's catch-up change, an empty learner on Day 2 is taught Day 1 first).
+  const day1 = UNITS.find((u) => u.id === 'w1-state-while')!.path!.map((id) => ({ id, date: '2026-10-26' }))
+  await page.getByLabel('Import progress file').setInputFiles(bundle(day1))
+  await expect(page.getByText(/Imported/)).toBeVisible()
+  await page.goto('/')
   // Day 2: the design lesson joins Learn first, after the unit's own learning, before the lab due today.
   const learn = page.getByTestId('learn-first')
   await expect(learn).toContainText('Designing a small program')
@@ -571,4 +571,40 @@ test('the Learn library: every track is findable, each lesson says its week and 
   await page.goto('/progress')
   await page.getByRole('link', { name: /Browse the Applied Engineering lessons/ }).click()
   await expect(page).toHaveURL(/\/learn#applied$/)
+})
+
+test('the Sprint from Nov 16: Today says Sprint with a number, starts with sliding windows, and a scaffolded lab opens on its worked example', async ({ page }) => {
+  // Progress shaped like the learner's real export (weeks 1–3 ready, 12 checkpoints, 6 labs; code and free text redacted).
+  const { readFileSync } = await import('node:fs')
+  await at(page, '2026-11-16T09:00:00-05:00')
+  await page.goto('/')
+  await page.getByLabel('Import progress file').setInputFiles({ name: 'progress.json', mimeType: 'application/json', buffer: readFileSync('lib/course/__fixtures__/progress-nov16.json') })
+  await expect(page.getByText(/Imported/)).toBeVisible()
+  await page.goto('/')
+  await expect(page.getByTestId('course-week')).toContainText('Sprint')
+  await expect(page.getByTestId('day-target')).toHaveText(/^\d+ reps$/)
+  await expect(page.getByTestId('sprint-panel')).toContainText('must-know reps left')
+  await expect(page.getByTestId('today-hero')).toContainText('Sliding windows')
+  // Review first, then new work: the first new rep is the first sliding-window rep; weeks 1–3 bring no teaching.
+  // Review-queue items are in today's list (shown as cold reps); new work starts with the first sliding-window rep.
+  await expect(page.locator('[data-testid="training-items"] li[data-kind="cold"]').first()).toBeVisible()
+  await expect(page.locator('[data-testid="training-items"] li[data-kind]:not([data-kind="cold"])').first()).toContainText(EXERCISE_BY_ID['d4-win-trace-slices'].title)
+  await expect(page.getByTestId('learn-first')).not.toContainText('Lesson: State')
+  // Lower on Today: the week is the Sprint's week, its checkpoints are sprint checkpoints, the Road names the next sprint unit.
+  await expect(page.getByTestId('week-card-title')).toContainText('Sprint')
+  await expect(page.getByTestId('week-card')).not.toContainText('Recursion')
+  await expect(page.getByTestId('road-next')).toContainText('Sliding windows')
+  await page.goto('/plan')
+  await expect(page.getByTestId('road-sprint-note')).toContainText('Sliding windows')
+
+  await page.goto('/lab/lab-activity-window')
+  const scaffold = page.getByTestId('lab-scaffold')
+  await expect(scaffold).toHaveAttribute('data-fade', 'full')
+  await expect(page.getByTestId('scaffold-worked-example')).toBeVisible()
+  const example = await page.getByTestId('scaffold-worked-example').boundingBox()
+  const steps = await page.getByTestId('scaffold-steps').boundingBox()
+  expect(example!.y).toBeLessThan(steps!.y)
+  await expect(page.getByTestId('scaffold-step-0')).toHaveAttribute('data-state', 'open')
+  await expect(page.getByTestId('scaffold-step-1')).toHaveAttribute('data-state', 'locked')
+  await expect(page.getByTestId('lab-finish')).toBeDisabled()
 })

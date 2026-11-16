@@ -58,7 +58,17 @@ export default function InterviewView() {
         }
       />
       <div className="relative mx-auto -mt-24 w-full max-w-[1180px] px-5 pb-28 sm:px-8">
-      {gate.gated && (
+      {gate.prep && (
+        <section aria-labelledby="prep-h" className="deck p-5 sm:p-7" data-testid="prep-mocks">
+          <h2 id="prep-h" className="section-title">
+            Prep mocks
+          </h2>
+          <p className="mt-2 max-w-[720px] text-[14px] text-ink-2" data-testid="mock-gate">
+            {gate.note} {gate.allowed ? `${gate.allowed} open now.` : ''}
+          </p>
+        </section>
+      )}
+      {gate.gated && !gate.prep && (
         <section aria-labelledby="route-h" className="deck p-5 sm:p-7">
           <h2 id="route-h" className="section-title">
             Your Week 14 route

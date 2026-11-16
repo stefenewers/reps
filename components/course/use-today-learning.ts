@@ -11,6 +11,7 @@ import { APPLIED_BY_UNIT, APPLIED_SCHEDULE, checksKey } from '@/data/course/appl
 import { daysBetween } from '@/lib/dates'
 import type { LearningUnit } from '@/data/course/units'
 import { catchUpUnits } from '@/lib/course/routing'
+import { SPRINT_START } from '@/data/course/sprint'
 
 export type LearnKind = 'lesson' | 'demo' | 'example'
 
@@ -65,7 +66,9 @@ export const LEARN_LABEL: Record<LearnKind, string> = { lesson: 'Lesson', demo: 
 export function useTodayLearning() {
   const { repo, today } = useReps()
   const cd = useCourseDay()
-  const focus = (DAY_PLAN[today]?.focusUnits ?? []).map((id) => UNIT_BY_ID[id]).filter(Boolean)
+  // From the Sprint, the day's units come from the generated plan (the contract's plan), not the old curated schedule.
+  const overlay = today >= SPRINT_START
+  const focus = ((overlay ? cd.dayContract.plan?.focusUnits : DAY_PLAN[today]?.focusUnits) ?? []).map((id) => UNIT_BY_ID[id]).filter(Boolean)
   const units: LearningUnit[] = focus.length ? focus : cd.course.current ? [cd.course.current.unit] : []
   // When the course is behind the calendar, teach the earlier units whose reps are still to learn (not just the first unfinished one,
   // which may only be waiting on its checkpoint), else the unit the learner is actually on.
@@ -74,8 +77,8 @@ export function useTodayLearning() {
       .filter(([d]) => d < today)
       .flatMap(([, p]) => p.focusUnits)
   )
-  const behind = catchUpUnits(cd.course.statuses, cd.week.number, scheduledBefore)
-  const learningUnits = behind.length ? behind : cd.course.current && cd.course.current.unit.week < cd.week.number ? [cd.course.current.unit] : units
+  const behind = overlay ? [] : catchUpUnits(cd.course.statuses, cd.week.number, scheduledBefore)
+  const learningUnits = overlay ? units : behind.length ? behind : cd.course.current && cd.course.current.unit.week < cd.week.number ? [cd.course.current.unit] : units
   const unlabeled = cd.week.unlabeled
   const items: LearnItem[] = unlabeled
     ? []

@@ -10,6 +10,9 @@ import { IconArrowRight, IconCheck, IconLock } from '@/components/icons'
 import Markdown from '@/components/markdown'
 import type { Lab } from '@/data/course/types'
 import { DESIGN_MIN_CHARS, labKey, labProgress, type LabState } from '@/lib/course/labs'
+import { LABS } from '@/data/course/lessons'
+import LabScaffold from '@/components/course/lab-scaffold'
+import { fadeFor, scaffoldKey, scaffoldProgress, type ScaffoldState } from '@/lib/course/scaffold'
 import '@/components/demos/learning.css'
 
 /** One stage on the lab's path. */
@@ -44,7 +47,19 @@ export default function LabView({ lab }: { lab: Lab }) {
     setLocal(next)
     void repo.setState(labKey(lab.id), next)
   }
-  const p = labProgress(lab, saved, attempts)
+  // Scaffolded labs: the explain-back is one more condition before done; the fade comes from finished scaffolded labs.
+  const scaffoldState = lab.scaffold ? repo.state<ScaffoldState>(scaffoldKey(lab.id)) : undefined
+  const sp = lab.scaffold ? scaffoldProgress(lab, scaffoldState) : undefined
+  const fade = lab.scaffold
+    ? fadeFor(
+        lab,
+        LABS,
+        Object.fromEntries(LABS.map((l) => [l.id, l.id === lab.id ? saved : repo.state<LabState>(labKey(l.id))])),
+        Object.fromEntries(LABS.filter((l) => l.scaffold).map((l) => [l.id, repo.state<ScaffoldState>(scaffoldKey(l.id))])),
+        attempts
+      )
+    : undefined
+  const p = labProgress(lab, saved, attempts, sp ? { explainDone: sp.explainDone, revealedOn: sp.revealedOn } : undefined)
   const stages = [
     { key: 'design', title: 'Design', done: p.designDone },
     { key: 'build', title: 'Build', done: p.buildPassed },
@@ -56,9 +71,10 @@ export default function LabView({ lab }: { lab: Lab }) {
   const reviewed = lab.review.filter((_, i) => saved.review[i]).length
   const missing = [
     !p.designDone && `the design (${designed} of ${lab.designQuestions.length} answered)`,
-    !p.buildPassed && 'the build passing its tests',
+    !p.buildPassed && (sp?.revealedOn ? `the build passing again after ${sp.revealedOn} (a step was revealed)` : 'the build passing its tests'),
     !p.changePassed && 'the change request passing',
-    !p.reviewDone && `the review (${reviewed} of ${lab.review.length} checked)`
+    !p.reviewDone && `the review (${reviewed} of ${lab.review.length} checked)`,
+    sp && !sp.explainDone && 'the explain-back'
   ].filter(Boolean) as string[]
 
   return (
@@ -80,6 +96,8 @@ export default function LabView({ lab }: { lab: Lab }) {
             ))}
           </ul>
         </section>
+
+        {lab.scaffold && fade && <LabScaffold lab={lab} fade={fade} />}
 
         <div>
           <Stage n={1} done={stages[0].done} now={now === 'design'} title="Design first" sub="A sentence or two each. Decide before you type code.">

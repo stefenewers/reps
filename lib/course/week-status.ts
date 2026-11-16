@@ -1,5 +1,6 @@
-import { COURSE_START, courseWeekOf, dailyTarget, dayType, holidayOf, trainingDays, weekDates, weekTarget, type DayType } from '@/data/course/calendar'
+import { COURSE_START, courseWeekOf, dailyTarget, dailyTargetOn, dayType, holidayOf, trainingDays, weekDates, weekTarget, type DayType } from '@/data/course/calendar'
 import { addDays } from '@/lib/dates'
+import { SPRINT_START } from '@/data/course/sprint'
 
 /**
  * The day, the week and the streak, from credits per date (lib/course/credit.ts).
@@ -22,7 +23,7 @@ export function courseDay(date: string, credits: Record<string, number> = {}): C
   const week = courseWeekOf(date)
   const type = dayType(date)
   const holiday = holidayOf(date)?.label
-  if (type === 'training') return { date, week, type, target: dailyTarget(week), optionalTarget: 0, holiday }
+  if (type === 'training') return { date, week, type, target: dailyTargetOn(date), optionalTarget: 0, holiday }
   if (type === 'recovery') {
     const short = Math.max(0, weekTarget(week) - weekDates(week).filter((d) => d < date).reduce((n, d) => n + (credits[d] ?? 0), 0))
     return { date, week, type, target: 0, optionalTarget: short, holiday }
@@ -59,12 +60,13 @@ export interface WeekProgress {
  */
 export function weekProgress(week: number, today: string, credits: Record<string, number>, extra: { labsDone?: number; labsRequired?: number; gatesCleared?: number; gatesRequired?: number } = {}): WeekProgress {
   const days = trainingDays(week)
-  const rate = dailyTarget(week)
+  // Before the Sprint every training day of a week has the same target; from it, each date has its own (dailyTargetOn).
+  const rate = weekDates(week)[0] < SPRINT_START ? dailyTarget(week) : Math.max(0, ...days.map(dailyTargetOn))
   const dates = weekDates(week)
   const done = dates.filter((d) => d <= today).reduce((n, d) => n + (credits[d] ?? 0), 0)
   const past = days.filter((d) => d < today)
-  const todayDone = days.includes(today) && (credits[today] ?? 0) >= rate
-  const expectedByNow = (past.length + (todayDone ? 1 : 0)) * rate
+  const todayDone = days.includes(today) && (credits[today] ?? 0) >= dailyTargetOn(today)
+  const expectedByNow = [...past, ...(todayDone ? [today] : [])].reduce((n, d) => n + dailyTargetOn(d), 0)
   const shortfall = Math.max(0, expectedByNow - done)
   const ended = today > dates[6]
   const target = weekTarget(week)
@@ -102,7 +104,7 @@ export function trainingStreak(today: string, credits: Record<string, number>): 
   let streak = 0
   for (let d = today; d >= COURSE_START; d = addDays(d, -1)) {
     if (dayType(d) !== 'training') continue
-    const met = (credits[d] ?? 0) >= dailyTarget(courseWeekOf(d))
+    const met = (credits[d] ?? 0) >= dailyTargetOn(d)
     if (met) streak++
     else if (d === today) continue
     else break
@@ -129,9 +131,9 @@ export type Momentum = 'starting' | 'building' | 'strong' | 'on-fire'
  */
 export function momentum(today: string, credits: Record<string, number>, extra: { gatesCleared?: number; labsDone?: number } = {}): Momentum {
   const days: string[] = []
-  for (let d = today; d >= COURSE_START && days.length < 10; d = addDays(d, -1)) if (dayType(d) === 'training' && (d < today || (credits[d] ?? 0) >= dailyTarget(courseWeekOf(d)))) days.push(d)
+  for (let d = today; d >= COURSE_START && days.length < 10; d = addDays(d, -1)) if (dayType(d) === 'training' && (d < today || (credits[d] ?? 0) >= dailyTargetOn(d))) days.push(d)
   if (!days.length) return 'starting'
-  const met = days.filter((d) => (credits[d] ?? 0) >= dailyTarget(courseWeekOf(d))).length
+  const met = days.filter((d) => (credits[d] ?? 0) >= dailyTargetOn(d)).length
   const rate = met / days.length
   const bonus = Math.min(0.2, 0.05 * ((extra.gatesCleared ?? 0) + (extra.labsDone ?? 0)))
   const score = rate + bonus

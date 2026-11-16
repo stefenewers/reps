@@ -5,7 +5,9 @@ import { IconArrowRight, IconCheck, IconLock } from '@/components/icons'
 import { weekState, WEEK_STATE_LABEL } from '@/components/course/road-state'
 import type { useCourseDay } from '@/components/use-course-day'
 import { useReps } from '@/components/reps-provider'
-import { COURSE_TARGET, courseWeekOf } from '@/data/course/calendar'
+import { COURSE_TARGET, courseWeekOf, PHASE_LABEL, phaseOf } from '@/data/course/calendar'
+import { isSprintUnit } from '@/data/course/sprint'
+import { sprintWeek } from '@/components/course/road-state'
 import { WEEKS } from '@/data/course/weeks'
 
 type CourseDayState = ReturnType<typeof useCourseDay>
@@ -13,13 +15,17 @@ type CourseDayState = ReturnType<typeof useCourseDay>
 /** The Road to Ready at a glance, under Today: fourteen milestones, where you are, what is next. */
 export default function RoadMini({ cd }: { cd: CourseDayState }) {
   const { today } = useReps()
-  const current = Math.max(1, courseWeekOf(today))
+  // From the Sprint the marker sits on the week of the first unfinished sprint unit, not the calendar week.
+  const current = sprintWeek(cd.course.statuses, today) ?? Math.max(1, courseWeekOf(today))
   const total = Object.values(cd.credits).reduce((a, b) => a + b, 0)
   const weeks = WEEKS.map((w) => {
     const units = cd.course.statuses.filter((s) => s.unit.week === w.number)
     return { w, state: weekState(units, w.number, current, cd.contracts.weekContract(w.number, today).complete) }
   })
   const next = weeks.find((x) => x.w.number > current)
+  // From the Sprint the order is the sprint list, not the weeks: name the next unit in it.
+  const phase = phaseOf(today)
+  const sprintNext = cd.course.statuses.filter((s) => isSprintUnit(s.unit.id) && s.state !== 'ready' && s.state !== 'maintenance')
   return (
     <section aria-labelledby="road-mini-h" className="rounded-2xl bg-shell p-5 text-shell-ink sm:p-6" data-testid="road-mini">
       <div className="flex flex-wrap items-baseline justify-between gap-3">
@@ -27,7 +33,7 @@ export default function RoadMini({ cd }: { cd: CourseDayState }) {
           Road to Ready
         </h2>
         <p className="num text-[12.5px] text-shell-muted">
-          {total} of {COURSE_TARGET} qualifying reps · Week {current} of 14
+          {total} of {COURSE_TARGET} qualifying reps · {phase === 'course' ? `Week ${current} of 14` : PHASE_LABEL[phase]}
         </p>
       </div>
       <ol className="mt-5 grid grid-cols-7 gap-y-4 sm:grid-cols-14" aria-label="Fourteen weeks">
@@ -66,7 +72,16 @@ export default function RoadMini({ cd }: { cd: CourseDayState }) {
       </ol>
       <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-shell-3 pt-4">
         <p className="text-[13px] text-shell-muted">
-          {next ? (
+          {phase !== 'course' ? (
+            sprintNext.length ? (
+              <span data-testid="road-next">
+                Sprint, now: <span className="text-shell-ink">{sprintNext[0].unit.title}</span>
+                {sprintNext[1] ? <>, then {sprintNext[1].unit.title}</> : null}. The big-tech pack is optional.
+              </span>
+            ) : (
+              <span data-testid="road-next">The must-know list is done. Prep: interview practice from ready units; the big-tech pack is optional.</span>
+            )
+          ) : next ? (
             <>
               Next: <span className="text-shell-ink">Week {next.w.number} · {next.w.title}</span>. It opens when this week&apos;s checkpoints are cleared.
             </>

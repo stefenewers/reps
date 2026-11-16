@@ -176,3 +176,51 @@ export function verifyLessons(lessons: { id: string; sections: { heading: string
   }
   return problems
 }
+
+/**
+ * Lab scaffolds: the worked example's solution runs; every step's checkpoint tests pass on the reference
+ * solution (or on the solution of the exercise the step names); a step count of 4–7, a hint ladder per step,
+ * and 2–3 explain-back prompts. The starter code of the step's exercise must not already pass the step.
+ */
+export function verifyScaffolds(
+  labs: { id: string; buildExerciseId: string; changeRequest: { exerciseId: string }; scaffold?: import('@/data/course/types').LabScaffold }[],
+  exercises: Record<string, Exercise>
+): string[] {
+  const problems: string[] = []
+  const jobs: Job[] = []
+  for (const lab of labs) {
+    const s = lab.scaffold
+    if (!s) continue
+    const where = `[scaffold ${lab.id}]`
+    if (s.steps.length < 4 || s.steps.length > 7) problems.push(`${where} needs 4–7 steps, has ${s.steps.length}`)
+    if (s.explainBack.length < 2 || s.explainBack.length > 3) problems.push(`${where} needs 2–3 explain-back prompts`)
+    if (!s.workedExample.walkthrough.length) problems.push(`${where} worked example has no walkthrough`)
+    if (!s.referenceSolution.trim()) problems.push(`${where} empty reference solution`)
+    jobs.push({ id: `${lab.id}::example`, code: s.workedExample.solution, tests: [] })
+    s.steps.forEach((step, i) => {
+      if (!step.hints.length) problems.push(`${where} step ${i + 1} has no hints`)
+      const exId = step.checkpoint.exerciseId ?? lab.buildExerciseId
+      const ex = exercises[exId]
+      if (!ex) problems.push(`${where} step ${i + 1} names unknown exercise ${exId}`)
+      if (!step.checkpoint.tests?.length) return
+      const reference = exId === lab.buildExerciseId ? s.referenceSolution : ex?.solution
+      if (reference) jobs.push({ id: `${lab.id}::step${i}::ref`, code: reference, tests: step.checkpoint.tests })
+      if (ex?.starterCode && !hasBlanks(ex.starterCode)) jobs.push({ id: `${lab.id}::step${i}::starter`, code: ex.starterCode, tests: step.checkpoint.tests })
+    })
+  }
+  if (!jobs.length) return problems
+  const results = runPythonBatch(jobs)
+  for (const job of jobs) {
+    const r = results.get(job.id)
+    const [labId, what, kind] = job.id.split('::')
+    if (!r) problems.push(`[scaffold ${labId}] ${what}: no result`)
+    else if (what === 'example') {
+      if (r.error) problems.push(`[scaffold ${labId}] worked example raised: ${r.error}`)
+    } else if (kind === 'ref') {
+      if (r.error || r.tests.some((x) => !x.passed)) problems.push(`[scaffold ${labId}] ${what} fails on the reference: ${describe(r)}`)
+    } else if (kind === 'starter') {
+      if (!r.error && r.tests.length && r.tests.every((x) => x.passed)) problems.push(`[scaffold ${labId}] ${what}: the starter code already passes this checkpoint`)
+    }
+  }
+  return problems
+}

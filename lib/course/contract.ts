@@ -1,5 +1,8 @@
 import { CAPSTONE_LC } from '@/data/course/capstones'
-import { COURSE_START, courseWeekOf, dailyTarget, dayType, trainingDays, weekDates, weekTarget, type DayType } from '@/data/course/calendar'
+import { COURSE_START, courseWeekOf, dailyTarget, dailyTargetOn, dayType, trainingDays, weekDates, weekTarget, type DayType } from '@/data/course/calendar'
+import { inSprint, SPRINT_START } from '@/data/course/sprint'
+import { sprintDayOn, sprintDueDates, sprintPlanAsOf, type OverlayInput } from '@/lib/course/sprint-day'
+import { prepDayOn } from '@/lib/course/prep-plan'
 import { GATE_BY_ID } from '@/data/course/gates'
 import { LABS } from '@/data/course/lessons'
 import { DAY_PLAN, GATE_DUE, LAB_DUE, SCHEDULE, TARGET_DUE, type DayPlan } from '@/data/course/schedule'
@@ -25,6 +28,8 @@ import type { Attempt, Exercise } from '@/lib/types'
  */
 
 export interface ContractInput {
+  /** Optional: the review queue (from the Sprint, Today's review block). Targets never depend on it. */
+  review?: import('@/lib/types').ReviewItem[]
   attempts: Attempt[]
   entries: SolveEntry[]
   mastery: Record<string, SkillMastery>
@@ -141,6 +146,8 @@ export function createContracts(input: ContractInput) {
   const cache = new Map<string, Snapshot>()
   const sorted = input.attempts.filter(validAttempt).sort((x, y) => time(x).localeCompare(time(y)))
   const allSolved = solvedDates(input.attempts, input.entries)
+  // From SPRINT_START: sprint checkpoints and labs are due the training day after their path finishes (lib/course/sprint-day.ts).
+  const overlayDue = sprintDueDates(input)
   const labDoneOn = new Map<string, string>()
   for (const lab of LABS) {
     const p = labProgress(lab, input.labStates[lab.id], input.attempts)
@@ -173,7 +180,7 @@ export function createContracts(input: ContractInput) {
 
   function gateState(id: string, date: string, snap: Snapshot): ContractGate {
     const { g, unit, status } = gateOf(id, snap)
-    const base = { id, title: g.title, unitId: g.unitId, dueDate: GATE_DUE[id] ?? date, carried: false, next: status?.next ?? [], repair: status?.repair ?? [] }
+    const base = { id, title: g.title, unitId: g.unitId, dueDate: dueOf('gate', id) ?? date, carried: false, next: status?.next ?? [], repair: status?.repair ?? [] }
     if (!status || status.available.length === 0) return { ...base, state: 'cleared' }
     if (status.cleared) return { ...base, state: 'cleared' }
     if (status.failed && status.repair.length) return { ...base, state: 'repair' }
@@ -183,14 +190,23 @@ export function createContracts(input: ContractInput) {
     return { ...base, state: 'open' }
   }
 
-  /** Items due by `date`: this week's schedule through the date, plus anything earlier in the course still not done. */
+  /** When an item is due: the old schedule before SPRINT_START, the sprint's due rule from it. */
+  function dueOf(kind: 'gate' | 'lab', id: string): string | undefined {
+    const old = kind === 'gate' ? GATE_DUE[id] : LAB_DUE[id]
+    if (old && old < SPRINT_START) return old
+    return (kind === 'gate' ? overlayDue.gates : overlayDue.labs).get(id)
+  }
+
+  /** Items due by `date`: this week's schedule through the date, plus anything earlier in the course still not done. From SPRINT_START the old schedule's later days no longer apply. */
   function dueIds(date: string) {
     const gates: string[] = []
     const labs: string[] = []
     const targets: number[] = []
+    for (const [id, d] of overlayDue.gates) if (d <= date) gates.push(id)
+    for (const [id, d] of overlayDue.labs) if (d <= date) labs.push(id)
     for (const w of SCHEDULE)
       for (const d of w.days) {
-        if (d.date > date) continue
+        if (d.date > date || d.date >= SPRINT_START) continue
         gates.push(...d.gatesDue)
         labs.push(...d.labsDue)
         targets.push(...d.targetsDue)
@@ -201,9 +217,12 @@ export function createContracts(input: ContractInput) {
   function dayContract(date: string): DayContract {
     const week = Math.min(14, Math.max(1, courseWeekOf(date)))
     const type = date < COURSE_START ? 'training' : dayType(date)
-    const plan = DAY_PLAN[date]
+    const sprintDay = date >= SPRINT_START && (inSprint(date) || date > SPRINT_START) ? sprintDayOn(date, input as OverlayInput) : undefined
+    const prepDay = date >= SPRINT_START && !inSprint(date) ? prepDayOn(date, input as OverlayInput) : undefined
+    const plan = date >= SPRINT_START ? (sprintDay ?? prepDay?.plan) : DAY_PLAN[date]
     const snap = snapshot(date)
-    const target = type === 'training' ? dailyTarget(week) : 0
+    // Before the Sprint: the week's target, as always. Sprint: what is left over the days left. Prep: the day's template.
+    const target = type !== 'training' ? 0 : date < SPRINT_START ? dailyTarget(week) : inSprint(date) ? (sprintDay?.target ?? dailyTargetOn(date)) : (prepDay?.target ?? dailyTargetOn(date))
     const reps = { done: snap.credits, target, met: snap.credits >= target }
     const weekStart = weekDates(week)[0]
     const due = dueIds(date)
@@ -217,15 +236,15 @@ export function createContracts(input: ContractInput) {
         title: l.title,
         unitId: l.unitId,
         state: snap.labsDone.has(l.id) ? ('done' as const) : ('open' as const),
-        dueDate: LAB_DUE[l.id],
-        carried: carried(LAB_DUE[l.id])
+        dueDate: dueOf('lab', l.id)!,
+        carried: carried(dueOf('lab', l.id)!)
       }))
       // Done labs from earlier days are not today's business; today's and carried open ones are.
       .filter((l) => l.state === 'open' || l.dueDate === date)
 
     const attemptedGates = snap.statuses.flatMap((s) => s.gates.filter((g) => g.attempted && !g.cleared).map((g) => g.gate.id))
     const gates: ContractGate[] = [...new Set([...due.gates, ...attemptedGates])]
-      .map((id) => ({ ...gateState(id, date, snap), carried: carried(GATE_DUE[id]) }))
+      .map((id) => ({ ...gateState(id, date, snap), carried: carried(dueOf('gate', id) ?? date) }))
       .filter((g) => g.state !== 'cleared' || g.dueDate === date)
       // A checkpoint tried early that still waits on its reps is not today's business until it is due.
       .filter((g) => g.state !== 'locked' || due.gates.includes(g.id))
@@ -273,7 +292,10 @@ export function createContracts(input: ContractInput) {
     const snap = snapshot(asOf)
     let done = 0
     for (const d of dates) if (d <= asOf) done += snapshot(d).credits
-    const target = weekTarget(week)
+    const overlay = dates[0] >= SPRINT_START
+    // Sprint and Prep weeks: the week's target is the sum of its days' targets; its checkpoints and labs are those due in it.
+    const target = overlay ? days.reduce((n, d) => n + dayContract(d).reps.target, 0) : weekTarget(week)
+    if (overlay) return overlayWeek(week, date, dates, days, target)
     const units = UNITS.filter((u) => u.week === week)
     const labs = LABS.filter((l) => l.week === week).map((l) => ({
       id: l.id,
@@ -311,6 +333,48 @@ export function createContracts(input: ContractInput) {
     else if (shortfall <= rate && overdue.length <= 1 && date <= end) status = 'recoverable'
     else status = 'off-track'
     return { week, output: { done, target }, labs, gates, targets, trainingDays: days.length, daysComplete, shortfall, overdue, complete, status }
+  }
+
+  function overlayWeek(week: number, date: string, dates: string[], days: string[], target: number): WeekContract {
+    const end = dates[6]
+    const asOf = date < end ? date : end
+    const snap = snapshot(asOf)
+    let done = 0
+    for (const d of dates) if (d <= asOf) done += snapshot(d).credits
+    const inWeek = (d?: string) => Boolean(d && d >= dates[0] && d <= end)
+    // The week's checkpoints and builds: those already due in it, and those the sprint plan (as of today) puts in it.
+    const planned = date >= SPRINT_START ? sprintPlanAsOf(date < dates[0] ? dates[0] : date, input as OverlayInput).days.filter((d) => inWeek(d.date)) : []
+    const plannedOn = (kind: 'gate' | 'lab', id: string) => planned.find((d) => (kind === 'gate' ? d.gatesDue : d.labsDue).includes(id))?.date
+    const when = (kind: 'gate' | 'lab', id: string) => {
+      const due = dueOf(kind, id)
+      return inWeek(due) ? due : plannedOn(kind, id)
+    }
+    const labs = LABS.filter((l) => inWeek(when('lab', l.id))).map((l) => ({ id: l.id, title: l.title, optional: Boolean(l.optional), done: snap.labsDone.has(l.id), dueDate: when('lab', l.id) }))
+    const gateIds = [...new Set([...[...overlayDue.gates].filter(([, d]) => inWeek(d)).map(([id]) => id), ...planned.flatMap((d) => d.gatesDue)])]
+    const gates = gateIds
+      .map((id) => [id, when('gate', id)!] as const)
+      .map(([id, d]) => {
+        const s = gateOf(id, snap).status
+        return { id, title: GATE_BY_ID[id].title, cleared: !s || s.available.length === 0 || s.cleared, dueDate: d }
+      })
+    const pastDays = days.filter((d) => d < date)
+    const todayDone = days.includes(date) && dayContract(date).complete
+    const expected = Math.min(target, [...pastDays, ...(todayDone ? [date] : [])].reduce((n, d) => n + dayContract(d).reps.target, 0))
+    const shortfall = Math.max(0, (date > end ? target : expected) - done)
+    const daysComplete = days.filter((d) => d <= asOf && dayContract(d).complete).length
+    const overdue = [
+      ...labs.filter((l) => !l.optional && !l.done && l.dueDate && l.dueDate < date).map((l) => `Lab: ${l.title}`),
+      ...gates.filter((g) => !g.cleared && g.dueDate < date).map((g) => `Checkpoint: ${g.title}`)
+    ]
+    const rate = Math.max(1, ...days.map((d) => dayContract(d).reps.target))
+    const complete = done >= target && labs.every((l) => l.optional || l.done) && gates.every((g) => g.cleared)
+    let status: WeekState
+    if (date < dates[0]) status = 'upcoming'
+    else if (complete) status = 'complete'
+    else if (shortfall === 0 && overdue.length === 0) status = 'on-track'
+    else if (shortfall <= rate && overdue.length <= 1 && date <= end) status = 'recoverable'
+    else status = 'off-track'
+    return { week, output: { done, target }, labs, gates, targets: [], trainingDays: days.length, daysComplete, shortfall, overdue, complete, status }
   }
 
   /** Consecutive required training days completed, counting back from `date` (rest and Saturdays protect it). */

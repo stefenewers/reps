@@ -1,4 +1,4 @@
-import { dailyTarget, dayType, weekDates } from '@/data/course/calendar'
+import { dayType, weekDates } from '@/data/course/calendar'
 import type { Contracts } from '@/lib/course/contract'
 import { flameFor } from '@/lib/course/week-status'
 import { parseLocal } from '@/lib/dates'
@@ -16,7 +16,8 @@ export default function WeekStrip({ week, today, credits, contracts }: { week: n
       {weekDates(week).map((d) => {
         const type = dayType(d)
         const done = credits[d] ?? 0
-        const target = dailyTarget(week)
+        // The day's own target (from the Sprint it comes from what is left; before it, the week's rate).
+        const target = contracts.dayContract(d).reps.target
         const raw = type === 'training' ? flameFor(done, target) : done > 0 ? 'ember' : 'unlit'
         const f = raw === 'blaze' && !contracts.dayContract(d).complete ? 'burning' : raw
         const past = d < today

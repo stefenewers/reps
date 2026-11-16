@@ -5,7 +5,9 @@ import { useReps } from '@/components/reps-provider'
 import { useCourse } from '@/components/use-course'
 import { useCredits } from '@/components/use-credits'
 import { COURSE_START, courseWeekOf, weekDates } from '@/data/course/calendar'
-import { LABS } from '@/data/course/lessons'
+import { LAB_BY_ID, LABS } from '@/data/course/lessons'
+import { SPRINT_START } from '@/data/course/sprint'
+import { sprintPlanAsOf } from '@/lib/course/sprint-day'
 import { WEEK_BY_NUMBER } from '@/data/course/weeks'
 import { EXERCISE_BY_ID } from '@/data/curriculum'
 import { labKey, labProgress, type LabState } from '@/lib/course/labs'
@@ -22,7 +24,7 @@ import { courseDay, flameFor, momentum, weekProgress } from '@/lib/course/week-s
  * streak, the flame, the labs, the checkpoints and the February readiness read.
  */
 export function useCourseDay() {
-  const { attempts, repo, today, mastery, program, version } = useReps()
+  const { attempts, repo, today, mastery, program, version, reviews } = useReps()
   const { entries } = useSolveLog()
   const course = useCourse()
   const credits = useCredits()
@@ -31,13 +33,22 @@ export function useCourseDay() {
     void version
     // The one contract for the day and the week (lib/course/contract.ts): streak, flame, week status and readiness read it.
     const labStates = Object.fromEntries(LABS.map((l) => [l.id, repo.state<LabState>(labKey(l.id))]))
-    const contracts = createContracts({ attempts, entries, mastery, labStates, exercises: EXERCISE_BY_ID, sections: SECTION_BY_ID })
+    const contracts = createContracts({ attempts, entries, mastery, labStates, exercises: EXERCISE_BY_ID, sections: SECTION_BY_ID, review: reviews })
     const dayC = contracts.dayContract(today)
     const day = courseDay(today, credits.byDate)
     const week = WEEK_BY_NUMBER[day.week] ?? WEEK_BY_NUMBER[14]
-    const labs = LABS.filter((l) => l.week === week.number).map((lab) => ({ lab, progress: labProgress(lab, repo.state<LabState>(labKey(lab.id)), attempts) }))
+    // From the Sprint a week's builds and checkpoints are the ones due or planned in it (the week contract), not the old course week's.
+    const overlay = today >= SPRINT_START
+    const weekC = contracts.weekContract(week.number, today)
+    const labs = (overlay ? weekC.labs.map((l) => LAB_BY_ID[l.id]) : LABS.filter((l) => l.week === week.number)).map((lab) => ({
+      lab,
+      progress: labProgress(lab, repo.state<LabState>(labKey(lab.id)), attempts)
+    }))
     const required = labs.filter((l) => !l.lab.optional)
-    const weekGates = course.statuses.filter((s) => s.unit.week === week.number).flatMap((s) => s.gates.filter((g) => g.available.length))
+    const overlayGates = new Set(weekC.gates.map((g) => g.id))
+    const weekGates = overlay
+      ? course.statuses.flatMap((s) => s.gates.filter((g) => overlayGates.has(g.gate.id)))
+      : course.statuses.filter((s) => s.unit.week === week.number).flatMap((s) => s.gates.filter((g) => g.available.length))
     const gatesCleared = weekGates.filter((g) => g.cleared).length
     const progress = weekProgress(week.number, today, credits.byDate, {
       labsDone: required.filter((l) => l.progress.done).length,
@@ -45,7 +56,6 @@ export function useCourseDay() {
       gatesCleared,
       gatesRequired: weekGates.length
     })
-    const weekC = contracts.weekContract(week.number, today)
     // Finished weeks, for the readiness read (from the same contract).
     const finished = Array.from(
       { length: Math.max(0, Math.min(14, courseWeekOf(today)) - 1) },
@@ -79,7 +89,9 @@ export function useCourseDay() {
       labs: labEvidence,
       transfer: t,
       mocksDone: program.mocks.completed,
-      today
+      today,
+      // From the Sprint, "behind" is the sprint plan's own measure (the calendar weeks no longer order the work).
+      sprintBehind: overlay ? sprintPlanAsOf(today, { attempts, entries, mastery, labStates, exercises: EXERCISE_BY_ID, sections: SECTION_BY_ID, review: reviews }).behindBy : undefined
     })
     return {
       day,
@@ -117,5 +129,5 @@ export function useCourseDay() {
       finalDecision: finalDecision(ready, t.grade, program.mocks.completed),
       course
     }
-  }, [attempts, repo, today, course, credits, entries, mastery, program, version])
+  }, [attempts, repo, today, course, credits, entries, mastery, program, version, reviews])
 }

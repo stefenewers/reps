@@ -5,12 +5,16 @@ import { UNIT_BY_ID } from '@/data/course/units'
 import { createContracts, type ContractInput } from '@/lib/course/contract'
 import { creditReason, dailyCredits, validAttempt } from '@/lib/course/credit'
 import { courseStatus, purposeOf, unitInventory, type CourseQueueItem } from '@/lib/course/routing'
+import { SPRINT_START, inSprint } from '@/data/course/sprint'
+import { sprintDayOn, sprintPlanAsOf, type OverlayInput } from '@/lib/course/sprint-day'
+import { prepDayOn } from '@/lib/course/prep-plan'
 
 /** The course prescription shared by Today and the full-course simulation.
  * Scheduled teaching precedes its checkpoint. Due work takes precedence over
  * optional practice, and flex slots retrieve material already introduced.
  */
 export function courseDailyPlan(date: string, input: ContractInput): CourseQueueItem[] {
+  if (date >= SPRINT_START) return overlayDailyPlan(date, input)
   if (date < COURSE_START || date > COURSE_END || dayType(date) === 'rest') return []
   input = { ...input, attempts: input.attempts.filter((a) => validAttempt(a) && a.date <= date), entries: input.entries.filter((e) => e.date <= date) }
   const contract = createContracts(input).dayContract(date)
@@ -134,4 +138,55 @@ export function courseDailyPlan(date: string, input: ContractInput): CourseQueue
     selectedKeys.add(q.key)
   }
   return selected
+}
+
+/**
+ * Sprint and Prep (from SPRINT_START): the day's items in order. Repairs, the review block, checkpoints due today
+ * (cold), the day's new reps; Prep adds timed problems and 1D DP. Then, for a learner who is faster, the next days'
+ * sprint reps as extras: finish early and the sprint ends early.
+ */
+/** Optional next-day reps offered once today's are done. */
+const AHEAD_EXTRAS = 5
+
+function overlayDailyPlan(date: string, input: ContractInput): CourseQueueItem[] {
+  if (dayType(date) === 'rest') return []
+  const full = input as OverlayInput
+  input = { ...input, attempts: input.attempts.filter((a) => validAttempt(a) && a.date <= date), entries: input.entries.filter((e) => e.date <= date) }
+  const contract = createContracts(full).dayContract(date)
+  const done = new Set(dailyCredits(date, input.attempts, input.entries, input.exercises).map((c) => c.key))
+  const passedBefore = new Set(input.attempts.filter((a) => a.passed && a.completedAt && !a.solutionViewed && a.date < date).map((a) => a.exerciseId))
+  const passedNow = new Set(input.attempts.filter((a) => a.passed && a.completedAt && !a.solutionViewed).map((a) => a.exerciseId))
+  const out: CourseQueueItem[] = []
+  const seen = new Set<string>()
+  const add = (q: CourseQueueItem) => {
+    if (seen.has(q.key) || done.has(q.key)) return
+    seen.add(q.key)
+    out.push(q)
+  }
+  const rep = (id: string, unitId: string, purpose: CourseQueueItem['purpose'], required = true) => {
+    if (input.exercises[id]) add({ key: id, exerciseId: id, unitId, purpose, required })
+  }
+  const unitOf = (gateId: string) => contract.gates.find((g) => g.id === gateId)?.unitId ?? ''
+  for (const r of contract.repair) for (const id of r.reps) rep(id, unitOf(r.gateId), 'repair')
+  const sprintDay = inSprint(date) || date > SPRINT_START ? sprintDayOn(date, full) : undefined
+  const prep = !inSprint(date) ? prepDayOn(date, full) : undefined
+  const day = sprintDay ?? prep?.carry
+  for (const r of day?.review ?? prep?.review ?? []) if (!done.has(r.exerciseId)) rep(r.exerciseId, 'review', 'retrieve')
+  if (day?.redo && !done.has(`lc:${day.redo.lc}`)) add({ key: `lc:${day.redo.lc}`, lc: day.redo.lc, unitId: 'review', purpose: 'problem', required: true })
+  for (const id of prep?.timed ?? []) rep(id, 'prep', 'transfer')
+  for (const g of contract.gates) if (g.state === 'open') for (const id of g.next) rep(id, g.unitId, 'gate')
+  for (const r of day?.repairs ?? []) rep(r, day!.focusUnits[0] ?? '', 'repair')
+  for (const r of day?.newReps ?? []) if (!passedBefore.has(r.exerciseId)) rep(r.exerciseId, r.unitId, purposeOf(input.exercises[r.exerciseId]))
+  for (const id of prep?.dp ?? []) rep(id, 'w11-dp', 'drill')
+  // Ahead of plan: the next few sprint reps, in order, as optional extras (do them and the sprint ends early).
+  if (date >= SPRINT_START) {
+    const later = sprintPlanAsOf(date, full)
+      .days.filter((d) => d.date > date)
+      .flatMap((d) => d.newReps)
+      .filter((r) => !passedNow.has(r.exerciseId) && !seen.has(r.exerciseId))
+      .slice(0, AHEAD_EXTRAS)
+    for (const r of later) rep(r.exerciseId, r.unitId, purposeOf(input.exercises[r.exerciseId]), false)
+  }
+  void COURSE_END
+  return out
 }

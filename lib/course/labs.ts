@@ -27,21 +27,29 @@ export interface LabProgress {
 }
 
 /** A build counts when it passes as the learner's own work: not a revealed solution or a rebuild of one. Hints are fine. */
-export function builtOwnWork(exerciseId: string, attempts: Attempt[]): boolean {
+export function builtOwnWork(exerciseId: string, attempts: Attempt[], after?: string): boolean {
   const mine = attempts.filter((a) => a.exerciseId === exerciseId)
+  // After a scaffold reveal, only a pass on a later day counts (the same rule as a shown solution, rebuilt from blank later).
   return mine.some((a) => {
+    if (after && a.date <= after) return false
     const e = masteryEvidence(a, mine)
     return e !== 'failed' && e !== 'revealed' && e !== 'reconstructed'
   })
 }
 
 /** Labs are binary: done, or not done. Done needs a real design, both builds as the learner's own work, and the review. */
-export function labProgress(lab: Lab, state: LabState | undefined, attempts: Attempt[]): LabProgress {
+/**
+ * A scaffolded lab also needs its explain-back answered (`explainDone`, from the `scaffold:<id>` state) before it can be
+ * marked done. Callers that do not pass it (history, contracts) trust the stored `doneAt`: it is only ever set once
+ * the lab could finish, so the extra condition never rewrites a lab already marked done.
+ */
+export function labProgress(lab: Lab, state: LabState | undefined, attempts: Attempt[], scaffold?: { explainDone: boolean; revealedOn?: string }): LabProgress {
   const designDone = lab.designQuestions.every((_, i) => typeof state?.design?.[i] === 'string' && state.design[i].trim().length >= DESIGN_MIN_CHARS)
-  const buildPassed = builtOwnWork(lab.buildExerciseId, attempts)
-  const changePassed = builtOwnWork(lab.changeRequest.exerciseId, attempts)
+  const after = lab.scaffold ? scaffold?.revealedOn : undefined
+  const buildPassed = builtOwnWork(lab.buildExerciseId, attempts, after)
+  const changePassed = builtOwnWork(lab.changeRequest.exerciseId, attempts, after)
   const reviewDone = lab.review.every((_, i) => state?.review?.[i])
-  const canFinish = designDone && buildPassed && changePassed && reviewDone
+  const canFinish = designDone && buildPassed && changePassed && reviewDone && (!lab.scaffold || !scaffold || scaffold.explainDone)
   const done = Boolean(typeof state?.doneAt === 'string' && Number.isFinite(Date.parse(state.doneAt))) && canFinish
   // Imported state can predate a later build/change pass. Never rewrite history
   // to claim that the lab was finished before its own-work evidence existed.

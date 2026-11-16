@@ -1,3 +1,4 @@
+import { isSprintUnit, SPRINT_START } from '@/data/course/sprint'
 import type { UnitStatus } from '@/lib/course/routing'
 
 /** A Road to Ready week's state, from its units and its contract (shared by the Road and Today's mini road). */
@@ -13,4 +14,10 @@ export function weekState(units: UnitStatus[], n: number, current: number, compl
   // Next week is ready once its first units are unlocked; anything further waits its turn.
   if (n === current + 1 && units.some((u) => !u.locked)) return 'ready'
   return 'locked'
+}
+
+/** From the Sprint: the course week of the first unfinished sprint unit (undefined before Nov 16 or when the sprint list is done). */
+export function sprintWeek(statuses: UnitStatus[], today: string): number | undefined {
+  if (today < SPRINT_START) return undefined
+  return statuses.find((s) => isSprintUnit(s.unit.id) && s.state !== 'ready' && s.state !== 'maintenance')?.unit.week
 }

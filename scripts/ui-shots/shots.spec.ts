@@ -203,3 +203,16 @@ for (const grade of ['red', 'yellow', 'green'] as const) {
     if (grade === 'green') await snap(page, '16-interview-session', '/interview/mock-1', { click: 'Start the clock' })
   })
 }
+
+test('sprint and prep (from Nov 16): Today on Nov 16 and Dec 1, a full-fade scaffolded lab', async ({ page }) => {
+  // Progress shaped like the real export (sanitized fixture: code and free text redacted).
+  const { readFileSync } = await import('node:fs')
+  await page.clock.setFixedTime(new Date('2026-11-16T09:30:00-05:00'))
+  await page.goto('/')
+  await page.getByLabel('Import progress file').setInputFiles({ name: 'progress.json', mimeType: 'application/json', buffer: readFileSync('lib/course/__fixtures__/progress-nov16.json') })
+  await expect(page.getByText(/Imported/)).toBeVisible()
+  await snap(page, '50-today-sprint-nov16', '/')
+  await snap(page, '52-lab-scaffold-full', '/lab/lab-activity-window')
+  await page.clock.setFixedTime(new Date('2026-12-01T09:30:00-05:00'))
+  await snap(page, '51-today-prep-dec01', '/')
+})

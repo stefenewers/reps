@@ -1,33 +1,33 @@
 {
  "summary": {
   "classifications": {
-   "REQUIRED PATH": 502,
-   "OPTIONAL": 173,
+   "REQUIRED PATH": 515,
+   "OPTIONAL": 182,
    "REPAIR INVENTORY": 166,
    "RETRIEVAL": 163,
-   "PLACEMENT": 120,
+   "PLACEMENT": 129,
    "STRETCH": 47
   },
-  "existingReps": 1171,
-  "reused": 451,
+  "existingReps": 1202,
+  "reused": 469,
   "moved": 0,
   "reworded": 164,
-  "reclassifiedAsGates": 120,
+  "reclassifiedAsGates": 129,
   "bridges": 57,
   "retrieval": 1,
-  "optional": 378,
+  "optional": 382,
   "retired": 0,
   "unmapped": 0,
-  "newReps": 193,
+  "newReps": 220,
   "newWeek1Reps": 42,
   "newWeek2Reps": 36,
-  "newGateVariants": 57,
+  "newGateVariants": 66,
   "newTransferProblems": 48,
-  "newLabExercises": 48,
+  "newLabExercises": 52,
   "newLessons": 27,
   "newWorkedExamples": 17,
-  "labs": 24,
-  "gates": 30
+  "labs": 26,
+  "gates": 33
  },
  "unmapped": [],
  "mappings": [
@@ -10749,7 +10749,7 @@
    "week": 8,
    "unitId": "w8-graphs",
    "purpose": "drill",
-   "classification": "OPTIONAL"
+   "classification": "REQUIRED PATH"
   },
   {
    "exerciseId": "o8-a-matrix",
@@ -20707,6 +20707,566 @@
    "unitId": "w11-dp",
    "purpose": "combine",
    "classification": "REQUIRED PATH"
+  },
+  {
+   "exerciseId": "s-dc-lru-trace",
+   "title": "Trace an OrderedDict",
+   "section": "s-design-class",
+   "module": "course",
+   "stage": "trace",
+   "skills": [
+    "dict_assign",
+    "dict_items"
+   ],
+   "planDate": null,
+   "action": "keep",
+   "week": 10,
+   "unitId": "s-design-class",
+   "purpose": "learn",
+   "classification": "REQUIRED PATH"
+  },
+  {
+   "exerciseId": "s-dc-lru-build",
+   "title": "Build an LRU cache",
+   "section": "s-design-class",
+   "module": "course",
+   "stage": "microbuild",
+   "skills": [
+    "dict_lookup",
+    "dict_assign",
+    "dict_membership"
+   ],
+   "planDate": null,
+   "action": "keep",
+   "week": 10,
+   "unitId": "s-design-class",
+   "purpose": "drill",
+   "classification": "REQUIRED PATH"
+  },
+  {
+   "exerciseId": "s-dc-lru-dbg",
+   "title": "Debug: the cache that forgets reads",
+   "section": "s-design-class",
+   "module": "course",
+   "stage": "debug",
+   "skills": [
+    "dict_lookup",
+    "dict_membership"
+   ],
+   "planDate": null,
+   "action": "keep",
+   "week": 10,
+   "unitId": "s-design-class",
+   "purpose": "drill",
+   "classification": "REQUIRED PATH"
+  },
+  {
+   "exerciseId": "s-dc-cap-lru",
+   "title": "LRU Cache",
+   "section": "s-design-class",
+   "module": "course",
+   "stage": "capstone",
+   "skills": [
+    "dict_lookup",
+    "dict_assign",
+    "dict_membership",
+    "hash_reasoning"
+   ],
+   "planDate": null,
+   "action": "keep",
+   "week": 10,
+   "unitId": "s-design-class",
+   "purpose": "capstone",
+   "classification": "REQUIRED PATH"
+  },
+  {
+   "exerciseId": "s-dc-timemap-trace",
+   "title": "Trace bisect_right",
+   "section": "s-design-class",
+   "module": "course",
+   "stage": "trace",
+   "skills": [
+    "binary_search",
+    "list_index"
+   ],
+   "planDate": null,
+   "action": "keep",
+   "week": 10,
+   "unitId": "s-design-class",
+   "purpose": "learn",
+   "classification": "REQUIRED PATH"
+  },
+  {
+   "exerciseId": "s-dc-timemap-build",
+   "title": "Build a time-keyed store",
+   "section": "s-design-class",
+   "module": "course",
+   "stage": "microbuild",
+   "skills": [
+    "binary_search",
+    "dict_get",
+    "dict_membership"
+   ],
+   "planDate": null,
+   "action": "keep",
+   "week": 10,
+   "unitId": "s-design-class",
+   "purpose": "drill",
+   "classification": "REQUIRED PATH"
+  },
+  {
+   "exerciseId": "s-dc-hit-counter",
+   "title": "Build a hit counter",
+   "section": "s-design-class",
+   "module": "course",
+   "stage": "microbuild",
+   "skills": [
+    "queue_deque",
+    "while_loop"
+   ],
+   "planDate": null,
+   "action": "keep",
+   "week": 10,
+   "unitId": "s-design-class",
+   "purpose": "drill",
+   "classification": "REQUIRED PATH"
+  },
+  {
+   "exerciseId": "s-dc-bank-build",
+   "title": "Build a tiny bank",
+   "section": "s-design-class",
+   "module": "course",
+   "stage": "microbuild",
+   "skills": [
+    "dict_membership",
+    "dict_assign",
+    "conditionals"
+   ],
+   "planDate": null,
+   "action": "keep",
+   "week": 10,
+   "unitId": "s-design-class",
+   "purpose": "drill",
+   "classification": "REQUIRED PATH"
+  },
+  {
+   "exerciseId": "s-dc-randomized-set",
+   "title": "Build a randomized set",
+   "section": "s-design-class",
+   "module": "course",
+   "stage": "microbuild",
+   "skills": [
+    "index_map",
+    "list_index",
+    "hash_reasoning"
+   ],
+   "planDate": null,
+   "action": "keep",
+   "week": 10,
+   "unitId": "s-design-class",
+   "purpose": "drill",
+   "classification": "REQUIRED PATH"
+  },
+  {
+   "exerciseId": "s-dc-cap-timemap",
+   "title": "Time Based Key-Value Store",
+   "section": "s-design-class",
+   "module": "course",
+   "stage": "capstone",
+   "skills": [
+    "binary_search",
+    "dict_get",
+    "dict_membership"
+   ],
+   "planDate": null,
+   "action": "keep",
+   "week": 10,
+   "unitId": "s-design-class",
+   "purpose": "capstone",
+   "classification": "REQUIRED PATH"
+  },
+  {
+   "exerciseId": "s-dc-g-a",
+   "title": "Recently viewed items",
+   "section": "s-design-class-gates",
+   "module": "course",
+   "stage": "retrieval",
+   "skills": [
+    "dict_assign",
+    "dict_membership",
+    "hash_reasoning"
+   ],
+   "planDate": null,
+   "action": "reclassify",
+   "week": 10,
+   "unitId": "s-design-class",
+   "purpose": "gate",
+   "classification": "PLACEMENT"
+  },
+  {
+   "exerciseId": "s-dc-g-b",
+   "title": "Leaderboard",
+   "section": "s-design-class-gates",
+   "module": "course",
+   "stage": "retrieval",
+   "skills": [
+    "dict_assign",
+    "dict_membership",
+    "hash_reasoning"
+   ],
+   "planDate": null,
+   "action": "reclassify",
+   "week": 10,
+   "unitId": "s-design-class",
+   "purpose": "gate",
+   "classification": "PLACEMENT"
+  },
+  {
+   "exerciseId": "s-dc-g-c",
+   "title": "Per-user rate limiter",
+   "section": "s-design-class-gates",
+   "module": "course",
+   "stage": "retrieval",
+   "skills": [
+    "dict_assign",
+    "dict_membership",
+    "hash_reasoning"
+   ],
+   "planDate": null,
+   "action": "reclassify",
+   "week": 10,
+   "unitId": "s-design-class",
+   "purpose": "gate",
+   "classification": "PLACEMENT"
+  },
+  {
+   "exerciseId": "s-q-g-a",
+   "title": "Average of the last k",
+   "section": "s-queue-gates",
+   "module": "course",
+   "stage": "retrieval",
+   "skills": [
+    "queue_deque",
+    "accumulator"
+   ],
+   "planDate": null,
+   "action": "reclassify",
+   "week": 8,
+   "unitId": "s-queue-basics",
+   "purpose": "gate",
+   "classification": "PLACEMENT"
+  },
+  {
+   "exerciseId": "s-q-g-b",
+   "title": "Take turns on the processor",
+   "section": "s-queue-gates",
+   "module": "course",
+   "stage": "retrieval",
+   "skills": [
+    "queue_deque",
+    "accumulator"
+   ],
+   "planDate": null,
+   "action": "reclassify",
+   "week": 8,
+   "unitId": "s-queue-basics",
+   "purpose": "gate",
+   "classification": "PLACEMENT"
+  },
+  {
+   "exerciseId": "s-q-g-c",
+   "title": "Count recent calls",
+   "section": "s-queue-gates",
+   "module": "course",
+   "stage": "retrieval",
+   "skills": [
+    "queue_deque",
+    "accumulator"
+   ],
+   "planDate": null,
+   "action": "reclassify",
+   "week": 8,
+   "unitId": "s-queue-basics",
+   "purpose": "gate",
+   "classification": "PLACEMENT"
+  },
+  {
+   "exerciseId": "s-cs-kahn-trace",
+   "title": "Trace Kahn's algorithm",
+   "section": "s-course-schedule",
+   "module": "course",
+   "stage": "trace",
+   "skills": [
+    "cycle_detection",
+    "queue_deque",
+    "graph_adjacency"
+   ],
+   "planDate": null,
+   "action": "keep",
+   "week": 9,
+   "unitId": "s-course-schedule",
+   "purpose": "learn",
+   "classification": "REQUIRED PATH"
+  },
+  {
+   "exerciseId": "s-cap-course-schedule-ii",
+   "title": "Course Schedule II",
+   "section": "s-course-schedule",
+   "module": "course",
+   "stage": "capstone",
+   "skills": [
+    "cycle_detection",
+    "queue_deque",
+    "graph_adjacency"
+   ],
+   "planDate": null,
+   "action": "keep",
+   "week": 9,
+   "unitId": "s-course-schedule",
+   "purpose": "capstone",
+   "classification": "REQUIRED PATH"
+  },
+  {
+   "exerciseId": "s-cs-g-a",
+   "title": "Can the build finish",
+   "section": "s-course-schedule-gates",
+   "module": "course",
+   "stage": "retrieval",
+   "skills": [
+    "cycle_detection",
+    "queue_deque",
+    "graph_adjacency"
+   ],
+   "planDate": null,
+   "action": "reclassify",
+   "week": 9,
+   "unitId": "s-course-schedule",
+   "purpose": "gate",
+   "classification": "PLACEMENT"
+  },
+  {
+   "exerciseId": "s-cs-g-b",
+   "title": "How many tasks can ever run",
+   "section": "s-course-schedule-gates",
+   "module": "course",
+   "stage": "retrieval",
+   "skills": [
+    "cycle_detection",
+    "queue_deque",
+    "graph_adjacency"
+   ],
+   "planDate": null,
+   "action": "reclassify",
+   "week": 9,
+   "unitId": "s-course-schedule",
+   "purpose": "gate",
+   "classification": "PLACEMENT"
+  },
+  {
+   "exerciseId": "s-cs-g-c",
+   "title": "An install order",
+   "section": "s-course-schedule-gates",
+   "module": "course",
+   "stage": "retrieval",
+   "skills": [
+    "cycle_detection",
+    "queue_deque",
+    "graph_adjacency"
+   ],
+   "planDate": null,
+   "action": "reclassify",
+   "week": 9,
+   "unitId": "s-course-schedule",
+   "purpose": "gate",
+   "classification": "PLACEMENT"
+  },
+  {
+   "exerciseId": "lab-bank-system-build",
+   "title": "Simple Bank System",
+   "section": "lab-sprint-builds",
+   "module": "course",
+   "stage": "combine",
+   "skills": [
+    "dict_assign",
+    "dict_membership",
+    "sort_key",
+    "state_tracking"
+   ],
+   "planDate": null,
+   "action": "optional",
+   "week": 10,
+   "unitId": "s-design-class",
+   "purpose": "combine",
+   "note": "Lab part: no rep credit; required lab obligation is scheduled separately.",
+   "classification": "OPTIONAL"
+  },
+  {
+   "exerciseId": "lab-bank-system-change",
+   "title": "Simple Bank System: merge accounts",
+   "section": "lab-sprint-builds",
+   "module": "course",
+   "stage": "combine",
+   "skills": [
+    "dict_items",
+    "dict_membership",
+    "state_tracking",
+    "edge_cases"
+   ],
+   "planDate": null,
+   "action": "optional",
+   "week": 10,
+   "unitId": "s-design-class",
+   "purpose": "combine",
+   "note": "Lab part: no rep credit; required lab obligation is scheduled separately.",
+   "classification": "OPTIONAL"
+  },
+  {
+   "exerciseId": "lab-inmemory-db-build",
+   "title": "In-Memory Database",
+   "section": "lab-sprint-builds",
+   "module": "course",
+   "stage": "combine",
+   "skills": [
+    "dict_create",
+    "dict_get",
+    "sort_key",
+    "string_methods"
+   ],
+   "planDate": null,
+   "action": "optional",
+   "week": 10,
+   "unitId": "s-design-class",
+   "purpose": "combine",
+   "note": "Lab part: no rep credit; required lab obligation is scheduled separately.",
+   "classification": "OPTIONAL"
+  },
+  {
+   "exerciseId": "lab-inmemory-db-change",
+   "title": "In-Memory Database: backup and restore",
+   "section": "lab-sprint-builds",
+   "module": "course",
+   "stage": "combine",
+   "skills": [
+    "dict_items",
+    "state_tracking",
+    "edge_cases"
+   ],
+   "planDate": null,
+   "action": "optional",
+   "week": 10,
+   "unitId": "s-design-class",
+   "purpose": "combine",
+   "note": "Lab part: no rep credit; required lab obligation is scheduled separately.",
+   "classification": "OPTIONAL"
+  },
+  {
+   "exerciseId": "prep-api-parse",
+   "title": "Fetch and validate a user",
+   "section": "prep-api",
+   "module": "course",
+   "stage": "combine",
+   "skills": [
+    "dict_membership",
+    "functions",
+    "edge_cases"
+   ],
+   "planDate": null,
+   "action": "keep",
+   "week": 14,
+   "unitId": "w14-interview",
+   "purpose": "combine",
+   "classification": "OPTIONAL"
+  },
+  {
+   "exerciseId": "prep-api-paginate",
+   "title": "Follow pages, write a report",
+   "section": "prep-api",
+   "module": "course",
+   "stage": "combine",
+   "skills": [
+    "while_loop",
+    "accumulator",
+    "edge_cases"
+   ],
+   "planDate": null,
+   "action": "keep",
+   "week": 14,
+   "unitId": "w14-interview",
+   "purpose": "combine",
+   "classification": "OPTIONAL"
+  },
+  {
+   "exerciseId": "prep-api-chain",
+   "title": "Chain calls: user → orders → products",
+   "section": "prep-api",
+   "module": "course",
+   "stage": "combine",
+   "skills": [
+    "dict_lookup",
+    "dict_assign",
+    "dict_membership",
+    "edge_cases"
+   ],
+   "planDate": null,
+   "action": "keep",
+   "week": 14,
+   "unitId": "w14-interview",
+   "purpose": "combine",
+   "classification": "OPTIONAL"
+  },
+  {
+   "exerciseId": "prep-debug-inventory",
+   "title": "Debug: shop inventory",
+   "section": "prep-debug",
+   "module": "course",
+   "stage": "combine",
+   "skills": [
+    "dict_get",
+    "conditionals",
+    "edge_cases"
+   ],
+   "planDate": null,
+   "action": "keep",
+   "week": 14,
+   "unitId": "w14-interview",
+   "purpose": "combine",
+   "classification": "OPTIONAL"
+  },
+  {
+   "exerciseId": "prep-debug-scheduler",
+   "title": "Debug: meeting room scheduler",
+   "section": "prep-debug",
+   "module": "course",
+   "stage": "combine",
+   "skills": [
+    "interval_overlap",
+    "sorting",
+    "string_methods"
+   ],
+   "planDate": null,
+   "action": "keep",
+   "week": 14,
+   "unitId": "w14-interview",
+   "purpose": "combine",
+   "classification": "OPTIONAL"
+  },
+  {
+   "exerciseId": "prep-debug-parser",
+   "title": "Debug: config file parser",
+   "section": "prep-debug",
+   "module": "course",
+   "stage": "combine",
+   "skills": [
+    "string_methods",
+    "enumerate",
+    "edge_cases"
+   ],
+   "planDate": null,
+   "action": "keep",
+   "week": 14,
+   "unitId": "w14-interview",
+   "purpose": "combine",
+   "classification": "OPTIONAL"
   },
   {
    "exerciseId": "mock-1-a",

@@ -213,6 +213,8 @@ export interface ReadinessInput {
   transfer?: { grade: TransferGrade; attempted: number; independent: number }
   mocksDone: number
   today: string
+  /** From the Sprint (Nov 16): required reps the sprint plan cannot hold (0 = on plan). Replaces "weeks behind the calendar". */
+  sprintBehind?: number
 }
 
 function labDomain(id: string, title: string, labs: LabEvidence[], what: string): Domain {
@@ -269,18 +271,21 @@ export function readiness(input: ReadinessInput): Readiness {
 
   const week = courseWeekOf(input.today)
   const frontier = input.statuses.find((s) => s.state !== 'ready' && s.state !== 'maintenance')
-  const behindWeeks = frontier ? Math.max(0, week - frontier.unit.week) : 0
+  const overlay = input.sprintBehind !== undefined
+  const behindWeeks = overlay ? 0 : frontier ? Math.max(0, week - frontier.unit.week) : 0
+  const sprintBehind = input.sprintBehind ?? 0
   const blocked = input.statuses.filter((s) => s.state === 'gate-blocked').length
   const last = input.finishedWeeks[input.finishedWeeks.length - 1]
   const cold = input.evidence.coldIndependent + input.evidence.retrieval + input.evidence.selfCorrected + input.evidence.outsideCold
   const why: string[] = []
   let track: Track = 'on-track'
-  if (last === 'off-track' || input.currentWeek === 'off-track' || behindWeeks >= 2 || blocked >= 3 || input.evidence.recentAssistance > 0.6) track = 'off-track'
-  else if (last === 'recoverable' || input.currentWeek === 'recoverable' || behindWeeks === 1 || blocked >= 1 || input.evidence.recentAssistance > 0.4 || (week >= 4 && cold === 0)) track = 'at-risk'
+  if (last === 'off-track' || input.currentWeek === 'off-track' || behindWeeks >= 2 || sprintBehind > 24 || blocked >= 3 || input.evidence.recentAssistance > 0.6) track = 'off-track'
+  else if (last === 'recoverable' || input.currentWeek === 'recoverable' || behindWeeks === 1 || sprintBehind > 0 || blocked >= 1 || input.evidence.recentAssistance > 0.4 || (week >= 4 && cold === 0)) track = 'at-risk'
   if (input.currentWeek === 'off-track') why.push('This week is off track: required work is behind.')
   else if (input.currentWeek === 'recoverable') why.push('This week is a little short: recoverable.')
   if (last && last !== 'complete' && last !== 'on-track') why.push(`Last week finished ${last === 'off-track' ? 'off track' : 'short'}.`)
   if (behindWeeks) why.push(`The course is ${behindWeeks} week${behindWeeks === 1 ? '' : 's'} behind the calendar.`)
+  if (sprintBehind) why.push(`The Sprint is behind by ${sprintBehind} required rep${sprintBehind === 1 ? '' : 's'}: the lowest-priority work moves into Dec 1–5.`)
   if (blocked) why.push(`${blocked} unit${blocked === 1 ? '' : 's'} waiting on a repaired checkpoint.`)
   if (input.evidence.recentAssistance > 0.4) why.push(`${Math.round(input.evidence.recentAssistance * 100)}% of the last 10 days' work leaned on help.`)
   if (week >= 4 && cold === 0) why.push('No cold evidence yet: checkpoints and re-solves supply it.')

@@ -4,7 +4,8 @@ import Link from 'next/link'
 import { IconArrowRight, IconCheck } from '@/components/icons'
 import WeekStrip from '@/components/course/week-strip'
 import type { useCourseDay } from '@/components/use-course-day'
-import { INTERVIEW_CHECKPOINT } from '@/data/course/calendar'
+import { INTERVIEW_CHECKPOINT, PHASE_LABEL, phaseOf, weekDates } from '@/data/course/calendar'
+import { shortDate } from '@/lib/dates'
 import { motivate } from '@/data/course/motivation'
 import { useReps } from '@/components/reps-provider'
 import { SECTION_BY_ID } from '@/data/course'
@@ -48,6 +49,7 @@ export const DOMAIN_TONE: Record<DomainStatus, string> = {
 /** The week scoreboard: problems, builds, checkpoints, status, and the heat strip. */
 export function WeekCard({ cd }: { cd: CourseDayState }) {
   const { week, labs, weekContract: contract } = cd
+  const phase = phaseOf(cd.day.date)
   const progress = { done: contract.output.done, target: contract.output.target, status: contract.status, shortfall: contract.shortfall }
   const line = motivate(contract.complete ? 'week-complete' : 'week-progress', {
     week: week.number,
@@ -59,8 +61,8 @@ export function WeekCard({ cd }: { cd: CourseDayState }) {
   return (
     <section aria-labelledby="week-h" className="rounded-2xl bg-bg p-6 shadow-[0_0_0_1px_var(--hairline)]" data-testid="week-card" data-status={progress.status}>
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h2 id="week-h" className="font-display text-[20px] font-semibold tracking-tight">
-          Week {week.number} · {week.short}
+        <h2 id="week-h" className="font-display text-[20px] font-semibold tracking-tight" data-testid="week-card-title">
+          {phase === 'course' ? `Week ${week.number} · ${week.short}` : `${PHASE_LABEL[phase]} · week of ${shortDate(weekDates(week.number)[0])}`}
         </h2>
         <span
           className={`rounded-full px-2.5 py-0.5 text-[12px] font-semibold uppercase tracking-wide ${WEEK_STATUS_TONE[progress.status]}`}
@@ -69,7 +71,9 @@ export function WeekCard({ cd }: { cd: CourseDayState }) {
           {WEEK_STATUS_LABEL[progress.status]}
         </span>
       </div>
-      <p className="mt-1 text-[13px] text-muted">{week.focus}</p>
+      <p className="mt-1 text-[13px] text-muted">
+        {phase === 'course' ? week.focus : phase === 'sprint' ? 'The must-know list, in sprint order; checkpoints the day after each path.' : 'Timed problems, format practice, the AI ramp and stories, from ready units.'}
+      </p>
       <div className="mt-4 grid gap-5 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
         <div>
           <p className="num text-[26px] font-semibold tracking-tight text-ink" data-testid="week-count">

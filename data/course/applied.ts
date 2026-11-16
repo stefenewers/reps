@@ -56,6 +56,9 @@ export const LAB_PREREQUISITES: Record<string, string[]> = {
   'lab-activity-window': ['sliding-window', 'sd-program-design'],
   'lab-undo-redo': ['stacks', 'sd-persistence'],
   'lab-product-catalog': ['binary-search', 'ae-external-dependencies'],
+  // Sprint and Prep builds (CodeSignal-style levels): a class behind a contract, records and ids, changing requirements.
+  'lab-bank-system': ['sd-program-design', 'ae-contracts-validation', 'ae-requirements-change', 'sd-persistence', 'dictionaries'],
+  'lab-inmemory-db': ['sd-program-design', 'ae-contracts-validation', 'ae-requirements-change', 'sd-persistence', 'dictionaries'],
   'lab-playlist': ['linked-lists', 'sd-program-design'],
   'lab-route-walker': ['linked-lists', 'sd-program-design'],
   'lab-nested-analyzer': ['recursion', 'sd-program-design'],

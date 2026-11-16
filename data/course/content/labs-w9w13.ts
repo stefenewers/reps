@@ -22,7 +22,7 @@ export const labs: Lab[] = [
     ],
     designQuestions: [
       'Which way do your edges point: from a task to what it needs, or from a prerequisite to what it unlocks? Which function wants which direction?',
-      'What are the three states a task can be in during the cycle search, and what does reaching a "visiting" task mean?',
+      'With in-degree counts and a queue of ready tasks, how do you know a cycle exists, and how do you name the tasks stuck in it?',
       'How do you turn the path you are on into the cycle you return?',
       'For the order, what do you keep per task so you know when it becomes ready? What structure holds the ready tasks?',
       'Why must unknown prerequisites be caught before the order is computed? What would break otherwise?',
@@ -41,7 +41,7 @@ export const labs: Lab[] = [
       'The cycle you return really is a path: each task in it needs the next one.',
       'Every task appears exactly once in the order, after all of its prerequisites.',
       'No function mutates the `tasks` dict it was given.',
-      'You can say why the visiting/done states are needed, not just a single visited set.',
+      'You can say why fewer tasks in the order than tasks in total means a cycle, and which tasks are left in it.',
     ],
   },
   {

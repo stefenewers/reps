@@ -124,7 +124,9 @@ for (const section of COURSE_SECTIONS)
       UNITS.find((u) => u.path?.includes(e.id)) ??
       UNITS.find((u) => [...u.sections, ...(u.optional ?? []), ...(u.retrieval ?? []), ...(u.stretch ?? [])].includes(section.id))
     const lab = LABS.find((l) => l.buildExerciseId === e.id || l.changeRequest.exerciseId === e.id)
-    const unit = gate ? UNIT_BY_ID[GATE_BY_ID[gate].unitId] : (home ?? (lab ? UNIT_BY_ID[lab.unitId] : undefined))
+    // Prep format practice (API integration, debugging; data/exercises/course/prep.ts) belongs to interview execution, from Dec 1.
+    const prep = section.id.startsWith('prep-') ? UNIT_BY_ID['w14-interview'] : undefined
+    const unit = gate ? UNIT_BY_ID[GATE_BY_ID[gate].unitId] : (home ?? (lab ? UNIT_BY_ID[lab.unitId] : prep))
     if (!unit) {
       unmapped.push(e.id)
       continue

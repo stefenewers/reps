@@ -1,5 +1,7 @@
 'use client'
 
+import OverlayPanel from '@/components/course/overlay-panel'
+import { PHASE_LABEL, phaseOf } from '@/data/course/calendar'
 import Link from 'next/link'
 import { useMockGate } from '@/components/use-mock-gate'
 import EarnedMoment from '@/components/course/earned-moment'
@@ -667,7 +669,7 @@ export default function CourseToday({
           <>
             <p className="text-[12.5px] font-semibold uppercase tracking-[0.1em] opacity-75" data-testid="day-heading">
               <span data-testid="course-week">
-                Week {cd.week.number} · {cd.week.title}
+                {phaseOf(today) === 'course' ? `Week ${cd.week.number} · ${cd.week.title}` : `${PHASE_LABEL[phaseOf(today)]} · ${phaseOf(today) === 'sprint' ? 'must-know work to Nov 30' : 'interview practice'}`}
               </span>
               {c.type === 'training' && trainingDayIndex > 0 ? ` · Day ${preview ? 1 : trainingDayIndex}` : ''}
             </p>
@@ -777,7 +779,9 @@ export default function CourseToday({
                 </div>
               </div>
 
-              {cd.week.number === 14 && !preview && (
+              {!preview && <OverlayPanel />}
+
+              {cd.week.number === 14 && !preview && phaseOf(today) === 'course' && (
                 <div
                   className={`mt-5 rounded-2xl px-4 py-3.5 ${mockGate.grade === 'green' ? 'tile-pass' : mockGate.grade === 'yellow' ? 'tile-repair' : 'tile-cold'}`}
                   data-testid="week14-route"

@@ -4,13 +4,18 @@ import { useRef, useState } from 'react'
 import { useReps } from '@/components/reps-provider'
 import { localDate } from '@/lib/dates'
 
+const SYNC_LABEL: Record<string, string> = { 'local-only': 'This device only', 'signed-out': 'Signed out', syncing: 'Syncing', saved: 'Synced', offline: 'Offline' }
+
 /** Portable JSON backup, independent of Supabase. Import validates and merges without duplicating. */
 export default function ProgressIO() {
-  const { repo } = useReps()
+  const { repo, status } = useReps()
+  const guard = repo.exportGuard()
   const input = useRef<HTMLInputElement>(null)
   const [msg, setMsg] = useState<string | null>(null)
 
   const exportNow = () => {
+    // A device that has not synced exports only what it has: say so, and ask first.
+    if (guard.warn && !window.confirm(`${guard.message}\n\nExport anyway?`)) return
     const blob = new Blob([JSON.stringify(repo.exportData(), null, 2)], { type: 'application/json' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
@@ -35,6 +40,15 @@ export default function ProgressIO() {
       <button type="button" className="hover:text-ink" onClick={exportNow}>
         Export progress
       </button>
+      <span className="text-muted" data-testid="export-sync-status" data-status={status}>
+        {SYNC_LABEL[status] ?? status}
+        {!guard.pulled && status !== 'local-only' && status !== 'signed-out' ? ', first sync not finished' : ''}
+      </span>
+      {guard.warn && (
+        <span className="text-ink-2" data-testid="export-warning">
+          {guard.message}
+        </span>
+      )}
       <span aria-hidden="true">·</span>
       <button type="button" className="hover:text-ink" onClick={() => input.current?.click()}>
         Import progress
