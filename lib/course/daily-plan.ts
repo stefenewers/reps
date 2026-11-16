@@ -145,6 +145,9 @@ export function courseDailyPlan(date: string, input: ContractInput): CourseQueue
  * (cold), the day's new reps; Prep adds timed problems and 1D DP. Then, for a learner who is faster, the next days'
  * sprint reps as extras: finish early and the sprint ends early.
  */
+/** Optional next-day reps offered once today's are done. */
+const AHEAD_EXTRAS = 5
+
 function overlayDailyPlan(date: string, input: ContractInput): CourseQueueItem[] {
   if (dayType(date) === 'rest') return []
   const full = input as OverlayInput
@@ -175,10 +178,14 @@ function overlayDailyPlan(date: string, input: ContractInput): CourseQueueItem[]
   for (const r of day?.repairs ?? []) rep(r, day!.focusUnits[0] ?? '', 'repair')
   for (const r of day?.newReps ?? []) if (!passedBefore.has(r.exerciseId)) rep(r.exerciseId, r.unitId, purposeOf(input.exercises[r.exerciseId]))
   for (const id of prep?.dp ?? []) rep(id, 'w11-dp', 'drill')
-  // Ahead of plan: the next sprint reps, in order, as optional extras.
+  // Ahead of plan: the next few sprint reps, in order, as optional extras (do them and the sprint ends early).
   if (date >= SPRINT_START) {
-    const later = sprintPlanAsOf(date, full).days.filter((d) => d.date > date)
-    for (const d of later) for (const r of d.newReps) if (!passedNow.has(r.exerciseId)) rep(r.exerciseId, r.unitId, purposeOf(input.exercises[r.exerciseId]), false)
+    const later = sprintPlanAsOf(date, full)
+      .days.filter((d) => d.date > date)
+      .flatMap((d) => d.newReps)
+      .filter((r) => !passedNow.has(r.exerciseId) && !seen.has(r.exerciseId))
+      .slice(0, AHEAD_EXTRAS)
+    for (const r of later) rep(r.exerciseId, r.unitId, purposeOf(input.exercises[r.exerciseId]), false)
   }
   void COURSE_END
   return out
