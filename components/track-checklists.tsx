@@ -1,5 +1,6 @@
 'use client'
 
+import { SPRINT_START } from '@/data/course/sprint'
 import { useReps } from '@/components/reps-provider'
 import { DESIGN_TRACK } from '@/data/design-track'
 import { STORY_PROMPTS } from '@/data/stories'
@@ -11,7 +12,8 @@ const NEXT: Record<StoryStatus, StoryStatus> = { todo: 'draft', draft: 'polished
 const STORY_LABEL: Record<StoryStatus, string> = { todo: 'Not started', draft: 'Draft', polished: 'Polished' }
 
 export function DesignTrack() {
-  const { repo, version } = useReps()
+  const { repo, version, today } = useReps()
+  const overlay = today >= SPRINT_START
   void version
   const done = (id: string) => Boolean(repo.state<{ done?: boolean }>(`design:${id}`)?.done)
   const count = DESIGN_TRACK.filter((d) => done(d.id)).length
@@ -25,7 +27,11 @@ export function DesignTrack() {
           {count} of {DESIGN_TRACK.length} done
         </p>
       </div>
-      <p className="mt-1 max-w-[640px] text-[13.5px] text-muted">One item for most Mondays from week 3. The bar for SWE I is clean classes, a sensible data model and depth on your own work.</p>
+      <p className="mt-1 max-w-[640px] text-[13.5px] text-muted">
+        {overlay
+          ? 'Optional, any time. The Sprint’s Design-a-class unit and the bank-system and in-memory-database builds already cover LRU caches, rate limiters and key-value stores; the rest suits Prep. The bar for SWE I is clean classes, a sensible data model and depth on your own work.'
+          : 'One item for most Mondays from week 3. The bar for SWE I is clean classes, a sensible data model and depth on your own work.'}
+      </p>
       <ul className="card mt-4 divide-y divide-line px-4">
         {DESIGN_TRACK.map((d) => (
           <li key={d.id} className="flex items-start gap-3 py-3">
@@ -39,7 +45,7 @@ export function DesignTrack() {
             <label htmlFor={`design-${d.id}`} className="min-w-0 flex-1">
               <span className="text-[14px] font-medium text-ink">{d.title}</span>
               <span className="ml-2 text-[12.5px] text-muted">
-                Week {d.week} · {d.kind}
+                {overlay ? d.kind : `Week ${d.week} · ${d.kind}`}
               </span>
               <span className="mt-0.5 block text-[13px] leading-relaxed text-ink-2">{d.deliverables.join(' · ')}</span>
             </label>

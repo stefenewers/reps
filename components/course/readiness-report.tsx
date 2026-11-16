@@ -1,5 +1,6 @@
 'use client'
 
+import { SPRINT_START } from '@/data/course/sprint'
 import { DOMAIN_LABEL, TRACK_LABEL } from '@/components/course/course-cards'
 import { useCourseDay } from '@/components/use-course-day'
 import type { DomainStatus } from '@/lib/course/readiness'
@@ -39,7 +40,7 @@ export default function ReadinessReport() {
     <section aria-labelledby="readiness" data-testid="readiness-report">
       <div className="flex flex-wrap items-baseline justify-between gap-3">
         <h2 id="readiness" className="section-title scroll-mt-20">
-          What you can do: Feb 1 readiness
+          {cd.day.date >= SPRINT_START ? 'What you can do: interview readiness' : 'What you can do: Feb 1 readiness'}
         </h2>
         <span className={`tag ${r.track === 'on-track' ? 'tag-pass' : 'tag-repair'}`}>{TRACK_LABEL[r.track]}</span>
       </div>

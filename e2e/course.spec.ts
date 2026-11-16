@@ -204,16 +204,18 @@ test('the primary action starts learning first, then required labs when the rep 
   await expect(page.getByTestId('training-flame')).not.toHaveAttribute('data-flame', 'blaze')
 })
 
-test('Saturday shows open work as optional and February shows the final decision', async ({ page }) => {
+test('Saturday shows open work as optional, and February is still Prep: training runs to the Feb 28 cutoff', async ({ page }) => {
   await at(page, '2026-10-31T12:00:00-04:00')
   await page.goto('/')
   await expect(page.getByTestId('course-today')).toHaveAttribute('data-day', 'recovery')
   await expect(page.getByTestId('course-today')).toContainText('Open work, if you choose')
   await expect(page.getByTestId('course-today')).not.toContainText('Nothing owed')
+  // The 14-week course would show its February verdict page here; from the Sprint, Prep runs on to the Feb 28 cutoff.
   await at(page, '2027-02-01T12:00:00-05:00')
   await page.goto('/')
-  await expect(page.getByTestId('course-finished')).toContainText('Not yet ready')
-  await expect(page.getByTestId('course-finished')).not.toContainText('Week 1')
+  await expect(page.getByTestId('course-finished')).toHaveCount(0)
+  await expect(page.getByTestId('prep-panel')).toBeVisible()
+  await expect(page.getByTestId('days-to-goal')).toContainText('Feb 28 cutoff')
 })
 
 test('every interactive concept loads, steps and resets on a 390px screen with reduced motion', async ({ page }) => {
@@ -594,8 +596,24 @@ test('the Sprint from Nov 16: Today says Sprint with a number, starts with slidi
   await expect(page.getByTestId('week-card-title')).toContainText('Sprint')
   await expect(page.getByTestId('week-card')).not.toContainText('Recursion')
   await expect(page.getByTestId('road-next')).toContainText('Sliding windows')
+  // The whole page reads the Sprint: the road is the sprint list, the countdown is the offer goal, readiness is interview readiness.
+  await expect(page.getByTestId('sprint-trail')).toBeVisible()
+  await expect(page.getByTestId('road-mini')).not.toContainText('Recursion')
+  await expect(page.getByTestId('road-mini')).not.toContainText('677')
+  await expect(page.getByTestId('days-to-goal')).toContainText('Jan 31 offer goal')
+  await expect(page.getByTestId('readiness-card')).toContainText('Interview readiness')
+  await expect(page.getByTestId('readiness-card')).not.toContainText('Week 13')
   await page.goto('/plan')
   await expect(page.getByTestId('road-sprint-note')).toContainText('Sliding windows')
+  await expect(page.getByTestId('bigtech-pack')).toContainText('Big-tech pack')
+  await expect(page.getByTestId('sprint-road')).not.toContainText('Fourteen weeks')
+  await page.goto('/learn')
+  await expect(page.locator('[data-place="sprint"]').first()).toBeVisible()
+  await expect(page.locator('main')).not.toContainText(/Week \d+ · ahead/)
+  await page.goto('/progress')
+  await expect(page.locator('main')).not.toContainText(/of 14|\/ 677|Feb 1 readiness|Tested in Week 13/)
+  await page.goto('/interview')
+  await expect(page.locator('main')).not.toContainText(/Week 14 route|Week \d+ · object design|none in week 1/)
 
   await page.goto('/lab/lab-activity-window')
   const scaffold = page.getByTestId('lab-scaffold')

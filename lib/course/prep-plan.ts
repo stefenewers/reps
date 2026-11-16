@@ -48,6 +48,7 @@ export interface AiStep {
 }
 
 export const AI_RAMP: AiStep[] = [
+  { key: 'discovery', title: 'Discovery: the workflow and what success means', lessonId: 'ae-discovery' },
   { key: 'structured', title: 'Structured output + validation', lessonId: 'ae-model-boundary', labId: 'lab-support-router' },
   { key: 'tools', title: 'Tools: the model proposes, code executes', lessonId: 'ae-tools-workflows' },
   { key: 'retrieval', title: 'Retrieval: grounded answers', lessonId: 'ae-retrieval', labId: 'lab-grounded-answer' },

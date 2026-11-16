@@ -155,7 +155,8 @@ export default function OverlayPanel() {
             type="button"
             className="btn mt-1.5"
             disabled={!(story ?? saved).trim()}
-            onClick={() => void repo.setState(storyKey(prep.story!.id), { answer: (story ?? saved).trim(), savedOn: today })}
+            // Merge: the story:<id> namespace is shared with the Interview stories checklist (its {status} must survive).
+            onClick={() => void repo.setState(storyKey(prep.story!.id), { ...(repo.state<object>(storyKey(prep.story!.id)) ?? {}), answer: (story ?? saved).trim(), savedOn: today })}
           >
             Save the story
           </button>

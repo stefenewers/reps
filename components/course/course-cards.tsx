@@ -1,5 +1,6 @@
 'use client'
 
+import { goalOn, HARD_CUTOFF, OFFER_GOAL, SPRINT_START } from '@/data/course/sprint'
 import Link from 'next/link'
 import { IconArrowRight, IconCheck } from '@/components/icons'
 import WeekStrip from '@/components/course/week-strip'
@@ -51,13 +52,26 @@ export function WeekCard({ cd }: { cd: CourseDayState }) {
   const { week, labs, weekContract: contract } = cd
   const phase = phaseOf(cd.day.date)
   const progress = { done: contract.output.done, target: contract.output.target, status: contract.status, shortfall: contract.shortfall }
-  const line = motivate(contract.complete ? 'week-complete' : 'week-progress', {
+  const motivation = motivate(contract.complete ? 'week-complete' : 'week-progress', {
     week: week.number,
     weekDone: progress.done,
     weekTarget: progress.target,
     weekStatus: progress.status === 'complete' || progress.status === 'upcoming' ? 'on-track' : progress.status,
     shortfall: progress.shortfall
   })
+  // From the Sprint the week's line speaks to the sprint, not to Week N of the course.
+  const line =
+    cd.day.date >= SPRINT_START
+      ? {
+          text: contract.complete
+            ? `This week is done: ${progress.done} qualifying reps, every checkpoint and build due in it.`
+            : progress.status === 'off-track'
+              ? `${progress.done} of ${progress.target} this week. Behind what the plan needs: today's target is the shortest way back.`
+              : progress.status === 'recoverable'
+                ? `${progress.done} of ${progress.target} this week. A little short: recoverable with today's target.`
+                : `${progress.done} of ${progress.target} this week. On plan for ${goalOn(cd.day.date).label}.`
+        }
+      : motivation
   return (
     <section aria-labelledby="week-h" className="rounded-2xl bg-bg p-6 shadow-[0_0_0_1px_var(--hairline)]" data-testid="week-card" data-status={progress.status}>
       <div className="flex flex-wrap items-baseline justify-between gap-2">
@@ -155,7 +169,7 @@ export function ReadinessCard({ cd }: { cd: CourseDayState }) {
     <section aria-labelledby="ready-h" className="rounded-2xl bg-bg p-6 shadow-[0_0_0_1px_var(--hairline)]" data-testid="readiness-card" data-track={r.track}>
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <h2 id="ready-h" className="font-display text-[20px] font-semibold tracking-tight">
-          Feb 1 readiness
+          {cd.day.date >= SPRINT_START ? 'Interview readiness' : 'Feb 1 readiness'}
         </h2>
         <span
           className={`rounded-full px-2.5 py-0.5 text-[12px] font-semibold uppercase tracking-wide ${r.track === 'on-track' ? 'bg-pass-soft text-green-ink' : 'bg-repair-soft text-repair'}`}
@@ -177,7 +191,9 @@ export function ReadinessCard({ cd }: { cd: CourseDayState }) {
         The full readiness report <IconArrowRight size={12} />
       </Link>
       <p className="mt-1 text-[12px] text-faint">
-        Interview-start checkpoint: {new Date(`${INTERVIEW_CHECKPOINT}T12:00:00`).toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}
+        {cd.day.date >= SPRINT_START
+          ? `Interviews in January · offer goal ${shortDate(OFFER_GOAL)} · hard cutoff ${shortDate(HARD_CUTOFF)}`
+          : `Interview-start checkpoint: ${new Date(`${INTERVIEW_CHECKPOINT}T12:00:00`).toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}`}
       </p>
     </section>
   )

@@ -8,6 +8,7 @@ import { useReps } from '@/components/reps-provider'
 import { COURSE_TARGET, courseWeekOf, PHASE_LABEL, phaseOf } from '@/data/course/calendar'
 import { isSprintUnit } from '@/data/course/sprint'
 import { sprintWeek } from '@/components/course/road-state'
+import { sprintRoad, SprintTrail } from '@/components/course/sprint-road'
 import { WEEKS } from '@/data/course/weeks'
 
 type CourseDayState = ReturnType<typeof useCourseDay>
@@ -26,6 +27,37 @@ export default function RoadMini({ cd }: { cd: CourseDayState }) {
   // From the Sprint the order is the sprint list, not the weeks: name the next unit in it.
   const phase = phaseOf(today)
   const sprintNext = cd.course.statuses.filter((s) => isSprintUnit(s.unit.id) && s.state !== 'ready' && s.state !== 'maintenance')
+  if (phase !== 'course') {
+    const road = sprintRoad(cd.course.statuses, today)
+    return (
+      <section aria-labelledby="road-mini-h" className="rounded-2xl bg-shell p-5 text-shell-ink sm:p-6" data-testid="road-mini" data-phase={phase}>
+        <div className="flex flex-wrap items-baseline justify-between gap-3">
+          <h2 id="road-mini-h" className="font-display text-[20px] font-semibold tracking-tight">
+            Road to Ready
+          </h2>
+          <p className="num text-[12.5px] text-shell-muted" data-testid="road-left">
+            {road.left ? `${road.left} must-know reps and checkpoint passes left · ${road.done} of 10 units ready` : 'The must-know list is done'} · {PHASE_LABEL[phase]}
+          </p>
+        </div>
+        <SprintTrail nodes={road.nodes} />
+        <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-shell-3 pt-4">
+          <p className="text-[13px] text-shell-muted" data-testid="road-next">
+            {sprintNext.length ? (
+              <>
+                {phase === 'sprint' ? 'Sprint, now' : 'Still from the Sprint'}: <span className="text-shell-ink">{sprintNext[0].unit.title}</span>
+                {sprintNext[1] ? <>, then {sprintNext[1].unit.title}</> : null}. The big-tech pack is optional.
+              </>
+            ) : (
+              'The must-know list is done. Prep: interview practice from ready units; the big-tech pack is optional.'
+            )}
+          </p>
+          <Link href="/plan" className="inline-flex items-center gap-1.5 rounded-lg bg-shell-2 px-3 py-1.5 text-[13px] font-medium text-shell-ink hover:bg-shell-3">
+            Open the road <IconArrowRight size={12} />
+          </Link>
+        </div>
+      </section>
+    )
+  }
   return (
     <section aria-labelledby="road-mini-h" className="rounded-2xl bg-shell p-5 text-shell-ink sm:p-6" data-testid="road-mini">
       <div className="flex flex-wrap items-baseline justify-between gap-3">
