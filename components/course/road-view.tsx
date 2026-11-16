@@ -5,11 +5,12 @@ import { useMemo, useState } from 'react'
 import { IconArrowRight, IconCheck, IconFlag, IconLock, IconRepair } from '@/components/icons'
 import Ring from '@/components/ring'
 import Scene from '@/components/scene'
-import { weekState, WEEK_STATE_LABEL, type WeekState } from '@/components/course/road-state'
+import { sprintWeek, weekState, WEEK_STATE_LABEL, type WeekState } from '@/components/course/road-state'
 import { useReps } from '@/components/reps-provider'
 import { useCourseDay } from '@/components/use-course-day'
 import { CONCEPT_BY_ID } from '@/data/concepts'
-import { COURSE_TARGET, courseWeekOf } from '@/data/course/calendar'
+import { COURSE_TARGET, courseWeekOf, PHASE_LABEL, phaseOf } from '@/data/course/calendar'
+import { BIG_TECH_LABEL, isBigTech, SPRINT_START, SPRINT_UNITS } from '@/data/course/sprint'
 import { LAB_BY_ID, LESSON_BY_ID } from '@/data/course/lessons'
 import { WEEKS } from '@/data/course/weeks'
 import { APPLIED_BY_UNIT } from '@/data/course/applied'
@@ -80,7 +81,7 @@ export default function RoadView() {
   const { today } = useReps()
   const cd = useCourseDay()
   const { statuses } = cd.course
-  const current = Math.max(1, Math.min(14, courseWeekOf(today)))
+  const current = sprintWeek(statuses, today) ?? Math.max(1, Math.min(14, courseWeekOf(today)))
   const [selected, setSelected] = useState(current)
   const total = Object.values(cd.credits).reduce((a, b) => a + b, 0)
   const weeks = useMemo(
@@ -112,11 +113,18 @@ export default function RoadView() {
                 Fourteen weeks from program state to interview execution. Each unit is taught, practised, then proven at a checkpoint before what depends on it
                 opens. <span className="font-semibold text-ink">The calendar can slide; the order cannot.</span>
               </p>
+              {today >= SPRINT_START && (
+                <p className="mt-3 rounded-xl bg-bg/80 px-4 py-3 text-[14px] leading-relaxed text-ink-2" data-testid="road-sprint-note">
+                  <span className="font-semibold text-ink">From Nov 16 the Sprint sets the order</span>:{' '}
+                  {SPRINT_UNITS.map((id) => statuses.find((s) => s.unit.id === id)?.unit.title ?? id).join(' → ')}. Then Prep from Dec 1. Units marked{' '}
+                  <span className="font-semibold">{BIG_TECH_LABEL}</span> are optional; any progress on them still counts.
+                </p>
+              )}
             </div>
             <div className="glass flex shrink-0 items-center gap-5 self-start rounded-2xl px-5 py-3">
               <div>
-                <p className="num text-[22px] font-semibold tracking-tight">Week {current}</p>
-                <p className="text-[12.5px] text-muted">of 14</p>
+                <p className="num text-[22px] font-semibold tracking-tight">{phaseOf(today) === 'course' ? `Week ${current}` : PHASE_LABEL[phaseOf(today)]}</p>
+                <p className="text-[12.5px] text-muted">{phaseOf(today) === 'course' ? 'of 14' : phaseOf(today) === 'sprint' ? 'to Nov 30' : 'from Dec 1'}</p>
               </div>
               <span aria-hidden="true" className="h-10 w-px bg-line-strong" />
               <div>
@@ -384,6 +392,8 @@ function lockedReason(units: UnitStatus[], statuses: UnitStatus[]): string {
 }
 
 function UnitCard({ u, index, statuses, onGoto }: { u: UnitStatus; index: string; statuses: UnitStatus[]; onGoto: (week: number) => void }) {
+  const { today } = useReps()
+  const sprint = today >= SPRINT_START
   const cleared = u.state === 'ready' || u.state === 'maintenance'
   const tone = u.locked ? 'bg-surface' : u.state === 'gate-blocked' ? 'tile-repair' : cleared ? 'tile-pass' : 'bg-bg shadow-[0_0_0_1px_var(--line)]'
   return (
@@ -404,6 +414,16 @@ function UnitCard({ u, index, statuses, onGoto }: { u: UnitStatus; index: string
         )}
       </div>
       <p className="mt-1.5 text-[12.5px] leading-relaxed text-muted">{u.unit.purpose}</p>
+      {sprint && (SPRINT_UNITS as readonly string[]).includes(u.unit.id) && (
+        <span className="tag tag-flame mt-2 self-start" data-testid="unit-sprint-tag">
+          Sprint {(SPRINT_UNITS as readonly string[]).indexOf(u.unit.id) + 1} of {SPRINT_UNITS.length}
+        </span>
+      )}
+      {sprint && isBigTech(u.unit.id) && (
+        <span className="tag tag-plain mt-2 self-start !normal-case !tracking-normal" data-testid="unit-bigtech-tag">
+          {BIG_TECH_LABEL}
+        </span>
+      )}
       <p className="mt-2 text-[12px] font-medium text-ink-2">
         {u.locked ? `Locked · needs ${u.blockedBy.length} earlier unit${u.blockedBy.length === 1 ? '' : 's'}` : UNIT_LABEL[u.state]}
         {!u.locked && u.total > 0 && !cleared ? ` · ${u.done}/${u.total}` : ''}

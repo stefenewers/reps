@@ -1,7 +1,7 @@
 import { CAPSTONE_LC } from '@/data/course/capstones'
 import { COURSE_START, courseWeekOf, dailyTarget, dailyTargetOn, dayType, trainingDays, weekDates, weekTarget, type DayType } from '@/data/course/calendar'
 import { inSprint, SPRINT_START } from '@/data/course/sprint'
-import { sprintDayOn, sprintDueDates, type OverlayInput } from '@/lib/course/sprint-day'
+import { sprintDayOn, sprintDueDates, sprintPlanAsOf, type OverlayInput } from '@/lib/course/sprint-day'
 import { prepDayOn } from '@/lib/course/prep-plan'
 import { GATE_BY_ID } from '@/data/course/gates'
 import { LABS } from '@/data/course/lessons'
@@ -342,9 +342,17 @@ export function createContracts(input: ContractInput) {
     let done = 0
     for (const d of dates) if (d <= asOf) done += snapshot(d).credits
     const inWeek = (d?: string) => Boolean(d && d >= dates[0] && d <= end)
-    const labs = LABS.filter((l) => inWeek(dueOf('lab', l.id))).map((l) => ({ id: l.id, title: l.title, optional: Boolean(l.optional), done: snap.labsDone.has(l.id), dueDate: dueOf('lab', l.id) }))
-    const gates = [...overlayDue.gates]
-      .filter(([, d]) => inWeek(d))
+    // The week's checkpoints and builds: those already due in it, and those the sprint plan (as of today) puts in it.
+    const planned = date >= SPRINT_START ? sprintPlanAsOf(date < dates[0] ? dates[0] : date, input as OverlayInput).days.filter((d) => inWeek(d.date)) : []
+    const plannedOn = (kind: 'gate' | 'lab', id: string) => planned.find((d) => (kind === 'gate' ? d.gatesDue : d.labsDue).includes(id))?.date
+    const when = (kind: 'gate' | 'lab', id: string) => {
+      const due = dueOf(kind, id)
+      return inWeek(due) ? due : plannedOn(kind, id)
+    }
+    const labs = LABS.filter((l) => inWeek(when('lab', l.id))).map((l) => ({ id: l.id, title: l.title, optional: Boolean(l.optional), done: snap.labsDone.has(l.id), dueDate: when('lab', l.id) }))
+    const gateIds = [...new Set([...[...overlayDue.gates].filter(([, d]) => inWeek(d)).map(([id]) => id), ...planned.flatMap((d) => d.gatesDue)])]
+    const gates = gateIds
+      .map((id) => [id, when('gate', id)!] as const)
       .map(([id, d]) => {
         const s = gateOf(id, snap).status
         return { id, title: GATE_BY_ID[id].title, cleared: !s || s.available.length === 0 || s.cleared, dueDate: d }

@@ -590,6 +590,12 @@ test('the Sprint from Nov 16: Today says Sprint with a number, starts with slidi
   await expect(page.locator('[data-testid="training-items"] li[data-kind="cold"]').first()).toBeVisible()
   await expect(page.locator('[data-testid="training-items"] li[data-kind]:not([data-kind="cold"])').first()).toContainText(EXERCISE_BY_ID['d4-win-trace-slices'].title)
   await expect(page.getByTestId('learn-first')).not.toContainText('Lesson: State')
+  // Lower on Today: the week is the Sprint's week, its checkpoints are sprint checkpoints, the Road names the next sprint unit.
+  await expect(page.getByTestId('week-card-title')).toContainText('Sprint')
+  await expect(page.getByTestId('week-card')).not.toContainText('Recursion')
+  await expect(page.getByTestId('road-next')).toContainText('Sliding windows')
+  await page.goto('/plan')
+  await expect(page.getByTestId('road-sprint-note')).toContainText('Sliding windows')
 
   await page.goto('/lab/lab-activity-window')
   const scaffold = page.getByTestId('lab-scaffold')

@@ -29,6 +29,8 @@ export interface ScaffoldState {
   hints?: Record<number, number>
   /** Explain-back answers by prompt index. */
   explain?: Record<number, string>
+  /** Step index → local date the reference was revealed. */
+  revealedOn?: Record<number, string>
 }
 
 export interface ScaffoldProgress {
@@ -37,6 +39,8 @@ export interface ScaffoldProgress {
   passed: number
   revealed: number[]
   explainDone: boolean
+  /** The latest reveal's date: the lab's build and change count as own work only when passed after it. */
+  revealedOn?: string
 }
 
 export function scaffoldProgress(lab: Lab, state: ScaffoldState | undefined): ScaffoldProgress {
@@ -46,7 +50,8 @@ export function scaffoldProgress(lab: Lab, state: ScaffoldState | undefined): Sc
   while (current < steps.length && s[current]) current++
   const revealed = steps.map((_, i) => i).filter((i) => s[i] === 'revealed')
   const explainDone = (lab.scaffold?.explainBack ?? []).every((_, i) => (state?.explain?.[i] ?? '').trim().length >= DESIGN_MIN_CHARS)
-  return { current, passed: steps.filter((_, i) => s[i] === 'passed').length, revealed, explainDone }
+  const revealedOn = revealed.map((i) => state?.revealedOn?.[i]).filter((d): d is string => Boolean(d)).sort().at(-1)
+  return { current, passed: steps.filter((_, i) => s[i] === 'passed').length, revealed, explainDone, revealedOn }
 }
 
 /** A step is open when every earlier step is passed or revealed. */

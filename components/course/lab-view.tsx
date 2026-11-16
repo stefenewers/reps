@@ -59,7 +59,7 @@ export default function LabView({ lab }: { lab: Lab }) {
         attempts
       )
     : undefined
-  const p = labProgress(lab, saved, attempts, sp ? { explainDone: sp.explainDone } : undefined)
+  const p = labProgress(lab, saved, attempts, sp ? { explainDone: sp.explainDone, revealedOn: sp.revealedOn } : undefined)
   const stages = [
     { key: 'design', title: 'Design', done: p.designDone },
     { key: 'build', title: 'Build', done: p.buildPassed },
@@ -71,7 +71,7 @@ export default function LabView({ lab }: { lab: Lab }) {
   const reviewed = lab.review.filter((_, i) => saved.review[i]).length
   const missing = [
     !p.designDone && `the design (${designed} of ${lab.designQuestions.length} answered)`,
-    !p.buildPassed && 'the build passing its tests',
+    !p.buildPassed && (sp?.revealedOn ? `the build passing again after ${sp.revealedOn} (a step was revealed)` : 'the build passing its tests'),
     !p.changePassed && 'the change request passing',
     !p.reviewDone && `the review (${reviewed} of ${lab.review.length} checked)`,
     sp && !sp.explainDone && 'the explain-back'

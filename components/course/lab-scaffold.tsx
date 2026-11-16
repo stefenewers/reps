@@ -33,7 +33,7 @@ function latestDraft(repo: { draft(id: string): string | undefined }, exerciseId
  * the explain-back. The fade decides how much of it shows. Progress: study state `scaffold:<labId>`.
  */
 export default function LabScaffold({ lab, fade }: { lab: Lab; fade: Fade }) {
-  const { repo } = useReps()
+  const { repo, today } = useReps()
   const s = lab.scaffold!
   const [local, setLocal] = useState<ScaffoldState | undefined>()
   const state: ScaffoldState = local ?? repo.state<ScaffoldState>(scaffoldKey(lab.id)) ?? { steps: {} }
@@ -73,7 +73,7 @@ export default function LabScaffold({ lab, fade }: { lab: Lab; fade: Fade }) {
     })
   }
 
-  const reveal = (i: number) => save({ ...state, steps: { ...state.steps, [i]: 'revealed' } })
+  const reveal = (i: number) => save({ ...state, steps: { ...state.steps, [i]: 'revealed' }, revealedOn: { ...(state.revealedOn ?? {}), [i]: today } })
 
   return (
     <section className="flex flex-col gap-5 rounded-2xl bg-bg p-5 shadow-[0_0_0_1px_var(--hairline)] sm:p-6" data-testid="lab-scaffold" data-fade={fade}>
@@ -185,7 +185,7 @@ export default function LabScaffold({ lab, fade }: { lab: Lab; fade: Fade }) {
                             }}
                             data-testid={`scaffold-reveal-${i}`}
                           >
-                            Reveal the reference (this step won’t count as your own work)
+                            Reveal the reference (this step won’t count as your own work; the build then counts only when passed again on a later day)
                           </button>
                         ) : (
                           <p className="text-[12.5px] text-muted">The reference opens after you check this step once.</p>

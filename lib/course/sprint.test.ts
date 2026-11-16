@@ -47,7 +47,6 @@ const load = (file = FIXTURE) => JSON.parse(readFileSync(file, 'utf8')) as Expor
 const bundle = load()
 const input = exportInput(bundle)
 const at = (date: string) => ({ attempts: input.attempts, mastery: input.mastery, exercises: input.exercises, sections: input.sections, today: date })
-const ready = (s?: UnitStatus) => s?.state === 'ready' || s?.state === 'maintenance'
 const FAST = { flushDelayMs: { attempts: 0, skill_mastery: 0, daily_progress: 0, review_queue: 0, generated_reps: 0, study_state: 0 }, retryDelaysMs: [20] }
 
 function freshRepo() {
@@ -271,4 +270,29 @@ test('8. content integrity: every sprint id exists once, scaffolds name real exe
     '2026-11-16', '2026-11-17', '2026-11-18', '2026-11-19', '2026-11-20', '2026-11-21',
     '2026-11-23', '2026-11-24', '2026-11-25', '2026-11-28', '2026-11-30'
   ])
+})
+
+test('9. from Nov 16 the week, readiness and builds read the sprint: planned checkpoints, behind-by not calendar weeks, a reveal needs a later pass', async () => {
+  const { readiness, evidenceSummary } = await import('@/lib/course/readiness')
+  const { builtOwnWork } = await import('@/lib/course/labs')
+  // The Nov 16 week lists the checkpoints and builds the sprint plan puts in it, none from the old Week 4 schedule alone.
+  const c = createContracts({ ...input, review: input.review })
+  const week = c.weekContract(4, '2026-11-16')
+  const planned = sprintPlanAsOf('2026-11-16', input).days.filter((d) => d.date <= '2026-11-22')
+  assert.deepEqual(new Set(week.gates.map((g) => g.id)), new Set(planned.flatMap((d) => d.gatesDue)))
+  assert.deepEqual(new Set(week.labs.map((l) => l.id)), new Set(planned.flatMap((d) => d.labsDue)))
+  assert.ok(week.gates.every((g) => !isBigTech(GATE_BY_ID[g.id].unitId)))
+  assert.equal(week.status, 'on-track')
+  // Readiness: on Dec 1 the frontier unit's week no longer makes it "weeks behind"; the sprint's own measure does.
+  const base = { statuses: courseStatus(at('2026-12-01')), finishedWeeks: [] as never[], evidence: evidenceSummary(input.attempts, input.entries, input.exercises, '2026-12-01'), labs: [], mocksDone: 0, today: '2026-12-01' }
+  assert.ok(readiness({ ...base, sprintBehind: 0 }).why.every((w) => !w.includes('behind the calendar')))
+  assert.ok(readiness({ ...base }).why.some((w) => w.includes('behind the calendar')), 'without the sprint measure it would say weeks behind')
+  assert.ok(readiness({ ...base, sprintBehind: 30 }).why.some((w) => w.includes('Sprint is behind by 30')))
+  // A scaffold reveal: a build passed the same day is not own work; passed on a later day it is.
+  const lab = LAB_BY_ID['lab-activity-window']
+  const pass = (date: string): Attempt => ({ ...input.attempts[0], id: `rv-${date}`, exerciseId: lab.buildExerciseId, date, passed: true, solutionViewed: false, hintsUsed: 0, attemptsBeforePass: 0, startedAt: `${date}T15:00:00Z`, completedAt: `${date}T15:05:00Z` })
+  assert.equal(builtOwnWork(lab.buildExerciseId, [pass('2026-11-17')], '2026-11-17'), false)
+  assert.equal(builtOwnWork(lab.buildExerciseId, [pass('2026-11-18')], '2026-11-17'), true)
+  assert.equal(labProgress(lab, undefined, [pass('2026-11-17')], { explainDone: true, revealedOn: '2026-11-17' }).buildPassed, false)
+  assert.equal(labProgress(lab, undefined, [pass('2026-11-17')]).buildPassed, true, 'unscaffolded rules unchanged')
 })
