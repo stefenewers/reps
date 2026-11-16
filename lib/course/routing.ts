@@ -1,5 +1,6 @@
 import { COURSE_START } from '@/data/course/calendar'
 import { GATE_BY_ID, GATE_OF_EXERCISE, type MasteryGate } from '@/data/course/gates'
+import { BIG_TECH_PACK, SPRINT_LABS, SPRINT_PATHS, SPRINT_PREREQS, SPRINT_START, SPRINT_UNITS, isBigTech, isSprintUnit } from '@/data/course/sprint'
 import { UNITS, type LearningUnit } from '@/data/course/units'
 import { gateClean, masteryEvidence, validAttempt } from '@/lib/course/credit'
 import type { SkillMastery } from '@/lib/mastery'
@@ -76,6 +77,30 @@ export interface CourseContext {
 }
 
 const time = (a: Attempt) => a.completedAt ?? a.startedAt
+
+/** Before the Sprint: the course's units exactly as defined (no sprint-only units). */
+const PRE_SPRINT_UNITS = UNITS.filter((u) => !u.sprintOnly)
+/** From SPRINT_START: every unit, with the sprint's prerequisites, paths and labs laid over units.ts (which is untouched). */
+const SPRINT_OVERLAY_UNITS = UNITS.map((u) =>
+  SPRINT_PREREQS[u.id] || SPRINT_PATHS[u.id] || SPRINT_LABS[u.id]
+    ? { ...u, prerequisites: SPRINT_PREREQS[u.id] ?? u.prerequisites, path: SPRINT_PATHS[u.id] ?? u.path, labIds: SPRINT_LABS[u.id] ?? u.labIds }
+    : u
+)
+const SPRINT_RANK = new Map<string, number>(SPRINT_UNITS.map((id, i) => [id, i]))
+
+/** The units in force on a date (computation order: prerequisites first). Dates before SPRINT_START see units.ts unchanged. */
+export function unitsOn(today: string): LearningUnit[] {
+  return today >= SPRINT_START ? SPRINT_OVERLAY_UNITS : PRE_SPRINT_UNITS
+}
+
+/** From SPRINT_START the teaching order is: weeks 1–3, then the sprint list in its order, then everything else (big-tech pack, DP, transfer). */
+function sprintOrder(statuses: UnitStatus[]): UnitStatus[] {
+  const group = (s: UnitStatus) => (s.unit.week <= 3 && !s.unit.sprintOnly ? 0 : SPRINT_RANK.has(s.unit.id) ? 1 : 2)
+  return statuses
+    .map((s, i) => ({ s, i }))
+    .sort((a, b) => group(a.s) - group(b.s) || (SPRINT_RANK.get(a.s.unit.id) ?? 0) - (SPRINT_RANK.get(b.s.unit.id) ?? 0) || a.i - b.i)
+    .map((x) => x.s)
+}
 const LESSON_LEVEL: Exercise['stage'][] = ['recognize', 'trace', 'recall', 'complete']
 const REPAIR_STAGES: Exercise['stage'][] = ['microbuild', 'debug', 'combine', 'reconstruct', 'recall', 'complete']
 
@@ -139,7 +164,7 @@ export function gateStatus(gate: MasteryGate, ctx: CourseContext, index: Map<str
   let repairPlan: string[] = []
   if (failed && last) {
     const broken = new Set((ctx.exercises[last.exerciseId]?.skills ?? []).filter((s) => gate.skills.includes(s)))
-    const unit = UNITS.find((u) => u.id === gate.unitId)
+    const unit = unitsOn(ctx.today).find((u) => u.id === gate.unitId)
     const pool = unit ? [...unitPath(unit, ctx), ...unitInventory(unit, ctx)] : []
     const fresh = (id: string) => (index.get(id) ?? []).some((a) => a.passed && a.completedAt && !a.solutionViewed && time(a) > time(last))
     const candidates = pool.filter(
@@ -190,7 +215,7 @@ export function courseStatus(ctx: CourseContext): UnitStatus[] {
   const index = byExercise(ctx.attempts)
   const out: UnitStatus[] = []
   const byId = new Map<string, UnitStatus>()
-  for (const unit of UNITS) {
+  for (const unit of unitsOn(ctx.today)) {
     const path = unitPath(unit, ctx)
     const gates = unit.gateIds
       .map((id) => GATE_BY_ID[id])
@@ -223,7 +248,7 @@ export function courseStatus(ctx: CourseContext): UnitStatus[] {
     out.push(s)
     byId.set(unit.id, s)
   }
-  return out
+  return ctx.today >= SPRINT_START ? sprintOrder(out) : out
 }
 
 /**
@@ -232,6 +257,9 @@ export function courseStatus(ctx: CourseContext): UnitStatus[] {
  * path reps to learn, in teaching order. A unit whose path is done and only waits
  * on its (cold) checkpoint has nothing left to teach.
  */
+/** The big-tech pack, for callers that label it. */
+export const BIG_TECH_UNITS: readonly string[] = BIG_TECH_PACK
+
 export function catchUpUnits(statuses: UnitStatus[], week: number, scheduledBefore: Set<string> = new Set()): LearningUnit[] {
   return statuses
     .filter(
@@ -285,11 +313,20 @@ export function courseQueue(statuses: UnitStatus[], ctx: CourseContext, solvedLc
   const passed = passedIds(ctx.attempts)
   const frontier = statuses.find((s) => s.state !== 'ready' && s.state !== 'maintenance')
   const horizon = (frontier?.unit.week ?? 14) + 1
+  // From SPRINT_START the horizon is the sprint list: its units may be required; the big-tech pack only offers extras; the rest waits.
+  const sprint = ctx.today >= SPRINT_START
   const out: CourseQueueItem[] = []
   const extras: CourseQueueItem[] = []
   for (const s of statuses) {
-    if (s.unit.week > horizon || s.locked) continue
+    if (s.locked) continue
+    const ready = s.state === 'ready' || s.state === 'maintenance'
+    if (sprint ? !ready && !isSprintUnit(s.unit.id) && !isBigTech(s.unit.id) : s.unit.week > horizon) continue
     const { unit } = s
+    if (sprint && isBigTech(unit.id) && !ready) {
+      for (const e of [...s.path, ...unitInventory(unit, ctx)])
+        if (!passed.has(e.id) && e.kind !== 'choice' && e.kind !== 'explain') extras.push({ key: e.id, unitId: unit.id, purpose: 'extra', exerciseId: e.id, required: false })
+      continue
+    }
     if (s.state === 'placement') {
       for (const g of s.gates)
         for (const id of g.next) out.push({ key: id, unitId: unit.id, purpose: 'gate', exerciseId: id, gateId: g.gate.id, required: true })
