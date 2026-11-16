@@ -318,31 +318,26 @@ test('lab design, build evidence, change evidence and review combine into persis
   await expect(page.getByTestId('today-contract')).toContainText('0 / 10')
 })
 
-for (const grade of ['red', 'yellow', 'green'] as const) {
-  test(`Week 14 ${grade} explains and enforces its mock allowance`, async ({ page }) => {
-    const bank = SECTION_BY_ID['c13-transfer'].exercises
-    const small = bank.filter((e) => e.stage !== 'interview' && e.minutes < 15)
-    const chosen = grade === 'green' ? bank : grade === 'yellow' ? small.slice(0, 6) : []
-    await at(page, '2027-01-25T12:00:00-05:00')
-    await page.goto('/')
-    if (chosen.length) {
-      await page.getByLabel('Import progress file').setInputFiles(bundle(chosen.map((e) => ({ id: e.id, date: '2027-01-22' }))))
-      await page.goto('/')
-    }
-    await expect(page.getByTestId('week14-route')).toHaveAttribute('data-grade', grade)
+test('mocks: the Week 14 route still gates them before Prep; from Dec 1 Prep opens interview mode, mocks from Dec 7 on ready units only', async ({ page }) => {
+  // Before Prep (the Sprint): the old readiness policy, closed without transfer evidence.
+  await at(page, '2026-11-20T12:00:00-05:00')
+  await page.goto('/interview')
+  await expect(page.getByTestId('mock-gate')).toContainText('Transfer grade: red')
+  await page.goto(`/interview/${MOCKS[0].id}`)
+  await expect(page.getByTestId('mock-locked-page')).toBeVisible()
+  // Prep (Dec 1 on): interview mode is open whatever Week 13 says; before Dec 7, and on units not ready, mocks stay closed.
+  for (const date of ['2026-12-04T12:00:00-05:00', '2027-01-25T12:00:00-05:00']) {
+    await at(page, date)
     await page.goto('/interview')
-    await expect(page.getByTestId('mock-gate')).toContainText(`Transfer grade: ${grade}`)
+    await expect(page.getByTestId('prep-mocks')).toBeVisible()
+    await expect(page.getByTestId('mock-gate')).not.toContainText('Transfer grade')
     await page.goto(`/interview/${MOCKS[0].id}`)
-    if (grade === 'red') await expect(page.getByTestId('mock-locked-page')).toBeVisible()
-    else {
-      await page.getByRole('button', { name: 'Start the clock' }).click()
-      await expect(page.getByRole('button', { name: /Hint|Solution|Basics/i })).toHaveCount(0)
-      await page.goto(`/interview/${MOCKS[1].id}`)
-      if (grade === 'yellow') await expect(page.getByTestId('mock-locked-page')).toBeVisible()
-      else await expect(page.getByRole('button', { name: 'Start the clock' })).toBeVisible()
-    }
-  })
-}
+    await expect(page.getByTestId('mock-locked-page')).toBeVisible()
+  }
+  await at(page, '2026-12-04T12:00:00-05:00')
+  await page.goto('/interview')
+  await expect(page.getByTestId('mock-gate')).toContainText('mocks open on Dec 7')
+})
 
 test('a malformed progress file is rejected visibly and leaves saved progress intact', async ({ page }) => {
   await at(page, '2026-10-26T16:00:00-04:00')
@@ -520,6 +515,11 @@ test('Monday, Day 1, end to end: every rep solved through the session, the day c
 
 test('the applied / design thread: Today teaches it before the lab, checks are think-then-reveal, the lab links back, Progress shows evidence', async ({ page }) => {
   await at(page, '2026-10-27T09:00:00-04:00')
+  await page.goto('/')
+  // Day 1 done (since main's catch-up change, an empty learner on Day 2 is taught Day 1 first).
+  const day1 = UNITS.find((u) => u.id === 'w1-state-while')!.path!.map((id) => ({ id, date: '2026-10-26' }))
+  await page.getByLabel('Import progress file').setInputFiles(bundle(day1))
+  await expect(page.getByText(/Imported/)).toBeVisible()
   await page.goto('/')
   // Day 2: the design lesson joins Learn first, after the unit's own learning, before the lab due today.
   const learn = page.getByTestId('learn-first')
