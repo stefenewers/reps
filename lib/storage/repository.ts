@@ -1,3 +1,4 @@
+import type { SyncStatus } from '@/lib/storage/types'
 import { z } from 'zod'
 import type { Attempt, DayModule, Exercise, ReviewItem, SkillId } from '@/lib/types'
 import { computeSkillMastery, type SkillMastery } from '@/lib/mastery'
@@ -196,7 +197,20 @@ export class RepsRepository {
   exportData(): ExportBundle {
     const bundle = { app: 'reps', version: 1, exportedAt: this.now().toISOString() } as ExportBundle
     for (const t of TABLES) (bundle as unknown as Record<Table, unknown[]>)[t] = this.engine.all(t)
+    bundle.rowCounts = Object.fromEntries(TABLES.map((t) => [t, this.engine.all(t).length]))
+    bundle.syncStatus = this.engine.status
     return bundle
+  }
+
+  /**
+   * An export is only the local cache. A device that is signed out, local-only, or has not finished its first pull
+   * exports what it has (possibly nothing), so it says so before exporting. Nothing about sync changes.
+   */
+  exportGuard(): { status: SyncStatus; pulled: boolean; warn: boolean; message?: string } {
+    const status = this.engine.status
+    const pulled = this.engine.pulled
+    const warn = status === 'signed-out' || status === 'local-only' || !pulled
+    return { status, pulled, warn, message: warn ? EXPORT_WARNING : undefined }
   }
 
   /** Validate, then merge without duplicating: attempts by id, everything else newest-wins. */
@@ -258,10 +272,15 @@ const attemptSchema = z.object({
 
 const keyed = z.object({ id: z.string().min(1), updatedAt: z.string() }).passthrough()
 
+export const EXPORT_WARNING = 'This device isn’t synced yet. Sign in and wait for sync, or this export will be incomplete.'
+
 export const exportSchema = z.object({
   app: z.literal('reps'),
   version: z.literal(1),
   exportedAt: z.string(),
+  /** Added with the export guard; older bundles have neither. */
+  rowCounts: z.record(z.string(), z.number()).optional(),
+  syncStatus: z.string().optional(),
   attempts: z.array(attemptSchema),
   skill_mastery: z.array(keyed).default([]),
   daily_progress: z.array(keyed).default([]),
