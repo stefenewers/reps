@@ -36,12 +36,17 @@ export function builtOwnWork(exerciseId: string, attempts: Attempt[]): boolean {
 }
 
 /** Labs are binary: done, or not done. Done needs a real design, both builds as the learner's own work, and the review. */
-export function labProgress(lab: Lab, state: LabState | undefined, attempts: Attempt[]): LabProgress {
+/**
+ * A scaffolded lab also needs its explain-back answered (`explainDone`, from the `scaffold:<id>` state) before it can be
+ * marked done. Callers that do not pass it (history, contracts) trust the stored `doneAt`: it is only ever set once
+ * the lab could finish, so the extra condition never rewrites a lab already marked done.
+ */
+export function labProgress(lab: Lab, state: LabState | undefined, attempts: Attempt[], scaffold?: { explainDone: boolean }): LabProgress {
   const designDone = lab.designQuestions.every((_, i) => typeof state?.design?.[i] === 'string' && state.design[i].trim().length >= DESIGN_MIN_CHARS)
   const buildPassed = builtOwnWork(lab.buildExerciseId, attempts)
   const changePassed = builtOwnWork(lab.changeRequest.exerciseId, attempts)
   const reviewDone = lab.review.every((_, i) => state?.review?.[i])
-  const canFinish = designDone && buildPassed && changePassed && reviewDone
+  const canFinish = designDone && buildPassed && changePassed && reviewDone && (!lab.scaffold || !scaffold || scaffold.explainDone)
   const done = Boolean(typeof state?.doneAt === 'string' && Number.isFinite(Date.parse(state.doneAt))) && canFinish
   // Imported state can predate a later build/change pass. Never rewrite history
   // to claim that the lab was finished before its own-work evidence existed.

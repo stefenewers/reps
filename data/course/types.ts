@@ -1,3 +1,5 @@
+import type { TestCase } from '@/lib/types'
+
 /**
  * Reps 2.0 teaching objects (REPS_2_MASTER_SPEC.md §9–10). Static content; a
  * learner's history stays in attempts and study state.
@@ -73,4 +75,33 @@ export interface Lab {
   aiFde?: boolean
   /** Not required (a holiday week's second build). */
   optional?: boolean
+  /**
+   * Step-by-step scaffolding for a self-taught learner (sprint labs and Prep builds). Optional:
+   * labs without it keep the design / build / change / review flow unchanged.
+   */
+  scaffold?: LabScaffold
+  /** Pin a fade level for this lab. Normally absent: the fade is derived from finished labs (lib/course/scaffold.ts), never stored. */
+  fade?: Fade
+}
+
+export type Fade = 'full' | 'partial' | 'minimal'
+
+export interface LabScaffoldStep {
+  title: string
+  instruction: string
+  /** Must pass before the next step unlocks. Tests run against the learner's draft of `exerciseId` (default: the build). */
+  checkpoint: { description: string; exerciseId?: string; tests?: TestCase[] }
+  /** A ladder, shown one at a time: concept nudge, structure, operation, outline. */
+  hints: string[]
+}
+
+export interface LabScaffold {
+  /** A smaller sibling problem, fully solved first. */
+  workedExample: { problem: string; walkthrough: { step: string; why: string; code?: string }[]; solution: string }
+  /** 4–7 steps, in order. */
+  steps: LabScaffoldStep[]
+  /** Revealed only after an attempt at the current step; a reveal marks that step 'revealed' (not own work). */
+  referenceSolution: string
+  /** 2–3 written prompts (at least DESIGN_MIN_CHARS each) before a scaffolded lab can be marked done. */
+  explainBack: string[]
 }
