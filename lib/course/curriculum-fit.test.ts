@@ -10,42 +10,48 @@ import { EXERCISE_BY_ID } from '@/data/curriculum'
 import { createContracts, type ContractInput } from '@/lib/course/contract'
 import { courseDailyPlan } from '@/lib/course/daily-plan'
 import { courseStatus } from '@/lib/course/routing'
+import { SPRINT_END, SPRINT_START, SPRINT_UNITS } from '@/data/course/sprint'
+import { trainingDaysBetween } from '@/lib/course/sprint-plan'
 import type { Attempt } from '@/lib/types'
 
 const same = (actual: (string | number)[], expected: (string | number)[], label: string) => assert.deepEqual([...actual].sort(), [...expected].sort(), label)
 
-test('all 14 curated weeks fit the output budget and schedule every obligation exactly once', () => {
+// From SPRINT_START the curated weeks no longer schedule anything (data/course/sprint.ts); their budget checks apply to the weeks before it.
+const PRE_SPRINT = SCHEDULE.filter((w) => w.days.every((d) => d.date < SPRINT_START))
+
+test('the curated weeks before the Sprint fit the output budget and schedule every obligation exactly once; every unit path is sound', () => {
   const seen = new Set<string>()
   for (const { week, days } of SCHEDULE) {
-    const units = UNITS.filter((u) => u.week === week)
+    const units = UNITS.filter((u) => u.week === week && !u.sprintOnly)
+    const scheduled = PRE_SPRINT.some((w) => w.week === week)
     const path = units.flatMap((u) => u.path ?? [])
     const gates = units.flatMap((u) => u.gateIds)
     const targets = units.flatMap((u) => u.targets)
     const required = path.length + gates.reduce((n, id) => n + GATE_BY_ID[id].need, 0) + targets.length
-    assert.ok(required + Math.ceil(0.15 * weekTarget(week)) <= weekTarget(week), `week ${week}: ${required} + reserve exceeds ${weekTarget(week)}`)
-    same(
+    if (scheduled) assert.ok(required + Math.ceil(0.15 * weekTarget(week)) <= weekTarget(week), `week ${week}: ${required} + reserve exceeds ${weekTarget(week)}`)
+    if (scheduled) same(
       days.map((d) => d.date),
       trainingDays(week),
       `week ${week}: training dates`
     )
-    same(
+    if (scheduled) same(
       days.flatMap((d) => d.gatesDue),
       gates,
       `week ${week}: checkpoints`
     )
-    same(
+    if (scheduled) same(
       days.flatMap((d) => d.labsDue),
       LABS.filter((l) => l.week === week && !l.optional).map((l) => l.id),
       `week ${week}: labs`
     )
-    same(
+    if (scheduled) same(
       days.flatMap((d) => d.targetsDue),
       targets,
       `week ${week}: targets`
     )
     let capacity = 0
     const dueUnits = new Set<string>()
-    for (const d of days) {
+    for (const d of scheduled ? days : []) {
       capacity += dailyTarget(week) - Math.ceil(0.15 * dailyTarget(week)) - d.gatesDue.reduce((n, id) => n + GATE_BY_ID[id].need, 0) - d.targetsDue.length
       for (const id of d.gatesDue) dueUnits.add(GATE_BY_ID[id].unitId)
       for (const id of d.labsDue) dueUnits.add(LABS.find((l) => l.id === id)!.unitId)
@@ -74,7 +80,7 @@ test('all 14 curated weeks fit the output budget and schedule every obligation e
   }
 })
 
-test('a perfect learner following the actual prescription completes every training day and all 14 weeks', () => {
+test('a perfect learner following the actual prescription completes every training day before the Sprint, then every Sprint day, and finishes the Sprint by Nov 30', () => {
   const input: ContractInput = { attempts: [], entries: [], mastery: {}, labStates: {}, exercises: EXERCISE_BY_ID, sections: SECTION_BY_ID }
   let n = 0
   const pass = (exerciseId: string, date: string) => {
@@ -98,7 +104,7 @@ test('a perfect learner following the actual prescription completes every traini
       updatedAt: t
     } as Attempt)
   }
-  for (const { week, days } of SCHEDULE) {
+  for (const { week, days } of PRE_SPRINT) {
     for (const day of days) {
       for (let step = 0; step < dailyTarget(week) + 15; step++) {
         const c = createContracts(input).dayContract(day.date)
@@ -142,6 +148,37 @@ test('a perfect learner following the actual prescription completes every traini
     const c = createContracts(input).weekContract(week, days.at(-1)!.date)
     assert.equal(c.complete, true, `week ${week}: ${JSON.stringify(c)}`)
   }
+  // The Sprint: every training day's contract (its target, its due checkpoints and labs) is met by doing what Today offers.
+  for (const date of trainingDaysBetween(SPRINT_START, SPRINT_END)) {
+    for (let step = 0; step < 40; step++) {
+      const c = createContracts(input).dayContract(date)
+      if (c.reps.met && c.gates.every((g) => g.state === 'cleared') && c.labs.every((l) => l.state === 'done')) break
+      const open = c.labs.find((l) => l.state !== 'done')
+      if (c.reps.met && open && c.gates.every((g) => g.state === 'cleared')) {
+        const lab = LABS.find((l) => l.id === open.id)!
+        pass(lab.buildExerciseId, date)
+        pass(lab.changeRequest.exerciseId, date)
+        input.labStates[lab.id] = {
+          design: Object.fromEntries(lab.designQuestions.map((_, i) => [i, 'Each function owns a clear input and output contract.'])),
+          review: Object.fromEntries(lab.review.map((_, i) => [i, true])),
+          doneAt: `${date}T16:00:00Z`
+        }
+        continue
+      }
+      const item = courseDailyPlan(date, input)[0]
+      assert.ok(item, `${date}: no next step; ${c.remaining.join("; ")}`)
+      if (item.exerciseId) pass(item.exerciseId, date)
+      else input.entries.push({ id: `redo:${item.lc}:${date}`, lc: item.lc, title: "Saturday redo", date, kind: "redo", result: "unaided", at: `${date}T13:00:00Z` })
+    }
+    const c = createContracts(input).dayContract(date)
+    assert.equal(c.complete, true, `${date}: ${c.remaining.join('; ')}`)
+    assert.ok(c.reps.target <= 24, `${date}: target ${c.reps.target}`)
+  }
+  const end = courseStatus({ ...input, today: SPRINT_END })
+  for (const id of SPRINT_UNITS) {
+    const s = end.find((x) => x.unit.id === id)!
+    assert.ok(s.state === 'ready' || s.state === 'maintenance', `${id} is ${s.state} on ${SPRINT_END}`)
+  }
 })
 
 test('missed weeks cannot reserve every slot for locked checkpoints and stall prerequisite practice', () => {
@@ -150,8 +187,9 @@ test('missed weeks cannot reserve every slot for locked checkpoints and stall pr
     const next = courseDailyPlan(date, input)
     assert.ok(next.length > 0, `${date}: a learner with no history can start the prerequisite`)
     assert.equal(next[0].exerciseId, UNITS[0].path![0])
+    // Required work never skips into the calendar week; from the Sprint, later units appear only as optional extras for a learner ahead of plan.
     assert.ok(
-      next.every((q) => q.unitId.startsWith('w1-')),
+      next.filter((q) => q.required).every((q) => q.unitId.startsWith('w1-')),
       'do not skip into the calendar week'
     )
   }

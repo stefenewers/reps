@@ -10,7 +10,7 @@ import { IconArrowRight, IconCheck, IconRepair } from '@/components/icons'
 import Ring from '@/components/ring'
 import { useReps } from '@/components/reps-provider'
 import { useCourseDay } from '@/components/use-course-day'
-import { COURSE_START, COURSE_TARGET, courseWeekOf, dailyTarget, dayType, weekDates } from '@/data/course/calendar'
+import { COURSE_START, COURSE_TARGET, courseWeekOf, dailyTargetOn, dayType, weekDates } from '@/data/course/calendar'
 import { LABS } from '@/data/course/lessons'
 import { motivate } from '@/data/course/motivation'
 import { WEEKS } from '@/data/course/weeks'
@@ -105,7 +105,7 @@ export default function CourseProgress() {
     const days: { date: string; done: number; target: number; type: ReturnType<typeof dayType> }[] = []
     for (let d = COURSE_START; d <= today; d = addDays(d, 1)) {
       const t = dayType(d)
-      days.push({ date: d, done: cd.credits[d] ?? 0, target: t === 'training' ? dailyTarget(courseWeekOf(d)) : 0, type: t })
+      days.push({ date: d, done: cd.credits[d] ?? 0, target: t === 'training' ? dailyTargetOn(d) : 0, type: t })
       if (t === 'rest') restDays++
       if (t !== 'training') continue
       if (d === today && !c.dayContract(d).complete) continue

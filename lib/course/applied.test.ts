@@ -31,11 +31,11 @@ test('the thread is spread across the course, not dumped in Week 12, and never i
   assert.ok(APPLIED_SCHEDULE.some((x) => UNIT_BY_ID[x.unitId].week <= 2), 'program design starts in Weeks 1–2')
 })
 
-test('applied teaching changes no day contract: targets 10 / 12 / 15, rest owes nothing', () => {
+test('applied teaching changes no day contract: targets 10 / 12 / 15 before the Sprint, rest owes nothing', () => {
   const c = createContracts({ attempts: [], entries: [], mastery: {}, labStates: {}, exercises: EXERCISE_BY_ID, sections: SECTION_BY_ID })
   assert.equal(c.dayContract('2026-10-27').reps.target, 10)
   assert.equal(c.dayContract('2026-11-03').reps.target, 12)
-  assert.equal(c.dayContract('2027-01-12').reps.target, 15)
+  assert.equal(c.dayContract('2026-11-10').reps.target, 15)
   assert.equal(c.dayContract('2026-11-01').complete, true)
   assert.equal(c.dayContract('2026-12-25').complete, true)
   // The optional retrieval mini-build is never required.

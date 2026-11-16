@@ -13,6 +13,8 @@ import { LABS } from '@/data/course/lessons'
 import { SECTION_BY_ID } from '@/data/course'
 import { labKey, type LabState } from '@/lib/course/labs'
 import { COURSE_START } from '@/data/course/calendar'
+import { SPRINT_START } from '@/data/course/sprint'
+import { createContracts } from '@/lib/course/contract'
 import type { usePacing } from '@/components/use-pacing'
 import { lcMeta, useSolveLog } from '@/components/use-solve-log'
 import { useTargets } from '@/components/use-targets'
@@ -60,14 +62,18 @@ export function useTodayPlan(pace: Pace, training: Training, dueLc: DueLc[]) {
     // Study state changes in place; its version invalidates lab/learning reads.
     void version
     if (today >= COURSE_START) {
-      const due = courseDailyPlan(today, {
+      const input = {
         attempts,
         entries,
         mastery,
+        review: reviews,
         labStates: Object.fromEntries(LABS.map((l) => [l.id, repo.state<LabState>(labKey(l.id))])),
         exercises: EXERCISE_BY_ID,
         sections: SECTION_BY_ID
-      })
+      }
+      const due = courseDailyPlan(today, input)
+      // From the Sprint the day's number comes from what is left (the contract), not a fixed weekly rate.
+      const required = today >= SPRINT_START ? createContracts(input).dayContract(today).reps.target : capacity.requiredReps
       const done = (credits.items[today] ?? []).map((c) => ({
         key: c.key,
         exerciseId: c.exerciseId,
@@ -89,10 +95,10 @@ export function useTodayPlan(pace: Pace, training: Training, dueLc: DueLc[]) {
         done: false
       }))
       return {
-        capacity: capacity.requiredReps,
+        capacity: required,
         items: [...done, ...items],
         repsDone: done.length,
-        complete: done.length >= capacity.requiredReps,
+        complete: done.length >= required,
         optional: [],
         capacityInfo: capacity
       }

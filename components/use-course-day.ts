@@ -22,7 +22,7 @@ import { courseDay, flameFor, momentum, weekProgress } from '@/lib/course/week-s
  * streak, the flame, the labs, the checkpoints and the February readiness read.
  */
 export function useCourseDay() {
-  const { attempts, repo, today, mastery, program, version } = useReps()
+  const { attempts, repo, today, mastery, program, version, reviews } = useReps()
   const { entries } = useSolveLog()
   const course = useCourse()
   const credits = useCredits()
@@ -31,7 +31,7 @@ export function useCourseDay() {
     void version
     // The one contract for the day and the week (lib/course/contract.ts): streak, flame, week status and readiness read it.
     const labStates = Object.fromEntries(LABS.map((l) => [l.id, repo.state<LabState>(labKey(l.id))]))
-    const contracts = createContracts({ attempts, entries, mastery, labStates, exercises: EXERCISE_BY_ID, sections: SECTION_BY_ID })
+    const contracts = createContracts({ attempts, entries, mastery, labStates, exercises: EXERCISE_BY_ID, sections: SECTION_BY_ID, review: reviews })
     const dayC = contracts.dayContract(today)
     const day = courseDay(today, credits.byDate)
     const week = WEEK_BY_NUMBER[day.week] ?? WEEK_BY_NUMBER[14]
@@ -117,5 +117,5 @@ export function useCourseDay() {
       finalDecision: finalDecision(ready, t.grade, program.mocks.completed),
       course
     }
-  }, [attempts, repo, today, course, credits, entries, mastery, program, version])
+  }, [attempts, repo, today, course, credits, entries, mastery, program, version, reviews])
 }

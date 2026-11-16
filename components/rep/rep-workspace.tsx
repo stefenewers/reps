@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useReps } from '@/components/reps-provider'
 import { useCredits } from '@/components/use-credits'
-import { COURSE_START, courseWeekOf, dailyTarget, dayType } from '@/data/course/calendar'
+import { COURSE_START, dailyTargetOn, dayType } from '@/data/course/calendar'
 import Markdown from '@/components/markdown'
 import CodeView from '@/components/code-view'
 import { ChoiceInput, ExplainInput, OutputInput, ReorderInput } from '@/components/rep/answer-inputs'
@@ -823,7 +823,7 @@ function Workspace({ exercise: ex, session, fromId, initialMode, router, ctx }: 
   // The day's running count, so every rep shows its place in today's training.
   const credits = useCredits()
   const dayCount =
-    today >= COURSE_START && dayType(today) === 'training' ? { done: credits.byDate[today] ?? 0, target: dailyTarget(courseWeekOf(today)) } : null
+    today >= COURSE_START && dayType(today) === 'training' ? { done: credits.byDate[today] ?? 0, target: dailyTargetOn(today) } : null
   const passCredit = (() => {
     if (!passed) return null
     const mine = attempts.filter((a) => a.exerciseId === ex.id && a.date === today && a.passed && a.completedAt).sort((x, y) => (x.completedAt ?? '').localeCompare(y.completedAt ?? ''))

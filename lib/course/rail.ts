@@ -1,4 +1,4 @@
-import { COURSE_TARGET, COURSE_WEEKS, courseWeekOf, dailyTarget, trainingDays } from '@/data/course/calendar'
+import { COURSE_TARGET, COURSE_WEEKS, courseWeekOf, dailyTargetOn, PHASE_LABEL, phaseOf, trainingDays } from '@/data/course/calendar'
 import { WEEK_BY_NUMBER } from '@/data/course/weeks'
 import type { ProgramProgress } from '@/lib/progress'
 
@@ -12,12 +12,12 @@ export function courseRail(credits: Record<string, number>, dayComplete?: (date:
   let cursor = 0
   let completed = 0
   const out = days.map((date) => {
-    const total = dailyTarget(courseWeekOf(date))
+    const total = dailyTargetOn(date)
     const done = Math.min(total, credits[date] ?? 0)
     completed += credits[date] ?? 0
     const start = cursor / COURSE_TARGET
     cursor += total
-    return { date, short: WEEK_BY_NUMBER[courseWeekOf(date)]?.short ?? '', total, completed: done, start, end: cursor / COURSE_TARGET, complete: dayComplete ? dayComplete(date) : done >= total }
+    return { date, short: phaseOf(date) === 'course' ? (WEEK_BY_NUMBER[courseWeekOf(date)]?.short ?? '') : PHASE_LABEL[phaseOf(date)], total, completed: done, start, end: cursor / COURSE_TARGET, complete: dayComplete ? dayComplete(date) : done >= total }
   })
   // Saturday work counts toward the course too (it is real output); the rail just never exceeds the course.
   for (const [d, n] of Object.entries(credits)) if (!days.includes(d)) completed += n
