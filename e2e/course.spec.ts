@@ -572,3 +572,33 @@ test('the Learn library: every track is findable, each lesson says its week and 
   await page.getByRole('link', { name: /Browse the Applied Engineering lessons/ }).click()
   await expect(page).toHaveURL(/\/learn#applied$/)
 })
+
+test('the Sprint from Nov 16: Today says Sprint with a number, starts with sliding windows, and a scaffolded lab opens on its worked example', async ({ page }) => {
+  // Progress shaped like the learner's real export (weeks 1–3 ready, 12 checkpoints, 6 labs; code and free text redacted).
+  const { readFileSync } = await import('node:fs')
+  await at(page, '2026-11-16T09:00:00-05:00')
+  await page.goto('/')
+  await page.getByLabel('Import progress file').setInputFiles({ name: 'progress.json', mimeType: 'application/json', buffer: readFileSync('lib/course/__fixtures__/progress-nov16.json') })
+  await expect(page.getByText(/Imported/)).toBeVisible()
+  await page.goto('/')
+  await expect(page.getByTestId('course-week')).toContainText('Sprint')
+  await expect(page.getByTestId('day-target')).toHaveText(/^\d+ reps$/)
+  await expect(page.getByTestId('sprint-panel')).toContainText('must-know reps left')
+  await expect(page.getByTestId('today-hero')).toContainText('Sliding windows')
+  // Review first, then new work: the first new rep is the first sliding-window rep; weeks 1–3 bring no teaching.
+  // Review-queue items are in today's list (shown as cold reps); new work starts with the first sliding-window rep.
+  await expect(page.locator('[data-testid="training-items"] li[data-kind="cold"]').first()).toBeVisible()
+  await expect(page.locator('[data-testid="training-items"] li[data-kind]:not([data-kind="cold"])').first()).toContainText(EXERCISE_BY_ID['d4-win-trace-slices'].title)
+  await expect(page.getByTestId('learn-first')).not.toContainText('Lesson: State')
+
+  await page.goto('/lab/lab-activity-window')
+  const scaffold = page.getByTestId('lab-scaffold')
+  await expect(scaffold).toHaveAttribute('data-fade', 'full')
+  await expect(page.getByTestId('scaffold-worked-example')).toBeVisible()
+  const example = await page.getByTestId('scaffold-worked-example').boundingBox()
+  const steps = await page.getByTestId('scaffold-steps').boundingBox()
+  expect(example!.y).toBeLessThan(steps!.y)
+  await expect(page.getByTestId('scaffold-step-0')).toHaveAttribute('data-state', 'open')
+  await expect(page.getByTestId('scaffold-step-1')).toHaveAttribute('data-state', 'locked')
+  await expect(page.getByTestId('lab-finish')).toBeDisabled()
+})
