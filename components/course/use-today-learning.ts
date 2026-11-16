@@ -7,7 +7,7 @@ import { LESSON_BY_ID, WORKED_EXAMPLE_BY_ID } from '@/data/course/lessons'
 import { DAY_PLAN } from '@/data/course/schedule'
 import { UNIT_BY_ID } from '@/data/course/units'
 import { demosForConcept } from '@/lib/demos'
-import { APPLIED_BY_UNIT, APPLIED_SCHEDULE, checksKey } from '@/data/course/applied'
+import { APPLIED_SCHEDULE, appliedByUnitOn, checksKey } from '@/data/course/applied'
 import { daysBetween } from '@/lib/dates'
 import type { LearningUnit } from '@/data/course/units'
 import { catchUpUnits } from '@/lib/course/routing'
@@ -102,7 +102,7 @@ export function useTodayLearning() {
             minutes: 3 + (WORKED_EXAMPLE_BY_ID[id]?.subgoals.length ?? 3)
           })),
           // The applied / design thread: short engineering lessons taught alongside this unit, after its own learning.
-          ...(APPLIED_BY_UNIT[u.id] ?? [])
+          ...(appliedByUnitOn(today)[u.id] ?? [])
             .filter((id) => LESSON_BY_ID[id])
             .map((id) => ({
               key: `lesson:${id}`,

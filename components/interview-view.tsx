@@ -1,5 +1,6 @@
 'use client'
 
+import { SPRINT_START } from '@/data/course/sprint'
 import Link from 'next/link'
 import { GlyphTerminal, GlyphTimer } from '@/components/concept-icons'
 import { InterviewTargetFull } from '@/components/interview-target'
@@ -71,7 +72,7 @@ export default function InterviewView() {
       {gate.gated && !gate.prep && (
         <section aria-labelledby="route-h" className="deck p-5 sm:p-7">
           <h2 id="route-h" className="section-title">
-            Your Week 14 route
+            {today >= SPRINT_START ? 'Mocks before Prep' : 'Your Week 14 route'}
           </h2>
           <p className="mt-2 max-w-[720px] text-[14px] text-ink-2" data-testid="mock-gate">
             Mocks open with the evidence, not the calendar. Transfer grade: <span className="font-semibold text-ink">{gate.grade}</span>. {gate.note}{' '}

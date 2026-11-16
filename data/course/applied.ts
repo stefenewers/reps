@@ -1,3 +1,4 @@
+import { PREP_LESSONS, SPRINT_APPLIED, SPRINT_START } from '@/data/course/sprint'
 import type { Lesson } from '@/data/course/types'
 import { appliedLessons as w1w5 } from '@/data/course/content/applied-w1w5'
 import { appliedLessons as w6w10 } from '@/data/course/content/applied-w6w10'
@@ -123,4 +124,19 @@ export function capabilityStatus(
   if (c.labIds.some((id) => evidence.labDone(id))) return 'applied'
   if (lessons.length === c.lessonIds.length && c.lessonIds.every((id) => evidence.checksDone(id))) return 'practiced'
   return 'learning'
+}
+
+/**
+ * The applied / design lessons taught with each unit on a date: before the Sprint, APPLIED_SCHEDULE; from it,
+ * lessons whose unit is in the big-tech pack move to a sprint unit (SPRINT_APPLIED) or to Prep's AI ramp.
+ */
+export function appliedByUnitOn(date: string): Record<string, string[]> {
+  if (date < SPRINT_START) return APPLIED_BY_UNIT
+  const out: Record<string, string[]> = {}
+  for (const { lessonId, unitId } of APPLIED_SCHEDULE) {
+    if (PREP_LESSONS.includes(lessonId)) continue
+    const u = SPRINT_APPLIED[lessonId] ?? unitId
+    ;(out[u] ??= []).push(lessonId)
+  }
+  return out
 }

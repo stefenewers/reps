@@ -296,3 +296,26 @@ test('9. from Nov 16 the week, readiness and builds read the sprint: planned che
   assert.equal(labProgress(lab, undefined, [pass('2026-11-17')], { explainDone: true, revealedOn: '2026-11-17' }).buildPassed, false)
   assert.equal(labProgress(lab, undefined, [pass('2026-11-17')]).buildPassed, true, 'unscaffolded rules unchanged')
 })
+
+test('10. the whole program reads the Sprint: no lesson is stranded on a big-tech unit, library items say where they sit, the goal is the offer', async () => {
+  const { appliedByUnitOn, APPLIED_BY_UNIT, APPLIED_SCHEDULE } = await import('@/data/course/applied')
+  const { planPlace } = await import('@/lib/course/library')
+  const { goalOn, PREP_LESSONS } = await import('@/data/course/sprint')
+  const { STORY_PROMPTS: checklist } = await import('@/data/stories')
+  const { STORY_PROMPTS: prepStories } = await import('@/data/course/prep-content')
+  // Before the Sprint the applied schedule is untouched; from it, every applied lesson has a sprint, weeks 1–3 or Prep home.
+  assert.equal(appliedByUnitOn('2026-11-10'), APPLIED_BY_UNIT)
+  const now = appliedByUnitOn('2026-11-16')
+  const placed = new Set(Object.values(now).flat())
+  for (const { lessonId } of APPLIED_SCHEDULE) assert.ok(placed.has(lessonId) || PREP_LESSONS.includes(lessonId), `${lessonId} has a home`)
+  assert.ok(Object.keys(now).every((u) => !isBigTech(u)), 'no applied lesson waits on a big-tech unit')
+  assert.deepEqual(
+    [planPlace('l-while', 'lesson'), planPlace('lab-evacuation-map', 'lab'), planPlace('ae-evals', 'lesson'), planPlace('trees', 'lesson')].map((p) => p?.label),
+    ['Week 1', 'Sprint 9', 'Prep · Dec 1', 'Big-tech pack · optional']
+  )
+  assert.equal(planPlace('lab-dependency-planner', 'lab')?.label, 'Sprint 10')
+  assert.deepEqual([goalOn('2026-11-10').short, goalOn('2026-11-16').short, goalOn('2027-02-05').short], ['Feb 1', 'the Jan 31 offer goal', 'the Feb 28 cutoff'])
+  // story:<id> is shared by the Interview checklist and Prep's daily prompt: their ids never collide.
+  const ids = new Set(checklist.map((s) => s.id))
+  assert.ok(prepStories.every((s) => !ids.has(s.id)))
+})

@@ -1,3 +1,4 @@
+import { SPRINT_START } from '@/data/course/sprint'
 import { courseWeekOf } from '@/data/course/calendar'
 import { GATE_OF_EXERCISE } from '@/data/course/gates'
 import type { Lab } from '@/data/course/types'
@@ -255,7 +256,7 @@ export function readiness(input: ReadinessInput): Readiness {
     units: ['w13-transfer'],
     status: !t || t.attempted === 0 ? 'not-tested' : t.grade === 'green' ? 'ready' : t.grade === 'yellow' ? 'developing' : 'building',
     stale: false,
-    why: !t || t.attempted === 0 ? 'Tested in Week 13, on unlabeled problems.' : `${t.independent} of ${t.attempted} unlabeled problems solved independently (${t.grade}).`,
+    why: !t || t.attempted === 0 ? (input.today >= SPRINT_START ? 'Tested by Prep’s timed, unlabeled problems from Dec 1.' : 'Tested in Week 13, on unlabeled problems.') : `${t.independent} of ${t.attempted} unlabeled problems solved independently (${t.grade}).`,
   }
   const swe = labDomain('building', 'Software building', input.labs.filter((l) => !l.lab.aiFde && !l.lab.optional), 'software')
   const ai = labDomain('ai-fde', 'Applied Engineering (AI builds)', input.labs.filter((l) => l.lab.aiFde), 'AI')
@@ -265,7 +266,7 @@ export function readiness(input: ReadinessInput): Readiness {
     units: ['w14-interview'],
     status: input.mocksDone >= 2 ? 'ready' : input.mocksDone === 1 ? 'developing' : 'not-tested',
     stale: false,
-    why: input.mocksDone ? `${input.mocksDone} mock${input.mocksDone === 1 ? '' : 's'} done.` : 'Mocks open in Week 14, once transfer evidence says they will be useful.',
+    why: input.mocksDone ? `${input.mocksDone} mock${input.mocksDone === 1 ? '' : 's'} done.` : (input.today >= SPRINT_START ? 'Mocks open Dec 7, on units you have passed.' : 'Mocks open in Week 14, once transfer evidence says they will be useful.'),
   }
   const dimensions = [foundations, problemSolving, coreDomain, transferDomain, swe, ai, interview]
 

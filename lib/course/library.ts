@@ -1,3 +1,5 @@
+import { isBigTech, isSprintUnit, PREP_LESSONS, SPRINT_APPLIED, SPRINT_START, SPRINT_UNITS } from '@/data/course/sprint'
+import { unitsOn } from '@/lib/course/routing'
 import { APPLIED_SCHEDULE, LAB_PREREQUISITES } from '@/data/course/applied'
 import { CONCEPTS } from '@/data/concepts'
 import { LABS, LESSONS, WORKED_EXAMPLES } from '@/data/course/lessons'
@@ -60,4 +62,31 @@ export function library() {
       labs: span(labs.map((x) => x.week))
     }
   }
+}
+
+/**
+ * From the Sprint (Nov 16): where a library item sits in the plan now. Weeks 1–3 keep their week; sprint units say
+ * Sprint; Prep's lessons, DP and transfer say Prep; the big-tech pack says so. Undefined when nothing places it.
+ */
+export function planPlace(id: string, kind: 'lesson' | 'example' | 'demo' | 'lab'): { label: string; tone: 'week' | 'sprint' | 'prep' | 'bigtech' } | undefined {
+  const units = unitsOn(SPRINT_START)
+  let homes: string[] = []
+  if (kind === 'lab') homes = units.filter((u) => u.labIds.includes(id)).map((u) => u.id).concat(LABS.find((l) => l.id === id)?.unitId ?? [])
+  else if (kind === 'example') homes = units.filter((u) => u.workedExampleIds.includes(id)).map((u) => u.id)
+  else {
+    if (PREP_LESSONS.includes(id)) return { label: 'Prep · Dec 1', tone: 'prep' }
+    homes = [
+      ...units.filter((u) => u.lessonIds.includes(id)).map((u) => u.id),
+      ...APPLIED_SCHEDULE.filter((x) => x.lessonId === id).map((x) => SPRINT_APPLIED[id] ?? x.unitId)
+    ]
+  }
+  const byId = new Map(units.map((u) => [u.id, u]))
+  const hs = homes.map((h) => byId.get(h)).filter((u): u is NonNullable<typeof u> => Boolean(u))
+  const early = hs.filter((u) => u.week <= 3 && !u.sprintOnly).sort((a, b) => a.week - b.week)[0]
+  if (early) return { label: `Week ${early.week}`, tone: 'week' }
+  const sprint = hs.find((u) => isSprintUnit(u.id))
+  if (sprint) return { label: `Sprint ${SPRINT_UNITS.indexOf(sprint.id as never) + 1}`, tone: 'sprint' }
+  if (hs.some((u) => !isBigTech(u.id))) return { label: 'Prep · Dec 1', tone: 'prep' }
+  if (hs.length) return { label: 'Big-tech pack · optional', tone: 'bigtech' }
+  return undefined
 }

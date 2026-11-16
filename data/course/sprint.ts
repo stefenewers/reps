@@ -217,3 +217,27 @@ export const MOCK_UNITS: Record<string, string[]> = {
 
 export const isBigTech = (unitId: string) => (BIG_TECH_PACK as readonly string[]).includes(unitId)
 export const isSprintUnit = (unitId: string) => (SPRINT_UNITS as readonly string[]).includes(unitId)
+
+/** The goal from Nov 16: interviews in January, an offer by Jan 31, Feb 28 the hard cutoff. */
+export const OFFER_GOAL = '2027-01-31'
+export const HARD_CUTOFF = '2027-02-28'
+
+/**
+ * From SPRINT_START, Applied / design lessons whose old unit is in the big-tech pack are taught with a sprint unit
+ * instead, so nothing a sprint lab relies on is stranded. The model-facing lessons move to Prep's AI ramp.
+ */
+export const SPRINT_APPLIED: Record<string, string> = {
+  'ae-reliability': 'w10-intervals',
+  'sd-auth-permissions': 's-design-class',
+  'ae-observability': 'w8-grids',
+  'sd-production-awareness': 's-course-schedule',
+}
+/** Lessons Prep's AI ramp teaches (lib/course/prep-plan.ts AI_RAMP). */
+export const PREP_LESSONS = ['ae-discovery', 'ae-model-boundary', 'ae-tools-workflows', 'ae-retrieval', 'ae-evals']
+
+/** What the countdown counts toward on a date: the Feb 1 checkpoint before the Sprint, then the Jan 31 offer goal, then the Feb 28 cutoff. */
+export function goalOn(date: string): { date: string; label: string; short: string } {
+  if (date < SPRINT_START) return { date: '2027-02-01', label: 'February 1', short: 'Feb 1' }
+  if (date <= OFFER_GOAL) return { date: OFFER_GOAL, label: 'an offer by Jan 31', short: 'the Jan 31 offer goal' }
+  return { date: HARD_CUTOFF, label: 'the Feb 28 cutoff', short: 'the Feb 28 cutoff' }
+}

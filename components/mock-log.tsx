@@ -1,5 +1,6 @@
 'use client'
 
+import { SPRINT_START } from '@/data/course/sprint'
 import { useMemo, useState } from 'react'
 import { useReps } from '@/components/reps-provider'
 import { shortDate } from '@/lib/dates'
@@ -113,7 +114,9 @@ export default function MockLog() {
           })}
         </ul>
       ) : (
-        <p className="mt-3 text-[13.5px] text-muted">No mocks logged yet. The plan has none in week 1; record yourself for the first one in week 2.</p>
+        <p className="mt-3 text-[13.5px] text-muted">
+          {today >= SPRINT_START ? 'No mocks logged yet. Mocks open Dec 7, on units you have passed.' : 'No mocks logged yet. The plan has none in week 1; record yourself for the first one in week 2.'}
+        </p>
       )}
     </section>
   )

@@ -10,10 +10,11 @@ import { useReps } from '@/components/reps-provider'
 import { useCourseDay } from '@/components/use-course-day'
 import { CONCEPT_BY_ID } from '@/data/concepts'
 import { COURSE_TARGET, courseWeekOf, PHASE_LABEL, phaseOf } from '@/data/course/calendar'
-import { BIG_TECH_LABEL, isBigTech, SPRINT_START, SPRINT_UNITS } from '@/data/course/sprint'
+import { BIG_TECH_LABEL, BIG_TECH_PACK, HARD_CUTOFF, isBigTech, OFFER_GOAL, PREP_START, SPRINT_END, SPRINT_START, SPRINT_UNITS } from '@/data/course/sprint'
 import { LAB_BY_ID, LESSON_BY_ID } from '@/data/course/lessons'
 import { WEEKS } from '@/data/course/weeks'
-import { APPLIED_BY_UNIT } from '@/data/course/applied'
+import { appliedByUnitOn } from '@/data/course/applied'
+import { sprintRoad, SprintTrail } from '@/components/course/sprint-road'
 import { THREAD_LABEL } from '@/lib/course/library'
 import { PROBLEM_URLS } from '@/data/problem-urls'
 import { shortDate } from '@/lib/dates'
@@ -100,6 +101,9 @@ export default function RoadView() {
     if (scroll) requestAnimationFrame(() => document.getElementById('week-focus')?.scrollIntoView({ behavior: 'smooth', block: 'start' }))
   }
 
+  // From Nov 16 the road is the Sprint, Prep and the offer goal; the 14 weeks stay below it as a reference.
+  if (today >= SPRINT_START) return <SprintRoadView statuses={statuses} weeks={weeks} />
+
   return (
     <main className="flex-1 bg-canvas pb-20">
       <div className="hero" data-mood="dawn">
@@ -113,13 +117,6 @@ export default function RoadView() {
                 Fourteen weeks from program state to interview execution. Each unit is taught, practised, then proven at a checkpoint before what depends on it
                 opens. <span className="font-semibold text-ink">The calendar can slide; the order cannot.</span>
               </p>
-              {today >= SPRINT_START && (
-                <p className="mt-3 rounded-xl bg-bg/80 px-4 py-3 text-[14px] leading-relaxed text-ink-2" data-testid="road-sprint-note">
-                  <span className="font-semibold text-ink">From Nov 16 the Sprint sets the order</span>:{' '}
-                  {SPRINT_UNITS.map((id) => statuses.find((s) => s.unit.id === id)?.unit.title ?? id).join(' → ')}. Then Prep from Dec 1. Units marked{' '}
-                  <span className="font-semibold">{BIG_TECH_LABEL}</span> are optional; any progress on them still counts.
-                </p>
-              )}
             </div>
             <div className="glass flex shrink-0 items-center gap-5 self-start rounded-2xl px-5 py-3">
               <div>
@@ -414,11 +411,6 @@ function UnitCard({ u, index, statuses, onGoto }: { u: UnitStatus; index: string
         )}
       </div>
       <p className="mt-1.5 text-[12.5px] leading-relaxed text-muted">{u.unit.purpose}</p>
-      {sprint && (SPRINT_UNITS as readonly string[]).includes(u.unit.id) && (
-        <span className="tag tag-flame mt-2 self-start" data-testid="unit-sprint-tag">
-          Sprint {(SPRINT_UNITS as readonly string[]).indexOf(u.unit.id) + 1} of {SPRINT_UNITS.length}
-        </span>
-      )}
       {sprint && isBigTech(u.unit.id) && (
         <span className="tag tag-plain mt-2 self-start !normal-case !tracking-normal" data-testid="unit-bigtech-tag">
           {BIG_TECH_LABEL}
@@ -460,7 +452,7 @@ function UnitCard({ u, index, statuses, onGoto }: { u: UnitStatus; index: string
             </Link>
           ) : null
         })}
-        {(APPLIED_BY_UNIT[u.unit.id] ?? []).map((id) =>
+        {(appliedByUnitOn(today)[u.unit.id] ?? []).map((id) =>
           LESSON_BY_ID[id] ? (
             <Link key={id} href={`/learn/${id}`} className="tag tag-plain !normal-case !tracking-normal hover:underline" data-thread={LESSON_BY_ID[id].thread}>
               {THREAD_LABEL[LESSON_BY_ID[id].thread ?? 'applied']}: {LESSON_BY_ID[id].title}
@@ -492,5 +484,88 @@ function UnitCard({ u, index, statuses, onGoto }: { u: UnitStatus; index: string
         </Link>
       )}
     </li>
+  )
+}
+
+/** The Road from Nov 16: the Sprint's ten units in order, Prep, the offer goal; the big-tech pack; the 14 weeks as a reference. */
+function SprintRoadView({ statuses, weeks }: { statuses: UnitStatus[]; weeks: { w: (typeof WEEKS)[number]; state: WeekState }[] }) {
+  const { today } = useReps()
+  const road = sprintRoad(statuses, today)
+  const sprint = SPRINT_UNITS.map((id) => statuses.find((s) => s.unit.id === id)).filter((s): s is UnitStatus => Boolean(s))
+  const bigTech = BIG_TECH_PACK.map((id) => statuses.find((s) => s.unit.id === id)).filter((s): s is UnitStatus => Boolean(s))
+  const noop = () => {}
+  return (
+    <main className="flex-1 bg-canvas pb-20" data-testid="sprint-road">
+      <div className="hero" data-mood="dawn">
+        <Scene mood="dawn" />
+        <div className="hero-veil" />
+        <div className="mx-auto w-full max-w-[1180px] px-5 pt-8 pb-10 sm:px-8 sm:pt-12">
+          <h1 className="headline">Road to Ready</h1>
+          <p className="mt-3 max-w-[720px] text-[16px] leading-relaxed text-ink-2" data-testid="road-sprint-note">
+            Finish the must-know list by {shortDate(SPRINT_END)}: {sprint.map((s) => s.unit.title).join(' → ')}. Prep starts {shortDate(PREP_START)}: timed problems,
+            format practice, the AI project and stories. Interviews in January, <span className="font-semibold text-ink">an offer by {shortDate(OFFER_GOAL)}</span>;{' '}
+            {shortDate(HARD_CUTOFF)} is the hard cutoff.
+          </p>
+          <div className="mt-6 rounded-2xl bg-shell p-5 text-shell-ink sm:p-6">
+            <p className="num text-[13px] text-shell-muted">
+              {road.left ? `${road.left} must-know reps and checkpoint passes left · ${road.done} of 10 units ready` : 'The must-know list is done'}
+            </p>
+            <SprintTrail nodes={road.nodes} />
+          </div>
+        </div>
+      </div>
+
+      <section aria-labelledby="sprint-units-h" className="mx-auto mt-10 w-full max-w-[1180px] px-5 sm:px-8">
+        <h2 id="sprint-units-h" className="section-title">
+          The Sprint, in order
+        </h2>
+        <p className="mt-1 text-[13.5px] text-muted">Each unit: its reps, then a cold checkpoint the next training day, then its build. Today hands you each day’s share.</p>
+        <ul className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+          {sprint.map((u, i) => (
+            <UnitCard key={u.unit.id} u={u} index={`Sprint ${i + 1} of ${sprint.length}`} statuses={statuses} onGoto={noop} />
+          ))}
+        </ul>
+      </section>
+
+      <section aria-labelledby="prep-road-h" className="mx-auto mt-10 w-full max-w-[1180px] px-5 sm:px-8">
+        <h2 id="prep-road-h" className="section-title">
+          Prep, from {shortDate(PREP_START)}
+        </h2>
+        <ul className="mt-3 grid gap-2 text-[14px] text-ink-2 sm:grid-cols-2">
+          <li className="rounded-xl bg-bg px-4 py-3 shadow-[0_0_0_1px_var(--hairline)]">Two timed problems a day, 30 minutes each, unlabeled, from units you have passed.</li>
+          <li className="rounded-xl bg-bg px-4 py-3 shadow-[0_0_0_1px_var(--hairline)]">Format practice Mon–Sat: CodeSignal-style 4-level builds, API integration, debugging, SQL.</li>
+          <li className="rounded-xl bg-bg px-4 py-3 shadow-[0_0_0_1px_var(--hairline)]">The AI project: discovery, structured output, tools, retrieval, evals, write-up.</li>
+          <li className="rounded-xl bg-bg px-4 py-3 shadow-[0_0_0_1px_var(--hairline)]">A story a day, 1D DP in the week of Dec 14, review; mocks from Dec 7 on ready units.</li>
+        </ul>
+      </section>
+
+      <section aria-labelledby="bigtech-h" className="mx-auto mt-10 w-full max-w-[1180px] px-5 sm:px-8" data-testid="bigtech-pack">
+        <h2 id="bigtech-h" className="section-title">
+          {BIG_TECH_LABEL}
+        </h2>
+        <p className="mt-1 text-[13.5px] text-muted">Deferred, not deleted: never required, and any progress on it still counts.</p>
+        <ul className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+          {bigTech.map((u) => (
+            <UnitCard key={u.unit.id} u={u} index="Optional" statuses={statuses} onGoto={noop} />
+          ))}
+        </ul>
+      </section>
+
+      <section className="mx-auto mt-10 w-full max-w-[1180px] px-5 sm:px-8">
+        <details className="rounded-2xl bg-bg px-5 py-4 shadow-[0_0_0_1px_var(--hairline)]" data-testid="road-reference">
+          <summary className="cursor-pointer text-[14.5px] font-semibold">The original 14-week course (reference)</summary>
+          <p className="mt-2 text-[13px] text-muted">Weeks 1–3 ran as planned. From Nov 16 the Sprint and Prep replace the weekly order; the content is all still here.</p>
+          <ol className="mt-3 grid gap-1 text-[13.5px] sm:grid-cols-2">
+            {weeks.map(({ w, state }) => (
+              <li key={w.number} className="flex gap-2">
+                <span className="num w-6 text-muted">{w.number}</span>
+                <span className="text-ink">{w.title}</span>
+                <span className="ml-auto text-[12px] text-muted">{state === 'complete' ? 'Complete' : w.number <= 3 ? WEEK_STATE_LABEL[state] : ''}</span>
+              </li>
+            ))}
+          </ol>
+        </details>
+      </section>
+    </main>
   )
 }

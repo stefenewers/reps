@@ -65,19 +65,19 @@ export default function LearnIndex() {
       href: '#core',
       title: THREAD_LABEL.core,
       line: 'Programming foundations, then the patterns and data structures interviews are made of.',
-      meta: `${lib.foundations.length} lessons · ${lib.concepts.length} concept guides · ${lib.spans.core}`
+      meta: `${lib.foundations.length} lessons · ${lib.concepts.length} concept guides`
     },
     {
       href: '#applied',
       title: THREAD_LABEL.applied,
       line: 'Build reliable software around APIs, models and customer workflows: contracts, reliability, tools, evals, retrieval.',
-      meta: `${lib.applied.length} short lessons · ${lib.spans.applied}`
+      meta: `${lib.applied.length} short lessons`
     },
     {
       href: '#design',
       title: THREAD_LABEL.design,
       line: 'Practical design reasoning: components, state, data flow, failures and tradeoffs, from one program to an AI system.',
-      meta: `${lib.design.length} short lessons · ${lib.spans.design}`
+      meta: `${lib.design.length} short lessons`
     }
   ]
   const jump = [
@@ -136,7 +136,7 @@ export default function LearnIndex() {
         {/* CORE SWE */}
         <div id="core" className="flex scroll-mt-20 flex-col gap-10">
           <h2 className="section-title">{THREAD_LABEL.core}</h2>
-          <Section id="foundations" title="Foundations" sub={`How programs hold state, and how to take a problem apart. ${lib.spans.foundations}.`}>
+          <Section id="foundations" title="Foundations" sub="How programs hold state, and how to take a problem apart.">
             <ul className="mt-4 flex flex-col gap-2">
               {lib.foundations.map(({ lesson, week, labs }) => (
                 <LessonRow key={lesson.id} id={lesson.id} title={lesson.title} sub={plain(lesson.mentalModel)} week={week} minutes={lesson.minutes} labs={labs} />
@@ -146,7 +146,7 @@ export default function LearnIndex() {
           <Section
             id="patterns"
             title="Patterns and data structures"
-            sub={`The full guide for each idea the course trains, in the order it is taught (${lib.spans.concepts}), with a video that teaches the idea, not one problem's answer.`}
+            sub={`The full guide for each idea the course trains, in the order it is taught, with a video that teaches the idea, not one problem's answer.`}
           >
             <ul className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {lib.concepts.map(({ concept: c, week }) => (
@@ -174,8 +174,8 @@ export default function LearnIndex() {
           <div>
             <h2 className="section-title">{THREAD_LABEL.applied}</h2>
             <p className="mt-1 max-w-[760px] text-[13.5px] text-muted">
-              {lib.applied.length} short lessons ({lib.spans.applied}), each 5–10 minutes with checks. Software as a system first, then the model as one
-              component. Each appears on Today in its week, before the build that uses it.
+              {lib.applied.length} short lessons, each 5–10 minutes with checks. Software as a system first, then the model as one component. Each
+              appears on Today with the unit (or the Prep AI project) that uses it, before the build that relies on it.
             </p>
           </div>
           <ul className="flex flex-col gap-2">
@@ -190,7 +190,7 @@ export default function LearnIndex() {
           <div>
             <h2 className="section-title">{THREAD_LABEL.design}</h2>
             <p className="mt-1 max-w-[760px] text-[13.5px] text-muted">
-              {lib.design.length} short lessons ({lib.spans.design}): the design questions every build asks, then how applications fit together, fail and
+              {lib.design.length} short lessons: the design questions every build asks, then how applications fit together, fail and
               scale. Junior scope: what a strong SWE I is expected to reason about.
             </p>
           </div>
@@ -207,7 +207,7 @@ export default function LearnIndex() {
             Builds
           </h2>
           <p className="mt-1 max-w-[760px] text-[13.5px] text-muted">
-            Small, real programs ({lib.spans.labs}): design, build, change, review. Each lists the lessons it builds on. Done or not done; never counted as reps.
+            Small, real programs: design, build, change, review. Each lists the lessons it builds on. Done or not done; never counted as reps.
           </p>
           <ul className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
             {lib.labs.map(({ lab, week, track }) => (

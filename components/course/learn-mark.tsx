@@ -3,6 +3,8 @@
 import { useReps } from '@/components/reps-provider'
 import { checksKey } from '@/data/course/applied'
 import { courseWeekOf } from '@/data/course/calendar'
+import { SPRINT_START } from '@/data/course/sprint'
+import { planPlace } from '@/lib/course/library'
 import { LESSON_BY_ID } from '@/data/course/lessons'
 import { labKey, labProgress, type LabState } from '@/lib/course/labs'
 import { LAB_BY_ID } from '@/data/course/lessons'
@@ -18,10 +20,19 @@ export default function LearnMark({ id, week, kind = 'lesson' }: { id: string; w
   const done =
     kind === 'lab' ? Boolean(LAB_BY_ID[id] && labProgress(LAB_BY_ID[id], repo.state<LabState>(labKey(id)), attempts).done) : Boolean(key && repo.state(key))
   const checks = kind === 'lesson' && LESSON_BY_ID[id]?.checks?.length ? Boolean(repo.state<{ answeredOn?: string }>(checksKey(id))?.answeredOn) : false
-  const when = week === undefined ? 'Reference' : week === now ? 'This week' : week > now ? `Week ${week} · ahead` : `Week ${week}`
+  // From the Sprint the item's place in the plan (Sprint N, Prep, big-tech pack), not a course week.
+  const place = today >= SPRINT_START ? planPlace(id, kind) : undefined
+  const when = place ? place.label : week === undefined ? 'Reference' : week === now ? 'This week' : week > now ? `Week ${week} · ahead` : `Week ${week}`
+  const tone = place
+    ? { week: 'tag-plain', sprint: 'tag-flame', prep: 'tag-learn', bigtech: 'tag-locked' }[place.tone]
+    : week === now
+      ? 'tag-flame'
+      : week !== undefined && week > now
+        ? 'tag-locked'
+        : 'tag-plain'
   return (
     <span className="flex flex-wrap items-center gap-1.5" data-state={done ? 'done' : 'open'}>
-      <span className={`tag ${week === now ? 'tag-flame' : week !== undefined && week > now ? 'tag-locked' : 'tag-plain'}`}>{when}</span>
+      <span className={`tag ${tone}`} data-place={place?.tone}>{when}</span>
       {done && <span className="tag tag-pass">{kind === 'lab' ? '✓ Built' : kind === 'demo' ? '✓ Watched' : '✓ Done'}</span>}
       {checks && <span className="tag tag-cold">✓ Checks</span>}
     </span>

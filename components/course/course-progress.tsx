@@ -1,5 +1,6 @@
 'use client'
 
+import { shortDate } from '@/lib/dates'
 import Link from 'next/link'
 import { useMemo } from 'react'
 import { WEEK_STATUS_LABEL } from '@/components/course/course-cards'
@@ -10,7 +11,9 @@ import { IconArrowRight, IconCheck, IconRepair } from '@/components/icons'
 import Ring from '@/components/ring'
 import { useReps } from '@/components/reps-provider'
 import { useCourseDay } from '@/components/use-course-day'
-import { COURSE_START, COURSE_TARGET, courseWeekOf, dailyTargetOn, dayType, weekDates } from '@/data/course/calendar'
+import { COURSE_START, COURSE_TARGET, courseWeekOf, dailyTargetOn, dayType, PHASE_LABEL, phaseOf, weekDates } from '@/data/course/calendar'
+import { isSprintUnit, SPRINT_START } from '@/data/course/sprint'
+import { sprintRoad } from '@/components/course/sprint-road'
 import { LABS } from '@/data/course/lessons'
 import { motivate } from '@/data/course/motivation'
 import { WEEKS } from '@/data/course/weeks'
@@ -112,7 +115,9 @@ export default function CourseProgress() {
       trainingDays++
       if (c.dayContract(d).complete) daysComplete++
     }
-    const units = cd.course.statuses
+    // From the Sprint the road is weeks 1–3 plus the sprint list; the big-tech pack and the old later weeks are not counted against it.
+    const overlay = today >= SPRINT_START
+    const units = overlay ? cd.course.statuses.filter((s) => (s.unit.week <= 3 && !s.unit.sprintOnly) || isSprintUnit(s.unit.id)) : cd.course.statuses
     const ready = units.filter((u) => u.state === 'ready' || u.state === 'maintenance').length
     const blocked = units.filter((u) => u.state === 'gate-blocked')
     // Mastery and freshness, kept apart.
@@ -169,8 +174,12 @@ export default function CourseProgress() {
 
   const thisWeek = data.weeks.find((x) => x.w.number === current)?.k
   const weeksComplete = data.weeks.filter((x) => x.k.complete).length
-  const swe = data.labs.filter((l) => !l.lab.aiFde && !l.lab.optional)
-  const ai = data.labs.filter((l) => l.lab.aiFde)
+  const overlay = today >= SPRINT_START
+  // From the Sprint: the builds the road requires are those of weeks 1–3 and the sprint units.
+  const onRoad = new Set(data.units.flatMap((u) => u.unit.labIds))
+  const swe = data.labs.filter((l) => !l.lab.aiFde && !l.lab.optional && (!overlay || onRoad.has(l.lab.id)))
+  const ai = data.labs.filter((l) => l.lab.aiFde && !overlay)
+  const road = overlay ? sprintRoad(cd.course.statuses, today) : undefined
   const ev = cd.readiness.evidence
   const evTotal = EVIDENCE_KINDS.reduce((n, k) => n + ev[k.key], 0)
   const recent = data.days.slice(-21)
@@ -195,9 +204,9 @@ export default function CourseProgress() {
           <Tile title="Qualifying reps" testid="course-total">
             <p className="num mt-2 text-[34px] font-semibold leading-none tracking-tight">
               {cd.total}
-              <span className="text-[14px] font-medium text-muted"> / {COURSE_TARGET}</span>
+              {!overlay && <span className="text-[14px] font-medium text-muted"> / {COURSE_TARGET}</span>}
             </p>
-            <p className="mt-1 text-[12px] text-muted">produced in the course, each one counted once</p>
+            <p className="mt-1 text-[12px] text-muted">{overlay ? 'produced since Oct 26, each one counted once' : 'produced in the course, each one counted once'}</p>
             <div className="mt-auto flex h-[64px] items-end gap-[3px] pt-3" aria-label="The last three weeks, day by day" role="img">
               {recent.map((d) => (
                 <span
@@ -273,7 +282,7 @@ export default function CourseProgress() {
                   {data.ready} of {data.units.length} units cleared
                 </p>
                 <p className="text-muted">
-                  Week {current} of 14 · {weeksComplete} complete
+                  {road ? (road.left ? `Sprint: ${road.left} must-know reps and checkpoint passes left` : 'The must-know list is done') : `Week ${current} of 14 · ${weeksComplete} complete`}
                 </p>
               </div>
             </div>
@@ -333,10 +342,14 @@ export default function CourseProgress() {
               return (
                 <li key={w.number} className="flex flex-col rounded-2xl bg-bg p-5 shadow-[0_0_0_1px_var(--hairline)]" data-week={w.number} data-status={k.status}>
                   <div className="flex items-center justify-between gap-2">
-                    <p className="num text-[12px] font-semibold uppercase tracking-[0.08em] text-muted">Week {w.number}</p>
+                    <p className="num text-[12px] font-semibold uppercase tracking-[0.08em] text-muted">
+                      {phaseOf(w.startsOn) === 'course' ? `Week ${w.number}` : `${PHASE_LABEL[phaseOf(w.startsOn)]} · ${shortDate(w.startsOn)}–${shortDate(w.endsOn)}`}
+                    </p>
                     <span className={`tag ${inProgress ? 'tag-flame' : STATE_TAG[k.status]}`}>{inProgress ? 'In progress' : STATE_LABEL[k.status]}</span>
                   </div>
-                  <p className="font-display mt-1 text-[20px] font-semibold tracking-tight">{w.title}</p>
+                  <p className="font-display mt-1 text-[20px] font-semibold tracking-tight">
+                    {phaseOf(w.startsOn) === 'course' ? w.title : phaseOf(w.startsOn) === 'sprint' ? 'Sprint week' : 'Prep week'}
+                  </p>
                   <div className="mt-3 flex items-end gap-3">
                     <p className="num text-[26px] font-semibold leading-none tracking-tight">{k.output.done}</p>
                     <p className="num pb-0.5 text-[13px] text-muted">/ {k.output.target} problems</p>

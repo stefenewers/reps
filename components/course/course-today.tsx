@@ -1,5 +1,6 @@
 'use client'
 
+import { goalOn, SPRINT_START } from '@/data/course/sprint'
 import OverlayPanel from '@/components/course/overlay-panel'
 import { PHASE_LABEL, phaseOf } from '@/data/course/calendar'
 import Link from 'next/link'
@@ -19,7 +20,7 @@ import { IconArrowRight, IconCheck, IconClock, IconLock, IconMoon, IconRepair } 
 import type { useCourseDay } from '@/components/use-course-day'
 import type { useTodayPlan } from '@/components/use-today-plan'
 import { trainingKey, type useTraining } from '@/components/use-training'
-import { COURSE_END, INTERVIEW_CHECKPOINT, dayOffKey, dayType, weekDates } from '@/data/course/calendar'
+import { COURSE_END, dayOffKey, dayType, weekDates } from '@/data/course/calendar'
 import { motivate } from '@/data/course/motivation'
 import { DAY_PLAN } from '@/data/course/schedule'
 import { UNIT_BY_ID } from '@/data/course/units'
@@ -101,7 +102,8 @@ function Hero({
 
 /** The flame, the streak and the distance to February, on the scene. */
 function MomentumCard({ cd, today, preview }: { cd: CourseDayState; today: string; preview: boolean }) {
-  const daysLeft = Math.max(0, Math.round((parseLocal(INTERVIEW_CHECKPOINT).getTime() - parseLocal(today).getTime()) / 86_400_000))
+  const goal = goalOn(today)
+  const daysLeft = Math.max(0, Math.round((parseLocal(goal.date).getTime() - parseLocal(today).getTime()) / 86_400_000))
   return (
     <div className="glass hidden shrink-0 items-center gap-4 self-start rounded-2xl px-4 py-3 sm:flex lg:mt-2">
       <TrainingFlame state={preview ? 'unlit' : cd.flame} size={42} />
@@ -117,7 +119,7 @@ function MomentumCard({ cd, today, preview }: { cd: CourseDayState; today: strin
       <span aria-hidden="true" className="mx-1 h-10 w-px bg-current opacity-15" />
       <div className="leading-tight">
         <p className="num text-[21px] font-semibold tracking-tight">{daysLeft}</p>
-        <p className="mt-0.5 text-[12.5px] opacity-80">days to Feb 1</p>
+        <p className="mt-0.5 text-[12.5px] opacity-80" data-testid="days-to-goal">days to {goal.short}</p>
       </div>
     </div>
   )
@@ -356,7 +358,8 @@ export default function CourseToday({
     if (remainingReps.length && !repair.length && !placementItems.length) window.setTimeout(() => void startReps(remainingReps), 0)
   })
 
-  if (today > COURSE_END)
+  // The February checkpoint page belongs to the 14-week course; from the Sprint, Prep runs on to the Feb 28 cutoff.
+  if (today > COURSE_END && today < SPRINT_START)
     return (
       <>
         <Hero
