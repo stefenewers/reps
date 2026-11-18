@@ -5,7 +5,7 @@ import { useMemo, useState } from 'react'
 import { useReps } from '@/components/reps-provider'
 import { useSolveLog } from '@/components/use-solve-log'
 import { SECTION_BY_ID } from '@/data/course'
-import { phaseOf } from '@/data/course/calendar'
+import { doubleDaysFrom, phaseOf } from '@/data/course/calendar'
 import { LAB_BY_ID, LABS, LESSON_BY_ID } from '@/data/course/lessons'
 import { BIG_TECH_LABEL, SPRINT_END } from '@/data/course/sprint'
 import { EXERCISE_BY_ID } from '@/data/curriculum'
@@ -32,6 +32,7 @@ export default function OverlayPanel() {
       labStates: Object.fromEntries(LABS.map((l) => [l.id, repo.state<LabState>(labKey(l.id))])),
       exercises: EXERCISE_BY_ID,
       sections: SECTION_BY_ID,
+      doubleDays: doubleDaysFrom(repo.statesWithPrefix<{ date?: string; on?: boolean }>('double:')),
       state: (k: string) => repo.state(k)
     }
   }, [attempts, entries, mastery, reviews, repo, version])

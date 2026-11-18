@@ -181,9 +181,12 @@ function redosOwed(entries: SolveEntry[]): { lc: number; title: string }[] {
 }
 
 /** The sprint plan from `date` (inclusive) to SPRINT_END, with any spill into Dec 1–5. */
-export function sprintPlan(input: SprintPlanInput, date: string): SprintPlan {
+export function sprintPlan(input: SprintPlanInput, date: string, opts: { double?: boolean } = {}): SprintPlan {
   const start = date < SPRINT_START ? SPRINT_START : date
   const days = trainingDaysBetween(start, SPRINT_END)
+  // A doubled day also takes the next training day's share: its target and review block. Checkpoints and labs keep their
+  // cold, next-day timing, so the ones tomorrow's plan held for a unit finished today still wait for tomorrow.
+  const extra = opts.double && days[0] === date ? sprintPlan(input, date).days[1] : undefined
   const work = requiredWork(input)
   let queue = [...work]
   const total = queue.reduce((n, x) => n + repCount(x), 0)
@@ -253,8 +256,9 @@ export function sprintPlan(input: SprintPlanInput, date: string): SprintPlan {
   let left = queue.reduce((n, x) => n + repCount(x), 0)
   days.forEach((d, i) => {
     const weekday = weekdayTarget(left, days.slice(i))
-    const target = dayTarget(weekday, d)
-    const picks = review.splice(0, Math.min(REVIEW_PER_DAY, target))
+    const boost = i === 0 ? extra : undefined
+    const target = dayTarget(weekday, d) + (boost?.target ?? 0)
+    const picks = review.splice(0, Math.min(REVIEW_PER_DAY * (boost ? 2 : 1), target))
     const redo = isSaturday(d) && owed.length ? owed[0] : undefined
     if (redo) owed = owed.slice(1)
     const { taken, room } = fill(d, queue, Math.max(0, target - picks.length - (redo ? 1 : 0)))

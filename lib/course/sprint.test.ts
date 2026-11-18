@@ -319,3 +319,19 @@ test('10. the whole program reads the Sprint: no lesson is stranded on a big-tec
   const ids = new Set(checklist.map((s) => s.id))
   assert.ok(prepStories.every((s) => !ids.has(s.id)))
 })
+
+test('11. a doubled day takes the next training day’s reps and review; checkpoints keep their cold, next-day timing', () => {
+  const day = '2026-11-17'
+  const normal = sprintPlanAsOf(day, { ...input })
+  const doubled = sprintPlanAsOf(day, { ...input, doubleDays: [day] })
+  const [today, tomorrow] = normal.days
+  const twice = doubled.days[0]
+  assert.equal(twice.target, today.target + tomorrow.target)
+  assert.equal(twice.review.length, Math.min(8, today.review.length + tomorrow.review.length))
+  assert.ok(today.newReps.every((r) => twice.newReps.some((x) => x.exerciseId === r.exerciseId)), 'today’s own reps stay')
+  assert.ok(twice.newReps.length > today.newReps.length, 'tomorrow’s reps move in')
+  assert.deepEqual(twice.gates, today.gates, 'no checkpoint is pulled forward onto the day its unit finishes')
+  assert.ok(doubled.behindBy <= normal.behindBy)
+  // Only the doubled date changes: the next day is planned from what was actually done.
+  assert.deepEqual(sprintPlanAsOf('2026-11-18', { ...input, doubleDays: [day] }).days[0], sprintPlanAsOf('2026-11-18', { ...input }).days[0])
+})

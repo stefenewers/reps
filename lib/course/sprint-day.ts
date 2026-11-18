@@ -20,7 +20,11 @@ export function sprintPlanAsOf(date: string, input: OverlayInput): SprintPlan {
   const before = input.attempts.filter((a) => a.date < date)
   const statuses = courseStatus({ attempts: before, mastery: input.mastery, exercises: input.exercises, sections: input.sections, today: date })
   const labsDone = new Set(LABS.filter((l) => { const p = labProgress(l, input.labStates[l.id], before); return p.done && (p.doneOn ?? '') < date }).map((l) => l.id))
-  const plan = sprintPlan({ statuses, review: input.review ?? [], attempts: before, entries: input.entries.filter((e) => e.date < date), exercises: input.exercises, mastery: input.mastery, labsDone }, date)
+  const plan = sprintPlan(
+    { statuses, review: input.review ?? [], attempts: before, entries: input.entries.filter((e) => e.date < date), exercises: input.exercises, mastery: input.mastery, labsDone },
+    date,
+    { double: input.doubleDays?.includes(date) }
+  )
   byDate.set(date, plan)
   return plan
 }

@@ -1,4 +1,5 @@
 import { SECTION_BY_ID } from '@/data/course'
+import { doubleDaysFrom } from '@/data/course/calendar'
 import { LABS } from '@/data/course/lessons'
 import { EXERCISE_BY_ID } from '@/data/curriculum'
 import { SKILLS } from '@/data/skills'
@@ -55,6 +56,7 @@ export function exportInput(bundle: ExportLike): ExportInput {
     exercises: exercisesWithGenerated(bundle),
     sections: SECTION_BY_ID,
     review: bundle.review_queue,
+    doubleDays: doubleDaysFrom([...states].filter(([k]) => k.startsWith('double:')).map(([, v]) => v as { date?: string; on?: boolean })),
     state: (k) => states.get(k),
     stateKeys: [...states.keys()]
   }

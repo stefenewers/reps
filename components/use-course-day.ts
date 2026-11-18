@@ -4,7 +4,7 @@ import { useMemo } from 'react'
 import { useReps } from '@/components/reps-provider'
 import { useCourse } from '@/components/use-course'
 import { useCredits } from '@/components/use-credits'
-import { COURSE_START, courseWeekOf, weekDates } from '@/data/course/calendar'
+import { COURSE_START, courseWeekOf, doubleDaysFrom, weekDates } from '@/data/course/calendar'
 import { LAB_BY_ID, LABS } from '@/data/course/lessons'
 import { SPRINT_START } from '@/data/course/sprint'
 import { sprintPlanAsOf } from '@/lib/course/sprint-day'
@@ -33,7 +33,8 @@ export function useCourseDay() {
     void version
     // The one contract for the day and the week (lib/course/contract.ts): streak, flame, week status and readiness read it.
     const labStates = Object.fromEntries(LABS.map((l) => [l.id, repo.state<LabState>(labKey(l.id))]))
-    const contracts = createContracts({ attempts, entries, mastery, labStates, exercises: EXERCISE_BY_ID, sections: SECTION_BY_ID, review: reviews })
+    const doubleDays = doubleDaysFrom(repo.statesWithPrefix<{ date?: string; on?: boolean }>('double:'))
+    const contracts = createContracts({ attempts, entries, mastery, labStates, exercises: EXERCISE_BY_ID, sections: SECTION_BY_ID, review: reviews, doubleDays })
     const dayC = contracts.dayContract(today)
     const day = courseDay(today, credits.byDate)
     const week = WEEK_BY_NUMBER[day.week] ?? WEEK_BY_NUMBER[14]
@@ -91,7 +92,7 @@ export function useCourseDay() {
       mocksDone: program.mocks.completed,
       today,
       // From the Sprint, "behind" is the sprint plan's own measure (the calendar weeks no longer order the work).
-      sprintBehind: overlay ? sprintPlanAsOf(today, { attempts, entries, mastery, labStates, exercises: EXERCISE_BY_ID, sections: SECTION_BY_ID, review: reviews }).behindBy : undefined
+      sprintBehind: overlay ? sprintPlanAsOf(today, { attempts, entries, mastery, labStates, exercises: EXERCISE_BY_ID, sections: SECTION_BY_ID, review: reviews, doubleDays }).behindBy : undefined
     })
     return {
       day,

@@ -66,6 +66,13 @@ export const inCourse = (date: string) => date >= COURSE_START && date <= COURSE
  */
 export const dayOffKey = (date: string) => `dayoff:${date}`
 
+/** A sprint day the learner chose to double: it also takes the next training day's reps (study state, { date, on }). */
+export const doubleDayKey = (date: string) => `double:${date}`
+
+/** The doubled dates, from the study-state values stored under doubleDayKey. */
+export const doubleDaysFrom = (values: ({ date?: string; on?: boolean } | undefined)[]) =>
+  values.filter((v): v is { date: string; on: true } => Boolean(v?.on && v.date)).map((v) => v.date)
+
 /** Week 1–14 for a date in the course; 0 before it starts, 15 after it ends. */
 export function courseWeekOf(date: string): number {
   if (date < COURSE_START) return 0

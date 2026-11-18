@@ -36,6 +36,8 @@ export interface ContractInput {
   labStates: Record<string, LabState | undefined>
   exercises: Record<string, Exercise>
   sections: Record<string, { exercises: Exercise[] }>
+  /** Sprint days the learner chose to double: each also takes the next training day's share (doubleDayKey in study state). */
+  doubleDays?: string[]
 }
 
 export type GateState = 'cleared' | 'open' | 'locked' | 'repair' | 'handled'

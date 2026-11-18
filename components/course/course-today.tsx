@@ -20,7 +20,7 @@ import { IconArrowRight, IconCheck, IconClock, IconLock, IconMoon, IconRepair } 
 import type { useCourseDay } from '@/components/use-course-day'
 import type { useTodayPlan } from '@/components/use-today-plan'
 import { trainingKey, type useTraining } from '@/components/use-training'
-import { COURSE_END, dayOffKey, dayType, weekDates } from '@/data/course/calendar'
+import { COURSE_END, dayOffKey, dayType, doubleDayKey, weekDates } from '@/data/course/calendar'
 import { motivate } from '@/data/course/motivation'
 import { DAY_PLAN } from '@/data/course/schedule'
 import { UNIT_BY_ID } from '@/data/course/units'
@@ -213,6 +213,7 @@ export default function CourseToday({
   // A training day marked off shows the next one, read-only until it starts: lessons open, nothing that counts.
   const lookahead = !preview && Boolean(realToday && realToday < today)
   const locked = preview || lookahead
+  const doubled = Boolean(repo.state<{ on?: boolean }>(doubleDayKey(today))?.on)
   const router = useRouter()
   const [busy, setBusy] = useState(false)
   const [stopped, setStopped] = useState(false)
@@ -837,6 +838,18 @@ export default function CourseToday({
                         data-testid="day-off"
                       >
                         Taking today off? Show tomorrow instead
+                      </button>
+                    )}
+                    {!locked && !complete && c.type === 'training' && phaseOf(today) === 'sprint' && (
+                      // Catching up a missed day: today also takes the next training day's reps (the plan recomputes the rest).
+                      <button
+                        type="button"
+                        className="self-start text-[12.5px] text-muted underline underline-offset-2 hover:text-ink"
+                        onClick={() => void repo.setState(doubleDayKey(today), { date: today, on: !doubled })}
+                        data-testid="double-day"
+                        data-on={doubled ? 'true' : 'false'}
+                      >
+                        {doubled ? 'Two days today. Back to one day' : 'Making up a missed day? Do two days today'}
                       </button>
                     )}
                   </div>

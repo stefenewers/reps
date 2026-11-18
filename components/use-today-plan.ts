@@ -12,7 +12,7 @@ import { courseDailyPlan } from '@/lib/course/daily-plan'
 import { LABS } from '@/data/course/lessons'
 import { SECTION_BY_ID } from '@/data/course'
 import { labKey, type LabState } from '@/lib/course/labs'
-import { COURSE_START } from '@/data/course/calendar'
+import { COURSE_START, doubleDaysFrom } from '@/data/course/calendar'
 import { SPRINT_START } from '@/data/course/sprint'
 import { createContracts } from '@/lib/course/contract'
 import type { usePacing } from '@/components/use-pacing'
@@ -69,7 +69,8 @@ export function useTodayPlan(pace: Pace, training: Training, dueLc: DueLc[]) {
         review: reviews,
         labStates: Object.fromEntries(LABS.map((l) => [l.id, repo.state<LabState>(labKey(l.id))])),
         exercises: EXERCISE_BY_ID,
-        sections: SECTION_BY_ID
+        sections: SECTION_BY_ID,
+        doubleDays: doubleDaysFrom(repo.statesWithPrefix<{ date?: string; on?: boolean }>('double:'))
       }
       const due = courseDailyPlan(today, input)
       // From the Sprint the day's number comes from what is left (the contract), not a fixed weekly rate.
