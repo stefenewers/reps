@@ -379,14 +379,23 @@ export function createContracts(input: ContractInput) {
     return { week, output: { done, target }, labs, gates, targets: [], trainingDays: days.length, daysComplete, shortfall, overdue, complete, status }
   }
 
-  /** Consecutive required training days completed, counting back from `date` (rest and Saturdays protect it). */
+  /**
+   * Consecutive required training days completed, counting back from `date` (rest and Saturdays protect it).
+   * A missed day right before a doubled day is made up by it: it counts once the double is complete, and does not
+   * break the streak while the double is still today.
+   */
   function streak(date: string): number {
+    const doubled = new Set(input.doubleDays ?? [])
     let n = 0
+    let later: { date: string; complete: boolean } | undefined
     for (const d of [...SCHEDULE.flatMap((w) => w.days.map((x) => x.date))].filter((d) => d <= date).reverse()) {
       if (dayType(d) !== 'training') continue
-      if (dayContract(d).complete) n++
-      else if (d === date) continue
-      else break
+      const complete = dayContract(d).complete
+      const madeUp = !complete && d !== date && later !== undefined && doubled.has(later.date)
+      if (madeUp && !later!.complete && later!.date !== date) break
+      if (!complete && !madeUp && d !== date) break
+      if (complete || (madeUp && later!.complete)) n++
+      later = { date: d, complete }
     }
     return n
   }

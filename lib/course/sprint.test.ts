@@ -322,7 +322,7 @@ test('10. the whole program reads the Sprint: no lesson is stranded on a big-tec
 
 test('11. a doubled day takes the next training day’s reps and review; checkpoints keep their cold, next-day timing', () => {
   const day = '2026-11-17'
-  const normal = sprintPlanAsOf(day, { ...input })
+  const normal = sprintPlanAsOf(day, { ...input, doubleDays: [] })
   const doubled = sprintPlanAsOf(day, { ...input, doubleDays: [day] })
   const [today, tomorrow] = normal.days
   const twice = doubled.days[0]
@@ -333,5 +333,5 @@ test('11. a doubled day takes the next training day’s reps and review; checkpo
   assert.deepEqual(twice.gates, today.gates, 'no checkpoint is pulled forward onto the day its unit finishes')
   assert.ok(doubled.behindBy <= normal.behindBy)
   // Only the doubled date changes: the next day is planned from what was actually done.
-  assert.deepEqual(sprintPlanAsOf('2026-11-18', { ...input, doubleDays: [day] }).days[0], sprintPlanAsOf('2026-11-18', { ...input }).days[0])
+  assert.deepEqual(sprintPlanAsOf('2026-11-18', { ...input, doubleDays: [day] }).days[0], sprintPlanAsOf('2026-11-18', { ...input, doubleDays: [] }).days[0])
 })

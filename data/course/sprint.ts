@@ -27,6 +27,9 @@ export const SPRINT_REST: { date: string; label: string }[] = [
   { date: '2026-11-27', label: 'Day after Thanksgiving' },
 ]
 
+/** Sprint days planned as doubles (a missed day made up the next day): on by default, the learner can turn one back to a single day. */
+export const SPRINT_DOUBLE_DAYS: { date: string; makesUp: string }[] = [{ date: '2026-11-18', makesUp: '2026-11-17' }]
+
 /** Prep rest on top of Sundays. Saturdays are Prep training days (format practice rotates Mon–Sat). */
 export const PREP_REST: { date: string; label: string }[] = [
   { date: '2026-12-24', label: 'Christmas Eve' },

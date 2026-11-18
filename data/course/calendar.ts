@@ -1,5 +1,5 @@
 import { addDays, parseLocal } from '@/lib/dates'
-import { inPrep, inSprint, PREP_REST, SATURDAY_SHARE, SPRINT_FLOOR, SPRINT_REST, SPRINT_START } from '@/data/course/sprint'
+import { inPrep, inSprint, PREP_REST, SATURDAY_SHARE, SPRINT_DOUBLE_DAYS, SPRINT_FLOOR, SPRINT_REST, SPRINT_START } from '@/data/course/sprint'
 
 /**
  * Reps 2.0: the 14-week course to the February 1 interview-start checkpoint
@@ -69,9 +69,12 @@ export const dayOffKey = (date: string) => `dayoff:${date}`
 /** A sprint day the learner chose to double: it also takes the next training day's reps (study state, { date, on }). */
 export const doubleDayKey = (date: string) => `double:${date}`
 
-/** The doubled dates, from the study-state values stored under doubleDayKey. */
-export const doubleDaysFrom = (values: ({ date?: string; on?: boolean } | undefined)[]) =>
-  values.filter((v): v is { date: string; on: true } => Boolean(v?.on && v.date)).map((v) => v.date)
+/** The doubled dates: the planned doubles (SPRINT_DOUBLE_DAYS) unless turned off, plus any the learner turned on (values stored under doubleDayKey). */
+export const doubleDaysFrom = (values: ({ date?: string; on?: boolean } | undefined)[]) => {
+  const set = new Set(SPRINT_DOUBLE_DAYS.map((d) => d.date))
+  for (const v of values) if (v?.date) { if (v.on) set.add(v.date); else set.delete(v.date) }
+  return [...set].sort()
+}
 
 /** Week 1–14 for a date in the course; 0 before it starts, 15 after it ends. */
 export function courseWeekOf(date: string): number {

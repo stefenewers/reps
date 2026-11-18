@@ -20,7 +20,7 @@ import { IconArrowRight, IconCheck, IconClock, IconLock, IconMoon, IconRepair } 
 import type { useCourseDay } from '@/components/use-course-day'
 import type { useTodayPlan } from '@/components/use-today-plan'
 import { trainingKey, type useTraining } from '@/components/use-training'
-import { COURSE_END, dayOffKey, dayType, doubleDayKey, weekDates } from '@/data/course/calendar'
+import { COURSE_END, dayOffKey, dayType, doubleDayKey, doubleDaysFrom, weekDates } from '@/data/course/calendar'
 import { motivate } from '@/data/course/motivation'
 import { DAY_PLAN } from '@/data/course/schedule'
 import { UNIT_BY_ID } from '@/data/course/units'
@@ -213,7 +213,7 @@ export default function CourseToday({
   // A training day marked off shows the next one, read-only until it starts: lessons open, nothing that counts.
   const lookahead = !preview && Boolean(realToday && realToday < today)
   const locked = preview || lookahead
-  const doubled = Boolean(repo.state<{ on?: boolean }>(doubleDayKey(today))?.on)
+  const doubled = doubleDaysFrom(repo.statesWithPrefix<{ date?: string; on?: boolean }>('double:')).includes(today)
   const router = useRouter()
   const [busy, setBusy] = useState(false)
   const [stopped, setStopped] = useState(false)

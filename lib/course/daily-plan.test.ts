@@ -134,3 +134,14 @@ test('future and malformed history cannot change the current prescription', () =
   i.attempts.push({ ...pass(UNITS[0].path![0], '2026-10-26'), completedAt: 'invalid' })
   assert.deepEqual(courseDailyPlan('2026-10-26', i), expected)
 })
+
+test('a missed sprint day made up by a doubled day keeps the streak: held while the double is today, counted once it is done', () => {
+  const i = input()
+  i.attempts = [pass(UNITS[0].path![0], '2026-11-17')]
+  const off = createContracts(i)
+  const on = createContracts({ ...i, doubleDays: ['2026-11-18'] })
+  assert.ok(!off.dayContract('2026-11-17').complete)
+  assert.equal(off.streak('2026-11-18'), 0)
+  assert.equal(on.streak('2026-11-18'), on.streak('2026-11-16'), 'the missed day does not break the streak while the double is in progress')
+  assert.equal(on.streak('2026-11-19'), 0, 'a double left unfinished does not make up the missed day')
+})
