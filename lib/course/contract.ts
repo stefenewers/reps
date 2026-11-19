@@ -381,21 +381,24 @@ export function createContracts(input: ContractInput) {
 
   /**
    * Consecutive required training days completed, counting back from `date` (rest and Saturdays protect it).
-   * A missed day right before a doubled day is made up by it: it counts once the double is complete, and does not
-   * break the streak while the double is still today.
+   * A sprint day can be covered by the next training day instead: a missed day by a doubled day, or a day whose rep
+   * target was met but whose checkpoints or labs carried over. It counts once the covering day is complete, does not
+   * break the streak while the covering day is still today, and covers can chain (Nov 17 by Nov 18 by Nov 19).
    */
   function streak(date: string): number {
     const doubled = new Set(input.doubleDays ?? [])
     let n = 0
-    let later: { date: string; complete: boolean } | undefined
+    let later: { date: string; status: 'counted' | 'pending' } | undefined
     for (const d of [...SCHEDULE.flatMap((w) => w.days.map((x) => x.date))].filter((d) => d <= date).reverse()) {
       if (dayType(d) !== 'training') continue
-      const complete = dayContract(d).complete
-      const madeUp = !complete && d !== date && later !== undefined && doubled.has(later.date)
-      if (madeUp && !later!.complete && later!.date !== date) break
-      if (!complete && !madeUp && d !== date) break
-      if (complete || (madeUp && later!.complete)) n++
-      later = { date: d, complete }
+      const c = dayContract(d)
+      let status: 'counted' | 'pending'
+      if (c.complete) status = 'counted'
+      else if (d === date) status = 'pending'
+      else if (later && d >= SPRINT_START && (doubled.has(later.date) || c.reps.met)) status = later.status
+      else break
+      if (status === 'counted') n++
+      later = { date: d, status }
     }
     return n
   }
