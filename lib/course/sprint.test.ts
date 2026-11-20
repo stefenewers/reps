@@ -182,7 +182,7 @@ test('5. target math: weekdays 15–24, Saturdays lower; an impossible backlog s
     if (!sat && d.newReps.length && d.date < plan.endsOn!) assert.ok(d.target >= 15, `${d.date}: ${d.target}`)
     if (sat) assert.ok(d.target < 20, `${d.date} (Saturday): ${d.target}`)
   }
-  // Nothing done from Nov 16 to Nov 27: two training days left cannot hold the sprint.
+  // Nothing done from Nov 16 to Nov 27: three training days left cannot hold the sprint.
   const late = sprintPlanAsOf('2026-11-28', input)
   assert.ok(late.behindBy > 0, 'behind')
   assert.ok(late.days.every((d) => d.behindBy === late.behindBy))
@@ -192,8 +192,9 @@ test('5. target math: weekdays 15–24, Saturdays lower; an impossible backlog s
   // The lowest priority goes first: linked lists before anything above it.
   const spilledUnits = new Set(spill.flatMap((d) => d.newReps.map((r) => r.unitId)))
   assert.ok(spilledUnits.has('w5-linked-lists'))
-  // Rest days owe nothing.
-  for (const d of ['2026-11-22', '2026-11-26', '2026-11-27', '2026-11-29']) assert.equal(createContracts(input).dayContract(d).reps.target, 0, d)
+  // Rest days owe nothing; the make-up Sundays are full training days.
+  for (const d of ['2026-11-26', '2026-11-27']) assert.equal(createContracts(input).dayContract(d).reps.target, 0, d)
+  for (const d of ['2026-11-22', '2026-11-29']) assert.ok(createContracts(input).dayContract(d).reps.target >= 15, d)
 })
 
 test('6. Dec 1 unlock: closed on Nov 30, the Prep template on Dec 1, mocks refused Dec 6 and allowed Dec 7 on ready units only', () => {
@@ -265,10 +266,10 @@ test('8. content integrity: every sprint id exists once, scaffolds name real exe
     assert.equal(lab.scaffold!.referenceSolution, EXERCISE_BY_ID[lab.buildExerciseId].solution, `${id}: reference is the build's solution`)
   }
   assert.ok(LAB_BY_ID['lab-inmemory-db'].optional, 'the Prep build is optional in the course')
-  // Training days in the sprint: weekdays and the two Saturdays, not Thanksgiving.
+  // Training days in the sprint: weekdays, the two Saturdays and the two make-up Sundays, not Thanksgiving.
   assert.deepEqual(trainingDaysBetween(SPRINT_START, SPRINT_END), [
-    '2026-11-16', '2026-11-17', '2026-11-18', '2026-11-19', '2026-11-20', '2026-11-21',
-    '2026-11-23', '2026-11-24', '2026-11-25', '2026-11-28', '2026-11-30'
+    '2026-11-16', '2026-11-17', '2026-11-18', '2026-11-19', '2026-11-20', '2026-11-21', '2026-11-22',
+    '2026-11-23', '2026-11-24', '2026-11-25', '2026-11-28', '2026-11-29', '2026-11-30'
   ])
 })
 

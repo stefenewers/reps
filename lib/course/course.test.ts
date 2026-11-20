@@ -8,9 +8,9 @@ test('the course: 14 weeks from Oct 26 to Jan 31; weeks 1–3 unchanged, then Sp
   assert.equal(WEEKS.length, 14)
   assert.equal(WEEKS[0].startsOn, '2026-10-26')
   assert.equal(WEEKS[13].endsOn, '2027-01-31')
-  // Before Nov 16: exactly as before. From it: Sprint floors (20 weekdays, 12 Saturdays) and Prep's nominal 6 (lib/course/sprint-plan.ts decides the real Sprint number).
+  // Before Nov 16: exactly as before. From it: Sprint floors (20 weekdays and the two make-up Sundays, 12 Saturdays) and Prep's nominal 6 (lib/course/sprint-plan.ts decides the real Sprint number).
   assert.deepEqual(WEEKS.slice(0, 3).map((w) => w.targetProblems), [50, 60, 75])
-  assert.deepEqual([weekTarget(4), weekTarget(5)], [5 * 20 + 12, 3 * 20 + 12])
+  assert.deepEqual([weekTarget(4), weekTarget(5)], [6 * 20 + 12, 4 * 20 + 12])
   assert.equal(COURSE_TARGET, WEEKS.reduce((n, w) => n + w.targetProblems, 0))
   assert.deepEqual([1, 2, 3].map(dailyTarget), [10, 12, 15])
 })
@@ -20,9 +20,10 @@ test('planned rest: before Nov 16 Sundays and holidays (Saturdays optional); Spr
   assert.equal(dayType('2026-10-31'), 'recovery')
   assert.equal(dayType('2026-11-14'), 'recovery')
   assert.equal(dayType('2026-10-26'), 'training')
-  for (const d of ['2026-11-22', '2026-11-26', '2026-11-27', '2026-12-24', '2026-12-25', '2026-12-26', '2026-12-31', '2027-01-01']) assert.equal(dayType(d), 'rest', d)
-  for (const d of ['2026-11-21', '2026-11-28', '2026-12-05', '2027-01-18']) assert.equal(dayType(d), 'training', d)
+  for (const d of ['2026-11-26', '2026-11-27', '2026-12-24', '2026-12-25', '2026-12-26', '2026-12-31', '2027-01-01']) assert.equal(dayType(d), 'rest', d)
+  for (const d of ['2026-11-21', '2026-11-22', '2026-11-28', '2026-11-29', '2026-12-05', '2027-01-18']) assert.equal(dayType(d), 'training', d)
   assert.deepEqual(trainingDays(9), ['2026-12-21', '2026-12-22', '2026-12-23'])
+  assert.equal(dayType('2026-12-06'), 'rest', 'Sundays in Prep still rest')
   assert.deepEqual(trainingDays(10), ['2026-12-28', '2026-12-29', '2026-12-30', '2027-01-02'])
 })
 

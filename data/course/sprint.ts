@@ -21,10 +21,16 @@ export const MOCKS_FROM = '2026-12-07'
 /** Behind-by spill-over lands in Prep's first week. */
 export const SPILL_END = '2026-12-05'
 
-/** Sprint rest on top of Sundays (Thanksgiving). Saturdays in the sprint are lighter training days. */
+/** Sprint rest on top of Sundays (Thanksgiving); SPRINT_TRAINING_SUNDAYS are the exception. Saturdays in the sprint are lighter training days. */
 export const SPRINT_REST: { date: string; label: string }[] = [
   { date: '2026-11-26', label: 'Thanksgiving' },
   { date: '2026-11-27', label: 'Day after Thanksgiving' },
+]
+
+/** Sprint Sundays turned into full training days (Nov 17 and Nov 19 were missed): the rest of the sprint fits by Nov 30. */
+export const SPRINT_TRAINING_SUNDAYS: { date: string; label: string }[] = [
+  { date: '2026-11-22', label: 'Make-up Sunday' },
+  { date: '2026-11-29', label: 'Make-up Sunday' },
 ]
 
 /** Sprint days planned as doubles (a missed day made up the next day): on by default, the learner can turn one back to a single day. */

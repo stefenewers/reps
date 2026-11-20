@@ -1,5 +1,5 @@
 import { addDays, parseLocal } from '@/lib/dates'
-import { inPrep, inSprint, PREP_REST, SATURDAY_SHARE, SPRINT_DOUBLE_DAYS, SPRINT_FLOOR, SPRINT_REST, SPRINT_START } from '@/data/course/sprint'
+import { inPrep, inSprint, PREP_REST, SATURDAY_SHARE, SPRINT_DOUBLE_DAYS, SPRINT_FLOOR, SPRINT_REST, SPRINT_START, SPRINT_TRAINING_SUNDAYS } from '@/data/course/sprint'
 
 /**
  * Reps 2.0: the 14-week course to the February 1 interview-start checkpoint
@@ -30,6 +30,8 @@ export const HOLIDAYS: PlannedOffDay[] = [
 const HOLIDAY = new Map(HOLIDAYS.map((h) => [h.date, h]))
 /** Sprint and Prep rest (data/course/sprint.ts), on top of Sundays. Applies only from SPRINT_START. */
 const OVERLAY_REST = new Map<string, PlannedOffDay>([...SPRINT_REST, ...PREP_REST].map((h) => [h.date, { ...h, debt: false as const }]))
+/** Sprint Sundays that are full training days (data/course/sprint.ts). */
+const TRAINING_SUNDAYS = new Set(SPRINT_TRAINING_SUNDAYS.map((d) => d.date))
 
 /**
  * A day in the course:
@@ -40,9 +42,10 @@ const OVERLAY_REST = new Map<string, PlannedOffDay>([...SPRINT_REST, ...PREP_RES
 export type DayType = 'training' | 'recovery' | 'rest'
 
 export function dayType(date: string): DayType {
-  // From Nov 16 (data/course/sprint.ts): Sprint, then Prep. Saturdays are (lighter) training days; Sundays and the listed days rest.
+  // From Nov 16 (data/course/sprint.ts): Sprint, then Prep. Saturdays are (lighter) training days; Sundays (except SPRINT_TRAINING_SUNDAYS) and the listed days rest.
   if (inSprint(date) || inPrep(date)) {
-    if (OVERLAY_REST.has(date) || parseLocal(date).getDay() === 0) return 'rest'
+    if (OVERLAY_REST.has(date)) return 'rest'
+    if (parseLocal(date).getDay() === 0 && !TRAINING_SUNDAYS.has(date)) return 'rest'
     return 'training'
   }
   if (HOLIDAY.has(date)) return 'rest'
